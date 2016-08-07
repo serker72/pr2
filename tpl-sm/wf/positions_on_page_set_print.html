@@ -1,0 +1,46 @@
+<!-- таблица на странице -->
+
+
+<table width="100%" cellpadding="1" cellspacing="0" border="1" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+     <th scope="col" width="20">№ п/п</th>
+    	<th scope="col" width="24">Код</th>
+        <th scope="col" width="*">Номенклатура</th>
+        <th scope="col" width="60">Ед. изм.</th>
+        <th scope="col" width="60">Кол-во к списанию</th>
+       
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        
+        <td width="24">
+         %{$pospos[pospossec].pl_position_id|string_format:"%05d"}%
+        </td>
+        <td width="*">
+        %{$pospos[pospossec].position_name}%
+       
+       
+        </td>
+        <td width="60">
+        %{$pospos[pospossec].dim_name}%
+       
+        </td>
+        
+        <td width="60">
+        %{$pospos[pospossec].quantity}%
+       
+    	</td>
+        
+       
+      
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+    

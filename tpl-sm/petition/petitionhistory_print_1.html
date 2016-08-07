@@ -1,0 +1,84 @@
+<html>
+<head>
+ 
+
+</head>
+<body >
+ 
+
+<style>
+div{
+	font-family:"Times New Roman", Times, serif;
+	font-size:12pt;
+	 
+}
+p{font-size:14pt; font-family:"Times New Roman", Times, serif;}
+h1{
+	text-align:center;
+	font-family:"Times New Roman", Times, serif;
+}
+</style>
+
+
+<table width="800" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="*">
+
+<div style="float:right;">
+
+<div>
+Генеральному директору %{$org.opf}% «%{$org.full_name}%»<br />
+
+%{$gen_dir.name_s}%
+ </div>
+<div>
+от <div style=" display:inline-block; width:250px; border-bottom:1px solid black; margin-bottom:0px;">%{$created_by_print}%</div>   
+</div>
+
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <small>(Ф.И.О., должность)</small>
+
+
+                                      
+<div>
+&nbsp;&nbsp;&nbsp;<div  style=" display:inline-block; width:250px; border-bottom:1px solid black;">%{$created_by_pos_print}%</div>
+</div>
+
+</div>
+
+ 
+<br clear="all" />
+
+<br />
+<br />
+<br />
+
+
+
+ <h1>Заявление</h1>
+
+
+
+
+<p>
+Прошу предоставить мне ежегодный основной оплачиваемый отпуск на  <nobr><u>%{$num_days}%</u> календарных дней</nobr>
+
+<nobr>с <u>«%{$claim.begin_pdate_d}%»</u> <u>%{$claim.begin_pdate_m}%</u> <u>%{$claim.begin_pdate_Y}%</u> года.</nobr> 
+</p>
+
+%{if $claim.wo_instead==0}%
+<p>
+На время моего отсутствия мои обязанности будет выполнять <u>%{$claim.instead_string}%</u>
+</p>
+%{/if}%
+
+
+%{include file="petition/sign_block.html"}%
+
+ 
+   
+</td>
+</tr>
+</table>  
+
+</body>
+</html>

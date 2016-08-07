@@ -1,0 +1,501 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker();
+	$("#pdate2").datepicker();
+	
+	
+	
+	
+	$("#sector_id").bind("change",function(){
+		if(($("#sector_id").val()==null)||($("#sector_id").val()==0)){
+			
+			//return false;	
+		}
+		
+		only_active_storages=0;
+		if($("#only_active_storages_4").prop("checked")) only_active_storages=1;
+		
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/goods_on_stor.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_storages",
+			  "sector_id":$("#sector_id").val(),
+			  "current_id":$("#storage_id").val(),
+			  "only_active_storages":only_active_storages
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//  alert(data);
+			$("#storage_id").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+	
+	$("#storage_id").bind("change",function(){
+		if(($("#storage_id").val()==null)||($("#storage_id").val()==0)){
+			
+			//return false;	
+		}
+		
+		only_active_sectors=0;
+		if($("#only_active_sectors").prop("checked")) only_active_sectors=1;
+		
+		
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/goods_on_stor.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_sectors",
+			  "storage_id":$("#storage_id").val(),
+			  "current_id":$("#sector_id").val(),
+			  "only_active_sectors":only_active_sectors
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			//alert(data);
+			$("#sector_id").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+	
+	
+	$("#only_active_sectors").bind("change",function(){
+		$("#storage_id").trigger("change");	
+	});
+	
+	
+	$("#only_active_storages").bind("change",function(){
+		$("#sector_id").trigger("change");
+	});
+	
+	
+});
+</script>
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form2">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="tab_page" value="1" id="tab_page" />
+
+%{include file="every_help_dialog.html" filename="an_j.htm" prefix="" description="отчет Ж"  style="float:right;  margin-right:10px;"}%
+
+<div style="float:left; margin-right:10px;">
+<strong>Период:</strong>
+<label for="pdate1">с:</label><br />
+<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" />
+
+
+<p />
+	<label for="pdate2">по:</label><br />
+    <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px;">
+
+<label for="sector_id">Участок:</label><br />
+
+
+<select id="sector_id" name="sector_id" style="width:150px;">
+<option value="0">-все участки-</option>
+%{*html_options values=$sector_ids selected=$sector_id output=$sector_names*}%
+%{$sector_html}%
+</select>
+<p />
+
+<label for="storage_id">Объект:</label><br />
+
+
+<select id="storage_id" name="storage_id" style="width:150px;">
+<option value="0">-все объекты-</option>
+%{*html_options values=$storage_ids selected=$storage_id output=$storage_names*}%
+%{$storage_html}%
+</select>
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+<input type="checkbox" name="only_active_sectors" id="only_active_sectors" %{if $only_active_sectors==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_sectors">только активные участки</label><p /><br />
+
+
+
+<input type="checkbox" name="only_active_storages" id="only_active_storages" %{if $only_active_storages==1}% checked="checked" %{/if}% value="1" />
+<label for="only_active_storages">только активные объекты</label><br />
+
+
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+	<label for="status_id">Статус:</label><br />
+ <select name="status_id" id="status_id" style="width:150px;">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все расп. на списание</option>
+    <option value="17"  %{if $status_id==17}% selected="selected"%{/if}%>выполнено</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>утвержден</option>
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>не утвержден</option>
+   
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>аннулирован</option>
+   </select>  
+</div>
+
+
+<!--<div style="float:left; margin-right:5px; max-width:350px;" id="search_shorter">
+<strong>Поиск по наименованию позиции:</strong><br />
+
+<input type="text" style="width:300px;" size="80" maxlength="255" value="%{$name2}%" name="name2" id="name2_1" /> <a href="#" id="do_ext_search"><img src="/img/icons/plus.png" width="24" height="24" alt="расширенный поиск" title="расширенный поиск" border="0" hspace="5" align="absmiddle" /></a>
+<br /><br />
+
+
+</div>
+-->
+
+<div style="float:left; margin-right:5px; display:none;" id="search_full">
+<table width="*" border="1" cellspacing="0" cellpadding="3" style="float:left; margin-right:10px;" class="blacktable">
+ <thead>
+  <tr align="left" valign="bottom">
+    <th scope="col" width="40"> Код позиции</th>
+	<th scope="col" width="*">Наименование</th> 
+    <th width="40" scope="col" >
+    ед.изм.
+   
+    </th>
+    
+     <th scope="col" width="100" >
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+    <th scope="col" width="40" >
+    ГОСТ/ТУ
+   
+    </th>
+    
+    
+    
+     <th width="40" scope="col">
+    Длина, мм
+   
+    </th>
+    <th width="40" scope="col" >
+    Ширина, мм
+   
+    </th>
+    <th width="40" scope="col" >
+    Высота/ толщина, мм
+   
+    </th>
+    <th width="40" scope="col">
+    Диаметр, мм:
+    </th>   
+    
+  
+  </tr>
+  <tr align="left" valign="top">
+  	
+    
+    <td  width="40"> 
+     <input type="text" size="8" maxlength="255" value="%{$id2}%" name="id2" id="id2" style="width:40px;" />
+    </td>
+	<td  width="*">
+    <input type="text" size="20" maxlength="255" value="%{$name2}%" name="nn" id="name2" />
+    </td> 
+    
+     
+    <td width="40" >
+     <select name="dimension_id2" id="dimension_id2" style="width:40px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+   
+    </td>
+    
+     <td width="100" >
+   
+   
+    <select name="group_id" id="group_id" style="width:100px;">
+    %{section name=groupsec loop=$group}%
+    	<option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="two_group_id" id="group_id2" style="width:100px;">
+    %{section name=two_groupsec loop=$two_group}%
+    	<option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="three_group_id" id="group_id3" style="width:100px;">
+    %{section name=three_groupsec loop=$three_group}%
+    	<option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#group_id").bind("click", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("click", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	});
+	</script>
+    
+    </td>
+    
+    
+ 
+    <td  width="40" >
+   <input type="text" size="8" maxlength="255" value="%{$gost_tu2}%" name="gost_tu2" id="gost_tu2" style="width:40px;" />
+   
+    </td>
+    
+    
+   
+    
+     <td width="40"  >
+     <input type="text" size="4" maxlength="255" value="%{$length2}%" name="length2" id="length2" style="width:40px;" />
+   
+    </td>
+    <td width="40" >
+    <input type="text" size="4" maxlength="255" value="%{$width2}%" name="width2" id="width2" style="width:40px;" />
+   
+   
+    </td>
+    <td width="40" >
+    <input type="text" size="4" maxlength="255" value="%{$height2}%" name="height2" id="height2"style="width:40px;" />
+   
+    </td>
+    <td width="40"  >
+   <input type="text" size="4" maxlength="255" value="%{$diametr2}%" name="diametr2" id="diametr2" style="width:40px;" />
+    </td> 
+    
+  
+  	
+  </tr>
+</thead>
+</table>
+</div>
+
+
+
+<div style="float:left; margin-right:5px;"><br />
+
+
+
+<a href="#" id="donot_ext_search" style="display:none;"><img src="/img/icons/minus.jpg" width="24" height="24" alt="скрыть расширенный поиск" title="скрыть расширенный поиск"  hspace="5" border="0" /></a>
+
+<script type="text/javascript">
+		$(function(){
+			$("#donot_ext_search").unbind("click");
+			$("#donot_ext_search").bind("click",function(){
+				
+				$("#name2_1").attr("value",$("#name2").val());
+				$("#name2").attr("value","");
+				$("#name2").attr("name","nn");
+				$("#name2_1").attr("name","name2");
+				
+				$("#donot_ext_search").css("display","none");
+				$("#search_full").css("display","none");
+				$("#dimension_id2").val("");
+				$("#length2").val("");
+				$("#width2").val("");
+				$("#height2").val("");
+				$("#weight2").val("");
+				$("#volume2").val("");
+				$("#diametr2").val("");
+				
+				$("#group_id").val("");
+				$("#group_id2").val("");
+				$("#group_id3").val("");
+				
+				$("#search_shorter").css("display","block");
+				return false;
+			});
+		});
+		</script>
+         <script type="text/javascript">
+		$(function(){
+			$("#do_ext_search").unbind("click");
+			$("#do_ext_search").bind("click",function(){
+				
+				$("#name2").attr("value",$("#name2_1").val());
+				
+				
+				$("#search_shorter").css("display","none");
+				$("#donot_ext_search").css("display","inline");
+				$("#search_full").css("display","block");
+				$("#name2_1").attr("value","");
+				
+				$("#name2_1").attr("name","nn");
+				$("#name2").attr("name","name2");
+				
+				return false;
+			});
+		});
+		</script>
+
+<input type="image" name="doSub" id="doSub" src="/img/icons/old-zoom-original.png" border="0" alt="Найти" title="Найти" />
+
+<a href="an_j.php?doSub=1"><img src="/img/icons/old-zoom-deselect.png" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" border="0"  /></a>
+
+  
+  %{if $can_print}%
+  
+  
+  
+  
+  <a href="#" id="print_table"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	 
+	  
+	  
+	  $("#print_table").bind("click",function(){
+		// $("#print").val(1);
+		 if($("#only_active_sectors").prop("checked")){
+			 only_active_sectors=1;
+		 }else{
+			 only_active_sectors=0;
+		 }
+		 
+		 
+		 if($("#only_active_storages").prop("checked")){
+			 only_active_storages=1;
+		 }else{
+			 only_active_storages=0;
+		 }
+		 window.open('an_j.php?doSub=1&tab_page=1&pdate1='+$('#pdate1').val()+'&pdate2='+$('#pdate2').val()+'&print='+'1'+'&storage_id='+$("#storage_id").val()+'&sector_id='+$("#sector_id").val()+'&sortmode='+'%{$sortmode}%'+'&id2='+$("#id2").val()+'&name2='+$("input[name=name2]").val()+'&group_id='+$("#group_id").val()+'&two_group_id='+$("#group_id2").val()+'&three_group_id='+$("#group_id3").val()+'&gost_tu2='+$("#gost_tu2").val()+'&dimension_id2='+$("#dimension_id2").val()+'&length2='+$("#length2").val()+'&width2='+$("#width2").val()+'&height2='+$("#height2").val()+'&diametr2='+$("#diametr2").val()+'&only_active_sectors='+only_active_sectors+'&only_active_storages='+only_active_storages, 'an_j','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 
+		
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+  
+</div>
+<br clear="all" />
+
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+
+
+
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  modal: true,
+	  width: 450,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+
+
+<p />
+
+
+
+
+
+
+</form>
+
+%{include file="an_j/an_j_table.html"}%  

@@ -1,0 +1,463 @@
+<script type="text/javascript">
+
+var master_ids%{$prefix}%=new Array();
+
+function reloadcontent%{$prefix}% ()
+{
+	do_next_iter%{$prefix}%(0,master_ids%{$prefix}%.length);
+}
+
+function do_next_iter%{$prefix}%(iter,total){
+	if(iter>=total) return false;
+	
+	var glgl=master_ids%{$prefix}%[iter];
+	var next_it=iter+1;
+	var total_it=total;
+	
+	
+	//alert("Итерация "+iter+" всего "+total+" для "+master_ids[iter]);
+	$.ajax({
+		async: true,
+		url: "/js/checknew.php",
+		type: "POST",
+		data:{
+			"action":"check_task%{$prefix}%",
+			"id":glgl
+		},
+		beforeSend: function(){
+			code="#has_new_conv%{$prefix}%_"+glgl;
+			$(code).html('<img src="/img/icon_wait.gif" width="16" height="16" border="0" alt="идет проверка, подождите" />');
+		},
+		success: function(data){
+		  code="#has_new_conv%{$prefix}%_"+glgl;
+		   $(code).html(data);
+		   
+		   do_next_iter%{$prefix}%(next_it,total_it);
+		},
+		error: function(xhr, status){
+			code="#has_new_conv%{$prefix}%_"+glgl;
+			$(code).html("");
+			do_next_iter%{$prefix}%(next_it,total_it);
+		},
+		complete: function(){
+			
+		} 
+	});
+}
+$(function(){
+		$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	 $("#pdate1%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#pdate2%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	
+	
+	$("#given_pdate1%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#given_pdate2%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	
+	setInterval('reloadcontent%{$prefix}%()', 60000); 
+	
+	
+	
+	
+	
+			
+		
+        $('#calendar%{$prefix}%').fullCalendar({
+            defaultView: 'month',
+            weekends: true,
+            buttonText: {
+                today:    'сегодня'
+            },
+            currentText: 'Сегодня',
+            monthNamesShort: ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+			monthNames : ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль',
+ 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+            dayNamesShort: ['вск','пнд','втр','срд','чтв','птн','сбт'],
+            dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+            dateFormat: 'dd.mm.yy',
+             timeFormat: 'HH:mm',
+            allDaySlot: false,
+            minTime: '00:00',
+            maxTime: '24:00',
+            slotMinutes: 60,
+			height: 300,
+			theme: true,
+            allDayDefault: false,
+            
+
+				 events: [
+				 
+				 %{section name=rowsec loop=$items}%
+				 {
+					 id  : '%{$items[rowsec].id}%',
+					 title  : %{strip}%
+					 '%{section loop=$items[rowsec].konts name=kontsec}%
+     	%{$items[rowsec].konts[kontsec].full_name}%, %{$items[rowsec].konts[kontsec].opf_name}%
+
+    %{/section}%, %{$items[rowsec].kind_name}%' %{/strip}%,
+           			 start  : %{if $items[rowsec].task_ptime!=""}%'%{$items[rowsec].task_pdate_unf}% %{$items[rowsec].task_ptime}%'%{else}%'%{$items[rowsec].task_pdate_unf}%'%{/if}%,
+           			 
+					 textColor: '%{$items[rowsec].color}%',
+					 backgroundColor: '#eee',
+					 borderColor: '#eee',
+					 allDay : %{if $items[rowsec].task_ptime!=""}%false%{else}%true%{/if}% // will make the time show
+					 
+				 },
+				 %{/section}%
+		
+		
+			],
+			
+			eventClick: function(e) {
+                //alert(e.id);
+				
+				
+				//location.href="taskhistory.php?id="+e.id;
+				zc=window.open('taskhistory.php?id='+e.id, '_blank','width=1000,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+				
+				//подгрузить данные по брони в диалог
+				
+				
+            }
+		  
+        });
+	
+	
+	$('#tasks').tabs({
+    show: function(event, ui) {
+			$('#calendar_1').fullCalendar('render');
+			$('#calendar_2').fullCalendar('render');
+			$('#calendar_3').fullCalendar('render');
+		}
+	});
+});
+</script>
+
+
+
+%{if $prefix=="_1"}%
+
+
+%{if $can_create_task}%
+<div style="float:left; margin-right:10px;">
+<a href="task_create.php"><img src="img/icons/menu_new.png" width="30" height="32" border="0" alt="Новая задача" title="Новая задача"  /></a>
+
+</div>
+%{/if}%
+
+
+
+%{include file="every_help_dialog.html" filename="tasks.htm" prefix=$prefix description="Cписок задач" style="float:right; margin-top:5px; margin-right:0px;"}%
+
+<br clear="all" />
+
+<p />
+%{else}%
+%{include file="every_help_dialog.html" filename="messages.htm" prefix=$prefix description="Cписок задач" style="float:right; margin-top:5px; margin-right:0px;"}%
+
+<br clear="all" />
+
+<p />
+%{/if}%
+
+
+<div id="calendar%{$prefix}%"></div>
+
+
+<br />
+
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+
+<h3>Цветовые обозначения:</h3>
+<ul type="circle">
+	<li style="color:red;">выполнение задачи просрочено, задача не выполнена</li>
+    <li style="color:#996633">новая задача</li>
+    <li>задача в обработке</li>
+    <li style="color:green;">задача выполнена</li>
+    <li style="color:silver;">задача аннулирована</li>
+</ul>
+
+
+%{$pages}%
+
+<label for="status_id%{$prefix}%_1" >Новые задачи</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_1" value="1" %{if $status_id==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id%{$prefix}%_2" >Задачи в обработке</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_2" value="2" %{if $status_id==2}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id%{$prefix}%_3" >Обработанные задачи</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_3" value="3" %{if $status_id==3}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id%{$prefix}%_4" >Выполненные задачи</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_4" value="4" %{if $status_id==4}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id%{$prefix}%_5" >Аннулированные задачи</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_5" value="5" %{if $status_id==5}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id%{$prefix}%_0" >Все задачи, кроме аннул.</label><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_0" value="0" %{if $status_id==0}% checked="checked"%{/if}%  /> 
+
+<a href="#" id="save_sort_mode%{$prefix}%"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" align="absmiddle" title="Сохранить" border="0" /></a>
+
+
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		if($.cookie('task_status_id')==null){
+			$.cookie('task_status_id', 0, { expires: 14 });		
+		}
+		
+		
+		
+		$("#save_sort_mode%{$prefix}%").bind("click",function(){
+			//alert($("input[name=sort_mode]:checked").val());
+			$.cookie('task_status_id', $("input[name=status_id%{$prefix}%]:checked").val(), { expires: 14 });
+			
+			return false;	
+		});
+		
+	
+	});
+	</script>
+
+<p />
+
+
+
+
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="tab_page" value="%{$tab_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="40">
+    Номер 
+     <div class="sort_dir">
+     <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+   </div>
+    </th>
+    
+    <th scope="col" width="60">
+    Предельный срок выполнения 
+     <div class="sort_dir">
+      <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+   </div>
+    </th>
+    
+    
+     <th scope="col" width="60">
+    Дата создания
+     <div class="sort_dir">
+      <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+	</div>
+    </th>
+    
+      <th scope="col" width="100">
+    Вид
+     <div class="sort_dir">
+     <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    	 
+   
+    <th scope="col"  width="*">
+    Контрагент
+    
+    </th>
+    
+      <th scope="col"  width="*">
+    Ответственные
+    сотрудники
+    
+    </th>
+    
+     
+   
+    
+    <th scope="col" width="100" >Статус 
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a> </div>
+    </th>
+    
+     <th scope="col" width="*" >Постановщик 
+   
+    </th>
+    
+     <th scope="col" width="40">Новые данные
+   
+    </th>    
+    <th scope="col" width="50">Журнал событий
+   
+    </th>
+   
+</tr>
+<tr align="center" valign="top">
+	<td width="40">
+	 <input type="text" size="8" maxlength="255" value="%{$id}%" name="id%{$prefix}%" id="id%{$prefix}%" style="width:40px;" />
+    </td>
+    
+    
+      <td width="60">
+	&nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /><br />
+    
+   
+    </td>
+    
+     <td width="60">
+     
+  &nbsp;&nbsp;с:&nbsp;<input type="text" name="given_pdate1%{$prefix}%" id="given_pdate1%{$prefix}%" size="10" maxlength="10" value="%{$given_pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="given_pdate2%{$prefix}%" id="given_pdate2%{$prefix}%" size="10" maxlength="10" value="%{$given_pdate2}%" style="width:60px;" />
+    
+        
+ 
+ </td>
+    
+    <td width="100">
+     <select name="kind_id%{$prefix}%" id="kind_id%{$prefix}%" style="width:100px;">
+    %{section name=sugsec loop=$sc}%
+    	<option value="%{$sc[sugsec].id}%" %{if $sc[sugsec].is_current}%selected="selected"%{/if}%>%{$sc[sugsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    </td>
+    
+     <td width="*">
+	<input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name%{$prefix}%" id="supplier_name%{$prefix}%" style="width:60px;" />
+    
+    </td>
+    
+    
+    <td width="*">
+	<input type="text" size="8" maxlength="255" value="%{$otv_user_name}%" name="otv_user_name%{$prefix}%" id="otv_user_name%{$prefix}%" style="width:60px;" />
+    
+    </td>
+    
+      <td width="100">
+      <select id="inner_status_id%{$prefix}%" style="width:100px;">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все задачи</option>
+   
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>новая</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>в обработке</option>
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>обработана</option>
+    <option value="4"  %{if $status_id==4}% selected="selected"%{/if}%>выполнена</option>
+    <option value="5"  %{if $status_id==5}% selected="selected"%{/if}%>аннулирована</option>
+   </select> 
+   
+    <br />
+    <input type="checkbox" value="1" name="status_all_5%{$prefix}%" id="status_all_5%{$prefix}%" onchange="if(this.checked){ document.getElementById('inner_status_id%{$prefix}%').selectedIndex=0; $('#inner_status_id%{$prefix}%').trigger('change'); }" %{if $status_all_5}% checked="checked"%{/if}% /><label for="status_all_5%{$prefix}%">все, кроме "Аннулирована"</label>
+    
+    
+    
+   <script type="text/javascript">
+   $(function(){
+	  $("#inner_status_id%{$prefix}%").bind("change", function(){
+		 $("#status_id%{$prefix}%_"+ $("#inner_status_id%{$prefix}%").val()).prop("checked",true);
+		 
+		 if(this.selectedIndex>0){ document.getElementById('status_all_5%{$prefix}%').checked=false;}
+		 
+		 $("#status_id%{$prefix}%_"+ $("#inner_status_id%{$prefix}%").val()).trigger("click");
+	  });
+	  
+	  
+   });
+   </script>
+      
+      
+      </td>
+    
+    <td width="*">
+	<input type="text" size="8" maxlength="255" value="%{$user_name}%" name="user_name%{$prefix}%" id="user_name%{$prefix}%" style="width:70px;" />
+    </td>
+   
+    
+    <td width="40">
+  
+    
+    </td>
+    
+    
+    <td width="50">
+    <input name="doFilter%{$prefix}%" type="submit" value="Найти" style="width:48px;" />
+    </form>
+    </td>
+   
+    
+</tr>
+</thead>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="40"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].id}%</td>
+	<td width="60" style="color:%{$items[rowsec].color}%;">%{$items[rowsec].task_pdate}%
+    %{$items[rowsec].task_ptime}%
+    </td>
+    <td width="60" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].pdate}%
+    </td>
+     <td width="100" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].kind_name}%
+    </td>
+    <td width="*" style="color:%{$items[rowsec].color}%;">
+    %{section loop=$items[rowsec].konts name=kontsec}%
+     	<a href="supplier.php?action=1&id=%{$items[rowsec].konts[kontsec].id}%" target="_blank" style="color:%{$items[rowsec].color}%;">%{$items[rowsec].konts[kontsec].full_name}%, %{$items[rowsec].konts[kontsec].opf_name}%</a><br />
+
+    %{/section}%
+    </td>
+    <td width="*" style="color:%{$items[rowsec].color}%;">
+     %{section loop=$items[rowsec].users name=usersec}%
+     	<a href="info.html?name=%{$items[rowsec].users[usersec].login}%" target="_blank" style="color:%{$items[rowsec].color}%;">%{$items[rowsec].users[usersec].name_s}% (%{$items[rowsec].users[usersec].login}%)</a><br />
+
+    %{/section}%
+    </td>
+     <td width="100" style="color:%{$items[rowsec].color}%;">
+     %{$items[rowsec].status_name}%
+    </td>
+    <td width="*" style="color:%{$items[rowsec].color}%;">
+    <a href="info.html?name=%{$items[rowsec].login}%" target="_blank" style="color:%{$items[rowsec].color}%;"> %{$items[rowsec].name_s}% (%{$items[rowsec].login}%)</a>
+    </td>
+    
+    <td width="40"  style="color:%{$items[rowsec].color}%;" id="has_new_conv%{$prefix}%_%{$items[rowsec].id}%">
+     %{if $items[rowsec].is_new}%
+    <img src="/img/new_message.gif" width="13" height="10" border="0" alt="новые данные" title="новые данные" /> %{/if}% 
+    </td>
+    
+    
+      <td width="50" style="color:%{$items[rowsec].color}%;">
+   
+    <a href="taskhistory.php?id=%{$items[rowsec].id}%" target="_blank"><img src="/img/log.png" width="67" height="30" alt="журнал событий" border="0" /></a>
+    
+    <script type="text/javascript">
+	master_ids%{$prefix}%.push("%{$items[rowsec].id}%");
+	</script>
+    
+    </td>
+    
+</tr>
+%{/section}%
+
+</table>
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям задач не найдено.</em><br />
+%{/if}%
+
+
+%{$pages}%

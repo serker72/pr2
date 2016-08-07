@@ -1,0 +1,48 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Тендер</th>
+   <th>Статус</th>
+   <th>Название</th>
+    <th></th>
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        
+       <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}%</a>
+</td>
+<td>       
+       
+        %{$item.status_name}%
+</td>
+<td>        
+        %{$item.topic}%
+         
+          
+</td>
+
+<td width="*">         
+       <ul>
+       %{foreach from=$item.leads item=lead}%   
+	   	       
+       <li>Лид <a href="ed_lead.php?action=1&id=%{$lead.id}%&from_begin=1" target="_blank" title="Подробно...">%{$lead.code}%</a>, статус  %{$lead.status_name}%, %{$lead.topic}% </li> 
+
+       %{foreachelse}%
+       <li>Связанных лидов не найдено, <a href="ed_lead.php?action=0" target="_blank" title="Создать лид...">создайте лид</a></li>
+       %{/foreach}%
+         
+       </ul>
+</td> 
+    
+    
+<td width="24">
+ <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 

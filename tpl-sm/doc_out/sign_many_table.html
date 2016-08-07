@@ -1,0 +1,149 @@
+<!-- таблица на странице -->
+
+ 
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable1" id="bill_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="*">Ф.И.О.</th>
+         
+        
+   
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    
+   	<tr align="left" valign="top" id="new_sign_row_%{$kind}%_%{$pospos[pospossec].hash}%">
+    	<td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+        <input type="hidden" id="new_sign_%{$kind}%_hash_%{$pospos[pospossec].hash}%" name="new_sign_%{$kind}%_hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        <input type="hidden" id="new_sign_%{$kind}%_id_%{$pospos[pospossec].hash}%" name="new_sign_%{$kind}%_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].user_id}%" />
+        
+        <strong>%{$pospos[pospossec].user_name_s}%</strong>
+        <br>
+		
+        <input type="checkbox" value="1" id="new_is_signed_%{$kind}%_1_%{$pospos[pospossec].hash}%" name="new_is_signed_%{$kind}%_1_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].is_signed==1}% checked%{/if}%  %{if  $pospos[pospossec].is_enabled==false}%  disabled%{/if}%    /><label for="new_is_signed_%{$kind}%_1_%{$pospos[pospossec].hash}%"> Утверждаю</label> 
+        
+        <span id="new_is_signed_signer_%{$kind}%_1_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].signer_1}%</span>
+        
+        <br>
+
+         <input type="checkbox" value="1" id="new_is_signed_%{$kind}%_2_%{$pospos[pospossec].hash}%" name="new_is_signed_%{$kind}%_2_%{$pospos[pospossec].hash}%" %{if $pospos[pospossec].is_signed==2}% checked%{/if}%  %{if  $pospos[pospossec].is_enabled==false}%  disabled%{/if}%    /><label for="new_is_signed_%{$kind}%_2_%{$pospos[pospossec].hash}%">Не утверждаю</label> 
+        
+        <span id="new_is_signed_signer_%{$kind}%_2_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].signer_2}%</span>
+        
+        <input type="hidden" id="new_is_signed_reason_%{$kind}%_%{$pospos[pospossec].hash}%" name="new_is_signed_reason_%{$kind}%_%{$pospos[pospossec].hash}%"  %{if  $pospos[pospossec].is_enabled==false}%  disabled%{/if}% value="" />
+        
+        </td>
+        
+        
+        <td width="24" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        
+       %{if $can_modify}%
+       
+      
+        <a href="#" id="new_del_%{$kind}%_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_button24" data-comment="удалить участника..."></a>
+        
+        
+        %{else}%
+       <a href="#" id="new_del_%{$kind}%_%{$pospos[pospossec].hash}%" class="reestr_delete reestr_button24 reestr_inactive" data-comment="удалить участника..." ></a>
+        %{/if}%
+        </td>
+    </tr>
+   
+    %{/section}%
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			 
+		
+		function new_del(hash){
+			%{if $can_modify}%
+				 
+				if(window.confirm('Вы действительно хотите удалить пользователя?')){ 
+					$('#new_sign_row_%{$kind}%_'+hash).remove();
+					 
+							
+				}
+				 
+				%{else}%
+				alert("Невозможно удалить пользователя.");
+				%{/if}%
+				return false;
+			
+		}
+		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$kind}%_%{$pospos[pospossec].hash}%").bind("click",function(){
+				return new_del("%{$pospos[pospossec].hash}%");
+				
+			});
+			
+			$("#new_is_signed_%{$kind}%_1_%{$pospos[pospossec].hash}%").bind("change", function(){
+				if($(this).prop("checked")) {
+					$("#new_is_signed_%{$kind}%_2_%{$pospos[pospossec].hash}%").prop("checked",false).trigger("change");
+					 
+					 
+					$.ajax({
+						async: true,
+						url: "/js/lead.php",
+						type: "POST",
+						data:{
+							"action":"redraw_is_confirmed_price_confirmer",
+							state: 1
+						},
+						beforeSend: function(){
+						 $("#new_is_signed_signer_%{$kind}%_1_%{$pospos[pospossec].hash}%").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+						},
+						success: function(data){
+						 
+						  $("#new_is_signed_signer_%{$kind}%_1_%{$pospos[pospossec].hash}%").html(data);
+						  
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});	
+				}else{
+					$("#new_is_signed_signer_%{$kind}%_1_%{$pospos[pospossec].hash}%").html('');
+				}
+			});
+			
+			$("#new_is_signed_%{$kind}%_2_%{$pospos[pospossec].hash}%").bind("change", function(){
+				if($(this).prop("checked")) {
+					$("#new_is_signed_%{$kind}%_1_%{$pospos[pospossec].hash}%").prop("checked",false).trigger("change");
+					 
+					
+					$.ajax({
+						async: true,
+						url: "/js/lead.php",
+						type: "POST",
+						data:{
+							"action":"redraw_is_confirmed_price_confirmer",
+							state: 1
+						},
+						beforeSend: function(){
+						 $("#new_is_signed_signer_%{$kind}%_2_%{$pospos[pospossec].hash}%").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+						},
+						success: function(data){
+						 
+						  $("#new_is_signed_signer_%{$kind}%_2_%{$pospos[pospossec].hash}%").html(data);
+						  
+						},
+						error: function(xhr, status){
+							//alert("Ошибка добавления вопроса.");	
+						}	 
+					});	
+				}else{
+					$("#new_is_signed_signer_%{$kind}%_2_%{$pospos[pospossec].hash}%").html('');
+				}
+			});
+			
+    	%{/section}%
+	
+	});
+      </script>

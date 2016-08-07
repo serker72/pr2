@@ -1,0 +1,25 @@
+%{foreach from=$clients item=client}%
+    <tr align="left" valign="top" id="%{$word}%_%{$client.id}%">
+	<td width="*" >
+    <span id="span_client_name_%{$client.id}%">%{$client.name}%</span>
+    <input type="hidden" id="client_name_%{$client.id}%" name="client_name_%{$client.id}%" value="%{$client.name|escape}%" />
+    
+    </td>
+    <td width="*" >
+	<span id="span_purpose_name_%{$client.id}%">%{$client.purpose_name}%</span>
+    
+    <span id="span_purpose_txt_%{$client.id}%">%{$client.purpose_txt}%</span>
+    
+    
+    
+    
+	<input type="hidden" id="purpose_name_%{$client.id}%"   value="%{$client.purpose_name|escape}%" />
+    <input type="hidden" id="purpose_txt_%{$client.id}%" name="purpose_txt_%{$client.id}%" value="%{$client.purpose_txt|escape}%" />
+    
+    <input type="hidden" id="purpose_id_%{$client.id}%" name="purpose_id_%{$client.id}%" value="%{$client.purpose_id|escape}%" />
+    </td>
+    
+    </tr>
+   
+    
+ %{/foreach}%  

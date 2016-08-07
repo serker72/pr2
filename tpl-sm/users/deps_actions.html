@@ -1,0 +1,565 @@
+<script type="text/javascript">
+
+	//подгрузка  
+	function load_main_deps(){	
+		 
+		 
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"find_main_deps" 
+				
+			},
+			beforeSend: function(){
+			 
+				  $("#main_deps_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+			  
+			},
+			success: function(data){
+			  
+			  		$("#main_deps_found").html(data);
+			 
+			  
+			  
+			  
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	function load_deps(){	
+		 
+		 
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"find_deps",
+				"main_department_id":0, //$("#main_department_id").val()
+				
+			},
+			beforeSend: function(){
+			 
+				  $("#deps_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+			  
+			},
+			success: function(data){
+			  
+			  		$("#deps_found").html(data);
+			 
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	
+	
+	function add_main_dep(){	
+		
+		nm='';
+		 
+		
+		if($("#new_main_deps").val()==""){
+			$("#new_main_deps").focus();
+			return false;
+		}
+			
+		 
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"add_main_dep",
+				
+				 
+				"name":$("#new_main_deps").val()
+				
+			},
+			beforeSend: function(){
+			  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			},
+			success: function(data){
+				$("#new_main_deps").val("");
+				load_main_deps();
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		}); 
+		
+	}
+	
+	
+	
+	function add_dep(){	
+		
+		nm='';
+		 
+		
+		if($("#new_deps").val()==""){
+			$("#new_deps").focus();
+			return false;
+		}
+			
+		 
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"add_dep",
+				"main_department_id":0, //$("#main_department_id").val(),
+				 
+				"name":$("#new_deps").val()
+				
+			},
+			beforeSend: function(){
+			    
+			},
+			success: function(data){
+				$("#new_deps").val("");
+				load_deps();
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		}); 
+		
+	}
+	
+	
+	
+	
+	
+	
+	//удаление ветви иерархии
+	function del_main_dep(branch_id){	
+		 
+		if(window.confirm("Вы действительно хотите удалить департамент?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"del_main_dep",
+					
+					"id":branch_id 
+					
+				},
+				beforeSend: function(){
+				  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					load_main_deps();
+				  },
+				error: function(xhr, status){
+					alert("Ошибка загрузки данных.");	
+				}	 
+			});
+			
+		}
+	}
+	
+	
+	function del_dep(branch_id){	
+		 
+		if(window.confirm("Вы действительно хотите удалить отдел?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"del_dep",
+					
+					"id":branch_id 
+					
+				},
+				beforeSend: function(){
+				  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					load_deps();
+				  },
+				error: function(xhr, status){
+					alert("Ошибка загрузки данных.");	
+				}	 
+			});
+			
+		}
+	}
+	
+	
+	//правка ветви иерархии
+	function edit_main_dep(branch_id){	
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"edit_main_dep",
+				
+				"id":branch_id,
+				"name":$("#edit_main_deps_"+branch_id).val()
+				
+			},
+			beforeSend: function(){
+			  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			},
+			success: function(data){
+				load_main_deps();
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	
+	
+	//правка ветви иерархии
+	function edit_dep(branch_id){	
+		
+		$.ajax({
+			async: true,
+			url: "/js/user_s.php",
+			type: "POST",
+			data:{
+				"action":"edit_dep",
+				
+				"id":branch_id,
+				"name":$("#edit_deps_"+branch_id).val()
+				
+			},
+			beforeSend: function(){
+			  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			},
+			success: function(data){
+				load_deps();
+			  },
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	 
+	
+$(function(){	
+	
+	
+	
+	
+	
+	$("#main_deps_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	 
+	 
+	 $("#deps_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	
+	$("#select_main_department_id").bind("click",function(){
+		//$("#branch_radio_"+$("#branch_id").val()+"").prop("checked",true);
+		 load_main_deps();
+		 
+		  
+		
+		$("#main_deps_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   
+			   
+				   if( ($("input[name=main_deps]:checked").val()==0)||($("input[name=main_deps]:checked").val()==null)||($("input[name=main_deps]:checked").val()==undefined) ){
+						
+						alert("Выберите департамент!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=main_deps]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#main_department_id").val()!=selected_branch){
+					 
+					  $("#clear_main_department_id").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/user_s.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_main_dep",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#main_department_string").val(data.name);
+							$("#main_department_id").val(data.id);
+							
+							 
+							$("#department_string").val("");
+							$("#department_id").val("");
+							
+							
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  
+			   } 
+			   
+			  $("#main_deps_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		 
+		
+		$("#main_deps_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	 
+	$("#select_department_id").bind("click",function(){
+		/*if(($("#main_department_id").val()=="")||($("#main_department_id").val()==0)||($("#main_department_id").val()==undefined)){
+			alert("Для выбора отдела необходимо сначала выбрать департамент!");
+			
+			return false;
+		}	
+	*/	
+		
+		
+		load_deps(); 
+		 
+		$("#deps_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   
+				   if( ($("input[name=deps]:checked").val()==0)||($("input[name=deps]:checked").val()==null)||($("input[name=deps]:checked").val()==undefined) ){
+						
+						alert("Выберите отдел!");
+					   return false;  
+			 	}
+				   
+				   
+				   
+				   
+				  
+				 selected_branch=$("input[name=deps]:checked").val()
+					   
+				  
+				  
+				 
+				 
+				  
+				  if($("#department_id").val()!=selected_branch){
+					 
+					  $("#clear_department_id").trigger("click");
+					  //подгружаем все данные по контрагенту
+					  if(selected_branch>0){
+						$.ajax({
+						  async: true,
+						  url: "/js/user_s.php",
+						  type: "GET",
+						  dataType: "json",
+						  data:{
+							  "action":"retrieve_dep",
+							  "id":selected_branch
+							  
+						  },
+						  beforeSend: function(){
+							
+						  },
+						  success: function(data){
+							
+							//alert(data.contract_no);
+							$("#department_string").val(data.name);
+							$("#department_id").val(data.id);
+							
+							 
+						 
+							
+							
+							 
+						  },
+						  error: function(xhr, status){
+							 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});
+					  }
+				  }
+			    
+			   
+			  $("#deps_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		
+		
+		$("#deps_dialog").dialog("open");
+	});
+	 
+	
+	$("#clear_main_department_id").bind("click",function(){
+		
+		//очистка выбранного п-ка
+		
+		
+		$("#main_department_id").val("");
+		$("#main_department_string").val("");
+		
+		
+		$("#department_id").val("");
+		$("#department_string").val("");
+		
+		
+	});
+	
+	
+	$("#clear_department_id").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+	
+		$("#department_id").val("");
+		$("#department_string").val("");
+		
+		
+	});
+	
+	
+	 
+	$("#add_new_main_deps").bind("click", function(){
+		add_main_dep();
+	});
+	
+	
+	$("#add_new_deps").bind("click", function(){
+		add_dep();
+	});
+	
+	 
+});
+</script>
+
+<div id="main_deps_dialog" title="Выберите департамент" style="display:none;">
+	
+ 
+
+ 
+ 
+ 
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Наименование</th>
+        
+        <th scope="col" width="96"></th>
+    </tr>
+    	
+       
+        
+    
+    <tbody id="main_deps_found">
+    
+    
+  
+    </tbody>
+    </table>
+	
+  
+  	<br />
+	<strong>Добавить департамент:</strong><br>
+  <input type="text" id="new_main_deps" size="30" maxlength="255" />
+  <br />
+     
+  <input type="button" value="Добавить департамент" id="add_new_main_deps"  />
+  
+</div>
+
+
+
+<div id="deps_dialog" title="Выберите отдел" style="display:none;">
+	
+ 
+
+ 
+ 
+ 
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Наименование</th>
+        
+        <th scope="col" width="96"></th>
+    </tr>
+    	
+       
+        
+    
+    <tbody id="deps_found">
+    
+    
+  
+    </tbody>
+    </table>
+	
+  
+  	<br />
+	<strong>Добавить отдел:</strong><br>
+  <input type="text" id="new_deps" size="30" maxlength="255" />
+  <br />
+     
+  <input type="button" value="Добавить отдел" id="add_new_deps"  />
+  
+</div>
+ 

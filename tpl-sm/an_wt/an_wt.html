@@ -1,0 +1,431 @@
+ <script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+ 
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	
+	VidgetMultiReport('%{$prefix}%statuses', 'Выберите статус', 'Все статусы', 'Cнять выбор', '# из # выбрано', "Выбраны статусы: ", 'Статусы не выбраны', 280 );
+	
+	VidgetMultiReport('%{$prefix}%kinds', 'Выберите вид', 'Все виды', 'Cнять выбор', '# из # выбрано', "Выбраны виды: ", 'Виды не выбраны', 280 );
+	
+	VidgetMultiReport('%{$prefix}%deps', 'Выберите отдел', 'Все отделы', 'Cнять выбор', '# из # выбрано', "Выбраны отделы: ", 'Отделы не выбраны', 280 );
+	 
+	 
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+		
+			 
+ 
+		
+	 function SelectSupplierGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_supplier.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_suppliers item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.code|escape:"html"}% %{$item.full_name|escape:"html"}%, %{$item.opf_name|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	
+	
+	function SelectGo2(name ){
+		 
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+			 
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+			
+	 
+			
+	SelectSupplierGo2("supplier_name%{$prefix}%");
+	SelectGo2("manager_name%{$prefix}%");
+	
+	 
+	
+	 $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+			
+		 	 window.open('an_working_time.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize());
+		   
+		 return false; 
+	  });   
+	
+});
+</script>
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+ 
+<input type="hidden" name="tab_page" value="1"  />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" id="sortmode%{$prefix}%" />
+
+
+
+
+
+
+
+<div class="report_filter_right">
+	
+    <div class="reestr_zoom reestr_right_button24" data-comment="Вывести">
+    <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub%{$prefix}%"  />
+    </div>
+    
+    <a href="%{$pagename}%?doSub%{$prefix}%=1&tab_page=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+    
+     %{if $can_print}%
+      %{section name=rowsec loop=$items}%%{/section}%
+      
+       <a href="#" id="print_table%{$prefix}%" class="reestr_print reestr_right_button24 " data-comment="Печать..." ></a>
+      
+      
+     
+      
+      
+      %{else}%
+       <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24 " data-comment="Печать..."></a>
+     %{/if}%
+    
+    
+    %{include file="every_help_dialog.html" filename="an_wt.html" description="Отчет Время обработки документов"  prefix=$prefix style="display:inline;" is_right=true}%
+
+
+</div>
+
+
+
+
+
+
+
+
+ 
+
+
+
+<div class="report_filter_left">
+	 
+    
+     
+    
+    
+    
+    
+     
+    
+    <div class="report_filter">
+    
+        
+          <label for="%{$prefix}%kinds" class="statuses_report_label">Вид документа:</label><br>
+    
+        <select id="%{$prefix}%kinds" name="%{$prefix}%kinds[]" multiple="multiple">
+        
+        	<option value="0" %{if $kind_0==1 or $all_kinds==1}% selected%{/if}% >Тендер</option>
+            <option value="1" %{if $kind_1==1 or $all_kinds==1}% selected%{/if}% >Лид</option>
+        <!--    <option value="2" %{if $kind_2==1 or $all_kinds==1}% selected%{/if}% >ТЗ</option>
+            <option value="3" %{if $kind_3==1 or $all_kinds==1}% selected%{/if}% >КП вх.</option>
+            <option value="4" %{if $kind_4==1 or $all_kinds==1}% selected%{/if}% >КП исх.</option>
+            <option value="5" %{if $kind_5==1 or $all_kinds==1}% selected%{/if}% >БДР/БДДС</option>-->
+ 		 
+        </select>
+        
+        
+        
+        <br clear="all" />
+        
+        <div id="%{$prefix}%kinds_caption" class="statuses_report_caption" style="width:270px !important;">
+        
+        </div>
+    
+    
+    </div>
+    
+    
+    <div class="report_filter">
+    
+        
+          <label for="%{$prefix}%deps" class="statuses_report_label">Обработчик:</label><br>
+    
+        <select id="%{$prefix}%deps" name="%{$prefix}%deps[]" multiple="multiple">
+        
+        	<option value="0" %{if $dep_0==1 or $all_deps==1}% selected%{/if}% >Менеджер</option>
+            <option value="1" %{if $dep_1==1 or $all_deps==1}% selected%{/if}% >Отдел закупок</option>
+            <option value="2" %{if $dep_2==1 or $all_deps==1}% selected%{/if}% >Технический отдел</option>
+            <option value="3" %{if $dep_3==1 or $all_deps==1}% selected%{/if}% >Поставщик</option>
+            <option value="4" %{if $dep_4==1 or $all_deps==1}% selected%{/if}% >Координатор ДПиМ</option>
+            <option value="5" %{if $dep_5==1 or $all_deps==1}% selected%{/if}% >Финансовая служба</option>
+ 		 <option value="6" %{if $dep_6==1 or $all_deps==1}% selected%{/if}% >Генеральный директор</option>
+ 		 
+        </select>
+        
+        
+        
+        <br clear="all" />
+        
+        <div id="%{$prefix}%deps_caption" class="statuses_report_caption" style="width:270px !important;">
+        
+        </div>
+    
+    
+    </div>
+    
+    
+     
+        
+    <div class="report_filter">
+    
+     
+    
+    
+        <label for="%{$prefix}%statuses" class="statuses_report_label">Статусы:</label><br>
+    
+        <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+       
+            
+          <option value="18" %{if $status_id_18==1 or $all_statuses==1}% selected%{/if}% >Создан</option>
+
+<option value="33" %{if $status_id_33==1 or $all_statuses==1}% selected%{/if}% >Новый</option>
+<option value="1" %{if $status_id_1==1 or $all_statuses==1}% selected%{/if}% >Не утвержден</option>
+<option value="2" %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}% >Утвержден</option>
+
+<option value="28" %{if $status_id_28==1 or $all_statuses==1}% selected%{/if}% >В работе</option>
+<option value="40" %{if $status_id_40==1 or $all_statuses==1}% selected%{/if}% >Проверен</option>
+
+<option value="37" %{if $status_id_37==1 or $all_statuses==1}% selected%{/if}% >Подтвердить отказ</option>
+<option value="34" %{if $status_id_34==1 or $all_statuses==1}% selected%{/if}% >Отказ</option>
+<option value="35" %{if $status_id_35==1 or $all_statuses==1}% selected%{/if}% >На рассмотрении</option>
+<option value="25" %{if $status_id_25==1 or $all_statuses==1}% selected%{/if}% >Отложен</option>
+
+<option value="32" %{if $status_id_32==1 or $all_statuses==1}% selected%{/if}% >Отменен</option>
+<option value="36" %{if $status_id_36==1 or $all_statuses==1}% selected%{/if}% >Упущен</option>
+<option value="26" %{if $status_id_26==1 or $all_statuses==1}% selected%{/if}% >Ждет контроля</option>
+<option value="23" %{if $status_id_23==1 or $all_statuses==1}% selected%{/if}% >Ждет выполнения</option>
+
+
+<option value="29" %{if $status_id_29==1 or $all_statuses==1}% selected%{/if}% >Заявлен</option>
+<option value="30" %{if $status_id_30==1 or $all_statuses==1}% selected%{/if}% >Выигран</option>
+<option value="31" %{if $status_id_31==1 or $all_statuses==1}% selected%{/if}% >Проигран</option>
+
+
+
+<option value="24" %{if $status_id_24==1 or $all_statuses==1}% selected%{/if}% >Выполняется</option> 
+
+<option value="38" %{if $status_id_38==1 or $all_statuses==1}% selected%{/if}% >Ожидание КП</option> 
+<option value="39" %{if $status_id_39==1 or $all_statuses==1}% selected%{/if}% >КП отправлено клиенту</option> 
+
+<option value="27" %{if $status_id_27==1 or $all_statuses==1}% selected%{/if}% >Не актуально</option>
+
+
+      
+        </select>
+        
+        
+        
+        <br clear="all" />
+        
+        <div id="%{$prefix}%statuses_caption" class="statuses_report_caption" style="width:270px !important;">
+        
+        </div>
+    
+    
+    </div>
+    
+    
+    
+    
+    <div class="report_filter">
+    <strong>Дата создания:</strong>
+    <br>
+    
+    
+    <label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10"  class="sched_report_field" />
+     &nbsp;&nbsp;
+    <label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10"  class="sched_report_field" />
+    
+    </div>
+    
+    
+     
+     
+    
+    <!--
+    
+   <div class="report_filter">
+    
+    
+        <label for="supplier_name%{$prefix}%"  >Контрагент:</label><br>
+        <input type="text" id="supplier_name%{$prefix}%" name="supplier_name%{$prefix}%" value="%{$supplier_name|escape:"html"}%" size="30" maxlength="255" style="width:180px;"/>
+        
+        
+    
+    
+    </div>
+    
+  -->
+  
+    
+    <div class="report_filter">
+    
+    
+        <label for="manager_name%{$prefix}%"  >Отв. сотрудник:</label><br>
+        <input type="text" id="manager_name%{$prefix}%" name="manager_name%{$prefix}%" value="%{$manager_name|escape:"html"}%" size="30" maxlength="255" style="width:180px;"/>
+        
+        
+    
+    
+    </div>
+    
+     
+    
+    
+    
+    <!--
+    
+    <div class="report_filter">
+    <br>
+
+    <input type="checkbox" id="has_content%{$prefix}%" name="has_content%{$prefix}%" value="1" %{if $has_content}% checked%{/if}%>
+    <label for="has_content%{$prefix}%">Расширенная форма</label>
+    <br>
+    
+    </div>
+    -->
+    
+    
+
+
+</div>
+
+
+
+
+ 
+
+<br clear="all" />
+ 
+</form>
+
+
+<!--
+<small>
+Примечания.
+
+<br />
+<br />
+
+
+1. <strong>Расширенная форма отчета</strong> позволяет включить в отчет комментарии.<br />
+<br />
+
+
+</small>-->
+
+%{if $do_it}%
+%{include file="an_wt/an_wt_table.html"}%
+%{/if}%
+
+
+
+
+

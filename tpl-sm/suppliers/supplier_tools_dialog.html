@@ -1,0 +1,501 @@
+<div id="add_dialog%{$prefix}%" title="Выберите станки" style="display:none;">
+	<input type="hidden" id="editing_id%{$prefix}%" value="" />
+    
+    <fieldset id="cat_tool%{$prefix}%">
+      
+    <div style="float:left; margin-right:10px; margin-bottom:15px;">
+      <label for="group_id%{$prefix}%">Вид оборудования:</label><br />
+      <select   id="group_id%{$prefix}%" style="width:150px" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+    <option value="0" %{if $group_id==0}% selected="selected"%{/if}%>-все-</option>
+    %{foreach from=$groups item=pk}%
+      <option value="%{$pk.id}%" %{if $pk.id==$group_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+    %{/foreach}%
+    </select> 
+    </div>
+     
+      
+       
+    <div style="float:left; margin-right:10px;  margin-bottom:15px;">
+      <label for="producer_id%{$prefix}%">Производитель:</label><br />
+      <select id="producer_id%{$prefix}%" style="width:150px" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+    <option value="0" %{if $producer_id==0}% selected="selected"%{/if}%>-все-</option>
+    %{foreach from=$producers item=pk}%
+      <option value="%{$pk.id}%" %{if $pk.id==$producer_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+    %{/foreach}%
+    </select> 
+    </div>
+      
+      
+    <div style="float:left; margin-right:10px  margin-bottom:15px;;">
+      <label for="two_group_id%{$prefix}%">Категория:</label><br />
+      <select   id="two_group_id%{$prefix}%" style="width:150px;" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+    <option value="0" %{if $two_group_id==0}% selected="selected"%{/if}%>-все-</option>
+    %{foreach from=$two_groups item=pk}%
+      <option value="%{$pk.id}%" %{if $pk.id==$two_group_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+    %{/foreach}%
+    </select> 
+    </div>
+     <br clear="all" />
+	 
+  
+  
+    
+    
+    <div style="float:left; margin-right:10px;  margin-bottom:15px;">
+	<label for="for_id%{$prefix}%">Оборудование:</label><br>
+
+    
+    <select  id="for_id%{$prefix}%" style="width:470px;">
+    %{section name=idsec loop=$ids}%
+    	<option value="%{$ids[idsec].id}%" %{if $ids[idsec].is_current}%selected="selected"%{/if}%>%{$ids[idsec].name|strip_tags|truncate:50:"...":false}%</option>
+    %{/section}%
+    </select>
+
+	</div>
+     <br clear="all" />
+	
+    </fieldset>
+    
+    
+    
+    
+    <fieldset id="name_tool%{$prefix}%">
+    <input type="checkbox" id="not_in_pl%{$prefix}%" value="1" /><label for="not_in_pl%{$prefix}%">Оборудование не из линейки:</label><br><br>
+
+	<label for="name%{$prefix}%">Оборудование:</label><br>
+	<input type="text" id="name%{$prefix}%" size="30" maxlength="255" value="" style="width:470px;" />
+    <br>
+<br>
+
+    </fieldset>
+    
+    
+    <label for="year%{$prefix}%">Год выпуска:</label>
+    <input type="text" id="year%{$prefix}%" size="4" maxlength="4" value="" /><br>
+<br>
+	
+    <label for="notes%{$prefix}%">Примечания:</label><br>
+	<textarea id="notes%{$prefix}%" cols="40" rows="5" style="width:470px;"></textarea>
+     
+</div>
+
+
+
+ 
+      
+      
+      <script type="text/javascript">
+      $(function(){
+		 
+		 $("a[id^=edit%{$prefix}%_]").bind("click",function(){
+			st=$(this).attr("id");
+			id=st.replace(/^edit%{$prefix}%_/,'');
+			$("#editing_id%{$prefix}%").val(id);
+			
+			
+			//alert(id);
+			
+			RedrawPage($('#data_pl_position_id%{$prefix}%_'+id).html());
+			 
+			 $("#name%{$prefix}%").val($('#data_name%{$prefix}%_'+id).html());
+		 
+ 			 $("#not_in_pl%{$prefix}%").prop("checked", ($('#data_not_in_pl%{$prefix}%_'+id).html()=='1'));
+			 $("#year%{$prefix}%").val($('#data_year%{$prefix}%_'+id).html());
+			 $("#notes%{$prefix}%").val($('#data_notes%{$prefix}%_'+id).html());
+			 
+			 $("#not_in_pl%{$prefix}%").trigger("change");
+			  
+			 
+			$("#add_dialog%{$prefix}%").dialog("option",{ 
+			 buttons: {
+				"Готово": function() { 
+					 
+					//самый главный метод: создание записи в реестр!
+					can_ret=true;
+					
+					
+					
+					if(can_ret&&($("#not_in_pl%{$prefix}%").prop("checked"))&&($.trim($("#name%{$prefix}%").val()).length<3)){
+						can_ret=can_ret&&false;
+						alert("Укажите название оборудования!");
+						$("#name%{$prefix}%").focus();
+					}
+					
+					if(can_ret&&(!$("#not_in_pl%{$prefix}%").prop("checked"))&&(($("#for_id%{$prefix}%").val()==0)||($("#for_id%{$prefix}%").val()==null)||($("#for_id%{$prefix}%").val()==undefined))){
+						can_ret=can_ret&&false;
+						alert("Укажите название оборудования!");
+						$("#for_id%{$prefix}%").focus();
+					}
+					
+					if(can_ret&&($("#year%{$prefix}%").val()=='')){
+						can_ret=can_ret&&false;
+						alert("Укажите год выпуска!");
+						$("#year%{$prefix}%").focus();
+					}
+					
+					
+					if(can_ret){
+						%{if !$can_unconfirm_price}%
+						can_ret=can_ret&&window.confirm("Внимание! Вы сохраняете данные по станку. У Вас нет прав для удаления данных.\nПросьба проверить корректность заполнения всех данных по станку.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+						%{/if}%	
+						
+					}
+					 
+					
+					
+					
+					if(can_ret){
+						if($("#not_in_pl%{$prefix}%").prop("checked")) not_in_pl=1;
+						else not_in_pl=0;
+						
+						
+						
+						 $.ajax({
+							  async: false,
+							  url: "/js/supplier_tool.php",
+							  type: "POST",
+							  data:{
+								  "action":"edit",
+								  "id":$("#editing_id%{$prefix}%").val(),
+								  "year":$("#year%{$prefix}%").val(),
+								  "pl_position_id":$("#for_id%{$prefix}%").val(),
+								  "not_in_pl":not_in_pl,
+								  "name":$("#name%{$prefix}%").val(),
+								  "notes":$("#notes%{$prefix}%").val(),
+								  "supplier_id":$("#supplier_id%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								//alert(data);
+								 
+								 location.reload();
+								
+							  },
+							  error: function(xhr, status){
+								  //alert("Ошибка добавления вопроса.");	
+							  }	 
+						  });
+						
+						$(this).dialog("close");
+					}
+				},
+				"Отмена": function() {
+					$(this).dialog("close");
+				}
+			 }
+			});
+			 
+			 $("#add_dialog%{$prefix}%").dialog("open");
+			
+			return false; 
+		 });
+		
+		
+		$("#add_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 500,
+			height: 450 
+			
+		});
+		
+		
+		
+		
+		
+        
+		$("#add%{$prefix}%").bind("click", function(){
+			 RedrawPage(0);
+			 
+			 $("#name%{$prefix}%").val('');
+			 $("#name%{$prefix}%").prop("disabled",true);
+			 $("#not_in_pl%{$prefix}%").prop("checked", false);
+			 $("#year%{$prefix}%").val('');
+			 $("#notes%{$prefix}%").val('');
+			 
+			 $("#cat_tool%{$prefix}%").prop("disabled", false);
+			 
+			$("#add_dialog%{$prefix}%").dialog("option",{ 
+			 buttons: {
+				"Готово": function() { 
+					 
+					//самый главный метод: создание записи в реестр!
+					can_ret=true;
+					
+					
+					
+					if(can_ret&&($("#not_in_pl%{$prefix}%").prop("checked"))&&($.trim($("#name%{$prefix}%").val()).length<3)){
+						can_ret=can_ret&&false;
+						alert("Укажите название оборудования!");
+						$("#name%{$prefix}%").focus();
+					}
+					
+					if(can_ret&&(!$("#not_in_pl%{$prefix}%").prop("checked"))&&(($("#for_id%{$prefix}%").val()==0)||($("#for_id%{$prefix}%").val()==null)||($("#for_id%{$prefix}%").val()==undefined))){
+						can_ret=can_ret&&false;
+						alert("Укажите название оборудования!");
+						$("#for_id%{$prefix}%").focus();
+					}
+					
+					if(can_ret&&($("#year%{$prefix}%").val()=='')){
+						can_ret=can_ret&&false;
+						alert("Укажите год выпуска!");
+						$("#year%{$prefix}%").focus();
+					}
+					
+					
+					if(can_ret){
+						%{if !$can_unconfirm_price}%
+						can_ret=can_ret&&window.confirm("Внимание! Вы сохраняете данные по станку. У Вас нет прав для удаления данных.\nПросьба проверить корректность заполнения всех данных по станку.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+						%{/if}%	
+						
+					}
+					 
+					
+					
+					
+					if(can_ret){
+						if($("#not_in_pl%{$prefix}%").prop("checked")) not_in_pl=1;
+						else not_in_pl=0;
+						
+						
+						
+						 $.ajax({
+							  async: false,
+							  url: "/js/supplier_tool.php",
+							  type: "POST",
+							  data:{
+								  "action":"add",
+								  "year":$("#year%{$prefix}%").val(),
+								  "pl_position_id":$("#for_id%{$prefix}%").val(),
+								  "not_in_pl":not_in_pl,
+								  "name":$("#name%{$prefix}%").val(),
+								  "notes":$("#notes%{$prefix}%").val(),
+								  "supplier_id":$("#supplier_id%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								//alert(data);
+								 
+								 location.reload();
+								
+							  },
+							  error: function(xhr, status){
+								  //alert("Ошибка добавления вопроса.");	
+							  }	 
+						  });
+						
+						$(this).dialog("close");
+					}
+				},
+				"Отмена": function() {
+					$(this).dialog("close");
+				}
+			 }
+			});
+			 
+			 $("#add_dialog%{$prefix}%").dialog("open");
+		});
+		
+		function RedrawPage(id){
+               $.ajax({
+						async: true,
+						url: "/js/supplier_tool.php",
+						type: "POST",
+						data:{
+							"action":"toggle_group_init" 
+							 
+						},
+						success: function(data){
+						 $("#group_id%{$prefix}%").html(data);				
+						},
+						error: function(xhr, status,m){
+							//alert(status+m);
+						}	 
+					  });
+				 
+					$.ajax({
+							async: true,
+							url: "/js/supplier_tool.php",
+							type: "POST",
+							data:{
+								"action":"toggle_eqs_init" ,
+								 "supplier_id":$("#supplier_id%{$prefix}%").val(),
+								 "current_id":id
+							},
+							success: function(data){
+							 $("#for_id%{$prefix}%").html(data);
+							 
+										
+							},
+							error: function(xhr, status,m){
+								//alert(status+m);
+							}	 
+						  })
+					   
+				$("#producer_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#producer_id%{$prefix}%").val(0);
+					
+					$("#two_group_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#two_group_id%{$prefix}%").val(0);	  	  
+            
+          }
+		  
+		  $("#not_in_pl%{$prefix}%").bind("change", function(){
+			 state=$("#not_in_pl%{$prefix}%").prop("checked");
+			 if(state){
+					$("#for_id%{$prefix}%").val(0);
+					$("#cat_tool%{$prefix}%").prop("disabled", true);
+					$("#name%{$prefix}%").prop("disabled",false);
+			 }else{
+				 $("#cat_tool%{$prefix}%").prop("disabled", false);
+				 $("#name%{$prefix}%").prop("disabled",true);
+				 $("#name%{$prefix}%").val('');
+			 }
+			  
+		  });
+        
+       
+          $("#group_id%{$prefix}%").bind("change", function(){
+				if($("#group_id%{$prefix}%").val()==0){
+					$("#producer_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#producer_id%{$prefix}%").val(0);
+					
+					$("#two_group_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#two_group_id%{$prefix}%").val(0)
+				}else{
+					 $.ajax({
+						async: true,
+						url: "/js/supplier_tool.php",
+						type: "POST",
+						data:{
+							"action":"toggle_producers",
+							"group_id":$("#group_id%{$prefix}%").val()
+						},
+						success: function(data){
+						  $("#producer_id%{$prefix}%").html(data);				
+						},
+						error: function(xhr, status,m){
+							//alert(status+m);
+						}	 
+					  });
+					  
+					  
+					
+				}
+				//подгрузить оборудование по первой категории
+				$.ajax({
+					async: true,
+					url: "/js/supplier_tool.php",
+					type: "POST",
+					data:{
+						"action":"toggle_eqs_by_group",
+						"group_id":$("#group_id%{$prefix}%").val(),
+						"current_id":$("#for_id%{$prefix}%").val(),
+						"supplier_id":$("#supplier_id%{$prefix}%").val()
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					 // alert(data);
+					  $("#for_id%{$prefix}%").prop("disabled", false); 
+					  $("#for_id%{$prefix}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+						
+				
+			});
+			
+			$("#producer_id%{$prefix}%").bind("change", function(){
+				if($("#producer_id%{$prefix}%").val()==0){
+					 
+					
+					$("#two_group_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#two_group_id%{$prefix}%").val(0)
+				}else{
+					$.ajax({
+						async: true,
+						url: "/js/supplier_tool.php",
+						type: "POST",
+						data:{
+							"action":"toggle_two_groups",
+							"group_id":$("#group_id%{$prefix}%").val(),
+							"producer_id":$("#producer_id%{$prefix}%").val()
+						},
+						success: function(data){
+							$("#two_group_id%{$prefix}%").html(data);				
+						},
+						error: function(xhr, status,m){
+							//alert(status+m);
+						}	 
+					  });
+					  
+					  
+				}
+				
+				//подгрузить оборудование по производителю
+				$.ajax({
+					async: true,
+					url: "/js/supplier_tool.php",
+					type: "POST",
+					data:{
+						"action":"toggle_eqs_by_producer",
+						"group_id":$("#producer_id%{$prefix}%").val(),
+						"current_id":$("#for_id%{$prefix}%").val(),
+						"supplier_id":$("#supplier_id%{$prefix}%").val()
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					 // alert(data);
+					  $("#for_id%{$prefix}%").prop("disabled", false); 
+					  $("#for_id%{$prefix}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			});
+			
+			
+			$("#two_group_id%{$prefix}%").bind("change", function(){
+				 //подгрузить оборудование
+				 $.ajax({
+					async: true,
+					url: "/js/supplier_tool.php",
+					type: "POST",
+					data:{
+						"action":"toggle_eqs_by_category",
+						"group_id2":$("#two_group_id%{$prefix}%").val(),
+						"current_id":$("#for_id%{$prefix}%").val(),
+						"supplier_id":$("#supplier_id%{$prefix}%").val()
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#for_id%{$prefix}%").prop("disabled", false); 
+					  $("#for_id%{$prefix}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			});
+           
+        
+      });
+      </script>

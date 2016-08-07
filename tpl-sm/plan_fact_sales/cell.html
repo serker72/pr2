@@ -1,0 +1,34 @@
+<!-- value=$data.data.value user_id=$user.id month_no=$data.no plan_or_fact=$data.plan_or_fact can_modify=$data.can_modify
+-->
+
+<!--
+ field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%
+-->
+
+ 
+<input type="text" %{if !$can_modify}% disabled="disabled"%{/if}% value="%{$value}%" id="field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%" size="5" maxlength="25" %{if $currency_id==1}% style="width:60px;" %{else}% style="width:45px;"%{/if}% />
+
+%{if $restricted_by_period}%
+<input type="hidden" id="check_field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%" value="%{$value}%" />
+<script type="text/javascript">
+$(function(){
+	$("#field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%").unbind("change");
+	$("#field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%").bind("change", function(e){
+		
+		$("#field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%").val($("#check_field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%").val());
+		
+		message="Превышен период корректировки факта продаж!\nПраво на корректировку факта продаж имеют следующие сотрудники: ";
+		%{foreach from=$users_instead item=userin}%
+		message=message+"%{$userin.name_s}% (%{$userin.login}%)\n";
+		%{/foreach}%
+		message=message+"Для корректировки факта продаж обратитесь, пожалуйста, к этим сотрудникам.";
+		alert(message);
+		$("#field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%").removeClass("changed");
+		e.stopPropagation();
+		e.preventDefault();
+		
+	});
+	
+});
+</script>
+%{/if}%

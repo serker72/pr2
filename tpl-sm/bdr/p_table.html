@@ -1,0 +1,219 @@
+ 
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="30">
+    <strong>Код
+</strong>
+    </th>
+    
+    
+    <th scope="col" width="*">
+    <strong>Структура проекта:
+</strong>
+    </th>
+    
+     <th scope="col" width="*">
+  <strong>  Стоимость без НДС
+ </strong>
+    </th>
+    
+    <th scope="col" width="*">
+   <strong> Ставка НДС
+ </strong>
+    </th>
+    
+        <th scope="col" width="*">
+   <strong> Сумма НДС
+ </strong>
+    </th>
+
+
+    <th scope="col" width="*">
+   <strong> Стоимость с НДС
+ </strong>
+    </th>
+
+    <th scope="col" width="*">
+   <strong> Примечания </strong>
+    </th>
+
+    <th scope="col" width="20">&nbsp;
+    
+    </th>
+    </tr>
+    </thead>
+ <tbody id="items_tbody">
+ 
+%{section name=supsec loop=$items}%
+  <tr align="left" valign="top" id="our_p_row_%{$items[supsec].id}%">
+    	
+    
+    <td width="30" >
+    	<input type="hidden" id="p_id_%{$items[supsec].id}%" name="p_id_%{$items[supsec].id}%" value="%{$items[supsec].id}%" />
+     	<strong>%{$items[supsec].code}%</strong>
+    </td>
+    
+     
+    
+    <td width="*" >
+       %{$items[supsec].name}%
+    
+    </td>
+    
+     <td width="*" >
+      	 <input type="text" size="15" maxlength="30" name="p_costwo_nds_%{$items[supsec].id}%" id="p_costwo_nds_%{$items[supsec].id}%" value="%{$items[supsec].cost_wo_nds}%"  disabled   />
+    
+    </td>
+    <td width="*" >
+      <input type="text" size="15" maxlength="30" name="p_nds_%{$items[supsec].id}%" id="p_nds_%{$items[supsec].id}%" value="%{$items[supsec].nds}%"  disabled   />
+    
+    </td>
+    <td width="*" >
+      <input type="text" size="15" maxlength="30" name="p_nds_cost_%{$items[supsec].id}%" id="p_nds_cost_%{$items[supsec].id}%" value="%{$items[supsec].nds_cost}%"  disabled   />
+    
+    </td>
+    <td width="*" >
+      <input type="text" size="15" maxlength="30"  id="p_cost_%{$items[supsec].id}%" value="%{$items[supsec].cost}%" %{if !$can_modify or !$items[supsec].editable}% disabled %{else}% name="p_cost_%{$items[supsec].id}%" %{/if}% />
+    	
+       %{if !$can_modify or !$items[supsec].editable}%
+       <input type="hidden" name="p_cost_%{$items[supsec].id}%" value="%{$items[supsec].cost}%" />
+        %{/if}% 
+        
+    </td>
+    
+    <td width="*">
+     
+    	 
+        <textarea %{if !$can_modify or $items[supsec].id==0}% disabled %{/if}%  cols="70" rows="2" id="p_notes_%{$items[supsec].id}%"  name="p_notes_%{$items[supsec].id}%"  style=" min-width:200px; width:100%; height:40px;">%{$items[supsec].notes|escape:"html"}%</textarea>
+    
+    </td>
+    <td width="20">
+   
+    </td>
+    
+   </tr> 
+%{/section}%
+ 
+</tbody>
+</table>
+
+%{if $can_modify}%
+<script>
+$(function(){
+	
+	$("input[id^=p_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+	$("input[id^=p_nds_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+	$("input[id^=p_costwo_nds_]").inputmask("currency", {removeMaskOnSubmit:true});
+	 
+	function CheckFields(){
+		can_ret=true;
+		
+		$("input[id^=p_cost_]").each(function(index, element) {
+			
+			$(element).inputmask('remove');
+			
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			$(element).inputmask("currency", {removeMaskOnSubmit:true});
+        });	
+		
+		return can_ret;
+	}
+	
+	function RedrawTable(){
+		fields=new Array();
+		$("input[id^=p_cost_]").each(function(index, element) {
+			id=$(element).attr("id").replace(/^p_cost_/,'');
+			$(element).inputmask('remove');
+			 
+			fields.push(id+"|"+$(element).val()+"|"+$("#p_notes_"+id).val());
+			
+		});
+			
+		//alert(fields);	
+		
+		 $.ajax({
+			async: true,
+			url: "/js/bdrs.php",
+			type: "POST",
+			data:{
+				"action":"redraw_p",
+				"fields": fields
+			},
+			beforeSend: function(){
+				 $("#p_block_set").prop("disabled",true); 
+				 $("#p_block_set input").prop("disabled",true); 
+				 $("#p_block_set textarea").prop("disabled",true); 
+			},
+			success: function(data){
+			 	 $("#p_block").html(data);
+				 
+				 $("input[id^=p_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+				$("input[id^=p_nds_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+				$("input[id^=p_costwo_nds_]").inputmask("currency", {removeMaskOnSubmit:true});
+			  
+			},
+			error: function(xhr, status){
+				
+			},
+			complete: function(xhr, status){
+				 $("#p_block_set").prop("disabled",false);
+				  $("#p_block_set input").prop("disabled",false); 
+				 $("#p_block_set textarea").prop("disabled",false);  
+			}		 
+		});
+	}
+	
+	
+	 $("input[id^=p_cost_]").bind("keypress", function(e){
+		if(e.keyCode==13){
+			//$("#doSrch").trigger("click");
+			
+			e.stopPropagation();
+			e.preventDefault();
+			
+			$(this).trigger("change");
+		}				
+	}); 
+	
+	
+	$("input[id^=p_cost_]").bind("change", function(){
+		//проверка корректности
+		
+		//если все ОК - перерисовка таблицы с новыми данными
+		can_ret=CheckFields();
+		if(can_ret){
+			//запрос на перестройку таблицы...
+			RedrawTable();
+			
+			
+		}else{
+			alert("Введите корректные значения в поля блока Выручка!");
+		}
+		
+	});
+	
+});
+</script>
+%{else}%
+<script>
+$(function(){
+	
+	$("input[id^=p_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+	$("input[id^=p_nds_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+	$("input[id^=p_costwo_nds_]").inputmask("currency", {removeMaskOnSubmit:true});
+});
+</script>
+
+
+%{/if}%
+ 
+

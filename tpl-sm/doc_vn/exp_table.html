@@ -1,0 +1,867 @@
+%{if $can_modify_plan or $can_modify_fact}%
+<input type="button" id="exp_add" value="Добавить статью расходов..." />
+
+%{/if}%
+
+%{if $can_expand_sut}%
+<input type="button" id="exp_sut" value="Правила расчета суточных..." />
+%{/if}%
+
+<br><br>
+
+
+
+ 
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="30" rowspan="2">
+    <strong>№ п/п
+</strong>
+    </th>
+    
+    
+    <th scope="col" width="*" rowspan="2">
+    <strong>Наименование расхода
+</strong>
+    </th>
+    
+     <th scope="col" width="*" rowspan="2">
+  <strong>  План
+ </strong>
+    </th>
+    
+    <th scope="col" width="*" rowspan="2">
+   <strong> Валюта
+ </strong>
+    </th>
+    
+        <th scope="col" width="*" rowspan="2">
+   <strong> Факт
+ </strong>
+    </th>
+
+
+    <th scope="col" width="*" rowspan="2">
+   <strong> Валюта
+ </strong>
+    </th>
+	
+     <th scope="col" width="80" rowspan="2">
+   <strong> Наличные или личная карта/
+
+Корпоративная карта
+
+
+ </strong>
+    </th>
+    
+    
+    <th scope="col" width="*" colspan="3">
+   <strong> Подтверждающий документ		
+ </strong>
+    </th>
+
+    <th scope="col" width="20" rowspan="2">&nbsp;
+    
+    </th>
+    </tr>
+    <tr align="left" valign="top">
+    	 <th scope="col" width="*" >
+       <strong> Наименование
+
+     </strong>
+        </th>
+        <th scope="col" width="*" >
+       <strong> Номер
+
+     </strong>
+        </th>
+        <th scope="col" width="*" >
+       <strong> Дата
+     </strong>
+        </th>
+    </tr>
+    </thead>
+ <tbody id="items_tbody">
+ 
+%{section name=supsec loop=$items}%
+  <tr align="left" valign="top" id="our_exp_row_%{$items[supsec].hash}%">
+    	
+    
+    <td width="30" >
+    	<input type="hidden" id="p_hash_%{$items[supsec].hash}%" name="p_hash_%{$items[supsec].hash}%" value="%{$items[supsec].hash}%" />
+        
+        <input type="hidden" id="p_id_%{$items[supsec].hash}%" name="p_id_%{$items[supsec].hash}%" value="%{$items[supsec].expenses_id}%" />
+        
+        <input type="hidden" id="p_pdate_%{$items[supsec].hash}%" name="p_pdate_%{$items[supsec].hash}%" value="%{$items[supsec].pdate}%" />
+        
+        
+     	<strong>%{$items[supsec].no}%</strong>
+        
+        <input type="hidden"  id="exp_is_auto_%{$items[supsec].hash}%"   value=" %{$items[supsec].is_auto}%" /> 
+      <!-- %{$items[supsec].hash}%-->
+    </td>
+    
+     
+    
+    <td width="*" >
+       %{$items[supsec].name}%
+    
+    </td>
+    
+     <td width="*" >
+      	 <input type="text" size="15" maxlength="30" id="exp_plan_%{$items[supsec].hash}%" value="%{$items[supsec].plan|string_format:"%.2f"}%" %{if !$can_modify_plan or $items[supsec].is_auto}% disabled %{else}%  name="exp_plan_%{$items[supsec].hash}%" %{/if}%  />
+       %{if !$can_modify_plan or $items[supsec].is_auto}% 
+       <input type="hidden"  name="exp_plan_%{$items[supsec].hash}%"   value="%{$items[supsec].plan|string_format:"%.2f"}%" />
+       %{/if}%
+       
+      
+    
+    </td>
+    <td width="*" >
+    	<select  id="exp_plan_currency_id_%{$items[supsec].hash}%" style="width:50px;"  %{if !$can_modify_plan or $items[supsec].is_auto}% disabled %{else}% name="exp_plan_currency_id_%{$items[supsec].hash}%" %{/if}%  >
+        	%{html_options values=$curr_ids selected=$items[supsec].plan_currency_id output=$curr_names}%
+        </select>
+        
+    	
+       %{if !$can_modify_plan or $items[supsec].is_auto}% 
+       <input type="hidden"  name="exp_plan_currency_id_%{$items[supsec].hash}%"   value="%{$items[supsec].plan_currency_id}%" />
+       %{/if}%
+    
+    </td>
+    <td width="*" >
+       <input type="text" size="15" maxlength="30" id="exp_fact_%{$items[supsec].hash}%" value="%{$items[supsec].fact}%" %{if !$can_modify_fact  }% disabled %{else}%  name="exp_fact_%{$items[supsec].hash}%"  %{/if}%  />
+       
+       %{if !$can_modify_fact or $items[supsec].is_auto}% 
+       <input type="hidden"  name="exp_fact_%{$items[supsec].hash}%"   value="%{$items[supsec].fact|string_format:"%.2f"}%" />
+       %{/if}%
+    
+    </td>
+    <td width="*" >
+    	<select id="exp_fact_currency_id_%{$items[supsec].hash}%" style="width:50px;"  %{if !$can_modify_fact }% disabled %{else}% name="exp_fact_currency_id_%{$items[supsec].hash}%"  %{/if}%  >
+        	%{html_options values=$curr_ids selected=$items[supsec].fact_currency_id output=$curr_names}%
+        </select>
+        
+         %{if !$can_modify_fact or $items[supsec].is_auto}% 
+       <input type="hidden"  name="exp_fact_currency_id_%{$items[supsec].hash}%"   value="%{$items[supsec].fact_currency_id}%" />
+       %{/if}%
+        
+    </td>
+    
+    <td width="*" >
+    	<select id="exp_fact_l_or_korp_%{$items[supsec].hash}%" style="width:150px;"  %{if !$can_modify_fact  and !$can_modify_plan}% disabled %{else}%  name="exp_fact_l_or_korp_%{$items[supsec].hash}%" %{/if}%  >
+        	<option value="0" %{if $items[supsec].fact_l_or_korp==0 }% selected %{/if}% >Наличные или личная карта
+
+</option>
+			<option value="1" %{if $items[supsec].fact_l_or_korp==1 }% selected %{/if}% >Корпоративная карта
+</option>
+         
+        </select>
+       
+        
+        
+           %{if (!$can_modify_fact and !$can_modify_plan) or $items[supsec].is_auto}% 
+       <input type="hidden"  name="exp_fact_l_or_korp_%{$items[supsec].hash}%"   value="%{$items[supsec].fact_l_or_korp}%" />
+       %{/if}%
+        
+        
+    </td>
+    
+    <td width="*">
+     	
+    	 
+        <textarea %{if !$can_modify_fact or $items[supsec].is_auto==1  }% disabled %{else}%  name="exp_doc_name_%{$items[supsec].hash}%" %{/if}%  cols="70" rows="2" id="exp_doc_name_%{$items[supsec].hash}%"   style=" min-width:200px; width:100%; height:40px;">%{$items[supsec].doc_name|escape:"html"}%</textarea>
+        
+           %{if !$can_modify_fact  }% 
+       <input type="hidden"  name="exp_doc_name_%{$items[supsec].hash}%"   value="%{$items[supsec].doc_name|escape:"html"}%" />
+       %{/if}%
+    
+    </td>
+    
+    <td width="*" >
+       <input type="text" size="15" maxlength="30"  id="exp_doc_no_%{$items[supsec].hash}%" value="%{$items[supsec].doc_no|escape:"html"}%" %{if !$can_modify_fact or $items[supsec].is_auto==1   }% disabled %{else}% name="exp_doc_no_%{$items[supsec].hash}%" %{/if}%  />
+       
+       
+           %{if !$can_modify_fact }% 
+       <input type="hidden"  name="exp_doc_no_%{$items[supsec].hash}%"   value="%{$items[supsec].doc_no|escape:"html"}%" />
+       %{/if}%
+    
+    </td>
+    
+    <td width="*" >
+       <input type="text" size="15" maxlength="30"  id="exp_doc_pdate_%{$items[supsec].hash}%" value="%{$items[supsec].doc_pdate|escape:"html"}%" %{if !$can_modify_fact  or $items[supsec].is_auto==1  }% disabled %{else}%  name="exp_doc_pdate_%{$items[supsec].hash}%" %{/if}%  />
+       
+       
+          %{if !$can_modify_fact }% 
+       <input type="hidden"  name="exp_doc_pdate_%{$items[supsec].hash}%"   value="%{$items[supsec].doc_pdate|escape:"html"}%" />
+       %{/if}%
+    
+    
+    </td>
+    
+    <td width="20">
+   		%{if ($can_modify_plan or $can_modify_fact) and !$items[supsec].is_auto }%
+        <a href="#" id="exp_pos_del_%{$items[supsec].hash}%" class="reestr_delete reestr_rigth_button24" data-comment="Удалить расход"></a>
+        %{else}%
+        <a href="#" onClick="return false;" id="exp_pos_del_%{$items[supsec].hash}%" class="reestr_delete reestr_inactive reestr_rigth_button24" data-comment="Удалить расход"></a>
+        %{/if}%
+    </td>
+    
+   </tr> 
+%{/section}%
+<tfoot>
+%{foreach from=$itogo item=item}%
+<tr align="left" valign="top" id="our_itogo_row_%{$item.id}%">
+	
+     
+    <th width="30" >
+    	 
+     	 
+    </th>
+    
+     
+    
+    <th width="*" >
+       %{$item.name}%
+    
+    </th>
+    
+     <th width="*" >
+     	%{$item.plan|string_format:"%.2f"}%
+      	  
+    
+    </th>
+    <th width="*" >
+    	%{$item.plan_currency}%
+    	
+      
+    
+    </th>
+    <th width="*" >
+      %{$item.fact|string_format:"%.2f"}%
+    
+    </th>
+    <th width="*" >
+    	%{$item.fact_currency}%
+        
+    </th>
+    
+    <th width="*" >
+     
+    </th>
+    
+    <th width="*">
+     	
+    	 
+    
+    </th>
+    
+    <th width="*" >
+     
+    
+    </th>
+    
+    <th width="*" >
+       
+    
+    </th>
+    
+    <th width="20">
+   		 
+    </th>
+</tr> 
+
+%{/foreach}%
+</tfoot> 
+</tbody>
+</table>
+
+<script>
+%{if  $can_modify_plan or $can_modify_fact}%	
+	
+	//подгрузка ветви иерархии
+	function load_branches(branch_id){	
+		branch_id=branch_id||0;
+		
+	
+		already_in=new Array();
+		 $("input[id^=p_id_]").each(function(index, element) {
+			already_in.push($(element).val());
+		 });
+		 
+		 
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"find_branches",
+				
+				 "branch_id":branch_id,
+				 "already_in[]":already_in
+				
+			},
+			beforeSend: function(){
+			 
+				  if(branch_id==0){
+					  $("#branchs_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+				  }else{
+				  
+					  $("#subbranch_row_"+branch_id).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');
+				  }
+
+			  
+			},
+			success: function(data){
+				 
+			   if(branch_id==0){
+			  		$("#branchs_found").html(data);
+			  }else{
+				  //удалить все ряды после subbranch_row_+branch_id и до следующего subbranch_row1_+branch_id
+				  was=false; dostop=false;
+				  $("#subbranch_row_"+branch_id).html('');
+				  $.each($("#branchs_found tr"), function(k,v){
+					  if($(v).attr("id")=="subbranch_row1_"+branch_id){
+						  dostop=true;
+					  }
+					  
+					  if(was&&!dostop){
+						 $(v).remove(); 
+					  }
+					  
+					  
+					  if($(v).attr("id")=="subbranch_row_"+branch_id){
+						  was=true;
+					  }
+				  });
+				  
+				  $(data).insertAfter($("#subbranch_row_"+branch_id));
+			  }
+
+			  
+			  
+			},
+			error: function(xhr, status){
+				alert("Ошибка загрузки данных.");	
+			}	 
+		});
+	}
+	
+	
+	//добавка ветви иерархии
+	function add_branch(branch_id){	
+		branch_id=branch_id||0;
+		
+		
+		$("#branch_data_code").val('');
+		$("#branch_data_name").val('');
+		
+		$("#branch_data_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				nm=$.trim($("#branch_data_name").val()); 
+				code=$.trim($("#branch_data_code").val()); 
+				
+				can_ret=true;
+				if(can_ret&&(nm.length==0)){
+					can_ret=can_ret&&false;
+					alert("Укажите название!");
+					$("#branch_data_name").focus();
+				}
+				
+				 
+				
+				if(can_ret){
+					$.ajax({
+						async: true,
+						url: "/js/doc_vns.php",
+						type: "POST",
+						data:{
+							"action":"add_branch",
+							
+							"branch_id":branch_id,
+							"name":nm,
+							"code":code
+							
+						},
+						beforeSend: function(){
+						  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+						},
+						success: function(data){
+							load_branches(branch_id);
+						  },
+						error: function(xhr, status){
+							alert("Ошибка загрузки данных.");	
+						}	 
+					});
+					$("#branch_data_dialog").dialog("close");
+				}
+				
+				
+			},
+			"Отмена": function(){
+				$("#branch_data_dialog").dialog("close");
+			}
+		});
+		
+		$("#branch_data_dialog").dialog("open");
+		
+		 
+		
+	}
+	
+	//удаление ветви иерархии
+	function del_branch(branch_id, parent_id){	
+		 
+		if(window.confirm("Вы действительно хотите удалить статью затрат?")){
+			$.ajax({
+				async: true,
+				url: "/js/doc_vns.php",
+				type: "POST",
+				data:{
+					"action":"del_branch",
+					
+					"branch_id":branch_id 
+					
+				},
+				beforeSend: function(){
+				  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					load_branches(parent_id);
+				  },
+				error: function(xhr, status){
+					alert("Ошибка загрузки данных.");	
+				}	 
+			});
+			
+		}
+	}
+	
+	//правка ветви иерархии
+	function edit_branch(branch_id, parent_id){	
+		
+		$("#branch_data_code").val($("#branch_code_"+branch_id).val());
+		$("#branch_data_name").val($("#branch_name_"+branch_id).val());
+		
+		$("#branch_data_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				nm=$.trim($("#branch_data_name").val()); 
+				code=$.trim($("#branch_data_code").val()); 
+				
+				can_ret=true;
+				if(can_ret&&(nm.length==0)){
+					can_ret=can_ret&&false;
+					alert("Укажите название!");
+					$("#branch_data_name").focus();
+				}
+				
+				 
+				
+				if(can_ret){
+					$.ajax({
+						async: true,
+						url: "/js/doc_vns.php",
+						type: "POST",
+						data:{
+							"action":"edit_branch",
+							
+							"branch_id":branch_id,
+							"name":nm,
+							"code":code
+							
+						},
+						beforeSend: function(){
+						  // $("#"+target_name).html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+						},
+						success: function(data){
+							load_branches(parent_id);
+						  },
+						error: function(xhr, status){
+							alert("Ошибка загрузки данных.");	
+						}	 
+					});
+					$("#branch_data_dialog").dialog("close");
+				}
+				
+				
+			},
+			"Отмена": function(){
+				$("#branch_data_dialog").dialog("close");
+			}
+		});
+		
+		$("#branch_data_dialog").dialog("open");
+		
+	 
+	}
+	
+	function PutToTable(id){
+		
+		 	
+		//поместить выбранную запись в таблицу...
+		//перестроить таблицу...
+		
+		//собрать имеющиеся записи и вновь добавляемую, перестроить таблицу с этой дополнительной логикой
+		fields=new Array();
+		 $("input[id^=p_hash_]").each(function(index, element) {
+			
+			hash=$(element).attr("id").replace(/^p_hash_/,'');
+			nid=$("#p_id_"+hash).val();
+			
+			 
+			fields.push(nid+"|"+$("#exp_plan_"+hash).val()+"|"+$("#exp_plan_currency_id_"+hash).val()+"|"+$("#exp_fact_"+hash).val()+"|"+$("#exp_fact_currency_id_"+hash).val()+"|"+$("#exp_fact_l_or_korp_"+hash).val()+"|"+$("#exp_doc_name_"+hash).val()+"|"+$("#exp_doc_no_"+hash).val()+"|"+$("#exp_doc_pdate_"+hash).val()+"|"+$("#p_pdate_"+hash).val()+"|"+hash);
+			
+		}); 
+		
+		
+		//alert(fields);
+		
+		 $.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"redraw_expenses",
+				"fields": fields,
+				"adding_field":id,
+				"id":$("#id").val(),
+				"sched_id":$("#sched_id").val()
+			},
+			beforeSend: function(){
+				/* $("#exp_block_set").prop("disabled",true); 
+				 $("#exp_block_set input").prop("disabled",true); 
+				 $("#exp_block_set textarea").prop("disabled",true); */
+				 
+				 $("#exp_wait_dialog").dialog("open");
+			},
+			success: function(data){
+				 
+			 	 $("#exp_block_set").html(data);
+				 $("#exp_wait_dialog").dialog("close");
+			  
+			},
+			error: function(xhr, status){
+				$("#exp_wait_dialog").dialog("close");
+			},
+			complete: function(xhr, status){
+				 /*$("#exp_block_set").prop("disabled",false);
+				  $("#exp_block_set input").prop("disabled",false); 
+				 $("#exp_block_set textarea").prop("disabled",false);*/  
+				  $("#exp_wait_dialog").dialog("close");
+			}		 
+		});
+		
+		
+		//RedrawTable();
+		 
+	}
+	
+	
+	function LoadDialog(hash){
+		var hash=hash;
+		
+		
+		 
+		load_branches(0);
+		 
+		$("#branch_name").val('');
+		$("#branch_name_id").empty();
+		$("#branch_name_parent_id").val(0);
+		
+		$("#branch_dialog").dialog("option", "buttons", {
+			"Готово": function(){
+				var selected_branch=0;
+	   
+			   if(($("#branch_name_id").val()!=null)&&($("#branch_name_id").val()!=undefined)&&($("#branch_name_id").val()!=0)){
+					
+					
+							
+					PutToTable($("#branch_name_id").val());		 
+			   }else{
+			   
+				   if( ($("input[name=branch_radio]:checked").val()==0)||($("input[name=branch_radio]:checked").val()==null)||($("input[name=branch_radio]:checked").val()==undefined) ){
+						
+						alert("Выберите статью затрат!");
+					   return false;  
+			 		}
+				   
+				   
+				  
+				 selected_branch=$("input[name=branch_radio]:checked").val()
+					
+				 
+				 	   
+				 PutToTable(selected_branch); 
+				  
+				 
+				 
+				 
+			   } 
+			   
+			  $("#branch_dialog").dialog("close"); 
+			  
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		});
+		 
+		
+		$("#branch_dialog").dialog("open");
+	}
+%{/if}%
+
+
+
+		$("#exp_wait_dialog").dialog({
+			autoOpen: false,
+			modal: false,
+			width: 400,
+			height: 150,
+			stack: true,
+			dialogClass: 'semi_auth',
+			buttons:{
+				 
+			} 
+		});
+
+
+
+$(function(){
+	
+	$("#exp_sut").bind("click", function(){
+		window.open("doc_sut.php");
+	});
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("input[id^=exp_doc_pdate_]").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+
+%{if  $can_modify_plan or $can_modify_fact}%	
+	
+	 
+	function CheckFields(){
+		can_ret=true;
+		
+		%{if  $can_modify_plan}%
+		$("input[id^=exp_plan_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		
+		$("select[id^=exp_plan_currency_id_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val==0)||(val==null)||(val==undefined)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		
+		
+		%{/if}%
+		
+		
+		%{if  $can_modify_fact}%
+		$("input[id^=exp_fact_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		
+		$("select[id^=exp_fact_currency_id_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val==0)||(val==null)||(val==undefined)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		
+		$("select[id^=exp_fact_l_or_korp_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val==null)||(val==undefined)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		%{/if}%
+		
+		
+		
+		return can_ret;
+	}
+	
+	
+	//вызов внесения изменений в таблицу
+	$("input[id^=exp_plan_]").bind("change", function(){
+		if(CheckFields()){
+			PutToTable(0);
+		}else{
+			alert("Одно или несколько полей таблицы расходов некорректно заполнено! Пожалуйста, внесите корректные данные в отмеченные поля!");	
+		}
+	});
+	$("select[id^=exp_plan_currency_id_]").bind("change", function(){
+		if(CheckFields()){
+			PutToTable(0);
+		}else{
+			alert("Одно или несколько полей таблицы расходов некорректно заполнено! Пожалуйста, внесите корректные данные в отмеченные поля!");	
+		}
+	});
+	$("input[id^=exp_fact_]").bind("change", function(){
+		if(CheckFields()){
+			PutToTable(0);
+		}else{
+			alert("Одно или несколько полей таблицы расходов некорректно заполнено! Пожалуйста, внесите корректные данные в отмеченные поля!");	
+		}
+	});
+	$("select[id^=exp_fact_currency_id_]").bind("change", function(){
+		if(CheckFields()){
+			PutToTable(0);
+		}else{
+			alert("Одно или несколько полей таблицы расходов некорректно заполнено! Пожалуйста, внесите корректные данные в отмеченные поля!");	
+		}
+	});
+	
+	$("select[id^=exp_fact_l_or_korp_]").bind("change", function(){
+		if(CheckFields()){
+			PutToTable(0);
+		}else{
+			alert("Одно или несколько полей таблицы расходов некорректно заполнено! Пожалуйста, внесите корректные данные в отмеченные поля!");	
+		}
+	});
+	
+	
+	$("input[id^=exp_plan_]").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$(this).trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	$("input[id^=exp_fact_]").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$(this).trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("a[id^=exp_pos_del_]").bind("click", function(){
+		if(window.confirm("Вы действительно хотите удалить статью затрат?")){
+			id=$(this).attr("id").replace(/^exp_pos_del_/,'');
+			$("#our_exp_row_"+id).remove();
+			//alert("#our_exp_row_"+id);
+			PutToTable(0);
+			
+		}
+		return false;
+	});
+ 	
+	
+	 
+	
+	
+	$("#exp_add").click(function(){
+		 
+		 
+		hashes=new Array();
+		LoadDialog(hashes);
+		
+		return false;
+	});
+	
+	
+	
+	$("#branch_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 800,
+		height: 650 
+	 });
+	
+	 $("#branch_data_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 400,
+		height: 150 
+	 });
+	
+	
+	 
+	
+	
+	
+	 $( "#branch_name" ).autocomplete({
+	 source: function(request, response) {
+             
+		    $.ajax({
+                url: "/js/doc_vn_expenses.php",
+                dataType: "json",
+                data: {
+                    term: request.term,
+					 
+                    foo: "foo22"
+                },
+                success: function(data) {
+					//alert(data);
+                    response(data);
+                }
+            });
+	 },
+	 
+	  minLength: 1,
+	  select: function( event, ui ) {
+	
+		$("#branch_name_id").empty();
+		$("#branch_name_id").html('<option value="'+ui.item.id+'" selected="selected">'+ui.item.value +'</option>');
+		
+	  
+	  }
+	 });
+	
+	 
+%{/if}%	
+});
+</script>
+
+
+
+ 
+
+
+
+ 
+

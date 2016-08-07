@@ -1,0 +1,227 @@
+<html>
+<head>
+<style>
+div{
+	font-family:"Times New Roman", Times, serif;
+	font-size:12pt;
+	 text-align:justify;
+}
+p{font-size:12pt; font-family:"Times New Roman", Times, serif; text-align:justify;}
+h1{
+	text-align:center;
+	font-family:"Times New Roman", Times, serif;
+}
+ 
+table, td{
+	border-collapse:collapse;
+	border:1px solid black;
+}
+ </style>
+
+</head>
+<body >
+ 
+
+ 
+<p  style="text-align:right;">
+Генеральному директору<br>
+
+ООО «Аэротэк»<br>
+
+Матюше А.А.
+
+
+</p>
+
+
+
+
+ <p style="text-align:center;">
+<strong>СЛУЖЕБНАЯ ЗАПИСКА</strong>
+<!--<br>
+<strong>Авансовый отчет № %{$bill.code}%  к командировке № %{$bill.sched_str}%  </strong>
+--></p>
+
+<p>
+Прошу направить в служебную командировку сотрудника:<br>
+
+%{$bill.manager_string}%
+
+
+</p>
+
+
+<p  >
+	
+<span style="text-decoration:underline">Командировка</span>: № %{$bill.sched_str}% 
+</p>
+
+
+<p>
+<span style="text-decoration:underline">Период</span>: с %{$bill.pdate_beg}% по %{$bill.pdate_end}%
+</p>
+
+
+<p>
+<span style="text-decoration:underline">
+Город</span>:
+
+
+%{section name=citisec loop=$cities}%
+  %{$cities[citisec].name}%, %{$cities[citisec].okrug_name}%, %{$cities[citisec].region_name}%,  %{$cities[citisec].country_name}%%{if $smarty.section.citisec.last==false}%, %{/if}%
+
+%{/section}%
+
+<br>
+
+<span style="text-decoration:underline">
+К контрагенту</span>:
+
+%{section name=supsec loop=$suppliers}%
+ 	%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%%{if $smarty.section.supsec.last==false}%, %{/if}%
+%{/section}%
+
+</p>
+
+
+<p>
+<span style="text-decoration:underline">
+Цель поездки</span>:
+
+<span style="font-size:10pt;">
+%{section name=supsec loop=$suppliers}%
+ 	%{$suppliers[supsec].note}%%{if $smarty.section.supsec.last==false}%, %{/if}%
+%{/section}%
+</span>
+</p>
+
+
+<p>
+<span style="text-decoration:underline">
+Просьба перечислить сотруднику</span>:<br>
+
+
+
+%{$bill.manager_string}%  на карту под отчет денежную сумму:<br>
+ <br>
+
+
+
+<table border="1" class="blacktable" cellspacing="0" cellpadding="1">
+<thead>
+<tr align="left" valign="top">
+	<th width="40">№п/п</th>
+    <th width="200">Наименование расхода</th>
+    <th width="200">Сумма </th>
+    <th width="200">Наличные или личная карта/ Корпоративная карта  </th>
+</tr>
+</thead>
+<tbody>
+%{section name=supsec loop=$exps}%
+%{if $exps[supsec].plan!=0}%
+<tr align="right" valign="top">
+	<td width="40"><em>%{$exps[supsec].no}%</em></td>
+    <td> <em>%{$exps[supsec].name}%</em></td>
+    <td><em>%{$exps[supsec].plan|string_format:"%.2f"}%&nbsp;%{$exps[supsec].pl_currency}%</em>  </td>
+    
+    <td><em>  %{if $exps[supsec].fact_l_or_korp==0 }%  Наличные или личная карта%{elseif $exps[supsec].fact_l_or_korp==1 }% Корпоративная карта%{/if}%</em>  </td>
+</tr>
+%{/if}%
+
+%{/section}%
+</tbody>
+<tfoot>
+%{foreach from=$itogo item=item}%
+%{if $item.id==0}%
+<tr align="right" valign="bottom">
+	<th width="40"><br><br>
+
+	
+    </th>
+    <th width="200"><strong><em>ИТОГО:</em></strong></th>
+    <th width="200"><strong><em>%{$item.plan|string_format:"%.2f"}%&nbsp;%{$item.plan_currency}%</em></strong> </th>
+    
+     <th width="200"> </th>
+
+</tr>
+%{/if}%
+%{/foreach}%
+</tfoot>
+</table>
+
+</p>
+
+
+
+%{$lenta}%
+
+
+<p style="text-align:right;">   
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:120px;   text-align:right;  /*border: 1px solid red;*/ overflow:visible;">
+
+  <u>%{$is_confirm_pdate}%</u><br />
+
+    <small>(дата)</small><br />
+ 
+%{if $has_sign and $manager.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:100px; left:450px; top:-40px;   text-align:right; /*border: 1px solid green; */ overflow:visible;">
+<img src="/img/print/%{$manager.sign}%" />
+</div>
+%{/if}%
+
+                  __________________________________<br />
+
+                                          <small>(подпись)</small>
+                                         
+ %{if $has_sign}%<br>
+ %{$manager.name_s}%, %{$manager.position_name}%, %{$manager.department_name}%
+%{/if}%
+</div> 
+</p>
+ 
+ 
+
+
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:200px;   /*border: 1px solid red;*/ ">
+          СОГЛАСОВАНО:<br /><br />
+ 
+%{if $has_sign and $is_ruk_confirmer.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:140px; left:20px; top:-30px;  /* border: 1px solid green;  */">
+<img src="/img/print/%{$is_ruk_confirmer.sign}%" />
+</div>
+%{/if}%
+__________________________________<br />
+
+	 <small>(подпись непосредственного руководителя)</small>
+  %{if $has_sign}%    <br>
+ %{$is_ruk_confirmer.name_s}%, %{$is_ruk_confirmer.position_name}%, %{$is_ruk_confirmer.department_name}%
+ %{/if}% 
+<br />
+ 
+
+%{if $has_sign and $is_dir_confirmer.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:140px; left:60px; top:30px;  /* border: 1px solid green;  */">
+<img src="/img/print/%{$is_dir_confirmer.sign}%" />
+</div>
+%{/if}%
+
+__________________________________<br />
+
+		 <small>(подпись ген. директора)</small>
+  %{if $has_sign}%  <br>
+ %{$is_dir_confirmer.name_s}%, %{$is_dir_confirmer.position_name}%, %{$is_dir_confirmer.department_name}%
+ %{/if}% 
+</div>
+
+
+
+
+
+
+
+ 
+
+   
+
+</body>
+</html>

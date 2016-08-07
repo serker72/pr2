@@ -1,0 +1,165 @@
+ 
+
+<script type="text/javascript">
+ 
+$(function(){
+		
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	 
+	$("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+ 
+	VidgetMultiReport('%{$prefix}%statuses', 'Выберите статус', 'Все статусы', 'Cнять выбор', '# из # выбрано', "Выбраны статусы: ", 'Статусы не выбраны', 200 );
+	
+	
+	 
+	
+});
+</script>
+
+ 
+
+ 
+ 
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+
+
+
+<div class="report_filter_right">
+	
+
+ 	<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+ 	<input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub%{$prefix}%"  />
+	</div>
+
+	<a href="%{$pagename}%?doSub%{$prefix}%=1&tab_page=%{$tab_page}%"  class="reestr_zoom_deselect reestr_right_button24"  data-comment="Сбросить фильтры"  ></a>
+ 
+ %{if $can_print}%
+  
+  
+  <a href="#" id="print_table%{$prefix}%" class="reestr_print reestr_right_button24"  data-comment="Печать отчета"></a>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	 
+	  $("#print_table%{$prefix}%").bind("click",function(){
+		
+		
+		
+		zc=window.open('%{$pagename}%?tab_page=%{$tab_page}%&print='+'1'+
+						$("#rep_form%{$prefix}%").serialize()+
+						'&doSub%{$prefix}%=1', 'an_petitions','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  
+ %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;" class="reestr_print reestr_inactive reestr_right_button24"  data-comment="Печать отчета"></a>
+ %{/if}%
+
+
+	%{include file="every_help_dialog.html" filename="an_memos.htm" prefix=$prefix description="Отчет Служебные записки" style="display:inline-block;" is_right=true}%
+  
+  
+
+</div>
+
+
+<div class="report_filter_left">
+	
+   <!--<div class="report_filter">
+ 
+     <label for="code%{$prefix}%">Номер: </label><br />
+    <input type="text" size="8" maxlength="255" value="%{$code}%" name="code%{$prefix}%" id="code%{$prefix}%"  />
+    </div>-->
+    
+    <div class="report_filter">
+    
+        <strong>Дата создания</strong><br />
+    
+       &nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /><br />
+        по:&nbsp;<input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" />
+    
+    </div>
+
+
+ 
+ 
+
+ <div class="report_filter">    
+    
+    
+    
+        <label for="%{$prefix}%statuses" class="statuses_report_label">Статусы:</label><br>
+    
+        <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+       <option value="18" %{if $status_id_18==1 or $all_statuses==1}% selected%{/if}% >Создан</option>
+<option value="33" %{if $status_id_33==1 or $all_statuses==1}% selected%{/if}% >Новый</option>
+
+
+<option value="41" %{if $status_id_41==1 or $all_statuses==1}% selected%{/if}% >На согласовании</option>
+<option value="42" %{if $status_id_42==1 or $all_statuses==1}% selected%{/if}% >Согласован</option>
+
+<option value="43" %{if $status_id_43==1 or $all_statuses==1}% selected%{/if}% >На утверждении</option>
+<option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утвержден</option>
+
+
+<option value="52" %{if $status_id_52==1 or $all_statuses==1}% selected%{/if}% >Не согласован</option>
+<option value="1"  %{if $status_id_1==1 or $all_statuses==1}% selected%{/if}%>Не утвержден</option>
+
+      
+        </select>
+        
+        
+        
+        <br clear="all" />
+        
+        <div id="%{$prefix}%statuses_caption" class="statuses_report_caption" style="width:170px !important;">
+        
+        </div>
+</div>
+	
+     <div class="report_filter">
+    
+      <label for="user_name%{$prefix}%">Ответственный в документе: </label><br />
+
+    <input type="text" size="20" maxlength="255" value="%{$user_name}%" name="user_name%{$prefix}%" id="user_name%{$prefix}%" style="width:150px;" />
+	
+    </div>
+    
+    
+
+</div>
+ 
+  
+
+<br clear="all"/>
+ 
+
+
+ 
+<input type="hidden" name="tab_page" value="%{$tab_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+</form>
+
+<p />
+
+
+%{if $do_it}%
+
+%{include file="an_petitions/an_memos_table.html"}%
+ 
+
+ %{/if}%

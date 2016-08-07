@@ -1,0 +1,56 @@
+body{
+	margin:00px 0px 0px 0px;
+	padding:00px 0 0 0;
+	width:900px;
+
+	}
+body, p, td{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size:12pt;
+	
+
+}
+
+h1{
+	font-size:18pt;
+	text-align:center;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	 
+	
+}
+
+h2{
+	font-size:12pt;
+	text-align:center;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	 
+}
+h3{
+	text-align:justify;
+	font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+	/*color:#ffc000;*/
+}
+table, td{
+	border-collapse:collapse;
+	border:1px solid black;
+}
+div.pdf_txt_for_kp div{
+	text-indent: 10mm;
+}
+li{ text-indent:0px;}
+
+table.hidd, table.hidd td{
+	border-collapse:collapse;
+	border:none;
+}
+
+td.colored{
+	background-color:#999;
+}
+img.red{
+	border:1px solid red;
+	padding:2px 2px;	
+}
+.red{
+	color: red;
+}

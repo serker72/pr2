@@ -1,0 +1,85 @@
+ 
+ 
+
+ 
+ 
+
+
+
+<h3>Вы выбрали:</h3>
+ 
+
+
+<div style="float:left; margin-right:10px;">
+
+%{if $code!=""}%
+ <strong>Номер:</strong> <br />
+ %{$code}% 
+<br />
+<br />
+%{/if}%
+<strong>Дата создания</strong><br />
+
+   &nbsp;&nbsp;с:&nbsp; %{$pdate1}% <br />
+	по:&nbsp; %{$pdate2}% 
+
+</div>
+
+
+
+  
+
+<div style="float:left; margin-right:20px;">      
+    
+     
+    <strong>   Статусы: </strong><br>
+    
+    
+ 
+      %{if $status_id_18==1 or $all_statuses==1}% Создан <br>%{/if}%  
+ %{if $status_id_33==1 or $all_statuses==1}% Новый <br>%{/if}%  
+
+
+ %{if $status_id_41==1 or $all_statuses==1}%  На согласовании <br>%{/if}%  
+ %{if $status_id_42==1 or $all_statuses==1}% Согласован <br>%{/if}% 
+
+ %{if $status_id_43==1 or $all_statuses==1}% На утверждении <br>%{/if}% 
+ %{if $status_id_2==1 or $all_statuses==1}% Утвержден <br>%{/if}%
+
+
+ %{if $status_id_52==1 or $all_statuses==1}% Не согласован <br>%{/if}%
+ %{if $status_id_1==1 or $all_statuses==1}% Не утвержден <br>%{/if}%
+
+    
+    </div>		
+ 
+ 
+%{if $user_name!=""}%   
+ 
+<div style="float:left; margin-right:20px;">      
+
+     <strong>  Ответственный в документе: </strong><br />
+
+     %{$user_name}% 
+</div>
+ %{/if}%    
+ 
+ 
+
+ 
+  
+
+<br clear="all"/>
+ 
+
+ 
+
+<p />
+
+
+%{if $do_it}%
+
+%{include file="an_petitions/an_memos_table.html"}%
+ 
+
+ %{/if}%

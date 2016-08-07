@@ -1,0 +1,22 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="user_row_%{$pos[possec].id}%">
+    	<td  width="50">
+        <input type="checkbox" id="user_checkbox_%{$pos[possec].id}%" name="user_radio" value="%{$pos[possec].id}%" />
+        <span id="login_s_%{$pos[possec].id}%">%{$pos[possec].login}%</span>
+        
+         <input type="hidden" id="is_active_%{$pos[possec].id}%" value="%{$pos[possec].is_active}%" />
+        </td>
+        
+       
+       
+        <td id="name_s_%{$pos[possec].id}%"  width="*">%{$pos[possec].name_s}%</td>
+        <td  width="200">%{$pos[possec].position_name}%</td>
+        
+        
+        <td  width="50">
+      
+        <a href="info.html?name=%{$pos[possec].login}%" target="_blank">Карта</a>
+       
+        </td>
+    </tr>
+%{/section}%    

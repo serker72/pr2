@@ -1,0 +1,417 @@
+ 
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#bdds_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#bdds_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#bdds_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+ 	  
+	$("#bdds_print_form").bind("click", function(){
+		
+		$("#print_form").trigger("click");
+		return false;
+		
+	});
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="bdds.html" prefix="bdds" description="Информация о редактировании БДДС" style="float:right" is_right=true}%
+ 
+ 
+
+<div style="float:right;  margin-right:10px;">
+  %{if $bill.status_id==27}%
+  <a href="#" onClick="alert('Невозможно распечатать БДДС в статусе Не актуально!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+   %{elseif $bill.is_confirmed==1 and $bill.is_confirmed_version==1 and $bill.is_confirmed_version1==1}%
+  <a href="#" id="bdds_print_form" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+  %{else}%
+  <a href="#" onClick="alert('Для печати БДДС необходимо утвердить его заполнение, утвердить проверку финансовой службой и генеральным директором!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+  %{/if}%
+</div>  
+
+
+ 
+
+<h1>Редактирование БДДС</h1>
+
+<form action="ed_bdr.php" method="post" id="bdds_form">
+
+<input type="hidden" name="action" value="1">
+<input type="hidden" name="id" value="%{$bill.id}%">
+<input type="hidden" name="current_status_id"  value="%{$bill.status_id}%" />
+  
+    
+%{include file="bdr/bdds_actions.html" items=$bddsdata can_modify=$can_modify}%
+
+<br clear="all">
+<p />
+    
+    
+ 
+
+ 
+<input type="checkbox"  id="bdds_is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="bdds_is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="bdds_is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	
+	 
+	
+	$("#bdds_is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0){
+			 
+		}
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#bdds_is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#bdds_is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 
+		 
+		  $("#bdds_is_confirmed_version").prop("checked",false);
+			 $("#bdds_is_confirmed_version").trigger("click");
+			  $("#bdds_is_confirmed_version").prop("checked",false);
+			  
+			  
+		 $("#bdds_is_confirmed_version1").prop("checked",false);
+			 $("#bdds_is_confirmed_version1").trigger("click");
+			  $("#bdds_is_confirmed_version1").prop("checked",false);
+			  	  
+			  
+	 
+
+		}
+	});
+});
+</script>
+
+ 
+<br>
+
+
+
+
+
+<div style="min-width:480px; width:100%; overflow:hidden; ">
+
+<fieldset id="bdds_fs_is_confirmed_version"  style="float:left; width:49%; min-width:200px; margin-right:10px; border:1px solid silver; padding:10px 10px;">
+
+	<legend>Проверка: Финансовая служба</legend>
+
+    
+    <input type="checkbox"  id="bdds_is_confirmed_version" name="is_confirmed_version" value="1" onchange="" %{if $bill.is_confirmed_version==1}% checked="checked"%{/if}% %{if $can_modify_v==false}% disabled="disabled"%{else}% %{/if}% /><label for="bdds_is_confirmed_version">Утверждаю</label>
+    
+    <span id="bdds_is_confirmed_version_confirmer">%{$is_confirmed_version_confirmer}%</span>
+    
+    <br>
+
+    
+    <label for="bdds_confirm_version_notes">Примечания:</label><br>
+    <textarea id="bdds_confirm_version_notes" name="confirm_version_notes" %{if !$can_modify_v or $bill.is_confirmed_version==1}% disabled="disabled"%{else}% %{/if}% style="width:100%; height:75px;">%{$bill.confirm_version_notes|escape:"html"}%</textarea>
+    
+    
+
+</fieldset>
+ 
+
+<fieldset id="bdds_fs_is_confirmed_version1"  style="float:right; width:49%; min-width:200px; margin-right:00px; border:1px solid silver; padding:10px 10px;">
+	<legend>Проверка: Генеральный директор</legend>
+
+    <input type="checkbox"  id="bdds_is_confirmed_version1" name="is_confirmed_version1" value="1" onchange="" %{if $bill.is_confirmed_version1==1}% checked="checked"%{/if}% %{if $can_modify_v1==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_version1">Утверждаю</label>
+    
+    <span id="bdds_is_confirmed_version1_confirmer">%{$is_confirmed_version1_confirmer}%</span>
+    
+    <br>
+
+    
+    <label for="bdds_confirm_version_notes1">Примечания:</label><br>
+    <textarea id="bdds_fulfil_kp_not1" name="confirm_version_notes1" %{if !$can_modify_v1 or $bill.is_confirmed_version1==1}% disabled="disabled"%{else}% %{/if}% style="width:100%; height:75px;">%{$bill.confirm_version_notes1|escape:"html"}%</textarea>
+    
+
+</fieldset>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#bdds_is_confirmed_version").bind("click",function(){
+		
+		if(	$("#bdds_is_confirmed_version").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#bdds_is_confirmed_version_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#bdds_is_confirmed_version_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			 
+		} 
+		
+
+		
+	}); 
+	
+	
+	$("#bdds_is_confirmed_version1").bind("click",function(){
+		
+		if(	$("#bdds_is_confirmed_version1").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#bdds_is_confirmed_version1_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#bdds_is_confirmed_version1_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			 
+		} 
+		
+
+		
+	}); 
+	
+});
+</script>
+
+
+
+<br clear="all">
+<p />
+ 
+
+   
+
+ 
+<input type="submit" name="doEditBDDS" id="doEditBDDS" value="Сохранить и перейти к списку БДР" />
+<input type="submit" name="doEditStayBDDS" id="doEditStayBDDS" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='leads.php';
+}else location.href='leads.php';" />
+
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+var frmvalidator2  = new Validator("bdds_form");
+
+function DoCustomValidation2()
+{
+	
+	 
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+	 
+	 /*
+	 if($("input[id^=check_file_]").length==0){
+		alert("Прикрепите хотя бы один файл!");
+		 
+		return false;	
+	}
+	*/
+	
+    can_go=true;	
+	
+	
+	//попытка утвердить заполнение тендера
+	if((%{$bill.is_confirmed}%==0)&&($("#bdds_is_confirmed").prop("checked")==true)){
+			
+			%{if !$can_unconfirm}%
+			if(can_go) return window.confirm("Внимание! Вы утверждаете заполнение БДР. У Вас нет прав для обратного действия - снятия утверждения заполнения БДР.\nПросьба проверить корректность заполнения всех данных ТЗ.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+			%{/if}%
+	}
+	
+	 
+	
+	 
+	 
+	return can_go; 
+}
+
+//frmvalidator.addValidation("given_pdate","req","Укажите дату ТЗ!");
+
+
+frmvalidator2.setAddnlValidationFunction(DoCustomValidation2);
+</script>
+%{else}%
+<script type="text/javascript">
+var frmvalidator2  = new Validator("crea_form");
+
+function DoCustomValidation2()
+{
+	var can_ret=true;
+	
+	
+	 
+		
+	
+	
+	
+	
+	//проверка доступности снятия утверждения цены
+		if(can_ret&&(%{$bill.is_confirmed}%==1)&&($("#bdds_is_confirmed").prop("checked")==false)){
+			
+			%{if !$can_unconfirm}%
+				can_ret=can_ret&&false;
+				alert("У Вас недостаточно прав для снятия утверждения заполнения БДР.\nПрава на это действие есть у следующих сотрудников: %{strip}%
+				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
+				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
+				%{/foreach}%
+															 %{/strip}%");
+				$("#bdds_is_confirmed").prop("checked", true).trigger("change");
+				
+				//в журнал
+				$.ajax({
+					async: true,
+					url: "/js/bdrs.php",
+					type: "POST",
+					data:{
+						"action":"fail_unconfirm_price",
+						id: "%{$bill.id}%"
+					}
+				});
+			%{/if}%
+			
+			
+			
+			if(can_ret)  $.ajax({
+				async: false,
+				url: "/js/bdrs.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполнения БДР. Причина: "+data+"."); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния БДР. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+	
+ 	 
+	 
+ 	 
+	
+	
+		  
+	
+	/*alert($("#fulful_kp_2").prop("checked"));
+	can_ret=can_ret&&false;	
+		*/		
+	
+		
+	return can_ret; 
+}
+
+ 
+
+frmvalidator2.setAddnlValidationFunction(DoCustomValidation2);
+</script>
+%{/if}%

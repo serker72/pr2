@@ -1,0 +1,26 @@
+<!-- value=$data.data.value user_id=$user.id month_no=$data.no plan_or_fact=$data.plan_or_fact can_modify=$data.can_modify
+-->
+
+<!--
+ field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%
+-->
+
+ 
+
+<div style="float:left; "> 
+<input type="text" disabled="disabled"  value="%{$value}%" id="field_%{$user_id}%_%{$year}%_%{$month_no}%_%{$plan_or_fact}%_%{$currency_id}%" size="5" maxlength="25" %{if $currency_id==1}% style="width:60px;" %{else}% style="width:45px;"%{/if}% />
+</div>
+
+<div style="float:left;">
+%{if $can_modify}%
+<a href="#" onclick="OpoDialog('%{$user_id}%', '%{$year}%', '%{$month_no}%', '%{$currency_id}%', '%{$tab.dep.id}%'); return false;"><img src="/img/icons/plus-tra1.png" width="24" height="24" alt="введите данные..." title="введите данные..." border="0" /></a>
+%{else}%
+<a href="#" onclick="alert('У Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/plus-tra-in.jpg" width="24" height="24" alt="введите данные..." title="введите данные..." border="0" /></a>
+%{/if}%
+</div>
+
+<div style="float:left;">
+
+<a href="plan_fact_fact_opo.php?month=%{$month_no}%&year=%{$year}%&us_name=%{$user.name_s|escape:"url"}%" target="_blank"><img src="/img/icons/old-zoom-original1.png" width="24" height="24" alt="открыть реестр фактов продаж" title="открыть реестр фактов продаж" border="0" /></a> 
+
+</div>

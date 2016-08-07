@@ -1,0 +1,210 @@
+<!--блок фильтрации опций-->
+%{if $price_kind_id!=3}%
+<div id="option_filter%{$prefix}%" title="Выберите опции" style="display:none;">
+	<div id="option_filter_scroll%{$prefix}%" style="overflow:auto; width:850px; height:500px;">
+	
+  <table width="100%" class="reptable" border="0" cellspacing="0" cellpadding="2">
+    <thead>
+    <tr align="left" valign="top">
+        <th width="24" scope="col">
+             
+        </th>
+        <th width="30" scope="col">№</th>
+        <th width="80" scope="col">Код позиции </th>
+        <th width="*" scope="col">Наименование </th>
+        <th width="24" scope="col">ед. изм. </th>
+        <th width="24" scope="col" > Цена</th>
+    </tr>
+    <tr align="left" valign="top">
+        <th width="24" scope="col">
+            <input type="checkbox" value="1" id="option_filter_all%{$prefix}%" />
+        </th>
+        
+        <th width="30" scope="col"><input type="text" value="" size="5" maxlength="128" id="option_filter_field_id%{$prefix}%" /> </th>
+        <th width="80" scope="col"><input type="text" value="" size="10" maxlength="128" id="option_filter_field_code%{$prefix}%" /> </th>
+         <th width="*" scope="col"><input type="text" value="" size="25" maxlength="128" id="option_filter_field_name%{$prefix}%" /> </th>
+        <th width="24" scope="col">
+        <select   id="option_filter_field_dimension_id%{$prefix}%" style="width:30px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" >%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+         </th>
+         
+         <th width="24" scope="col"> <a href="#" id="option_filter_find%{$prefix}%" class="reestr_zoom reestr_right_button24" data-comment="Найти"></a></th>
+    </tr>
+    
+    </thead>
+    <tbody id="option_filter_inner%{$prefix}%">
+    
+    </tbody>
+    </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	try{
+			touchScrollXY("option_filter_scroll%{$prefix}%");
+	}catch(e){}
+	
+	
+	 
+	$("#option_filter_field_id%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find%{$prefix}%").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#option_filter_field_code%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find%{$prefix}%").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#option_filter_field_name%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find%{$prefix}%").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	 
+	
+	
+	
+	$("#option_filter_all%{$prefix}%").bind("change", function(){
+		$("input[id^=option_filter_sel_]").prop("checked", $("#option_filter_all%{$prefix}%").prop("checked"));
+	});
+	
+	$("#option_filter%{$prefix}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+			modal: true,
+			width: 900,
+			height: 600,
+			buttons:{
+				"Отметить выбранные опции": function(){
+					
+					$("input[id^=option_filter_sel_]:checked").each(function(index, element) {
+                    	//alert($(element).val());
+						$("#q_a"+$(element).val()+"%{$prefix}%").prop("checked", true);  
+						$("#q_a"+$(element).val()+"%{$prefix}%").trigger("change");  
+						
+                    });
+					
+					$(this).dialog("close");
+					 
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+	});
+	
+	
+	function PerformSearch(){
+		 var except_ids=new Array();
+		 $.each($("input[id^=q_a]:checked"), function(k,v){ 
+		 	id=$(v).attr("id");
+			
+			id=id.replace(/^q_a/, '');
+			id=id.replace(/%{$prefix}%$/, '');
+		 	//alert(id); 
+			except_ids.push(id); 
+		 });
+		 
+		 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"prefind_options",
+					  "parent_id":"%{$id}%",
+					  "except_ids[]":except_ids,
+					  "price_kind_id":"%{$price_kind_id}%",
+					  "id":$("#option_filter_field_id%{$prefix}%").val(),
+					  "code":$("#option_filter_field_code%{$prefix}%").val(),
+					  "name":$("#option_filter_field_name%{$prefix}%").val(),
+					  "dimension_id":$("#option_filter_field_dimension_id%{$prefix}%").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					 $("#option_filter_inner%{$prefix}%").html('<tr><td colspan="6"><img src="/img/wait.gif" width="32" height="32" alt="Подождите, пожалуйста..."> </td></tr>');
+				  },
+				  success: function(data){
+					  $("#option_filter_inner%{$prefix}%").html(data);
+				  }
+			});
+	}
+	
+	
+	function LaunchSearch(fieldname, value){
+		$("input[id^=option_filter_field_]").val('');
+		$("#option_filter_field_"+fieldname+"%{$prefix}%").val(value);
+		
+		PerformSearch();	
+		$("#option_filter%{$prefix}%").dialog("open");
+		$("#option_filter_field_"+fieldname+"%{$prefix}%").focus();
+	}
+	
+	
+	$("#option_filter_find%{$prefix}%").bind("click", function(){
+		PerformSearch();
+		
+		return false;
+	});
+	
+	//переопределяем заполнение фильтров
+	$("#id%{$prefix}%").bind("keyup", function(){
+		letter=$("#id%{$prefix}%").val();
+		$("#id%{$prefix}%").val('');
+		
+		LaunchSearch('id', letter);
+	});
+	
+	//переопределяем заполнение фильтров
+	$("#code%{$prefix}%").bind("keyup", function(){
+		letter=$("#code%{$prefix}%").val();
+		$("#code%{$prefix}%").val('');
+		
+		LaunchSearch('code', letter);
+	});
+		
+		
+		//переопределяем заполнение фильтров
+	$("#name%{$prefix}%").bind("keyup", function(){
+		letter=$("#name%{$prefix}%").val();
+		$("#name%{$prefix}%").val('');
+		
+		LaunchSearch('name', letter);
+	});
+		
+		
+		//переопределяем заполнение фильтров
+	/*$("#producer_name%{$prefix}%").bind("keyup", function(){
+		letter=$("#producer_name%{$prefix}%").val();
+		$("#producer_name%{$prefix}%").val('');
+		
+		LaunchSearch('producer_name', letter);
+	});*/
+		
+		
+		//переопределяем заполнение фильтров
+	$("#dimension_id%{$prefix}%").bind("change", function(){
+		letter=$("#dimension_id%{$prefix}%").val();
+		$("#dimension_id%{$prefix}%").val('');
+		
+		LaunchSearch('dimension_id', letter);
+	});
+		
+		
+});
+</script>
+%{/if}%

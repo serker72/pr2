@@ -1,0 +1,36 @@
+ 
+
+<script type="text/javascript">
+function CalcNewTenders%{$data_kind}%(){
+
+	 if(_window_is_active) $.ajax({
+		  async: true,
+		  url: "/js/tender_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind%{$data_kind}%"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+		//	  alert(data); 
+		 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+$(function(){
+	 
+	
+	
+	
+	
+	window.setInterval('CalcNewTenders%{$data_kind}%()', 60000);
+});
+</script>

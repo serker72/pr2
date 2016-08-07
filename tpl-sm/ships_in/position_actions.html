@@ -1,0 +1,210 @@
+<div id="positions" style="/* border:1px solid silver; width:650px; height:200px; overflow:scroll;*/">
+%{if $has_positions}%
+%{include file="ships_in/positions_on_page_set.html" pospos=$positions}%
+%{/if}%
+</div>
+
+<div style="display:none;">
+<strong>Всего, руб.:&nbsp;</strong><span id="positions_cost">%{$total_cost}%</span>
+<br />
+<strong>НДС (в т.ч.):&nbsp;</strong><span id="positions_nds">%{$total_nds}%</span>
+</div>
+
+
+
+<div id="positions_dialog" title="Выберите позиции">
+Входящий счет № <span id="positions_dialog_komplekt_name"></span>:<br />
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	$("#add_pos").bind("click",function(){
+		
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			var complex_positions=new Array();
+			
+			
+			//$.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+			$.each($("#positions table tbody tr td input[id^='new_hash_']"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				
+				hash=$(value).val();
+				
+				hashed_string='';
+				hashed_string=$("#new_position_id_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_has_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_price_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_rub_or_percent_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_plus_or_minus_"+hash).val();
+				hashed_string=hashed_string+';'+$("#new_value_"+hash).val();
+				
+				hashed_string=hashed_string+';'+$("#new_komplekt_ved_id_"+hash).val();
+				hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';';
+				hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val();
+				hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val();
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);		
+			});
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/ship_in.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "ship_id":"%{$ship.id}%",
+				  "storage_id":$("#storage_id").val(),
+				  "sector_id":$("#sector_id").val(),
+				  "komplekt_ved_id":$("#komplekt_ved_id").val(),
+				  "bill_id":$("#bill_id").attr("value"),
+				  
+				  "complex_positions[]":complex_positions
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data);  
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#positions_dialog_komplekt_name").html($("#bill_id").attr("value"));
+			$("#positions_dialog").dialog("open");
+		
+	});
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 900,
+		height: 490,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				
+				var can_put=true;
+				var complex_positions=new Array();
+				$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+					var hash1=$(value).val();
+					
+					function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+				
+				
+				
+					//кол-во
+					local_put=true;
+					if($("#quantity_"+hash1).attr("value").length==0){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					if(isNaN($("#quantity_"+hash1).attr("value"))||(parseFloat($("#quantity_"+hash1).attr("value"))<0)){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					
+					if(!isNaN($("#quantity_"+hash1).attr("value"))&&(parseFloat($("#quantity_"+hash1).attr("value"))>parseFloat($("#max_quantity_"+hash1).attr("value")))){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					if(local_put){
+						$("#quantity_"+hash1).removeClass("wrong");	
+					}else $("#quantity_"+hash1).addClass("wrong");
+						
+						
+				});
+				
+				
+				
+				if(can_put) {
+					//перенос данных в таблицу на странице
+					
+					
+					$.each($("#positions_dialog_table table tbody tr td input[id^='hash_']"), function(key, value){
+						
+						
+						hash1=$(value).val();
+						
+						hashed_string='';
+						hashed_string=$("#position_id_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#quantity_"+hash1).val();
+						if($("#do_pm_"+hash1).prop("checked")) hashed_string=hashed_string+';'+'1';
+						else hashed_string=hashed_string+';'+'0';
+						hashed_string=hashed_string+';'+$("#price_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#rub_or_percent_"+hash1).val();
+						
+						hashed_string=hashed_string+';'+$("#plus_or_minus_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#value_"+hash1).val();
+						
+						
+						hashed_string=hashed_string+';'+$("#komplekt_ved_id_"+hash1).val();
+						
+						hashed_string=hashed_string+';'
+						hashed_string=hashed_string+';'
+						hashed_string=hashed_string+';'+$("#price_pm_check_"+hash1).val();
+						hashed_string=hashed_string+';'+$("#total_check_"+hash1).val();
+						
+						//alert(hashed_string);
+						
+						complex_positions.push(hashed_string);			  
+					});
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/ship_in.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_positions",
+						  "storage_id":$("#storage_id").val(),
+						  "sector_id":$("#sector_id").val(),
+						  "komplekt_ved_id":$("#komplekt_ved_id").val(),
+						  "bill_id":$("#bill_id").attr("value"),
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						$("#positions").html(data); 
+						
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

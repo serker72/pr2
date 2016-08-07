@@ -1,0 +1,64 @@
+<!-- таблица на странице -->
+
+
+    %{section name=pospossec loop=$pospos}%
+    
+    <tr align="center" valign="middle">
+
+
+
+<td width="70">
+
+</td>
+
+<td width="70">
+
+</td>
+
+<td width="70">
+%{$pospos[pospossec].position_name}%
+</td>
+
+<td width="70">
+
+</td>
+
+<td width="70">
+
+</td>
+
+<td width="70">
+ %{$pospos[pospossec].dim_name}%
+</td>
+
+<td width="70">
+ %{$pospos[pospossec].quantity}%
+</td>
+
+<td width="70">
+%{if $is_confirmed_wf==1}%
+ %{$pospos[pospossec].fact_quantity}%
+      
+%{/if}%
+</td>
+
+
+<td width="70">
+
+</td>
+
+<td width="70">
+
+</td>
+
+<td width="70">
+
+</td>
+
+
+
+
+</tr>
+    
+    %{/section}%
+    

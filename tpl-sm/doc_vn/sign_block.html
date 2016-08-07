@@ -1,0 +1,29 @@
+
+
+<p style="text-align:right;">   
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:120px;   text-align:right;  /*border: 1px solid red;*/ overflow:visible;">
+
+  <u>%{$bill.pdate}%</u><br />
+
+    <small>(дата)</small><br />
+ 
+%{if $has_sign and $manager.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:100px; left:450px; top:-40px;   text-align:right; /*border: 1px solid green; */ overflow:visible;">
+<img src="/img/print/%{$manager.sign}%" />
+</div>
+%{/if}%
+
+                  __________________________________<br />
+
+                                          <small>(подпись)</small>
+                                         
+ %{if $has_sign}%<br>
+ %{$manager.name_s}%, %{$manager.position_name}%, %{$manager.department_name}%
+%{/if}%
+</div> 
+</p>
+ 
+ 
+ 
+
+ 

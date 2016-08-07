@@ -1,0 +1,788 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	//$("#pdate").datepicker();
+$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$("#pdate_shipping_plan").datepicker();
+	
+	touchScroll('notes');
+//	touchScroll('positions_scroll_block');
+	
+	
+});
+</script>
+
+<div style="float:left; margin-right:20px;">
+<h1>Редактирование распоряжения на межсклад</h1>
+</div>
+
+%{include file="every_help_dialog.html" filename="is_edit.htm" prefix="" description="редактирование распоряжения на межсклад"  style="float:right;  margin-right:0px;"}%
+
+
+<div style="float:right;  margin-right:10px;">
+%{if $bill.is_confirmed==1}%
+ %{if $can_print}%
+ 
+ <a href="#" id="print_form"><img src="/img/icons/print.png" width="24" height="24" alt="печать распоряжения на межсклад..." title="печать распоряжения на межсклад..." border="0" align="absmiddle" /></a>
+ 
+ 	
+    <div id="is_print_dialog" title="Выберите форму для печати">
+    <strong>Выберите форму для печати:</strong><br />
+
+    	<input type="checkbox" id="do_print_rasp" value="1" />Распоряжение на межсклад<br />
+		<input type="checkbox" id="do_print_nakl" value="1" />Требование-накладная<br />
+    </div>
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		//ed_is.php?action=1&id=%{$bill.id}%&print=1
+		$("#is_print_dialog").dialog({
+			autoOpen: false,
+			modal: true,
+			width: 350,
+			height: 150,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					if($("#do_print_rasp").prop("checked")){
+						zc=window.open('ed_is.php?action=1&id=%{$bill.id}%&print=1&printmode=0','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати распоряжения на межсклад.');
+						
+					}
+					
+					if($("#do_print_nakl").prop("checked")){
+						zc=window.open('ed_is.php?action=1&id=%{$bill.id}%&print=1&printmode=1','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');
+						
+					}
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#is_print_dialog").dialog("open");
+			
+			return false;
+		});
+		
+	});
+	</script>
+    
+    
+ %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати распоряжения на межсклад.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения на межсклад..." title="печать распоряжения на межсклад..." border="0" align="absmiddle"  /></a>
+ %{/if}%
+ 
+ 
+ %{else}%
+ <a href="#" target="_blank" onclick="alert('В данном режиме печать распоряжения на межсклад недоступна. Пожалуйста, утвердите распоряжение на межсклад.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения на межсклад..." title="печать распоряжения на межсклад..." border="0" align="absmiddle" /></a>
+ %{/if}%
+
+&nbsp;&nbsp;
+
+<input type="button" value="Файлы..." onclick="location.href='is_files.php?is_id=%{$bill.id}%';" />
+
+
+
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<form action="noscripts.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" value="%{$bill.status_id}%" />
+
+<div style="float:left; margin-right:20px;  padding-top:3px;">
+<strong>Номер:</strong>
+%{$bill.id}%
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер:</label><br />
+
+<input type="text" size="10" maxlength="512" value="%{$bill.given_no}%" name="given_no" id="given_no" %{if !$can_modify}%disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate_shipping_plan">Плановая дата отгрузки:</label><br />
+<input type="text" size="10" maxlength="10" value="%{$bill.pdate_shipping_plan}%" name="pdate_shipping_plan" id="pdate_shipping_plan" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px;" />
+</div>
+
+<div style="float:left; margin-right:20px; ">
+<strong>Дата создания:</strong><br />
+
+%{$bill.pdate}%<br />
+<small>создано: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<br />
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+<div style="float:right; margin-right:00px; margin-top:-5px; min-width:120px;" id="toggle_annul">
+%{include file="is/toggle_annul_card.html"}%
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sender_sector_id">Участок-отправитель:</label>
+<select id="sender_sector_id" name="sender_sector_id" style="width:150px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+%{html_options values=$sender_sector_ids selected=$sender_sector_id output=$sender_sector_names}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sender_storage_id">Объект-отправитель:</label>
+<select id="sender_storage_id" name="sender_storage_id" style="width:150px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+%{html_options values=$sender_storage_ids selected=$sender_storage_id output=$sender_storage_names}%
+</select>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#sender_sector_id").bind("change",function(){
+		//alert('tet');
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/is.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_storages",
+			  "sector_id":$("#sender_sector_id").attr("value"),
+			  "filter_ss":1,
+			  "current_id":0
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			$("#sender_storage_id").html(data);  
+		  },
+		  error: function(xhr, status){
+		//	 alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+	});
+});
+</script>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="receiver_sector_id">Участок-получатель:</label>
+<select id="receiver_sector_id" name="receiver_sector_id" style="width:150px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+%{html_options values=$receiver_sector_ids selected=$receiver_sector_id output=$receiver_sector_names}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="receiver_storage_id">Объект-получатель:</label>
+<select id="receiver_storage_id" name="receiver_storage_id" style="width:150px;" %{if !$can_modify}%disabled="disabled"%{/if}%>
+
+%{html_options values=$receiver_storage_ids selected=$receiver_storage_id output=$receiver_storage_names}%
+</select>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	
+	$("#receiver_sector_id").bind("change",function(){
+		$.ajax({
+		  async: true,
+		  url: "/js/is.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_storages",
+			  "sector_id":$("#receiver_sector_id").attr("value"),
+			  "filter_ss":0,
+			  "current_id":0
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			$("#receiver_storage_id").html(data);  
+		  },
+		  error: function(xhr, status){
+		//	 alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+	});
+});
+</script>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Позиции распоряжения:</strong> 
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if $bill.is_confirmed_wf==1 or !$can_add_positions}% disabled="disabled"%{/if}% />
+
+<input type="hidden" id="choice_was_made" value="0" />
+
+<div id="positions_wrapper">
+%{include file="is/position_actions.html" change_low_mode=$bill.change_low_mode is_confirmed=$bill.is_confirmed}%
+</div>
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="is/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="is/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+<h4>Распоряжения по списанию:</h4>
+<div id="rasp_wf" style="border:1px solid silver; width:100%; height:200px; overflow:scroll;">
+	%{include file="is/rasp_wf.html" items=$rasp_wf word="rasp_wf" named="распоряжения по списанию" user_id=$bill.id can_edit=$can_rasp_wf_edit}%
+</div>
+<p /> 
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю отгрузку</label>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_wf").prop("disabled",true);
+		$.ajax({
+              async: true,
+              url: "/js/is.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                  $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');       
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_wf" name="is_confirmed_wf" value="1" %{if $bill.is_confirmed_wf==1}% checked="checked"%{/if}% %{if $can_confirm_wf==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_wf">Утверждаю списание</label>
+%{if $can_confirm_wf==false}%
+
+%{/if}%
+
+<span id="is_confirmed_wf_confirmer">%{$is_confirmed_wf_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_wf").bind("click",function(){
+		if(	$("#is_confirmed_wf").prop("checked")) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/is.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_wf_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                $("#is_confirmed_wf_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+              },
+              success: function(data){
+                $("#is_confirmed_wf_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+
+
+
+</div>
+<br clear="all" />
+<p />
+
+
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку распоряжений" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="location.href='interstore.php';" />
+
+
+</form>
+<script type="text/javascript">
+ $(function(){
+	 $("#crea_form").attr("action", "ed_is.php");
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+	 
+	function RetRet(){
+		var can_go=true;
+		
+		//проверка дат
+		if(!PeriodChecker('pdate_shipping_plan', '%{$pch_date}%')){
+			alert("Плановая дата отгрузки должна быть не ранее %{$pch_date}%!");
+			can_go=can_go&&false;
+			return false;
+		}
+		
+		if(!PeriodCheckerByPeriod('pdate_shipping_plan', closed_date )){
+			alert('Плановая дата отгрузки не должна попадать в закрытый период '+interval_string+'!');
+			can_go=can_go&&false;
+			return false;	
+		}
+		
+		
+		if(can_go&&($("#sender_sector_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Укажите участок-отправитель!");
+		}
+		
+		if(can_go&&($("#receiver_sector_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Укажите участок-получатель!");
+		}
+		
+		if(can_go&&($("#sender_storage_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Укажите объект-отправитель!");
+		}
+		
+		if(can_go&&($("#receiver_storage_id").val()==0)){
+			can_go=can_go&&false;
+			alert("Укажите объект-получатель!");
+		}
+		
+		
+		if(can_go&&($("#pdate_shipping_plan").val()=="")){
+			can_go=can_go&&false;
+			$("#pdate_shipping_plan").focus();
+			alert("Укажите плановую дату отгрузки!");
+		}
+		
+		
+		if(can_go&&
+		(
+		($("#receiver_storage_id").val()==$("#sender_storage_id").val())&&
+		($("#sender_sector_id").val()==$("#receiver_sector_id").val())
+		)
+		){
+			can_go=can_go&&false;
+			alert("Укажите разные объекты или участки!");
+			
+		}
+		
+		
+		var local_count=0;
+		$.each($("#positions table input[id^=new_quantity_]"), function(k,v){
+			
+				local_count++;
+			
+		});
+		if(can_go&&(local_count==0)){
+			can_go=can_go&&false;
+			alert("Выберите позиции для редактирования распоряжения на межсклад!");
+		}
+		
+		//проверить количества. Вдруг нулевые?
+		%{if $bill.is_confirmed==0}%
+			var local_can=true;
+			$.each($("#positions table input[id^=new_quantity_]"), function(k,v){
+				if(parseFloat($(v).val())<=0){
+					local_can=local_can&&false;	
+				}
+			});
+			
+			if(can_go&&(local_can==false)){
+				can_go=can_go&&false;
+				alert("Укажите ненулевые количества позиций для редактирования распоряжения на межсклад!");
+			}
+		%{/if}%
+		
+		
+		
+		
+		
+		//мы утверждаем отгрузку, отгрузка не была утверждена
+		if($("#is_confirmed").prop("checked")&&($("#is_confirmed_wf").prop("disabled"))&&("%{$bill.is_confirmed}%"=="0")){
+			
+			$.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_confirm_fill",
+					  id: $("#id").val()
+				  },
+				  beforeSend: function(){
+					  //alert('zz');   
+				  },
+				  success: function(data){
+					 // can_go=can_go&&false;
+					  //alert(data);
+				   // $("#is_confirmed_wf_confirmer").html(data);
+					  if(data==0){
+						  
+					  }else{
+						  alert("Утверждение отгрузки товара невозможно. Причина:\n"+data);
+						  $("#is_confirmed").prop("checked",false);
+						  can_go=can_go&&false;
+					  }
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+				  }	 
+			  });
+
+
+
+			
+			//выполнить сложный запрос по проверке заявок
+			if(can_go&&($("#sender_sector_id").val()!=$("#receiver_sector_id").val())){
+			  $.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_komplekts",
+					  id: $("#id").val()
+				  },
+				  beforeSend: function(){
+					  //alert('zz');   
+				  },
+				  success: function(data){
+					 // can_go=can_go&&false;
+					  //alert(data);
+				   // $("#is_confirmed_wf_confirmer").html(data);
+					  if(data==1){
+						  
+					  }else{
+						  alert("Утверждение отгрузки товара невозможно, так как нет заявки на "+$("#receiver_sector_id option:selected").text()+", "+$("#receiver_storage_id option:selected").text()+" на позиции распоряжения на межсклад!\nСоздайте соответствующую заявку.");
+						  $("#is_confirmed").prop("checked",false);
+						  can_go=can_go&&false;
+					  }
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+				  }	 
+			  });
+			}
+		}
+		
+		
+		//мы снимаем утв отгузки
+		if(!$("#is_confirmed").prop("checked")&&($("#is_confirmed_wf").prop("disabled"))&&("%{$bill.is_confirmed}%"=="1")){
+			$.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_unconfirm_fill",
+					  id: $("#id").val()
+				  },
+				  beforeSend: function(){
+					  //alert('zz');   
+				  },
+				  success: function(data){
+					 // can_go=can_go&&false;
+					  //alert(data);
+				   // $("#is_confirmed_wf_confirmer").html(data);
+					  if(data==0){
+						  
+					  }else{
+						  alert("Снятие утверждения отгрузки товара невозможно. Причина:\n"+data);
+						  $("#is_confirmed").prop("checked",false);
+						  can_go=can_go&&false;
+					  }
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+				  }	 
+			  });
+		}
+		
+		
+		//мы утверждаем списание! списание не было утверждено!
+		if($("#is_confirmed_wf").prop("checked")&&($("#is_confirmed_wf").prop("disabled")==false)&&("%{$bill.is_confirmed_wf}%"=="0")){
+			
+			
+			
+			$.ajax({
+				async: false,
+				url: "/js/is.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить списание по распоряжению на межсклад. Причина: "+data+""); 
+					 can_go=can_go&&false;
+				  }else{
+					 can_go=can_go&&true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения на межсклад. Пожалуйста, попытайтесь сохранить распоряжение снова.");
+					can_go=can_go&&false;	
+				}	 
+			});
+			
+			
+			
+			
+			//проверить наличие списаний
+			var sum_pos=0;
+			$.each($("#positions table tbody tr input[id^=new_fact_quantity_]"),function(k,v){
+				sum_pos=sum_pos+parseFloat($(v).val());
+			});
+			if(sum_pos==0){
+				alert("Для утверждения списания необходимо указать фактически перемещаемые количества позиций!");
+				$("#is_confirmed_wf").prop("checked",false);
+				can_go=can_go&&false;
+			}
+			
+			if(can_go){
+			  //проверить недостачи...
+			  var has_lack=false;
+			  var lacks="";
+			  $.each($("#positions table tbody tr input[id^=new_position_id_]"),function(k,v){
+				  //sum_pos=sum_pos+parseFloat($(v).val());
+				  key=$(v).val();
+				  
+				  if(parseFloat($("#new_quantity_"+key).val())>parseFloat($("#new_fact_quantity_"+key).val()) ){
+					  has_lack=has_lack||true;
+					  lacks+="по позиции "+$("#new_val_position_code_"+key).html()+" "+$("#new_val_position_name_"+key).html()+" недостача составляет "+roundPlus(parseFloat($("#new_quantity_"+key).val())-parseFloat($("#new_fact_quantity_"+key).val()),3)+" "+$("#new_val_position_dim_name_"+key).html()+"\n";	
+				  }
+				  
+			  });
+			  
+			  if(has_lack){
+				  if(window.confirm("Внимание! При списании с участка "+$("#sender_sector_id :selected").text()+", объекта "+$("#sender_storage_id :selected").text()+" недостача составляет:\n"+lacks+"Пожалуйста, проверьте количества позиций.\nЕсли у Вас произошла недостача, пожалуйста, свяжитесь с сотрудником отдела снабжения.\nПродолжить утверждение списания?")){
+					  if(window.confirm("Вы уверены?")){}
+					  else can_go=can_go&&false;
+				  }else can_go=can_go&&false;
+				  //can_go=can_go&&window.confirm("Внимание!");
+			  }
+			}
+			
+			
+			//выполнить сложный запрос по проверке заявки
+			if(can_go){
+			  $.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_komplekts_fakt",
+					  id: $("#id").val()
+				  },
+				  beforeSend: function(){
+					  //alert('zz');   
+				  },
+				  success: function(data){
+				     /* can_go=can_go&&false;
+					  alert(data);*/
+					  
+					  if(data==1){
+						  
+					  }else{
+						  alert("Перемещение товара невозможно, так как нет заявки на "+$("#receiver_sector_id option:selected").text()+", "+$("#receiver_storage_id option:selected").text()+" на позиции распоряжения на межсклад!\nСоздайте соответствующую заявку.");
+						  $("#is_confirmed_wf").prop("checked",false);
+						  can_go=can_go&&false;
+					  }
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+				  }	 
+			  });
+			}
+			
+			
+			//проверить права на списание с выбранного объекта
+			if(can_go){
+			  $.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_wf_object",
+					  id: $("#id").val(),
+					  "sender_storage_id":$("#sender_storage_id").val(),
+					  "sender_sector_id":$("#sender_sector_id").val()
+				  },
+				  beforeSend: function(){
+					  //alert('zz');   
+				  },
+				  success: function(data){
+				   // $("#is_confirmed_wf_confirmer").html(data);
+					  if(data==1){
+						  
+					  }else{
+						  alert("У Вас недостаточно прав для списания продукции с объекта "+$("#sender_storage_id option:selected").text()+".");
+						  $("#is_confirmed_wf").prop("checked",false);
+						  can_go=can_go&&false;
+					  }
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления вопроса.");	
+					  $("#is_confirmed_wf").prop("checked",false);
+					  can_go=can_go&&false;
+				  }	 
+			  });
+			}
+			
+		}
+		
+		
+		
+	//мы снимаем утверждение, утверждение было
+	if(($("#is_confirmed_wf").prop("checked")==false)&&($("#is_confirmed_wf").prop("disabled")==false)&&("%{$bill.is_confirmed_wf}%"=="1")){
+		
+		var can_ret;
+			$.ajax({
+				async: false,
+				url: "/js/is.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение списания по распоряжению на межсклад. Причина: "+data+"\nДля снятия утверждения списания необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=window.confirm("Вы уверены, что хотите снять утверждение списания по распоряжению на межсклад %{$bill.id}%?");
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения на межсклад. Пожалуйста, попытайтесь сохранить распоряжение снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;
+		
+	}
+		
+		
+		return can_go;
+	}
+	
+		
+		
+		 
+	 
+	 
+	$("#crea_form").bind("submit",RetRet);
+	
+	
+});
+</script>

@@ -1,0 +1,106 @@
+<!-- таблица на странице -->
+<!-- 1= мен€ем распор€жение, счет 0=не мен€ем -->
+<input type="hidden" name="change_low_mode" id="change_low_mode" value="%{$change_low_mode}%" />
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="wf_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	 <th scope="col" width="20">є п/п</th>
+        <th scope="col" width="24"> од</th>
+        <th scope="col" width="*">Ќоменклатура</th>
+        <th scope="col" width="60">≈д. изм.</th>
+        <th scope="col" width="60"> ол-во к списанию</th>
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="24">
+         %{$pospos[pospossec].pl_position_id|string_format:"%05d"}%
+        </td>
+        <td width="*">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+        
+       <input type="hidden" id="new_pl_position_id_%{$pospos[pospossec].id}%" name="new_pl_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].pl_position_id}%" />
+        </td>
+        <td width="60">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="60">
+        %{$pospos[pospossec].quantity}%
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].id}%" name="new_quantity_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+       
+        <td width="24">
+     
+       %{if $can_modify}%
+       %{if $can_del_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+       %{/if}%
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+			
+		
+    	</td>
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			var position_ids=new Array(); var quantities=new Array();
+		
+			function BuildRows(){
+			   position_ids=new Array();  quantities=new Array();
+			
+			  $.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+				  
+				  //вычленить айди позиции, заполнить массивы данными
+				  if(value.id.indexOf('new_position_id_')!=-1){
+					  //alert(value.id);
+					  position_id=value.value;
+					  position_ids.push(value.value);
+					  quantities.push($("#new_quantity_"+position_id).attr("value"));
+					
+				  }
+			  });	  
+			}
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].id}%").bind("click",function(){
+				%{if $can_modify}%
+				%{if $can_del_positions}%
+				if(window.confirm('¬ы действительно хотите удалить позицию распор€жени€ на списание?')){ 
+					$('#new_row_%{$pospos[pospossec].id}%').remove();
+					BuildRows();
+					var temp_cter=0;
+					$.each($("#wf_positions_table tbody tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first").html(temp_cter);
+					});
+				}
+				%{else}%
+				alert("” ¬ас недостаточно прав, чтобы удалить позиции распор€жени€ на списание!");
+				%{/if}%
+				%{else}%
+				alert("Ќевозможно удалить позиции утвержденного распор€жени€ на списание!");
+				%{/if}%
+				return false;
+			});
+    	%{/section}%
+	
+	});
+      </script>

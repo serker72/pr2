@@ -1,0 +1,41 @@
+%{foreach name=vd from=$vyh_dates item=d}%
+<tr id="vyh_dates_row_%{$d.id}%">
+	<td> 
+    <input id="vyh_date_pdate_%{$d.id}%" type="text" size="10" maxlength="10" value="%{$d.pdate}%" />
+    </td>
+    <td>
+    
+    с <input id="vyh_date_time_from_h_%{$d.id}%"  type="text" size="2" maxlength="2" value="%{$d.time_from_h}%" />:
+      <input id="vyh_date_time_from_m_%{$d.id}%"  type="text" size="2" maxlength="2"  value="%{$d.time_from_m}%" />
+      
+      по
+       <input id="vyh_date_time_to_h_%{$d.id}%"  type="text" size="2" maxlength="2"  value="%{$d.time_to_h}%" />:
+        <input id="vyh_date_time_to_m_%{$d.id}%" type="text" size="2" maxlength="2"  value="%{$d.time_to_m}%" />
+    </td>
+    <td width="24">
+    %{if $can_modify}%
+    
+    
+    <a href="#" id="delete_vyh_date_%{$d.id}%" data-comment="удалить дату работы" onClick="if(window.confirm('Вы действительно хотите удалить дату работы в выходные?')) $('#vyh_dates_row_%{$d.id}%').remove(); return false;"   class="reestr_delete16 reestr_button16"></a> 
+    
+    
+   
+    
+    %{/if}%
+    <script type="text/javascript">
+	$(function(){
+		
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		$("#vyh_date_pdate_%{$d.id}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+			 
+		$("#vyh_date_time_from_h_%{$d.id}%").setMask('hours');
+		$("#vyh_date_time_from_m_%{$d.id}%").setMask('mins');
+		
+		$("#vyh_date_time_to_h_%{$d.id}%").setMask('hours');
+		$("#vyh_date_time_to_m_%{$d.id}%").setMask('mins');
+	
+	});
+	</script>
+           </td>
+</tr>
+%{/foreach}%

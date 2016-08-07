@@ -1,0 +1,33 @@
+
+<input type="checkbox" value="1" id="petition_email_file_all"><label for="petition_email_file_all">Выбрать все</label><br>
+
+<input type="checkbox" value="s0" id="petition_email_files_s0"><label for="petition_email_files_s0">PDF-форма документа (без подписей)</label><br>
+
+<input type="checkbox" value="s1" id="petition_email_files_s1"><label for="petition_email_files_s1">PDF-форма документа (с подписями)</label><br>
+
+
+
+%{foreach name=ff from=$items item=files}%
+
+
+<input type="checkbox" value="%{$files.id}%" id="petition_email_files_%{$files.id}%"><label for="petition_email_files_%{$files.id}%">%{$files.orig_name}% %{$files.txt}%</label><br>
+
+
+
+%{/foreach}%
+<script>
+$(function(){
+	$("#petition_email_file_all").bind("change", function(){
+		$("input[id^=petition_email_files_]").prop("checked", $(this).prop("checked"));
+	});
+	
+	$("input[id^=petition_email_files_]").bind("change", function(){
+		
+		total=$("input[id^=petition_email_files_]").length;
+		checked=$("input[id^=petition_email_files_]:checked").length;
+		
+		$("#petition_email_file_all").prop("checked", ((checked>0)&&(total==checked)));
+		
+	});
+});
+</script>

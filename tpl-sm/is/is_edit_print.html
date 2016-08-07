@@ -1,0 +1,122 @@
+<h1>Распоряжение на межсклад № %{$bill.id}%</h1>
+</div>
+
+
+<div style="float:left; margin-right:20px; ">
+Номер:<br />
+<strong>
+%{$bill.id}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+Заданный номер:
+<br />
+<strong>%{$bill.given_no}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;  ">
+Дата создания:<br />
+<strong>
+%{$bill.pdate}%</strong><br />
+<small>создано: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Организация:
+<br />
+<strong>
+%{$org}%</strong>
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sender_sector_id">Участок-отправитель:</label>
+<select id="sender_sector_id" name="sender_sector_id" style="width:150px;" disabled="disabled">
+%{html_options values=$sender_sector_ids selected=$sender_sector_id output=$sender_sector_names}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="sender_storage_id">Объект-отправитель:</label>
+<select id="sender_storage_id" name="sender_storage_id" style="width:150px;" disabled="disabled">
+%{html_options values=$sender_storage_ids selected=$sender_storage_id output=$sender_storage_names}%
+</select>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="receiver_sector_id">Участок-получатель:</label>
+<select id="receiver_sector_id" name="receiver_sector_id" style="width:150px;" disabled="disabled">
+%{html_options values=$receiver_sector_ids selected=$receiver_sector_id output=$receiver_sector_names}%
+</select>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="receiver_storage_id">Объект-получатель:</label>
+<select id="receiver_storage_id" name="receiver_storage_id" style="width:150px;" disabled="disabled">
+
+%{html_options values=$receiver_storage_ids selected=$receiver_storage_id output=$receiver_storage_names}%
+</select>
+</div>
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<strong>Позиции распоряжения:</strong> 
+<br />
+
+
+<div id="positions_wrapper">
+%{include file="is/position_actions_print.html" change_low_mode=$bill.change_low_mode is_confirmed=$bill.is_confirmed}%
+</div>
+
+
+<h4>Примечания:</h4>
+<div id="notes" >
+        %{include file="is/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    
+<p />    
+
+<h4>Распоряжения по списанию:</h4>
+<div id="rasp_wf" >
+	%{include file="is/rasp_wf_print.html" items=$rasp_wf word="rasp_wf" named="распоряжения по списанию" user_id=$bill.id can_edit=$can_rasp_wf_edit}%
+</div>
+<p /> 
+
+
+<div style="float:left; margin-right:20px;">
+%{if $bill.is_confirmed==1}% Утверждаю отгрузку: %{$is_confirmed_confirmer}%%{/if}% 
+
+
+
+<br />
+
+
+%{if $bill.is_confirmed_wf==1}% Утверждаю списание: %{$is_confirmed_wf_confirmer}%%{/if}% 
+
+
+</div>
+<br clear="all" />
+<p />
+

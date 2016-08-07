@@ -1,0 +1,385 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+ 
+<label for="status_id_2">Утвержденные</label><input type="checkbox"  disabled="disabled" name="status_id_2" id="status_id_2" value="2" %{if $status_id_2==1  or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="status_id_1"> Неутвержденные</label><input type="checkbox"   disabled="disabled"  name="status_id_1" id="status_id_1" value="1" %{if $status_id_1==1  or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+
+
+
+
+
+&nbsp;
+<label for="status_id_3">Аннулированные</label><input type="checkbox"   disabled="disabled"  name="status_id_3" id="status_id_3" value="3" %{if $status_id_3==1  or $all_statuses==1}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<label for="all_status_id_0">Все</label><input type="checkbox"   disabled="disabled"  name="all_status_id_0" id="all_status_id_0" value="0" %{if $all_status_id_0==1  or $all_statuses==1}% checked="checked"%{/if}%  /> 
+  
+
+
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    
+    
+    	
+    <th scope="col" width="40">
+    Номер 
+   
+    </th>
+    
+     <th scope="col" width="40">
+   Месяц
+    
+    </th>
+    
+     <th scope="col" width="40">
+   Год
+   
+    </th>
+    
+    
+    
+     <th scope="col" width="60">
+  Сотрудник
+    
+     </th>
+    
+   
+     
+      <th scope="col" width="40">
+    Вид цен
+   
+    </th>
+    
+    <th scope="col" width="70">
+    Оборудование
+    
+    
+    </th>
+    
+    
+    <th scope="col" width="70">
+    Производитель
+    
+    
+    </th>
+    
+    
+    <th scope="col" width="40">
+    Сумма договора
+   
+    </th>
+    
+    
+    <th scope="col" width="40">
+    № договора
+   
+    </th>
+   
+   
+    <th scope="col" width="70">
+    Клиент
+    
+    </th>
+    
+      
+    <th scope="col" width="70">
+    Новый клиент
+    
+    </th>
+    
+    
+     <th scope="col" width="100">
+    Город
+   
+    </th>
+    
+    
+      <th scope="col" width="60">
+    Статус
+        </th>
+    
+ 
+   
+    
+   
+    
+   <th scope="col" width="*">
+  Примечания
+    </th>
+    
+     <th scope="col" width="100">
+    Создал
+   
+   
+    </th>
+    
+   
+</tr>
+<tr align="center" valign="top">
+	
+    <td width="40">
+    
+    <input type="text" size="8" maxlength="255" value="%{$id}%" name="id" id="id" style="width:40px;" disabled="disabled" />
+	 
+    </td>
+    
+    <td width="40">
+    <select name="month" id="month" style="width:60px;" disabled="disabled">
+     <option value="">-все-</option>
+	 %{foreach from=$monthes item=mont}%
+     <option value="%{$mont.no}%" %{if $mont.no==$month}% selected="selected"%{/if}%>%{$mont.name}%</option>
+     %{/foreach}%
+    </select>
+    </td>
+    
+    
+     <td width="40">
+    
+    	 <input type="text" size="8" maxlength="255" value="%{$year}%" name="year" id="year" style="width:40px;" disabled="disabled" />
+    
+    </td>
+    
+    
+    
+    <td width="60" > 
+    
+  	<input type="text" size="8" maxlength="255" value="%{$us_name}%" name="us_name" id="us_name" style="width:60px;" disabled="disabled" />
+  
+    </td>
+    
+    
+     <td width="40" >
+   <select id="price_kind_id" name="price_kind_id" style="width:40px;" disabled="disabled">
+    %{html_options values=$price_kind_ids selected=$price_kind_id output=$price_kind_id_vals}%
+   </select>  
+  
+   </td>
+   
+   <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$eq_name}%" name="eq_name" id="eq_name" style="width:70px;" disabled="disabled" />
+   
+   
+      
+    </td>
+    
+     <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$prod_name}%" name="prod_name" id="prod_name" style="width:70px;"disabled="disabled" />
+   
+   
+      
+    </td>
+    
+	<td width="40" >&nbsp;
+  
+    </td>
+    
+    <td width="40">
+   <input type="text" size="8" maxlength="255" value="%{$contract_no}%" name="contract_no" id="contract_no" style="width:40px;" disabled="disabled" />
+   
+   
+      
+    </td>
+    
+    <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name" id="supplier_name" style="width:60px;" disabled="disabled" />
+   
+   
+      
+    </td>
+    
+    
+       <td width="40">
+    <select name="supplier_is_new" id="supplier_is_new" style="width:60px;">
+     
+	 
+     <option value="" %{if $supplier_is_new==""}% selected="selected"%{/if}%>все</option>
+     <option value="1" %{if $supplier_is_new=="1"}% selected="selected"%{/if}%>только новые</option>
+     <option value="0" %{if $supplier_is_new=="0"}% selected="selected"%{/if}%>только не новые</option>
+    
+    </select>
+    </td>
+    
+    
+    
+   <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$city}%" name="city" id="city" style="width:70px;" disabled="disabled" />
+   
+   
+      
+    </td>
+    
+   
+   
+   
+   <td width="60" >
+  
+   </td>
+   
+    
+    <td width="*" >&nbsp;
+   
+   </td>
+   
+    <td width="100" >
+   <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name" id="manager_name" style="width:60px;" disabled="disabled" />
+   
+   </td>
+   
+  
+   
+    
+</tr>
+</thead>
+<tbody>
+ 
+%{section name=rowsec loop=$items}%
+ 
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+ 
+	
+    <td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>
+    <a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].id}%
+    
+    
+    </td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].month_name}%
+    <input type="hidden" id="month_%{$items[rowsec].id}%" value="%{$items[rowsec].month}%" />
+    <input type="hidden" id="month_name_%{$items[rowsec].id}%" value="%{$items[rowsec].month_name}%" />
+    
+    </td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].year}%
+    <input type="hidden" id="year_%{$items[rowsec].id}%" value="%{$items[rowsec].year}%" />
+    </td>
+     
+    <td width="60" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].us_name}%  
+    
+    <input type="hidden" id="user_id_%{$items[rowsec].id}%" value="%{$items[rowsec].user_id}%" />
+    <input type="hidden" id="us_name_%{$items[rowsec].id}%" value="%{$items[rowsec].us_name}%" />
+    <input type="hidden" id="us_login_%{$items[rowsec].id}%" value="%{$items[rowsec].us_login}%" />
+    
+    
+    </td>
+  
+   <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].price_kind_name}%
+     <input type="hidden" id="price_kind_id_%{$items[rowsec].id}%" value="%{$items[rowsec].price_kind_id}%" /> 
+     <input type="hidden" id="price_kind_name_%{$items[rowsec].id}%" value="%{$items[rowsec].price_kind_name}%" /> 
+    </td>
+  
+  	
+     <td width="70" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].eq_name}%
+     %{if $items[rowsec].eq_is_new==1}%
+   <br />
+	<strong>новое оборудование</strong>
+    %{else}%
+    <br />
+	<strong>б/у</strong>
+   %{/if}%
+    <input type="hidden" id="eq_is_new_%{$items[rowsec].id}%" value="%{$items[rowsec].eq_is_new}%" /> 
+    <input type="hidden" id="eq_name_%{$items[rowsec].id}%" value="%{$items[rowsec].eq_name}%" />
+    </td>
+     <td width="70" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].prod_name}%
+    <input type="hidden" id="producer_id_%{$items[rowsec].id}%" value="%{$items[rowsec].producer_id}%" /> 
+  
+    </td>
+    
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].contract_sum}%&nbsp;%{$items[rowsec].currency_signature}%
+    <input type="hidden" id="contract_currency_id_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_currency_id}%" /> 
+    <input type="hidden" id="currency_signature_%{$items[rowsec].id}%" value="%{$items[rowsec].currency_signature}%" /> 
+    <input type="hidden" id="contract_sum_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_sum}%" /> 
+    </td>
+    
+    
+     <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].contract_no}%
+     <input type="hidden" id="contract_no_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_no}%" />
+    </td>
+    
+    
+    <td width="70" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{$items[rowsec].opf_name}%
+   
+   %{$items[rowsec].supplier_name}%
+   
+   
+    <input type="hidden" id="supplier_name_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_name|escape:"html"}%" />
+    <input type="hidden" id="supplier_id_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_id}%" />
+    
+     <input type="hidden" id="supplier_is_new_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_is_new}%" />
+   
+    </td>
+    
+    
+     <td width="70" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{if $items[rowsec].supplier_is_new==1}%
+  
+	<strong>новый клиент</strong>
+   %{/if}%
+     </td>
+    
+   
+      <td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{$items[rowsec].city}%
+   <input type="hidden" id="city_id_%{$items[rowsec].id}%" value="%{$items[rowsec].city_id}%" />
+   <input type="hidden" id="city_%{$items[rowsec].id}%" value="%{$items[rowsec].city}%" />
+    </td>
+   
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% >
+     %{$items[rowsec].status_name}%
+     
+    </td>
+   
+   
+    
+  
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+ <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    
+    </td>
+    
+  
+    
+    
+     <td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}%  
+    </td>
+ 
+ 	 
+    
+   
+</tr>
+ 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям коммерческих предложений не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+ 

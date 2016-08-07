@@ -1,0 +1,191 @@
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+});
+</script>
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+%{include file="every_help_dialog.html" filename="storages.htm" prefix="" description="реестр объектов"  style="float:right;  margin-right:10px;"}%
+
+
+%{if $can_print}%
+<div style="float:right; margin-right:5px;">
+<a href="#" id="print_s"><img src="/img/icons/print.png" border="0" width="24" height="24" alt="печать..." title="печать..."  /></a>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#print_s").bind("click",function(){
+	    if( $('#is_active').prop('checked')) state='&is_active=1';
+		else state='&is_active=0';
+		window.open('storage.php?id='+$('#id').val()+'&name='+$('#name').val()+'&fact_address='+$('#fact_address').val()+state+'&sortmode='+'%{$sortmode}%'+'&print=1'); 
+	  return false;
+	});
+});
+</script>
+
+%{/if}%
+
+
+<div style="float:left; margin-right:10px;">
+<input type="button" value="Добавить объект..." %{if $can_add}%onclick="location.href='ed_storage.php';"%{else}% onclick='alert("У Вас нет прав на данное действие.\nЗа соответствующими правами обратитесь, пожалуйста, к администратору.\nСпасибо.");'%{/if}% />
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+&nbsp;&nbsp;
+<label for="is_active">Активные объекты</label>
+<input type="checkbox" name="is_active" id="is_active" value="1" %{if $is_active==1}% checked="checked"%{/if}%  /> 
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="80">
+    Код объекта
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   
+    <th scope="col">
+    Название
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    <th scope="col">
+    Фактический адрес
+   
+    </th>
+    
+    <th scope="col">
+    Схема<br />
+ проезда
+   
+    </th>
+    
+    <th scope="col" width="100">
+    Примечания
+   
+    </th>
+    
+    <th scope="col" width="30">&nbsp;</th>
+    <th scope="col" width="30">&nbsp;</th>
+ 
+</tr>
+<tr align="center" valign="top">
+	<td width="100">
+	 <input type="text" size="8" maxlength="255" value="%{$id}%" name="id" id="id" />
+    
+    </td>
+    
+	<td >
+   <input type="text" size="40" maxlength="255" value="%{$name}%" name="name" id="name" />
+    
+    </td>
+    <td width="*">
+   
+   <input type="text" size="40" maxlength="255" value="%{$fact_address}%" name="fact_address" id="fact_address" />
+   
+    
+    </td>
+    
+    <td width="100" >&nbsp;</td>
+   
+    <td >&nbsp;</td>
+    <td width="30">
+    <input name="doFilter" type="submit" value="Найти" />
+    </td>
+    <td width="30">&nbsp;
+    
+    </td>
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="100" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>%{$items[rowsec].id}%</td>
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].name}%&nbsp;</td>
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>%{$items[rowsec].fact_address}%&nbsp;</td>
+    
+    <td width="*" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+    <a href="#" onclick="zc=window.open('storage_files.php?sup_id=%{$items[rowsec].id}%','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.'); return false;"><img src="../../img/shema.png" width="67" height="30" border="0" alt="Схема проезда..." title="Схема проезда..." /></a>
+   <!-- <input type="button" value="Схема проезда..." onclick="zc=window.open('storage_files.php?sup_id=%{$items[rowsec].id}%','_blank','width=1024,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати требования-накладной.');" />-->
+    </td>
+   
+    <td width="100" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    
+     <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+    %{$items[rowsec].notes[notesec].user_login}%:
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    
+    </td>
+    <td width="30" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+    <a href="ed_storage.php?action=1&id=%{$items[rowsec].id}%" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    
+   
+    %{/if}%&nbsp;
+    </td>
+    
+    <td width="30" %{if $items[rowsec].is_active==0}%class="item_inactive"%{/if}%>
+    %{if $can_delete}%
+   
+    
+    %{if $items[rowsec].can_delete}%
+    <a href="#" onclick="if(window.confirm('Вы действительно хотите удалить объект %{$items[rowsec].name|escape}%?')) location.href='ed_storage.php?action=2&id=%{$items[rowsec].id}%'; return false;">
+   
+   
+    <img src="/img/icons/delete.png" width="24" height="24" alt="удалить..." title="удалить..." border="0" />
+   
+    </a>
+    %{else}%
+     <a href="#" onclick="alert('Невозможно удалить объект %{$items[rowsec].name|escape}%. Причина: по объекту есть связанные утвержденные документы.'); return false;">
+   
+   
+    <img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить..." title="удалить..." border="0" />
+   
+    </a>
+   %{/if}% 
+    
+    %{/if}%&nbsp;
+    </td>
+</tr>
+%{/section}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям объектов не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

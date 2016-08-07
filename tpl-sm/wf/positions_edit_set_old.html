@@ -1,0 +1,80 @@
+<!-- таблица в диалоге -->
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="60%">Номенклатура</th>
+        <th scope="col" width="80">Ед. изм.</th>
+       
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col" width="80">Доступное кол-во</th>
+       
+        
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" >
+    	<td width="60%">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="position_id_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].position_id}%" />
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="dimension_id_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+       
+        <td width="80">
+        <input type="text" id="quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].quantity}%" size="4" maxlength="20" />
+    	</td>
+        <td width="80">
+        %{$pospos[pospossec].max_quantity}%
+        <input type="hidden" id="max_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].max_quantity}%" />
+        
+         <script type="text/javascript">
+		$(function(){
+			
+			
+			//проверка количества
+			$("#quantity_%{$pospos[pospossec].position_id}%").bind("change",function(){
+				ret=true;
+				
+				if($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").length==0){
+					alert("Заполните поле Количесто!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#quantity_%{$pospos[pospossec].position_id}%").attr("value"))||(parseInt($("#quantity_%{$pospos[pospossec].position_id}%").attr("value"))<0)){
+					alert("Неверное значение в поле Количество!");
+					ret=ret&&false;
+				}
+				
+				if(!isNaN($("#quantity_%{$pospos[pospossec].position_id}%").attr("value"))&&(parseInt($("#quantity_%{$pospos[pospossec].position_id}%").attr("value"))>parseInt("%{$pospos[pospossec].max_quantity}%"))){
+					alert("Превышено допустимое количество!");
+					ret=ret&&false;
+				
+				}
+				
+				
+				if(!ret) {
+					$("#quantity_%{$pospos[pospossec].position_id}%").addClass("wrong");
+					$("#quantity_%{$pospos[pospossec].position_id}%").focus();
+				}else{
+					//peres4et	
+					$("#quantity_%{$pospos[pospossec].position_id}%").removeClass("wrong");
+					//RecalcPrices();
+				}
+				return ret;
+			});
+			
+			
+			
+		});
+		</script>
+        
+        </td>
+       
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+    

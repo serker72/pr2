@@ -1,0 +1,397 @@
+<div id="positions" style="/*border:1px solid silver; width:650px; height:200px; overflow:scroll;*/">
+%{if $has_positions}%
+%{include file="is/positions_on_page_set.html" pospos=$positions}%
+%{/if}%
+</div>
+
+<div style="/*width:650px; height:30px; overflow:auto; text-align:right; padding-right:20px; padding-top:5px;*/">
+<span id="positions_cost">%{$total_cost}%</span>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div id="positions_dialog" title="¬ыберите позиции">
+<!--“овары на выбранном объекте/участке <span id="positions_dialog_komplekt_name"></span>:<br />-->
+
+
+
+
+
+
+
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+
+
+<div id="position_confirm_dialog" title=" оличество позиций">
+
+	<div id="position_confirm_dialog_text"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	var low_mode_made=false;
+	var choice_was_made=true;
+	
+	
+	//обработка нажати€ ¬ыбрать позиции
+	$("#add_pos").bind("click",function(){
+						
+			was_changed=true;
+			
+			low_mode_made=false;
+			
+			choice_was_made=true;
+			
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			
+			var position_ids=new Array(); var quantities=new Array();
+			
+			$.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+				
+				//вычленить айди позиции, заполнить массивы данными
+				if(value.id.indexOf('new_position_id_')!=-1){
+					//alert(value.id);
+					position_id=value.value;
+					position_ids.push(value.value);
+					quantities.push($("#new_quantity_"+position_id).attr("value"));
+				
+				}
+			});
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/is.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "storage_id":$("#sender_storage_id").attr("value"),
+				  "sector_id":$("#sender_sector_id").attr("value"),
+				  "selected_positions[]":position_ids,
+				  "selected_quantities[]":quantities,
+				  "change_low_mode":$("#change_low_mode").val(),
+				  "is_confirmed":"%{$is_confirmed}%",
+				  "id":$("#id").val()
+			  },
+			  beforeSend: function(){
+				//alert("«агрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/wait.gif" width="32" height="32" alt="пожалуйста, подождите..." border="0" />');  
+			  },
+			  success: function(data){
+				 // 
+				$("#positions_dialog_table").html(data); 
+				touchScroll('positions_scroll_block'); 
+			  },
+			  error: function(xhr, status){
+				// alert("ќшибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#positions_dialog").dialog("open");
+		
+	});
+	
+	$("#position_confirm_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 500,
+		height: 350,
+		stack: true
+	});
+	
+	function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+	
+	
+	function CustomClose(dcl){
+		
+		var can_put=true;
+				$.each($("#positions_dialog_table table tbody tr td input[type=hidden]"), function(key, value){
+					//alert(value.id);
+					//вычленить айди позиции, выполнить все проверки!
+					if(value.id.indexOf('position_id_')!=-1){
+						position_id=value.value;
+						
+						//цена
+						local_put=true;
+						
+						%{if $is_confirmed==0}%
+						  //кол-во
+						  local_put=true;
+						  if($("#quantity_"+position_id).attr("value").length==0){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+							 // alert('1');
+						  }
+						  if(isNaN($("#quantity_"+position_id).attr("value").replace("\,","\."))||(parseFloat($("#quantity_"+position_id).attr("value").replace("\,","\."))<0)){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+							 // alert('2');
+						  }
+						  
+						  if(!isNaN($("#quantity_"+position_id).attr("value").replace("\,","\."))&&(parseFloat($("#quantity_"+position_id).attr("value").replace("\,","\."))>parseFloat($("#max_quantity_"+position_id).attr("value").replace("\,","\.")))){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+						  }
+						  if(local_put){
+							  $("#quantity_"+position_id).removeClass("wrong");	
+						  }else $("#quantity_"+position_id).addClass("wrong");
+						%{else}%
+						//кол-во
+						  local_put=true;
+						  if($("#fact_quantity_"+position_id).attr("value").length==0){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+							 // alert('1');
+						  }
+						  if(isNaN($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))||(parseFloat($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))<0)){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+							  //alert('2');
+						  }
+						  
+						  if(!isNaN($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))&&(parseFloat($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))>parseFloat($("#max_fact_quantity_"+position_id).attr("value").replace("\,","\.")))){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+						  }
+						  
+						  if(!isNaN($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))&&(parseFloat($("#fact_quantity_"+position_id).attr("value").replace("\,","\."))<parseFloat($("#min_fact_quantity_"+position_id).attr("value").replace("\,","\.")))){
+							  can_put=can_put&&false;
+							  local_put=local_put&&false;
+						  }
+						  
+						  if(local_put){
+							  $("#fact_quantity_"+position_id).removeClass("wrong");	
+						  }else $("#fact_quantity_"+position_id).addClass("wrong");
+						%{/if}%
+					}
+					
+					
+				});
+				
+				if(can_put) {
+					
+					
+					%{if $is_confirmed==1}%
+					//найти все позиции, которые повышены, понижены
+					//спросить
+					//проверка позиций, которые меньше:
+					pos_str='';
+					$.each($("#positions_dialog_table table tbody tr td input[id^=position_id_]"), function(key, value){
+						//alert(value.value);
+						position_id=value.value;
+						if((roundPlus(parseFloat($("#fact_quantity_"+position_id).attr("value").replace("\,","\.")),3)>0)&&(roundPlus(parseFloat($("#fact_quantity_"+position_id).attr("value").replace("\,","\.")),3)<roundPlus(parseFloat($("#max_fact_quantity_"+position_id).attr("value").replace("\,","\.")),3))){
+							if(pos_str.length>0) pos_str=pos_str+",<br />";
+							pos_str=pos_str+''+$("#val_position_code_"+position_id).html()+' ' +$("#val_position_name_"+position_id).html()+' доступно: '+roundPlus(parseFloat($("#max_fact_quantity_"+position_id).attr("value").replace("\,","\.")),3)+' выбрано: '+$("#fact_quantity_"+position_id).attr("value").replace("\,","\.");
+						};
+						
+					});
+					
+					/*if((pos_str.length>0)&&(!low_mode_made)){
+						$("#position_confirm_dialog_text").html("¬нимание! ¬ы выбрали меньшее фактически перемещаемое количество позиций, чем доступно по распор€жению на межсклад.<p />Ѕудет ли производитьс€ дополнительный вывоз позиций:<p />"+pos_str+" ?<p />≈сли дополнительный вывоз производитьс€ не будет, то при утверждении списани€ количество этих позиций в распор€жении на межсклад будет уменьшено!");
+						$("#position_confirm_dialog").dialog({
+							autoOpen: false,
+							modal: true,
+							width: 500,
+							height: 350,
+							buttons:{
+								"ƒа, будет производитьс€ вывоз": function(){
+									$("#pos_change_low_mode").attr("value",0);
+									$("#position_confirm_dialog").dialog("close");
+									low_mode_made=true;
+									choice_was_made=choice_was_made&&true;
+									//$("#positions_dialog").dialog("close"); 
+									CustomClose(dcl);
+									
+								},
+								"Ќет, не будет вывоза": function(){
+									$("#pos_change_low_mode").attr("value",1);
+									$("#position_confirm_dialog").dialog("close");
+									low_mode_made=true;
+									choice_was_made=choice_was_made&&true;
+									//$("#positions_dialog").dialog("close"); 
+									CustomClose(dcl);
+									
+								},
+								"ќтмена": function(){
+									$("#position_confirm_dialog").dialog("close");
+									low_mode_made=false;
+									choice_was_made=choice_was_made&&false;
+									
+								}
+							}
+						});
+						
+						
+						$("#position_confirm_dialog").dialog("open");
+						
+						return;
+						
+					}
+					*/
+					$("#pos_change_low_mode").attr("value",1);
+					low_mode_made=true;
+					choice_was_made=true;
+					
+					//конец проверки на меньшие значени€
+					%{/if}%
+					
+					if(choice_was_made) $("#choice_was_made").val(1);
+					else  $("#choice_was_made").val(0);
+					
+					//перенос данных в таблицу на странице
+					var position_ids=new Array(); var quantities=new Array();
+					var fact_quantities=new Array();
+					
+					//данные на страницы
+					var new_position_ids=new Array(); var new_quantities=new Array();
+					var new_fact_quantities=new Array();
+					
+					//данные из диалога
+					$.each($("#positions_dialog_table table tbody tr td input[type=hidden]"), function(key, value){
+						//вычленить айди позиции, заполнить массивы данными
+						if(value.id.indexOf('position_id_')!=-1){
+							
+							position_id=value.value;
+							position_ids.push(value.value);
+							quantities.push($("#quantity_"+position_id).attr("value").replace("\,","\."));
+							fact_quantities.push($("#fact_quantity_"+position_id).attr("value").replace("\,","\."));
+							
+						}
+					});
+					
+					
+					//данные со страницы
+					$.each($("#positions table tbody tr td input[type=hidden][id^=new_position_id]"), function(key, value){
+				
+						//вычленить айди позиции, заполнить массивы данными
+							
+							new_position_id=value.value;
+							new_position_ids.push(value.value);
+							new_quantities.push($("#new_quantity_"+new_position_id).attr("value").replace("\,","\."));
+							new_fact_quantities.push($("#new_fact_quantity_"+new_position_id).attr("value").replace("\,","\."));
+							
+					});
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/is.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_positions",
+						  
+						  "storage_id":$("#sender_storage_id").attr("value"),
+				 		  "sector_id":$("#sender_sector_id").attr("value"),
+						  "selected_positions[]":position_ids,
+						  "selected_quantities[]":quantities,
+						  "selected_fact_quantities[]":fact_quantities,
+						  "change_low_mode":$("#pos_change_low_mode").val(),
+				  		  "id":$("#id").val(),
+						  "new_selected_positions[]":new_position_ids,
+						  "new_selected_quantities[]":new_quantities,
+						  "new_selected_fact_quantities[]":new_fact_quantities
+						  
+						  
+					  },
+					  beforeSend: function(){
+						//alert("«агрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#positions").html(data); 
+						
+						$.ajax({
+								  async: true,
+								  url: "/js/is.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_rasp_wf",
+									  "user_id":$("#id").val()
+								  },
+								  beforeSend: function(){
+									$("#rasp_wf").html('<img src="/img/images/wait.gif" width="32" height="32" alt="пожалуйста, подождите" border="0" />');	
+								  },
+								  success: function(data){
+									$("#rasp_wf").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									 $("#rasp_wf").empty(); 
+								  }	 
+							  });
+						
+					  },
+					  error: function(xhr, status){
+						// alert("ќшибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					if(dcl) $("#positions_dialog").dialog("close");
+					return;
+				}else{
+					
+					alert("Ќеверно заполнены пол€ таблицы!");
+					return;	
+				}
+	}
+	
+	
+	
+	
+	
+	
+		
+	
+	
+	
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 900,
+		height: 600,
+		buttons:{
+			%{if $bill.is_confirmed==0}%
+			"ƒобавить выбранное и продолжить поиск": function(){
+				CustomClose(false);
+			},
+			"ƒобавить выбранное и закрыть": function(){
+				CustomClose(true);
+			},
+			%{else}%
+			"√отово": function(){
+				CustomClose(true);
+			},
+			%{/if}%
+			"ќтмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

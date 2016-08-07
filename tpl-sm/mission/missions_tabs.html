@@ -1,0 +1,63 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+
+<!--<link href="/js/fullcalendar/fullcalendar.css" type="text/css" rel="stylesheet" />
+<link media="print" href="/js/fullcalendar/fullcalendar.print.css" type="text/css" rel="stylesheet" />
+<script src="/js/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>-->
+
+<script type="text/javascript">
+
+//периодическая проверка новых заданий
+function CalcNewTasksMode(mode, fieldname){
+	var fieldname1=fieldname;
+	$.ajax({
+		async: true,
+		url: "/js/checknew.php",
+		type: "POST",
+		data:{
+			"action":"total_count_tasks_mode",
+			"mode":mode
+		},
+		beforeSend: function(){
+			$("#"+fieldname1+"").html('<img src="/img/icon_wait.gif" width="10" height="10" border="0" alt="идет проверка, подождите" />');
+		},
+		success: function(data){
+		  if(data==0) $("#"+fieldname1+"").empty();
+		  else $("#"+fieldname1+"").html(data);
+		   
+		},
+		error: function(xhr, status){
+		   $("#"+fieldname1+"").html("");
+		},
+		complete: function(){
+			
+		} 
+	});
+  }
+	
+$(function(){
+  $("#tasks").tabs({
+  	cookie: { expires: 14, name: 'startTabtasks' }
+  });
+  
+	
+	//setInterval('CalcNewTasksMode(1, "incoming_tasks_count")', 60000);
+	
+});
+</script>
+
+
+<div id="tasks">
+  <ul>
+    <li><a href="#tabs-1">Командировки <span id="incoming_tasks_count">%{$incoming_tasks_count}%</span></a></li>
+   
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$tasks_1}%
+    
+    </p>
+  </div>
+  
+
+</div>

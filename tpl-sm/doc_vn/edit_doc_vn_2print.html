@@ -1,0 +1,117 @@
+<html>
+<head>
+ <style>
+  body, div, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12pt;
+ }
+table, td{
+	border-collapse:collapse;
+	border:1px solid black;
+}
+ </style>
+
+</head>
+<body >
+ 
+ 
+  
+<p align="right">
+Генеральному директору<br>
+
+ООО «Аэротэк»<br>
+
+Матюше А.А.<br>
+от сотрудника:<br>
+
+%{$bill.manager_string}%, <br>
+%{$manager.position_name}% 
+
+
+
+</p>
+
+
+
+
+<br>
+<br>
+
+<p align="center">
+<strong>ЗАЯВЛЕНИЕ</strong>
+</p>
+<br>
+
+
+<p>
+
+Я согласен выйти на работу в выходной день %{foreach name=hd from=$hdays item=item}%
+%{$item}%%{if $smarty.foreach.hd.last==false}%, %{/if}%
+%{/foreach}%.
+
+</p>
+
+
+
+
+
+<p>
+%{$vh.name}%
+%{if $bill.vyh_reason_id==2}%
+%{if $bill.vyh_later==0}%
+ 
+%{foreach name=dd from=$vyh_otp_dates item=d}%
+ %{$d.pdate}%%{if $smarty.foreach.dd.last==false}%, %{/if}%
+ 
+%{/foreach}%
+%{else}%
+: предоставить даты позднее.
+%{/if}%
+%{/if}%
+</p>
+
+
+
+
+
+
+
+<p>
+Дата заполнения: %{$bill.pdate}%
+</p>
+
+<p>
+Заполнил:  %{$bill.manager_string}%
+</p>
+
+ 
+
+
+
+<p>
+СОГЛАСОВАНО:<br>
+
+%{$is_ruk_confirmer}%
+
+</p>
+ 
+
+<p>
+
+УТВЕРЖДАЮ:<br>
+
+Генеральный директор
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%{$is_dir_confirmer}%  
+</p>
+<br>
+ 
+ 
+
+    <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 
+
+
+</body>
+</html>

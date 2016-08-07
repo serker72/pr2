@@ -1,0 +1,125 @@
+  
+  <td width="20" class="small">
+    %{$smarty.section.possec.index+1}%
+    </td>
+  <td width="*" class="small">
+    %{$items[rowsec].subs[possec].name}%
+    
+    </td>
+   
+    <td width="20" class="small">
+    %{$items[rowsec].subs[possec].dimension}%
+    </td>
+    <td width="40"  class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].quantity}%
+   
+    </td>
+   
+    %{if $view_full_version}%
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].price_f}%
+    </td>
+    %{/if}%
+    
+     <td width="50" class="small"  style="white-space:nowrap;">
+    %{$items[rowsec].subs[possec].price_pm}%
+   
+    </td>
+    
+    %{if $view_full_version}%
+    <td class="small" width="50" style="white-space:nowrap;">
+    %{if $items[rowsec].subs[possec].plus_or_minus==0}%
+    +
+   %{else}%
+    -
+    %{/if}%
+    %{$items[rowsec].subs[possec].value}%
+    %{if $items[rowsec].subs[possec].rub_or_percent==0}%
+    руб.
+   %{else}%
+    %
+    <br />
+	<small>(%{$items[rowsec].subs[possec].pm_per_unit}%)</small>
+    
+    %{/if}%
+    </td>
+    
+   
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     %{$items[rowsec].subs[possec].pm_per_cost}%
+    </td>
+    
+     <td class="small" width="50" style="white-space:nowrap;">
+  
+     
+     %{$items[rowsec].subs[possec].discount_total_amount}%
+      %{if $items[rowsec].subs[possec].discount_rub_or_percent==1}%
+     <br />
+	<small>(%{$items[rowsec].subs[possec].discount_value}% %)</small>
+     %{/if}%
+    </td>
+    
+    %{/if}%
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+     <span id="edit_vydacha_%{$items[rowsec].subs[possec].p_id}%">%{$items[rowsec].subs[possec].vydacha}%</span>
+     
+     <input type="hidden" id="edit_unf_vydacha_%{$items[rowsec].subs[possec].p_id}%" value="%{$items[rowsec].subs[possec].unf_vydacha}%" />
+     
+    </td>
+   
+    
+    <td class="small" width="50" style="white-space:nowrap;">
+    
+   
+  <input type="text" id="edit_unf_discount_given_%{$items[rowsec].subs[possec].p_id}%" value="%{$items[rowsec].subs[possec].unf_discount_given}%" size="10" maxlength="255" />
+   
+  	<script type="text/javascript">
+	$(function(){
+		
+		function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}	
+		
+		function RecalcSumGiven(){
+			res=0;
+			$.each($("input[id^=edit_unf_discount_given_]"), function(k,v){
+				res=res+parseFloat($(v).val());
+			});
+			
+			$("#edit_total_given").html(roundPlus(res,2));
+		}
+		
+		$("#edit_unf_discount_given_%{$items[rowsec].subs[possec].p_id}%").bind("dblclick",function(){
+			$("#edit_unf_discount_given_%{$items[rowsec].subs[possec].p_id}%").val($("#edit_unf_vydacha_%{$items[rowsec].subs[possec].p_id}%").val());
+			
+			RecalcSumGiven();
+			
+		});
+		
+		$("#edit_unf_discount_given_%{$items[rowsec].subs[possec].p_id}%").bind("change",function(){
+				
+				if(
+					isNaN($(this).val())||
+					(parseFloat($(this).val())<0)||
+					(parseFloat($(this).val())>parseFloat($("#edit_unf_vydacha_%{$items[rowsec].subs[possec].p_id}%").val()))
+					
+					){
+						$(this).addClass("wrong");
+						alert("Некорректно введена сумма полученного +/-. Сумма может быть от 0 до "+$("#edit_vydacha_%{$items[rowsec].subs[possec].p_id}%").html()+" руб.");
+					}else{
+						$(this).removeClass("wrong");
+						RecalcSumGiven();
+					}
+		});
+	});
+	</script>
+   
+    </td>
+    
+    <td class="small" width="50">
+    %{include file="bills/positions_pm_saver.html" item=$items[rowsec].subs[possec]}%
+    </td>

@@ -1,0 +1,145 @@
+<script type="text/javascript">
+$(function(){	
+	
+	
+	
+	
+	function rebuild(){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=zmanager_radio]:checked").val()==0)||($("input[name=zmanager_radio]:checked").val()==null)||($("input[name=zmanager_radio]:checked").val()==undefined)  ){
+			
+			alert("Выберите сотрудника!");
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=zmanager_radio]:checked").val()
+		   
+	  
+	  
+	 
+	  
+	  if($("#zmanager_id").val()!=selected_supplier){
+		  $("#zmanager_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/petition.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_zmanager",
+				  "id":selected_supplier
+				  
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#manager_string").val(data.name_s);
+				$("#manager_id").val(data.id);
+				
+			 
+				$("#sched_clear").trigger("click");
+				if($("#kind_id").val()==6) if(!$("#wo_sched").prop("checked")) $("#sched_select").trigger("click");
+				 
+				if($("#kind_id").val()==3) if(($("#vyh_reason_id").val()!=3)&&($("#vyh_reason_id").val()!=0)) $("#sched_select").trigger("click"); 
+				 
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#zmanager_dialog").dialog("close"); 
+	}
+ 
+	
+	
+	
+	
+	$("#zmanager_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 720,
+		height: 490,
+		 
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#zmanager_select").bind("click",function(){
+		$("#zmanager_radio_"+$("#manager_id").val()+"").prop("checked",true);
+	//	$("#doFind").trigger("click");
+		$("#zmanager_dialog").dialog("open");
+	});
+	
+	$("#zmanager_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+		
+		
+		$("#manager_string").val("");
+	 
+		
+		$("#manager_id").val("");
+		
+		$("#sched_clear").trigger("click");
+		 
+		
+	});
+	
+	
+	
+	
+	   
+	
+	 
+});
+</script>
+
+<div id="zmanager_dialog" title="Выберите сотрудника" style="display:none;">
+
+
+  
+
+
+
+
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col"> </th>
+        
+        <th scope="col">Ф.И.О.</th>
+        <th scope="col">Должность</th>
+         
+    </tr>
+     
+    <tbody id="managers_found">
+   	%{include file="petition/zmanagers_list.html" pos=$managers}%
+    </tbody>
+    </table>
+	
+  
+ 
+</div>
+ 

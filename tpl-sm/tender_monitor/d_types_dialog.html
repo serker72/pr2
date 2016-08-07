@@ -1,0 +1,227 @@
+<div id="add_dialog%{$prefix}%" title="Выберите вид оборудования" style="display:none;">
+	<h2>Выберите вид оборудования:</h2><br>
+	<select id="add_eq_type%{$prefix}%" style="width:370px;"></select>
+    <input type="button" value="..." id="expand_eq_type%{$prefix}%" %{if !$can_expand}% disabled%{/if}%>
+	
+    <br>
+<br>
+
+    <label for="pdate%{$prefix}%">
+    Дата:
+    </label><br>
+
+    <input type="text" id="given_pdate%{$prefix}%" value="%{$now}%" size="10" maxlength="10" />
+</div>
+
+
+
+<div id="opf_dialog" title="Типы оборудования" style="display:none;">
+      <div id="opf_dic">
+      %{include file="tender_monitor/d_types.html"}%
+      </div>
+      
+      Новый тип оборудования:<br>
+      <input type="text" id="new_opf" size="30" maxlength="255" />
+      <input type="button" value="Добавить тип" id="add_new_opf"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+		 $("#given_pdate%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+		  
+        $("#opf_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/tender_monitor.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+					RedrawPage();
+					
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+             
+            $(this).dialog("close"); }
+          }
+        
+        });
+		
+		
+		$("#add_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 450,
+			height: 200,
+			buttons: {
+				"Готово": function() { 
+					//$.ajax({});
+					//самый главный метод: создание записи в реестр!
+					can_ret=true;
+					
+					if(can_ret&&(
+					($("#add_eq_type%{$prefix}%").val()==null)||
+					($("#add_eq_type%{$prefix}%").val()==undefined)||
+					($("#add_eq_type%{$prefix}%").val()=='')||
+					($("#add_eq_type%{$prefix}%").val()==0)
+					)){
+						can_ret=can_ret&&false;
+						alert("Выберите вид оборудования!");
+						$("#add_eq_type%{$prefix}%").focus();
+							
+					}
+					
+					if(can_ret&&($("#given_pdate%{$prefix}%").val()=='')){
+						can_ret=can_ret&&false;
+						alert("Укажите дату!");
+						$("#given_pdate%{$prefix}%").focus();
+					}
+					
+					
+					 
+					
+					
+					
+					if(can_ret){
+						 $.ajax({
+							  async: false,
+							  url: "/js/tender_monitor.php",
+							  type: "POST",
+							  data:{
+								  "action":"add_kind_1",
+								  "data":$("#add_eq_type%{$prefix}%").val(),
+								  "given_pdate":$("#given_pdate%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								// alert(data);
+								 
+								 location.reload();
+								
+							  },
+							  error: function(xhr, status){
+								  //alert("Ошибка добавления вопроса.");	
+							  }	 
+						  });
+						
+						$(this).dialog("close");
+					}
+				},
+				"Отмена": function() {
+					$(this).dialog("close");
+				}
+			 }
+		});
+		
+		
+		
+		
+		
+        $("#expand_eq_type%{$prefix}%").bind("click",function(){
+			 RedrawDic();
+            $("#opf_dialog").dialog("open");
+        });
+		$("#add%{$prefix}%").bind("click", function(){
+			 RedrawPage();
+			 
+			 $("#add_dialog%{$prefix}%").dialog("open");
+		});
+		
+		function RedrawPage(){
+               $.ajax({
+                  async: false,
+                  url: "/js/tender_monitor.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    // alert(data);
+					  $("#add_eq_type%{$prefix}%").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+          }
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/tender_monitor.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_opf").bind("click", function(){
+              if($("#new_opf").val().length<3){
+                  $("#new_opf").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender_monitor.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_type",
+                      "opf":$("#new_opf").val()
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("Тип оборудования добавлен!"); 
+                     $("#new_opf").val('');
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления Типа оборудования.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>

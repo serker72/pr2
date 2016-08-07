@@ -1,0 +1,62 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'anpet_Tab' }  
+  	});
+});
+</script>
+
+ 
+<div id="tabs">
+  <ul>
+    %{if $has_otp}%
+    <li><a href="#tabs-1">Заявления на отпуска</a></li>
+    %{/if}%
+    
+    
+      %{if $has_others}%
+    <li><a href="#tabs-2">Заявления - прочие</a></li>
+    %{/if}%
+    
+    
+       %{if $has_memos}%
+    <li><a href="#tabs-3">Служебные записки</a></li>
+    %{/if}%
+    
+    
+  </ul>
+   %{if $has_otp}%
+  <div id="tabs-1">
+    <p>
+    <!--<h2>Заявления на отпуска</h2>-->
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+     %{if $has_others}%
+  <div id="tabs-2">
+    <p>
+  <!--  <h2>Заявления - прочие</h2>-->
+    %{$log2}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+   
+    %{if $has_memos}%
+  <div id="tabs-3">
+    <p>
+ <!--   <h2>Служебные записки</h2>-->
+    %{$log3}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+  
+   
+
+</div>

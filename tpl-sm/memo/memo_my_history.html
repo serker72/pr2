@@ -1,0 +1,796 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+ <script src="/js/meiomask.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  //$("#tabs").tabs();
+  $("#tabs").tabs({
+	selected:%{$tab_page}%  
+  });
+  
+  var was_changed=false;
+  	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+   $.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	
+	 
+
+	$("#print_s").bind("click", function(){
+			 $("#is_print_dialog").dialog("open");
+			
+			 
+			
+			
+			
+			
+			return false;
+		});
+		
+		
+	$("#is_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 250,
+			height: 180,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					
+					
+					if($("#print_mode_0").prop("checked")) {
+						zc=window.open('memo_my_history.php?action=1&id=%{$claim.id}%&print=1&printmode=0','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					if($("#print_mode_1").prop("checked")) {
+						zc=window.open('memo_my_history.php?action=1&id=%{$claim.id}%&print=1&printmode=1','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					 
+					
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});	
+			
+	
+   %{if $force_print}%
+   $("#print_s").trigger("click");
+    
+   %{/if}%
+   
+   $("#copy_doc").bind("click", function(){
+	  //
+	  has_files=0;
+	  %{if $has_files}%
+	  hhas_files=window.confirm("К данному документу прикреплены файлы. Желаете ли Вы скопировать файлы в новый документ?");
+	  if(hhas_files) has_files=1;
+	  %{/if}%
+	  
+	  window.open('memo_create.php?kind_id=%{$claim.kind_id}%&copyfrom=%{$claim.id}%&has_files='+parseInt(has_files));
+	  
+	  return false; 
+   });
+});
+</script>
+
+
+ <div id="is_print_dialog" title="Выберите форму для печати" style="display:none;">
+    <strong>Выберите форму для печати:</strong><br /><br>
+
+
+    <input type="checkbox" id="print_mode_0" value="0" %{if  $field_rights.to_print_sz==false}% disabled="disabled"%{/if}%  /><label for="print_mode_0">Служебная записка без подписей</label><br />
+    
+    <input type="checkbox" id="print_mode_1" value="1" %{if  $field_rights.to_print_sign==false  }% disabled="disabled"%{/if}%  /><label for="print_mode_1">Служебная записка с подписями</label><br />
+    
+    
+</div>
+
+
+%{include file="error_window.html"   prefix="" }% 
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Служебная записка</a></li>
+   
+      %{if $has_syslog}%
+    <li><a href="#tabs-6">Журнал событий</a></li>
+    %{/if}%
+    
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <form action="memo_my_history.php" method="post" id="crea_form">
+    <input type="hidden" name="action" value="1" />
+    <input type="hidden" name="id" id="id" value="%{$claim.id}%" />
+    
+    <input type="hidden" id="user_id" value="%{$claim.user_id}%" />
+     
+    
+    <input type="hidden" name="current_status_id" value="%{$claim.status_id}%" />
+    
+     <div style="float:left; margin-right:20px;">
+     <h1>Служебная записка № %{$claim.code}%</h1></div>
+    
+      <div style="float:right;">
+    
+    
+    <div style="float:left;  margin-right:10px;height:50px; ">
+ 	 %{if $can_print and $field_rights.to_email}%
+  
+    <a href="#" id="memo_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="memo/pdf_actions.html" mode=0}%
+      %{else}%
+     <a href="#" onclick=" return false;" data-comment="отправить pdf-документы на электронную почту..."  class="reestr_email reestr_inactive reestr_right_button24"></a>
+      %{/if}%
+      
+ 
+</div>
+
+
+  <div style="float:left; margin-right:10px;">
+ %{if $field_rights.to_copy}%
+      <a href="#" id="copy_doc"  class="reestr_copy reestr_right_button24" data-comment="Копировать..."  ></a>
+ 		   
+    %{else }%
+     <a href="#" onclick="  return false;" class="reestr_copy reestr_inactive reestr_right_button24" data-comment="Копировать..." ></a> 
+    %{/if}%
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+   
+   %{if $can_print and $field_rights.to_print_sz}%
+  
+    <a href="#" id="print_s" data-comment="печать..." class="reestr_print reestr_right_button24"></a>
+    
+      %{else}%
+     <a href="#" onclick="  return false;" data-comment="печать..."  class="reestr_print reestr_inactive reestr_right_button24"></a>
+      %{/if}%
+      
+      
+ 
+    
+    
+  
+    </div>
+    
+     <div style="float:left; margin-right:10px;">
+<input type="button" value="Файлы..." onclick="location.href='memo_files.php?bill_id=%{$claim.id}%';" />
+
+</div>
+
+    
+    
+    %{include file="every_help_dialog.html" filename="memohistory.html" prefix="" description="Информация о карточке служебной записки" style="float:left" is_right=true}%
+    
+   
+   
+    </div>
+     <br clear="all" />
+     
+   
+
+
+    
+    <div style="float:right; margin-right:00px; min-width:120px;" id="toggle_annul">
+%{include file="memo/toggle_annul_card.html" bill=$claim}%
+</div>
+    
+    
+      
+     %{if $field_rights.send_ruk_sz}%
+<div style="float:left; margin-right:10px;  ">
+	<input type="submit" name="send_ruk_sz" id="send_ruk_sz" value="Отправить на согласование"  />
+</div>
+%{/if}%
+
+%{if $field_rights.send_dir_sz}%
+<div style="float:left; margin-right:10px; ">
+	<input type="submit" name="send_dir_sz" id="send_dir_sz" value="Отправить на утверждение"  />
+</div>
+%{/if}%
+     
+     
+%{if $can_escal}%
+<div style="float:left; margin-right:10px; ">
+	<input type="submit" name="to_escal" id="to_escal" value="Эскалировать"  />
+</div>
+
+<br clear="all" />
+%{/if}%
+          
+    
+    
+   
+    
+        
+   <div style="float:left; margin-right:20px;  ">
+     <strong>Вид:</strong><br />
+
+    %{$claim.kind_name}%
+
+    
+    </div>
+    
+    
+    
+    
+    <div style="float:left; margin-right:20px;">
+    <strong>Дата создания:</strong><br />
+    
+    %{$claim.pdate}% 
+
+    <small>создано: %{$created_by}%</small>
+    </div>
+
+    
+    
+    
+    <div style="float:left; margin-right:20px;">
+ 
+        <label for="manager_select">Сотрудник:</label><br>
+    
+        <input type="hidden"  id="manager_id" name="manager_id" value="%{$claim.manager_id}%" />
+       
+        <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:220px;" />
+      
+     
+        
+        <input type="button" id="zmanager_select"   value="..." %{if !$can_modify or !$can_modify_manager}% disabled%{/if}% />
+        <input type="button" id="zmanager_clear"   value="x"  %{if !$can_modify or !$can_modify_manager}% disabled%{/if}% />
+        
+        %{include file="memo/zmanager_actions.html" can_modify= $can_modify_manager }%
+        
+    </div>
+
+   
+   <br clear="all" />
+    <p />   
+
+     <div style="float:left; margin-right:10px;">
+    <label for="topic">Тема:</label><br>
+    
+     <input type="text"  id="topic"  name="topic"  value="%{$claim.topic|escape}%" %{if !$can_modify}% disabled="disabled"%{/if}%  size="100" maxlength="255" style="width:670px;"   />
+    
+     </div>
+ 
+  <br clear="all" />
+    <p />  
+    
+    
+<label for="txt">Комментарий:</label><br />
+<textarea cols="80" rows="15" name="txt" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$claim.txt|escape}%</textarea>
+<p />
+
+  <script type="text/javascript">
+	CKEDITOR.replace( 'txt',
+					 
+					 {
+						  
+						  customConfig : '/ckeditor4/config-kp.js',
+						 'width':'99%',
+						 'height':'100px'
+						 
+    				  }
+					 );
+	</script>
+ 
+   
+    
+    
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:scroll;">
+        %{include file="memo/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$claim.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="memo/d_notes_dialog.html" word="notes" named="Примечания" user_id=$claim.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+    
+  
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1"  %{if $claim.is_confirmed==1}% checked="checked"%{/if}% %{if !$can_confirm_price or !$field_rights.to_confirm}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_chief").prop("disabled",true);
+		
+			$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_price_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_price_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+		
+		 
+		if(state==0){
+			 $("#is_ruk_1").prop("checked",false);
+			 $("#is_ruk_1").trigger("change");
+			  $("#is_ruk_1").prop("checked",false);
+			  
+			   $("#is_ruk_2").prop("checked",false);
+			 $("#is_ruk_2").trigger("change");
+			  $("#is_ruk_2").prop("checked",false);
+			  
+			  
+			  $("#is_dir_1").prop("checked",false);
+			 $("#is_dir_1").trigger("change");
+			  $("#is_dir_1").prop("checked",false); 
+			  
+			  $("#is_dir_2").prop("checked",false);
+			 $("#is_dir_2").trigger("change");
+			  $("#is_dir_2").prop("checked",false); 
+		}
+	});
+});
+</script>
+
+<p />
+
+
+ 
+ 	 <strong>Руководитель отдела: </strong>
+
+    
+  
+        <input type="checkbox" id="is_ruk_1" name="is_ruk" value="1"  %{if $claim.is_ruk==1}% checked="checked"%{/if}% %{if !$can_ruk_sz or !$field_rights.to_ruk_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_ruk_1">Утверждаю</label>
+        
+        
+         
+        <span id="is_confirmed_ruk_confirmer_1">%{$is_confirmed_ruk_confirmer_1}%</span>
+     
+    &nbsp;&nbsp;&nbsp;
+     
+        <input type="checkbox" id="is_ruk_2" name="is_ruk" value="2"  %{if $claim.is_ruk==2}% checked="checked"%{/if}% %{if !$can_ruk_sz or !$field_rights.to_ruk_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_ruk_2">Не утверждаю</label>
+         
+        <span id="is_confirmed_ruk_confirmer_2">%{$is_confirmed_ruk_confirmer_2}%</span>
+        
+        <br>
+		<label for="ruk_not">Комментарий руководителя отдела:</label><br>
+        
+        <textarea id="ruk_not" name="ruk_not" style="min-width:200px; width:100%; height:30px;"  %{if !$can_ruk_sz or !$field_rights.ruk_not}% disabled="disabled"%{/if}%>%{$claim.ruk_not|escape:"html"}%</textarea>
+     
+    
+    
+    <script type="text/javascript">
+    $(function(){
+        $("#is_ruk_1").bind("click",function(){
+            
+            if(	$("#is_ruk_1").prop("checked")){
+                
+                 state=1;
+				 $("#is_ruk_2").prop("checked", false).trigger("change");
+            }else state=0;
+            
+            
+            $.ajax({
+                  async: true,
+                  url: "/js/kp.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_is_confirmed_price_confirmer",
+                      state: state
+                  },
+                  beforeSend: function(){
+                   $("#is_confirmed_ruk_confirmer_1").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                  },
+                  success: function(data){
+                   
+                    $("#is_confirmed_ruk_confirmer_1").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+             
+              
+            
+            
+        });
+		
+		$("#is_ruk_2").bind("click",function(){
+            
+            if(	$("#is_ruk_2").prop("checked")){
+                
+                 state=1;
+				  $("#is_ruk_1").prop("checked", false).trigger("change");
+            }else state=0;
+            
+            
+            $.ajax({
+                  async: true,
+                  url: "/js/kp.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_is_confirmed_price_confirmer",
+                      state: state
+                  },
+                  beforeSend: function(){
+                   $("#is_confirmed_ruk_confirmer_2").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                  },
+                  success: function(data){
+                   
+                    $("#is_confirmed_ruk_confirmer_2").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+             
+              
+            
+            
+        });
+    });
+    </script>
+ 
+<p />
+
+  
+
+ 	 <strong>Генеральный директор:</strong>
+
+
+     
+      <input type="checkbox" id="is_dir_1" name="is_dir" value="1"  %{if $claim.is_dir==1}% checked="checked"%{/if}% %{if !$can_dir_sz or !$field_rights.to_dir_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_dir_1">Утверждаю</label>
+       
+      <span id="is_confirmed_dir_confirmer_1">%{$is_confirmed_dir_confirmer_1}%</span>
+	 
+	
+    &nbsp;&nbsp;&nbsp;
+    
+        <input type="checkbox" id="is_dir_2" name="is_dir" value="2"  %{if $claim.is_dir==2}% checked="checked"%{/if}% %{if !$can_dir_sz or !$field_rights.to_dir_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_dir_2">Не утверждаю</label>
+       
+      <span id="is_confirmed_dir_confirmer_2">%{$is_confirmed_dir_confirmer_2}%</span>
+        <br>
+
+        <label for="dir_not">Комментарий генерального директора:</label><br>
+        
+        <textarea id="dir_not" name="dir_not" style="min-width:200px; width:100%; height:30px;" %{if  !$can_dir_sz or !$field_rights.dir_not}% disabled="disabled"%{/if}%>%{$claim.dir_not|escape:"html"}%</textarea>
+     
+    
+    
+<script type="text/javascript">
+$(function(){
+	$("#is_dir_1").bind("click",function(){
+		
+		if(	$("#is_dir_1").prop("checked")){
+			 $("#is_dir_2").prop("checked", false).trigger("change");
+			 state=1;
+		}else state=0;
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_dir_confirmer_1").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_dir_confirmer_1").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+	});
+	
+	$("#is_dir_2").bind("click",function(){
+		
+		if(	$("#is_dir_2").prop("checked")){
+			$("#is_dir_1").prop("checked", false).trigger("change");
+			 state=1;
+		}else state=0;
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_dir_confirmer_2").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_dir_confirmer_2").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+	});
+});
+</script>
+ 
+ 
+
+ 
+<br clear="all"/>
+<p />
+		
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку служебных записок" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+
+
+
+
+
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='memos.php';
+}else location.href='memos.php';" />
+	</form>
+
+%{if $can_edit and $can_modify}%
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	  var res=true;
+		var error_fields=new Array();
+		
+		if($.trim($("#topic").val()).length<15){
+		  
+		  res=res&&false;
+			 
+			error_fields.push({
+				"id":"topic",
+				"name":"Тема",
+				"error":"Укажите тему служебной записки (мин. 15 символов)!"
+			});	
+		  
+	  	  
+	  }	
+		
+	 if(($("#manager_id").val()==0)||($("#manager_id").val()=="")){
+		  
+		  res=res&&false;
+			 
+			error_fields.push({
+				"id":"manager_string",
+				"name":"Сотрудник",
+				"error":"Выберите сотрудника!"
+			});	
+		  
+	  	  
+	  }
+	  
+	  
+	  if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20 ){
+		   
+		   res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"txt",
+			  "name":"Комментарий",
+			  "error":"Укажите комментарий (мин. длина 20 символов)!"
+		  });
+	  }
+	  
+	  
+	  
+	  $(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+		
+		
+		return res;
+	 
+	});
+});
+</script>
+%{else}%
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	 	var res=true;
+		var error_fields=new Array();
+		
+		
+		
+		%{if $field_rights.to_ruk_sz}%
+		
+		//проверка доступности утверждения рук-лем
+		if((%{$claim.is_ruk}%==0)&&($("#is_ruk_2").prop("checked")==true)&&($("#ruk_not").val().length<15)){
+			
+				
+			 
+			
+			 
+				res=res&&false;
+				error_fields.push({
+					"id":"ruk_not",
+					"name":"Комментарий руководителя отдела:",
+					"error":"Укажите комментарий руководителя отдела (мин. длина 15 символов)!"
+				});	
+		 
+			 
+			 
+		}
+		%{/if}% 
+		
+		%{if $field_rights.to_dir_sz}%
+		
+		//проверка доступности утверждения рук-лем
+		if((%{$claim.is_dir}%==0)&&($("#is_dir_2").prop("checked")==true)&&($("#dir_not").val().length<15)){
+			
+				
+			 
+			
+			 
+				res=res&&false;
+				error_fields.push({
+					"id":"dir_not",
+					"name":"Комментарий генерального директора:",
+					"error":"Укажите комментарий генерального директора (мин. длина 15 символов)!"
+				});	
+			 
+		}
+		%{/if}% 
+		
+		
+		 $(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+		
+		
+		return res;
+	});
+});
+</script>
+%{/if}%
+
+
+<br clear="all" />
+<p />
+    
+     
+    
+    
+    
+    
+    
+    </p>
+  </div>
+ 
+  
+   %{if $has_syslog}%
+  <div id="tabs-6">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+
+</div>

@@ -1,0 +1,802 @@
+
+
+<script type="text/javascript">
+$(function(){
+	touchScroll('position_rules');
+	
+	
+	
+});
+</script>
+
+<div style="float:left; margin-left:10px;">
+<input type="button" value="Добавить правило..." id="position_add_rule"   %{if !$can_edit}% disabled="disabled"%{/if}% />
+</div>
+<br clear="all" />
+<div id="position_rules" style="width:100%; height:500px; border:1px solid silver; overflow:auto;">
+	%{include file="pl/rules/list.html"}%    
+</div>
+<br />
+
+
+
+
+
+<div id="position_rule_dialog" style="display:none;" title="Редактировать правило">
+	<input type="hidden" id="rule_id" value="0"/>
+    
+    <input type="hidden" id="rule_parent_id" value="%{$position.parent_id}%" />
+    
+    <label for="rule_kind_id">Вид:</label><br>
+	<select id="rule_kind_id">
+    %{$rules_kinds}%
+    </select>
+    
+    
+<br>
+<br>
+
+    
+    
+    
+    <label for="rule_option_str">Главная опция:</label><br>
+	<input type="text" id="rule_option_str" disabled size="60" maxlength="512" value="" style="width:300px;" />
+    <input type="hidden" id="rule_option_id" value="0" />
+    <input type="button" value="..." id="rule_option_select"/>
+    <input type="button" value="x" id="rule_option_clear"/>
+    <br>
+<br>
+
+    
+    
+    <label for="rule_quantity">Ограничение по количеству (0 -нет ограничений, не ноль - ограничить заданным значением):</label><br>
+    <input type="text" id="rule_quantity"  size="5" maxlength="512" value="0" />
+    <br>
+	<input type="checkbox" id="rule_is_fixed" disabled value="1"/>
+    <label for="rule_is_fixed">строгое ограничение (если не выбрано - то можно задать другое кол-во)</label>
+ 
+</div>
+
+
+
+
+
+<div id="position_item_dialog" style="display:none;" title="Редактировать связанную опцию">
+	<input type="hidden" id="item_rule_id" value="0"/>
+     
+    <label for="item_rule_option_str">Опция:</label><br>
+	<input type="text" id="item_rule_option_str" disabled size="60" maxlength="512" value="" style="width:300px;" />
+    <input type="hidden" id="item_rule_option_id" value="0" />
+    <input type="button" value="..." id="item_rule_option_select"/>
+    <input type="button" value="x" id="item_rule_option_clear"/>
+    <br>
+<br>
+
+    
+    
+    <label for="item_rule_quantity">Ограничение по количеству (0 -нет ограничений, не ноль - ограничить заданным значением):</label><br>
+    <input type="text" id="item_rule_quantity"  size="5" maxlength="512" value="0" />
+    <br>
+	<input type="checkbox" id="item_rule_is_fixed" disabled value="1"/>
+    <label for="item_rule_is_fixed">строгое ограничение (если не выбрано - то можно задать другое кол-во)</label>
+ 	<br>
+	<br>
+    
+    <input type="checkbox" id="item_rule_is_mandatory"  value="1"/>
+    <label for="item_rule_is_mandatory">обязательное условие (для связанных опций: опция, не отмеченная этой галочкой, по умолчанию выбирается, но выбор может быть снят)</label>
+    
+	
+</div>
+
+
+
+<script type="text/javascript">
+	function RuleAdd(){
+		res=true;	
+		
+		res=res&&IsCorrectRuleQuantity();
+		res=res&&IsCorrectRuleOption();
+		
+		if(res){
+			 is_fixed=0;
+			 if($("#rule_is_fixed").prop("checked")) is_fixed=1;
+			 
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"add_rule",
+					  "parent_id":"%{$position.id}%",
+					  "option_id":$("#rule_option_id").val(),
+					  "kind_id":$("#rule_kind_id").val(),
+					  "quantity":$("#rule_quantity").val(),
+					  "is_fixed":is_fixed
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+			
+		}
+		
+		
+		return res;
+	}
+	
+	function RuleEdit(){
+		res=true;	
+		
+		res=res&&IsCorrectRuleQuantity();
+		res=res&&IsCorrectRuleOption();
+		
+		if(res){
+			 is_fixed=0;
+			 if($("#rule_is_fixed").prop("checked")) is_fixed=1;
+			 
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"edit_rule",
+					  "id":$("#rule_id").val(),
+					  
+					  "option_id":$("#rule_option_id").val(),
+					  "kind_id":$("#rule_kind_id").val(),
+					  "quantity":$("#rule_quantity").val(),
+					  "is_fixed":is_fixed
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+			
+		}
+		
+		
+		return res;
+	}
+	
+	
+	function launchRuleEdit(id){
+		$("#rule_id").val(id);
+		$("#rule_kind_id").val($("#rule_kind_id_"+id).val());
+		$("#rule_option_id").val($("#rule_option_id_"+id).val());
+		$("#rule_quantity").val($("#rule_quantity_"+id).val());
+		//$("#rule_is_fixed").val($("#rule_is_fixed_"+id).val());
+		$("#rule_option_str").val($("#rule_str_"+id).html());
+		if($("#rule_is_fixed_"+id).val()==1) $("#rule_is_fixed").prop("checked",true);
+		else  $("#rule_is_fixed").prop("checked",false);
+		
+		if($("#rule_quantity").val()>0) $("#rule_is_fixed").prop("disabled",false);
+		else  $("#rule_is_fixed").prop("disabled",true);
+		
+		$("#position_rule_dialog").dialog({
+			buttons:{
+				"Редактировать правило":function(){
+					 res=RuleEdit();
+					 
+					 if(res) $(this).dialog("close");
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+		});	
+		$("#position_rule_dialog").dialog("open");	
+		
+	}
+	
+	function launchRuleDel(id){
+		if(window.confirm("Вы действительно хотите удалить правило взаимосвязи опций?")){
+			$("#rule_id").val(id);
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"del_rule",
+					  "id":$("#rule_id").val() 
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+		}
+	}
+	
+	function RuleReload(){
+		 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"reload_rules",
+					  "parent_id":"%{$position.id}%",
+					 
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					 $("#position_rules").html(' <img src="/img/wait.gif" width="32" height="32" alt="Подождите, пожалуйста...">  ');
+				  },
+				  success: function(data){
+					  $("#position_rules").html(data);
+				  }
+			});
+	}
+	
+	
+	function RuleClear(){
+		$("#rule_id").val("");
+		$("#rule_option_str").val("");
+		$("#rule_option_id").val(0);
+		$("#rule_quantity").val(0);
+		$("#rule_is_fixed").prop("checked",false);
+		$("#rule_is_fixed").prop("disabled", true);
+		
+	}
+	
+	function IsCorrectRuleQuantity(){
+		res=true;
+		local_res=true;
+		
+		sk=$("#rule_quantity").val();	
+		sk=sk.replace("\,","\.");
+		if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#rule_quantity").focus();
+			alert("Некорректно заполнено значение поля Ограничение по количеству !");
+			$("#rule_quantity").addClass("wrong");
+			
+		}else $("#rule_quantity").removeClass("wrong");
+		
+		
+		 
+		return res;
+	}
+	
+	function IsCorrectRuleOption(){
+		res=true;
+		local_res=true;
+		
+		sk=$("#rule_option_id").val();	
+		 
+		if((sk=="")||isNaN(sk)||(parseFloat(sk)==0)){
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#rule_option_str").focus();
+			alert("Выберите опцию !");
+			$("#rule_option_str").addClass("wrong");
+			
+		}else $("#rule_option_str").removeClass("wrong");
+		
+		
+		 
+		return res;
+	}
+	
+	$("#position_rule_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+			modal: true,
+			width: 450,
+			height: 300,
+			buttons:{
+				 
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+	});
+	
+	
+	function ItemClear(){
+		$("#item_rule_id").val("");
+		$("#item_rule_option_str").val("");
+		$("#item_rule_option_id").val(0);
+		$("#item_rule_quantity").val(0);
+		$("#item_rule_is_fixed").prop("checked",false);
+		$("#item_rule_is_fixed").prop("disabled", true);
+		$("#item_rule_is_mandatory").prop("checked",false);
+	}
+	
+	
+	function IsCorrectItemQuantity(){
+		res=true;
+		local_res=true;
+		
+		sk=$("#item_rule_quantity").val();	
+		sk=sk.replace("\,","\.");
+		if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#item_rule_quantity").focus();
+			alert("Некорректно заполнено значение поля Ограничение по количеству !");
+			$("#item_rule_quantity").addClass("wrong");
+			
+		}else $("#item_rule_quantity").removeClass("wrong");
+		
+		
+		 
+		return res;
+	}
+	
+	function IsCorrectItemOption(){
+		res=true;
+		local_res=true;
+		
+		sk=$("#item_rule_option_id").val();	
+		 
+		if((sk=="")||isNaN(sk)||(parseFloat(sk)==0)){
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#item_rule_option_str").focus();
+			alert("Выберите опцию !");
+			$("#item_rule_option_str").addClass("wrong");
+			
+		}else $("#item_rule_option_str").removeClass("wrong");
+		
+		
+		 
+		return res;
+	}
+	
+	
+	$("#position_item_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+			modal: true,
+			width: 450,
+			height: 300,
+			buttons:{
+				 
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+	});
+	
+	
+	$("#position_add_rule").bind("click", function(){
+		RuleClear();
+		$("#position_rule_dialog").dialog({
+			buttons:{
+				"Добавить правило":function(){
+					 res=RuleAdd();
+					 
+					 if(res) $(this).dialog("close");
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+		});	
+		$("#position_rule_dialog").dialog("open");	
+	});
+	
+	$("#rule_option_clear").bind("click", function(){
+		$("#rule_option_str").val("");
+		$("#rule_option_id").val(0);
+		 
+		$("#rule_is_fixed").prop("checked",false);
+		$("#rule_is_fixed").prop("disabled", true);
+		
+	});
+	
+	$("#rule_quantity").bind("change", function(){
+		res=true;
+		res=res&&IsCorrectRuleQuantity();
+		if(res){
+			sk=$("#rule_quantity").val();	
+			sk=sk.replace("\,","\.");
+			if((parseFloat(sk)>0)){
+				$("#rule_is_fixed").prop("disabled", false);
+					
+			}else{
+				$("#rule_is_fixed").prop("disabled", true);
+				$("#rule_is_fixed").prop("checked", false);
+			}
+				
+		}
+	});
+	
+	
+	
+	
+	//связанные опции
+	function ItemAdd(rule_id){
+		res=true;	
+		
+		res=res&&IsCorrectItemQuantity();
+		res=res&&IsCorrectItemOption();
+		
+		if(res){
+			 is_fixed=0;
+			 if($("#item_rule_is_fixed").prop("checked")) is_fixed=1;
+			 
+			 is_mandatory=0;
+			 if($("#item_rule_is_mandatory").prop("checked")) is_mandatory=1;
+			 
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"add_item",
+					  "rule_id":rule_id,
+					  "option_id":$("#item_rule_option_id").val(),
+					  
+					  "quantity":$("#item_rule_quantity").val(),
+					  "is_fixed":is_fixed,
+					  "is_mandatory":is_mandatory
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+			
+		}
+		
+		
+		return res;	
+	}
+	
+	function ItemEdit(){
+		res=true;	
+		
+		res=res&&IsCorrectItemQuantity();
+		res=res&&IsCorrectItemOption();
+		
+		if(res){
+			 is_fixed=0;
+			 if($("#item_rule_is_fixed").prop("checked")) is_fixed=1;
+			 
+			 is_mandatory=0;
+			 if($("#item_rule_is_mandatory").prop("checked")) is_mandatory=1;
+			 
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"edit_item",
+					  "id":$("#item_rule_id").val(),
+					  
+					  "option_id":$("#item_rule_option_id").val(),
+					  "kind_id":$("#item_rule_kind_id").val(),
+					  "quantity":$("#item_rule_quantity").val(),
+					  "is_fixed":is_fixed,
+					  "is_mandatory":is_mandatory
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+			
+		}
+		
+		
+		return res;
+	}
+	
+	
+	function launchItemAdd(rule_id){
+		ItemClear();
+		$("#position_item_dialog").dialog({
+			buttons:{
+				"Добавить опцию":function(){
+					 res=ItemAdd(rule_id);
+					 
+					 if(res) $(this).dialog("close");
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+		});	
+		$("#position_item_dialog").dialog("open");		
+	}
+	
+	$("#item_rule_option_clear").bind("click", function(){
+		$("#item_rule_option_str").val("");
+		$("#item_rule_option_id").val(0);
+		 
+		$("#item_rule_is_fixed").prop("checked",false);
+		$("#item_rule_is_fixed").prop("disabled", true);
+		
+	});
+	
+	$("#item_rule_quantity").bind("change", function(){
+		res=true;
+		res=res&&IsCorrectItemQuantity();
+		if(res){
+			sk=$("#item_rule_quantity").val();	
+			sk=sk.replace("\,","\.");
+			if((parseFloat(sk)>0)){
+				$("#item_rule_is_fixed").prop("disabled", false);
+					
+			}else{
+				$("#item_rule_is_fixed").prop("disabled", true);
+				$("#item_rule_is_fixed").prop("checked", false);
+			}
+				
+		}
+	});
+	
+	
+	function launchItemEdit(id){
+		$("#item_rule_id").val(id);
+		 
+		$("#item_rule_option_id").val($("#item_option_id_"+id).val());
+		$("#item_rule_quantity").val($("#item_quantity_"+id).val());
+		//$("#rule_is_fixed").val($("#rule_is_fixed_"+id).val());
+		$("#item_rule_option_str").val($("#item_str_"+id).html());
+		if($("#item_is_fixed_"+id).val()==1) $("#item_rule_is_fixed").prop("checked",true);
+		else  $("#item_rule_is_fixed").prop("checked",false);
+		
+		if($("#item_rule_quantity").val()>0) $("#item_rule_is_fixed").prop("disabled",false);
+		else  $("#item_rule_is_fixed").prop("disabled",true);
+		
+		
+		if($("#item_is_mandatory_"+id).val()==1) $("#item_rule_is_mandatory").prop("checked",true);
+		else  $("#item_rule_is_mandatory").prop("checked",false);
+		
+		$("#position_item_dialog").dialog({
+			buttons:{
+				"Редактировать опцию":function(){
+					 res=ItemEdit();
+					 
+					 if(res) $(this).dialog("close");
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+		});	
+		$("#position_item_dialog").dialog("open");	
+	}
+	
+	function launchItemDel(id){
+		if(window.confirm("Вы действительно хотите удалить правило взаимосвязи опций?")){
+			$("#item_rule_id").val(id);
+			 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"del_item",
+					  "id":$("#item_rule_id").val() 
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					  
+				  },
+				  success: function(data){
+					   
+					  RuleReload();
+				  }
+			});
+		}
+	}
+	
+	
+</script>
+
+
+
+<!-- блок отбора опций -->
+<div id="option_filter" title="Выберите опции" style="display:none;">
+	<div id="option_filter_scroll" style="overflow:auto; width:850px; height:500px;">
+	
+  <input type="hidden" value="" id="option_filter_field"  />
+  <table width="100%" class="reptable" border="0" cellspacing="0" cellpadding="2">
+    <thead>
+    <tr align="left" valign="top">
+        <th width="24" scope="col">
+             
+        </th>
+        <th width="30" scope="col">№</th>
+        <th width="80" scope="col">Код позиции </th>
+        <th width="*" scope="col">Наименование </th>
+        <th width="24" scope="col">ед. изм. </th>
+        <th width="24" scope="col"> Цена</th>
+    </tr>
+    <tr align="left" valign="top">
+        <th width="24" scope="col">
+           <!-- <input type="checkbox" value="1" id="option_filter_all" />-->
+        </th>
+        
+        <th width="30" scope="col"><input type="text" value="" size="5" maxlength="128" id="option_filter_field_id" /> </th>
+        <th width="80" scope="col"><input type="text" value="" size="10" maxlength="128" id="option_filter_field_code" /> </th>
+         <th width="*" scope="col"><input type="text" value="" size="25" maxlength="128" id="option_filter_field_name" /> </th>
+        <th width="24" scope="col">
+        
+         </th>
+         
+         <th width="24" scope="col"> <a href="#" id="option_filter_find"><img src="/img/icons/old-zoom-original.png" alt="Найти" title="Найти" width="24" height="24" border="0" /></a></th>
+    </tr>
+    
+    </thead>
+    <tbody id="option_filter_inner">
+    
+    </tbody>
+    </table>
+    </div>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	try{
+			touchScrollXY("option_filter_scroll");
+	}catch(e){}
+	
+	
+	 
+	$("#option_filter_field_id").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#option_filter_field_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#option_filter_field_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#option_filter_find").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	 
+	
+	
+	
+	
+	$("#option_filter").dialog({
+		autoOpen: false,
+			modal: true,
+			width: 900,
+			height: 600,
+			buttons:{
+				"Выбрать опцию": function(){
+					
+					$("input[id^=option_filter_sel_]:checked").each(function(index, element) {
+                    	//alert($(element).val());
+						
+						$("#"+$("#option_filter_field").val()+'_id').val($(element).val());
+						$("#"+$("#option_filter_field").val()+'_str').val( $(element).val() +" "+$("#option_filter_code_"+$(element).val()).val()+" "+$("#option_filter_name_"+$(element).val()).val());
+						
+                    });
+					
+					$(this).dialog("close");
+					 
+				},
+				"Закрыть": function(){
+					 $(this).dialog("close");
+					 
+				}
+			}
+	});
+	
+	
+	function PerformSearch(id){
+		 id=id||'rule_option';
+		 
+		 $("#option_filter_field").val(id);
+		 
+		 var except_ids=new Array();
+		 except_ids.push($("#"+id+'_id').val());
+		 
+		 $.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"prefind_options_card",
+					  "parent_id":"%{$position.id}%",
+					  "except_ids[]":except_ids,
+					  "price_kind_id":"%{$price_kind_id}%",
+					  "id":$("#option_filter_field_id").val(),
+					  "code":$("#option_filter_field_code").val(),
+					  "name":$("#option_filter_field_name").val(),
+					  "dimension_id":$("#option_filter_field_dimension_id").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					 $("#option_filter_inner").html('<tr><td colspan="6"><img src="/img/wait.gif" width="32" height="32" alt="Подождите, пожалуйста..."> </td></tr>');
+				  },
+				  success: function(data){
+					  $("#option_filter_inner").html(data);
+				  }
+			});
+	}
+	
+	
+	function LaunchSearch(fieldname, value){
+		$("input[id^=option_filter_field_]").val('');
+		$("#option_filter_field_"+fieldname+"").val(value);
+		
+		PerformSearch($("#option_filter_field").val()+'_id');	
+		$("#option_filter").dialog("open");
+		$("#option_filter_field_"+fieldname+"").focus();
+	}
+	
+	
+	$("#option_filter_find%{$prefix}%").bind("click", function(){
+		PerformSearch($("#option_filter_field").val()+'_id');
+		
+		return false;
+	});
+	
+	
+	$("#rule_option_select").bind("click", function(){
+		 
+		PerformSearch();	
+		$("#option_filter").dialog("open");
+		$("#option_filter_field_"+fieldname+"").focus();
+		
+		return false;
+	});
+	
+	
+	$("#item_rule_option_select").bind("click", function(){
+		 
+		PerformSearch('item_rule_option');	
+		$("#option_filter").dialog("open");
+		$("#option_filter_field_"+fieldname+"").focus();
+		
+		return false;
+	});
+	
+	 
+		
+});
+</script>

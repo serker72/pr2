@@ -1,0 +1,232 @@
+<div id="doc_vn_email_documents_dialog" title="Отправка pdf-документов на email" style="display:none;">
+<input id="doc_vn_email_documents_id" value="" type="hidden" />
+
+<div style="float:left; margin-right:20px;">
+    <b>Выберите адресата:</b>
+    
+    <div id="doc_vn_email_documents_addresses" style="border:1px solid silver; width:400px; height:350px; overflow:auto;" >
+    </div>
+
+</div>
+
+<div style="float:left; margin-right:0px;">
+	<strong>Выберите файлы:</strong>
+    
+    <div id="doc_vn_email_files" style="border:1px solid silver; width:400px; height:350px; overflow:auto;" >
+    </div>
+
+</div>
+<br clear="all" />
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+ 
+	
+	 
+	
+	//блок/разблок отгр. док.
+	 
+	//подгрузка адресатов
+	function doc_vn_email_documents_GetAddresses(sched_id){
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"load_pdf_addresses",
+				"id":sched_id //$("#supplier_id").val()
+			},
+			beforeSend: function(){
+				$("#doc_vn_email_documents_addresses").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#doc_vn_email_documents_addresses").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	//подгрузка файлов
+	function doc_vn_email_documents_GetFiles(sched_id){
+		$.ajax({
+			async: false,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"load_pdf_filelist",
+				"id":sched_id  
+			},
+			beforeSend: function(){
+				$("#doc_vn_email_files").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#doc_vn_email_files").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	
+	
+	
+	//вызов отправки 
+	function doc_vn_email_documents_SendData(){
+		res=true;
+		
+		 
+		
+		if(res&&($("input[id^=doc_vn_email_documents_address_]:checked").length==0)){
+			res=res&&false;
+			alert("Выберите хотя бы одного адресата!");
+		}
+		
+		
+		if(res&&($("input[id^=doc_vn_email_files_]:checked").length==0)){
+			res=res&&false;
+			alert("Выберите хотя бы один файл!");
+		}
+		
+		
+		if(res){
+			//вызов отправщика	
+			
+			  var addresses=new Array();
+			 
+			
+			$("input[id^=doc_vn_email_documents_address_]:checked").each(function(index, element) {
+                addresses.push($(element).val());
+            });
+			
+			
+			
+			
+			file_ids=new Array();
+			
+			$("input[id^=doc_vn_email_files_]:checked").each(function(index, element) {
+                file_ids.push($(element).val());
+            });
+			
+			//alert(file_ids); return;
+			
+			zc=window.open('ed_doc_vn_email_sender.php?id='+$("#doc_vn_email_documents_id").val()+'&send_email=1&email='+addresses+'&file_ids='+file_ids,'emb','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+			if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+			
+			
+			$("#doc_vn_email_documents_dialog").dialog("close");
+			
+			//перезагружать окно, если это форма документа 
+			/*if(($("#id").val()!=null)&&($("#id").val()!=undefined)){
+				location.reload();	
+			}*/
+			 
+	 
+		}
+	}
+	
+	
+	//запуск из карты
+	$("#doc_vn_email_documents").bind("click", function(){
+		$("#doc_vn_email_documents_id").val($("#id").val());
+		
+		 
+		
+		doc_vn_email_documents_GetAddresses($("#id").val());
+		
+		
+		
+		//файловый блок
+	 	doc_vn_email_documents_GetFiles($("#id").val());
+		
+		
+		//управление доступностью видимых форм
+		%{if  !$field_rights.to_print_email}% 
+		$("#doc_vn_email_files_s3").prop("disabled", true);
+		%{/if}%
+		
+		%{if  !$field_rights.to_print_sz}% 
+		$("#doc_vn_email_files_s0").prop("disabled", true);
+		%{/if}%
+		
+		%{if  !$field_rights.to_print_sz or $bill.hd_count==0}% 
+		$("#doc_vn_email_files_s1").prop("disabled", true);
+		$("#doc_vn_email_files_s2").prop("disabled", true);
+		%{/if}%
+		
+		
+		
+		$("#doc_vn_email_documents_dialog").dialog("open");
+		return false;
+	});
+	
+	//запуск из реестра
+	function  doc_vn_email_documents_launch(id){
+		$("#doc_vn_email_documents_id").val(id);
+		 
+		
+		doc_vn_email_documents_GetAddresses(id);
+		
+		
+		 //файловый блок
+	 	doc_vn_email_documents_GetFiles(id);
+		
+		//управление доступностью видимых форм
+//		if($("#hd_count_"+id).val()>0)
+		if($("#to_print_sz_"+id).val()==1){
+			$("#doc_vn_email_files_s0").prop("disabled", false);		
+		}else{
+			$("#doc_vn_email_files_s0").prop("disabled", true);	
+		}
+		
+		if(($("#to_print_sz_"+id).val()!=1)||($("#hd_count_"+id).val()==0)){
+			$("#doc_vn_email_files_s1").prop("disabled", true);
+				$("#doc_vn_email_files_s2").prop("disabled", true);
+		}else{
+			$("#doc_vn_email_files_s1").prop("disabled", false);
+				$("#doc_vn_email_files_s2").prop("disabled", false);
+		}
+		
+		if($("#to_print_email_"+id).val()==1){
+			$("#doc_vn_email_files_s3").prop("disabled", false);		
+		}else{
+			$("#doc_vn_email_files_s3").prop("disabled", true);	
+		}
+		
+		$("#doc_vn_email_documents_dialog").dialog("open");
+		return false;
+	}
+	
+	
+	
+	$("#doc_vn_email_documents_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 900,
+		height: 500,
+		dialogClass: 'semi_auth',
+		buttons: {
+			"Готово": function(){
+				
+				
+					doc_vn_email_documents_SendData();
+				 
+				
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+ 
+</script>

@@ -1,0 +1,372 @@
+<script type="text/javascript" src="/js/jquery.maskedinput-1.3.min.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_begin").datepicker();
+	$("#pdate_end").datepicker();
+	
+	/*
+	$("#task_ptime").mask("99:99");
+	touchScroll('suppliers_list');
+	
+	
+	touchScroll('users_list');
+	*/
+	try{
+	  if(isTouchDevice()){
+		
+		touchScrollXY('suppliers');	
+		touchScrollXY('cities');		  
+	  }
+	}catch(e){}
+
+	
+});
+</script>
+ %{include file="every_help_dialog.html" filename="mission_create.html" prefix="" description="Информация о создании командировки" style="float:right"}%
+
+<h1>Создание командировки</h1>
+
+
+<form action="mission_create.php" method="post" id="crea_form">
+
+
+<label for="sent_user_id">
+Командированный сотрудник:
+</label><br />
+<select id="sent_user_id" name="sent_user_id" style="width:370px" %{if !$can_all_missions}% disabled="disabled"%{/if}%>
+%{section name=usec loop=$users}%
+<option value="%{$users[usec].id}%" %{if $users[usec].is_current}% selected="selected"%{/if}%>
+%{$users[usec].name_s}% (%{$users[usec].login}%)
+</option>
+%{/section}%
+</select>
+
+
+<br />
+
+<p />
+
+
+<h4>Период командировки:</h4>
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate_begin">с:</label><br />
+<input type="text" value="%{$pdate_begin}%" id="pdate_begin" name="pdate_begin" size="10" maxlength="10" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="pdate_end">по:</label><br />
+<input type="text" value="%{$pdate_end}%" id="pdate_end" name="pdate_end" size="10" maxlength="10" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+<label for="selectSupplier">Контрагент:</label><br />
+<input type="text" value="-" id="supplier_id_string"  size="40" maxlength="512" style="width:530px;" disabled="disabled" /> 
+<input type="hidden" value="0" id="supplier_id" name="supplier_id" /> 
+<input type="button" value="..." id="selectSupplier" style="width:30px;" />
+<input type="button" value="x" id="clearSupplier" style="width:30px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:10px;">
+<label for="selectCity">Город командировки:</label><br />
+<input type="text" value="-" id="city_id_string"  size="40" maxlength="512" style="width:530px;" disabled="disabled" /> 
+<input type="hidden" value="0" id="city_id" name="city_id" /> 
+<input type="button" value="..." id="selectCity" style="width:30px;" />
+<input type="button" value="x" id="clearCity" style="width:30px;" />
+</div>
+<br clear="all" />
+<p />
+
+
+%{include file="mission/supplier_actions.html"}%
+%{include file="mission/city_actions.html"}%
+
+
+
+<h4>Расходы на командировку:</h4>
+<script type="text/javascript">
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+function RecalcPlan(){
+	//$("#value_"+hash).val().replace("\,","\.")
+	var itogo=0.0;
+	var is_correct=true;
+	$.each($("input[id^=exp_id_]"), function(k,v){
+		
+		if(is_correct){
+		  vv=$(v).val().replace("\,","\.");
+		  
+		  
+		  if(isNaN(vv)||($(v).val().length==0)){
+			  alert("Неправильно введена сумма!");
+			  $(v).addClass("wrong");
+			  $(v).focus();
+			  //break;
+			  is_correct=is_correct&&false;
+		  }else{
+			  $(v).removeClass("wrong");
+		  }
+		  
+		  itogo+=parseFloat(vv);
+		}
+	});
+	
+	$("#exp_cost_plan").html(roundPlus(itogo,2));
+}
+
+</script>
+ <table width="600" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="400">Наименование</th>
+        
+        <th scope="col" width="100">План., руб.</th>
+        <th scope="col" width="100">Факт., руб.</th>
+      
+    </tr>
+   <tbody> 
+   %{section name=rasec loop=$ras}% 
+   <tr align="left" valign="top">
+   		<td width="400"><label for="exp_id_%{$ras[rasec].id}%">%{$ras[rasec].name}%</label></td>
+        
+        <td width="100">
+        <input type="text" value="0" id="exp_id_%{$ras[rasec].id}%" name="exp_id_%{$ras[rasec].id}%" style="width:100px;" size="18" maxlength="255" />
+        </td>
+        <td width="100">- 
+        <script type="text/javascript">
+		$(function(){
+			$("#exp_id_%{$ras[rasec].id}%").bind("change", function(){
+				RecalcPlan();
+			});
+		});
+		</script>  
+        </td>
+   </tr>
+   %{/section}%
+   <tr align="left" valign="top">
+   		<td width="400"><strong>Итого, руб.</strong></td>
+        
+        <td width="100" align="center" id="exp_cost_plan" style="font-weight:bold;">
+       0
+        </td>
+        <td width="100" align="center" id="exp_cost_fact" style="font-weight:bold;">-</td>
+   </tr>
+   </tbody>
+    </table> 
+
+
+<p />
+
+
+
+
+
+
+
+
+
+<label for="txt">Описание командировки:</label><br />
+<textarea cols="80" rows="15" name="txt"></textarea>
+<p />
+
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+<script type="text/javascript">
+	CKEDITOR.replace( 'txt',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_mini.js'
+    				  }
+					 );
+	</script>
+
+
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "swfupl-js/upload_file_mission.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%"
+				},
+				file_size_limit : "192 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите файл...</span>',
+				button_width: 130,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload2.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+
+<div id="uploaded_files">
+	
+</div>
+
+<strong>Приложите файл:</strong>
+
+
+
+<div class="fieldset flash" id="fsUploadProgress">
+			<span class="legend"></span>
+</div>
+<div id="divStatus"></div>
+<div>
+				<span id="spanButtonPlaceHolder"></span>
+                
+                <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+
+<br />
+<em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  				
+</div>
+
+
+<p />
+
+
+<input type="submit" value="Создать командировку" name="makeOrder" />
+<p />
+
+<input type="button" value="Отменить командировку" name="cancelOrder" onclick="location.href='missions.php';" />
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	
+	   //контроль дат!
+	  //конечная дата д.быть больше начальной
+	  date1=new Date($("#pdate_begin").val().substr(6,4), parseInt($("#pdate_begin").val().substr(3,2))-1,  $("#pdate_begin").val().substr(0,2));
+	  
+	  
+	  date2=new Date($("#pdate_end").val().substr(6,4), parseInt($("#pdate_end").val().substr(3,2))-1,  $("#pdate_end").val().substr(0,2));
+	  
+	 // alert(date2);
+	  if(date1>date2){
+	  	alert("Неверно выбран период командировки: дата окончания долнжна быть позже даты начала командировки!");
+	  	return false;	
+	  }
+		
+	
+	
+	  if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 5 ){
+		  alert("Пожалуйста, добавьте описание к командировке!\nБез описания создание командировки невозможно.");
+		  CKEDITOR.instances.txt.focus();
+		  return false;
+	  }
+	  
+	  
+	    
+	 
+	  
+	  
+	  
+	  //указать к-та
+	  if(parseInt($("#supplier_id").val())==0){
+	  	alert("Пожалуйста, укажите контрагента!");
+	    return false;
+	  }
+	  
+	  //указать город
+	   if(parseInt($("#city_id").val())==0){
+	  	alert("Пожалуйста, укажите город!");
+	    return false;
+	  }
+	  
+	  
+	
+	  
+	  
+	  
+	  //д.б. выбран хотя бы 1 ответственный!
+	  /*if($("input[id^=user_id_]").length==0){
+		   alert("Пожалуйста, выберите хотя бы одного ответственного за исполнение сотрудника!\nБез выбора ответственных сотрудников создание задачи невозможно.");
+		  
+		  return false;
+	  }*/
+	 
+	
+	});
+});
+</script>

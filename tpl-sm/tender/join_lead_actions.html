@@ -1,0 +1,233 @@
+<script type="text/javascript">
+$(function(){
+	 
+	$("#join_lead_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1024,
+		height: 600,
+		 
+		buttons: {
+			"Готово":  function(){
+				 can_ret=true;
+				 
+				 //проверка корректности
+				 lead_id=$("input[name=join_lead_id]:checked").val();
+				 if((lead_id==null)||(lead_id==undefined)||(lead_id==0)){
+					can_ret=can_ret&&false;
+					alert("Выберите лид для продолжения работы!"); 
+				 }
+				 
+				 if(can_ret){
+					// alert($("#manager_id").val()+" vs "+$("#join_lead_manager_id_"+lead_id).val());
+					if($("#manager_id").val()!=$("#join_lead_manager_id_"+lead_id).val()){
+						can_ret=can_ret&&window.confirm("Внимание!\nУ тендера и лида не совпадают кураторы!\nКуратор тендера: "+$("#manager_string").val()+", куратор лида: "+$("#join_lead_manager_name_"+lead_id).html()+".\nПри продолжении куратором лида будет выставлен сотрудник "+$("#manager_string").val()+".\nПродолжить?");
+					}
+					 
+				 }
+				 if(can_ret&&($("#join_lead_status_id_"+lead_id).val()==35)){
+					can_ret=can_ret&&window.confirm("Внимание!\nЛид находится в статусе На рассмотрении.\nВы уверены, что тендер тоже находится на рассмотрении?"); 
+				 }
+				 
+				 
+				 if(can_ret){
+				 	
+					//вызвать сравнение полей...
+					 $("#join_our_lead_id").val(lead_id);
+					 
+					 $("#join_our_tender_id").val("%{$bill.id}%");
+					 
+					 $("#join_lead_diff_dialog").dialog("open");
+					 $.ajax({
+						async: true,
+						url: "/js/tender.php",
+						type: "POST",
+				   
+						data:{
+							"action":"compare_fields_leads",
+							"tender_id":"%{$bill.id}%",
+							"lead_id":lead_id 
+							
+						},
+						beforeSend: function(){
+						  $("#join_lead_diff_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+						},
+						success: function(data){
+						  
+						  //alert(data.contract_no);
+						  $("#join_lead_diff_found").html(data); 
+					   
+						   
+						},
+						error: function(xhr, status,m){
+						   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						   ///alert("Ошибка загрузки лидов."+status+m);	
+						}	 
+					  });
+					 
+					
+					
+					//$(this).dialog("close"); 
+					
+					
+				 }
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		},
+		open: function(){
+			//загрузить лиды
+			 $.ajax({
+			  async: true,
+			  url: "/js/tender.php",
+			  type: "POST",
+		 
+			  data:{
+				  "action":"scan_leads",
+				  "tender_id":"%{$bill.id}%" 
+				  
+			  },
+			  beforeSend: function(){
+				$("#leads_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#leads_found").html(data); 
+			 
+				 
+			  },
+			  error: function(xhr, status,m){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				 ///alert("Ошибка загрузки лидов."+status+m);	
+			  }	 
+			});
+			
+		}
+	 });
+	 
+	 
+	 $("#join_lead_diff_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 290,
+		 
+		buttons: {
+			"Готово":  function(){
+				 //проверка корректности
+				 
+				
+				 
+				 function doBlink(v){
+			
+					var blr=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr);
+						$(v).removeClass("blue");
+					}, 3000);
+				 }
+				
+				 
+				 can_ret=true;
+				 err_fields=new Array();
+				 
+				 $.each($("#join_fields_data input[name^=join_]"), function(k,v){
+					 if(($(v).val()==null)||($(v).val()==undefined)) can_ret=can_ret&&false;
+					 //alert($("#join_fields_data input[name="+$(v).attr("name")+"]:checked").val());
+					 
+					 if(($("#join_fields_data input[name="+$(v).attr("name")+"]:checked").val()==undefined)||($("#join_fields_data input[name="+$(v).attr("name")+"]:checked").val()==null)) can_ret=can_ret&&false;
+					 err_fields.push($("label[for="+$(v).attr("id")+"]"));
+					 
+				 });
+				 
+				 if(can_ret){
+					  if(!window.confirm("Подтвердите пожалуйста, что данные корректны.")) return false;
+				 
+				 //
+				 	//передаем аргументы...
+					
+					$.ajax({
+					  async: false,
+					  url: "/js/tender.php",
+					  type: "POST",
+				 
+					  data:{
+						  "action":"join_lead",
+						  "tender_id":$("#join_our_tender_id").val(),
+						  "lead_id":$("#join_our_lead_id").val(),
+						  "eq_type_id":$("input[name=join_eq_type_id]:checked").val(),
+						  "max_price":$("input[name=join_max_price]:checked").val()
+						  
+					  },
+					  beforeSend: function(){
+						//$("#leads_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+					  },
+					  success: function(data){
+						
+						//alert(data.contract_no);
+						alert("Лид успешно прикреплен к тендеру.");
+						$("#join_lead_diff_dialog").dialog("close");
+						$("#join_lead_dialog").dialog("close");
+						
+						location.reload();
+					 
+						 
+					  },
+					  error: function(xhr, status,m){
+						 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						 alert("Ошибка прикрепления лида к тендеру");	
+					  }	 
+					});
+					
+					 
+				 }else{
+					alert("Выберите значения полей для занесения в лид после прикрепления его к тендеру!");	 
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+				 }
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	 
+	 
+});
+</script>
+
+<div id="join_lead_dialog" title="Выберите лид" style="display:none;">
+
+
+   <div id="leads_found">
+   
+   </div>
+
+
+  
+ 
+</div>
+
+
+<div id="join_lead_diff_dialog" title="Преобразуемые поля лида" style="display:none;">
+
+  <input type="hidden" id="join_our_tender_id" value="">
+  <input type="hidden" id="join_our_lead_id" value="">
+   <div id="join_lead_diff_found">
+   
+   </div>
+
+
+  
+ 
+</div>
+ 

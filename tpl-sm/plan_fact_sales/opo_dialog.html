@@ -1,0 +1,605 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+	touchScroll("notes");
+</script>
+
+%{include file="plan_fact_sales/supplier_actions.html"}%
+
+
+<script type="text/javascript">
+$(function(){ 
+  $("#fact_opo_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 500,
+		 
+		height: 550,
+		buttons:{
+			"Ввести данные": function(){
+				
+				
+				
+			},
+			"Отмена": function(){
+				$(this).dialog('close');
+			}
+		}
+  });
+});
+
+function OPOCheckData(){
+	can_go=true;
+				
+				/*if($("#fact_opo_supplier_name").val().length<3){
+					can_go=can_go&&false;
+					alert("Заполните поле Название клиента!");
+					$("#fact_opo_supplier_name").focus();	
+				}*/
+				
+				if(can_go&&(($("#fact_opo_supplier_id").val().length==0)||($("#fact_opo_supplier_id").val()==0)||($("#fact_opo_supplier_id").val()==""))){
+					can_go=can_go&&false;
+					alert("Укажите контрагента!");
+					$("#fact_opo_supplier_select").focus();	
+				}
+				
+				if(can_go&&($("#fact_opo_city_id").val().length==0)){
+					can_go=can_go&&false;
+					alert("Укажите город!");
+					$("#fact_opo_select_city").focus();	
+				}
+				
+				
+				if(can_go&&($("#fact_opo_contract_sum").val().length==0)){
+					can_go=can_go&&false;
+					alert("Укажите сумму договора!");
+					$("#fact_opo_contract_sum").focus();	
+				}
+				
+				if(can_go&&(isNaN($("#fact_opo_contract_sum").val().replace(/\,/, '.')))){
+					can_go=can_go&&false;
+					alert("Укажите корректную сумму договора!");
+					$("#fact_opo_contract_sum").focus();	
+				}
+				
+				if(can_go&&(parseFloat($("#fact_opo_contract_sum").val().replace(/\,/, '.'))<=0)){
+					can_go=can_go&&false;
+					alert("Укажите корректную сумму договора!");
+					$("#fact_opo_contract_sum").focus();	
+				}
+				//fact_opo_eq_name
+				/*if(can_go&&(($("#fact_opo_eq_id").val()==0)||($("#fact_opo_eq_id").val()==null)||($("#fact_opo_eq_id").val()==undefined))){
+					can_go=can_go&&false;
+					alert("Укажите название станка!");
+					$("#fact_opo_eq_id").focus();	
+				} */
+				if(can_go&&($("#fact_opo_eq_name").val().length==0)){
+					can_go=can_go&&false;
+					alert("Укажите название станка!");
+					$("#fact_opo_eq_name").focus();	
+				}
+				
+				if(can_go&&(($("#fact_opo_producer_id").val()==0)||($("#fact_opo_producer_id").val()==null)||($("#fact_opo_producer_id").val()==undefined))){
+					can_go=can_go&&false;
+					alert("Выберите производителя!");
+					$("#fact_opo_producer_id").focus();	
+				}
+				
+				if(can_go&&($("#fact_opo_contract_no").val().length==0)){
+					can_go=can_go&&false;
+					alert("Укажите номер договора!");
+					$("#fact_opo_contract_no").focus();	
+				}
+				
+				if(can_go&&(($("#fact_opo_year").val().length!=4)||isNaN($("#fact_opo_year").val()))){
+					can_go=can_go&&false;
+					alert("Укажите год договора!");
+					$("#fact_opo_year").focus();	
+				}
+				
+				if(can_go&&(($("#fact_opo_month").val()==0)||($("#fact_opo_month").val()==undefined)||($("#fact_opo_month").val()==null))){
+					can_go=can_go&&false;
+					alert("Укажите месяц договора!");
+					$("#fact_opo_year").focus();	
+				}
+				
+				return can_go;
+}
+
+function OPONewData(){
+	can_go=OPOCheckData();
+				
+				if(can_go){
+					//ajax - вводим запись
+					//parseInt($("#fact_opo_supplier_is_new").prop("checked")),
+					if($("#fact_opo_supplier_is_new").prop("checked")) supplier_is_new=1;
+					else supplier_is_new=0;
+					
+					eq_is_new=0;
+					if($("#fact_opo_eq_is_new_0").prop("checked")) eq_is_new=0;
+					else if($("#fact_opo_eq_is_new_1").prop("checked")) eq_is_new=1;
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/plan_fact_sales.php",
+					  type: "POST",
+					  data:{
+						  "action":"save_fact_opo",
+						  "month":$("#fact_opo_month").val(),
+						  "year":$("#fact_opo_year").val(),
+						  "user_id":$("#fact_opo_user_id").val(),
+						  /*"supplier_name":$("#fact_opo_supplier_name").val(),*/
+						  "supplier_id":$("#fact_opo_supplier_id").val(),
+						  "supplier_is_new":supplier_is_new,
+						  "eq_name":$("#fact_opo_eq_name").val(),
+						  /*"eq_id":$("#fact_opo_eq_id").val(),*/
+						  "eq_is_new":eq_is_new,
+						 
+						  "contract_sum":$("#fact_opo_contract_sum").val(),
+						  "contract_currency_id":$("#fact_opo_contract_currency_id").val(),
+						  "city_id":$("#fact_opo_city_id").val(),
+						  "price_kind_id":$("#fact_opo_price_kind_id").val(),
+						  "producer_id":$("#fact_opo_producer_id").val(),
+ 						  "contract_no":$("#fact_opo_contract_no").val(),
+						  "notes":$("#fact_opo_notes").val()
+						  
+					  },
+					  beforeSend: function(){
+						 
+					  },
+					  success: function(data){
+						  $("#fact_opo_dialog").dialog('close');	
+						  alert("Изменения в план/факт продаж внесены."+data);	
+						  location.reload();
+					  },
+					  error: function(d,k,m){
+						  //alert(d+' '+k+' '+m);
+					  }
+					});
+					
+				}
+}
+
+function OPOSaveData(){
+	can_go=OPOCheckData();
+				
+				if(can_go){
+					//ajax - вводим запись
+					//parseInt($("#fact_opo_supplier_is_new").prop("checked")),
+					if($("#fact_opo_supplier_is_new").prop("checked")) supplier_is_new=1;
+					else supplier_is_new=0;
+					
+					eq_is_new=0;
+					if($("#fact_opo_eq_is_new_0").prop("checked")) eq_is_new=0;
+					else if($("#fact_opo_eq_is_new_1").prop("checked")) eq_is_new=1;
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/plan_fact_sales.php",
+					  type: "POST",
+					  data:{
+						  "action":"save_exist_fact_opo",
+						  "id":$("#fact_opo_id").val(),
+						  "month":$("#fact_opo_month").val(),
+						  "year":$("#fact_opo_year").val(),
+						  "user_id":$("#fact_opo_user_id_select").val(),
+						  /*"supplier_name":$("#fact_opo_supplier_name").val(),*/
+						  "supplier_id":$("#fact_opo_supplier_id").val(),
+						  "supplier_is_new":supplier_is_new,
+						  "eq_name":$("#fact_opo_eq_name").val(),
+						  /*"eq_id":$("#fact_opo_eq_id").val(),*/
+						  "eq_is_new":eq_is_new,
+						 
+						  "contract_sum":$("#fact_opo_contract_sum").val(),
+						  "contract_currency_id":$("#fact_opo_contract_currency_id").val(),
+						  "city_id":$("#fact_opo_city_id").val(),
+						  "price_kind_id":$("#fact_opo_price_kind_id").val(),
+						  "producer_id":$("#fact_opo_producer_id").val(),
+ 						  "contract_no":$("#fact_opo_contract_no").val(),
+						  "notes":$("#fact_opo_notes").val()
+						  
+					  },
+					  beforeSend: function(){
+						 
+					  },
+					  success: function(data){
+						  $("#fact_opo_dialog").dialog('close');	
+						  alert("Изменения в план/факт продаж внесены."+data);	
+						  location.reload();
+					  },
+					  error: function(d,k,m){
+						  //alert(d+' '+k+' '+m);
+					  }
+					});
+					
+				}
+}
+
+//диалог ввода данных (для работы в таблице плана/факта)
+function OpoDialog(user_id, year, month_no, currency_id, department_id){
+	//подставить поля
+	var monthes=new Array('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
+	$("#fact_opo_user_id").val(user_id);
+	$("#fact_opo_user_id_string").val($("#user_"+user_id).html());
+	
+	$("#fact_opo_month").val(month_no);
+	$("#fact_opo_month_string").val(monthes[month_no-1]);
+	
+	$("#fact_opo_year").val(year);
+	
+	$("#fact_opo_contract_currency_id").val($("#currency_"+department_id).val());
+	$("#fact_opo_contract_currency_signature").val($("#currency_"+department_id+" option:selected").html());
+	
+	 
+	$("#fact_opo_supplier_name").val('');
+	$("#fact_opo_supplier_id").val('');
+	
+	$("#fact_opo_eq_name").val('');
+	//$("#fact_opo_eq_id").val('');
+	$("#fact_opo_producer_id").val('');
+	$("#fact_opo_contract_sum").val('');
+	$("#fact_opo_contract_no").val('');
+	
+	$("#fact_opo_city_id").val('');
+	
+	$("#fact_opo_city_id_string").val('');
+	$("#fact_opo_notes").val('');
+	
+	$("#fact_opo_user_unselectable").show();
+	$("#fact_opo_user_selectable").hide();
+	
+	
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/plan_fact_sales.php",
+	  type: "POST",
+	  data:{
+		  "action":"load_producer_id",
+		  "department_id":department_id
+		  
+	  },
+	  beforeSend: function(){
+		  $("#fact_opo_producer_id").html('');
+	  },
+	  success: function(data){
+		// alert(data);
+		 $("#fact_opo_producer_id").html(data);
+	  },
+	  error: function(d,k,m){
+		  //alert(d+' '+k+' '+m);
+	  }
+	});
+	
+	// OPONewData()
+	$("#fact_opo_dialog").dialog({buttons:{
+			"Ввести данные": function(){
+				
+				 OPONewData();
+				
+			},
+			"Отмена": function(){
+				$(this).dialog('close');
+			}
+	}});
+	
+	$("#fact_opo_dialog").dialog('open');
+		
+}
+
+
+//функция правки данных из реестра
+function OpoSaveDialog(id){
+	//подставить поля
+	var monthes=new Array('Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь');
+	
+	$("#fact_opo_id").val(id);
+	
+	
+	
+	
+	
+	$("#fact_opo_user_id").val($("#user_id_"+id).val())
+	;
+	$("#fact_opo_user_id_string").val($("#us_name_"+id).val()+' ('+$("#us_login_"+id).val()+')');
+	
+	$("#fact_opo_month").val($("#month_"+id).val());
+	$("#fact_opo_month_string").val(monthes[parseInt($("#month_"+id).val())-1]);
+	
+	$("#fact_opo_year").val($("#year_"+id).val());
+	
+	$("#fact_opo_contract_currency_id").val($("#contract_currency_id_"+id).val());
+	$("#fact_opo_contract_currency_signature").val($("#currency_signature_"+id).val());
+	
+	 
+	$("#fact_opo_supplier_name").val($("#supplier_name_"+id).val());
+	$("#fact_opo_supplier_id").val($("#supplier_id_"+id).val());
+	
+	
+	if($("#supplier_is_new_"+id).val()=="1") $("#fact_opo_supplier_is_new").prop("checked", true);
+	else  $("#fact_opo_supplier_is_new").prop("checked", false);
+	
+	$("#fact_opo_eq_name").val($("#eq_name_"+id).val());
+	$("#fact_opo_eq_is_new_"+$("#eq_is_new_"+id).val()).prop("checked",true);
+	
+	$("#fact_opo_price_kind_id").val($("#price_kind_id_"+id).val());
+	
+	
+	//$("#fact_opo_eq_id").val('');
+	$("#fact_opo_producer_id").val($("#producer_id_"+id).val());
+	$("#fact_opo_contract_sum").val($("#contract_sum_"+id).val());
+	$("#fact_opo_contract_no").val($("#contract_no_"+id).val());
+	
+	$("#fact_opo_city_id").val($("#city_id_"+id).val());
+	
+	$("#fact_opo_city_id_string").val($("#city_"+id).val());
+	
+	$("#fact_opo_notes").val('');
+	$("#fact_opo_notes_input").hide();
+	$("#fact_opo_notes_block").show();
+	
+	
+	$("#fact_opo_user_unselectable").hide();
+	$("#fact_opo_user_selectable").show();
+	
+	
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/plan_fact_sales.php",
+	  type: "POST",
+	  data:{
+		  "action":"load_producer_id"
+		  
+	  },
+	  beforeSend: function(){
+		  $("#fact_opo_producer_id").html('');
+	  },
+	  success: function(data){
+		// alert(data);
+		 $("#fact_opo_producer_id").html(data);
+		 $("#fact_opo_producer_id").val($("#producer_id_"+id).val());
+	  },
+	  error: function(d,k,m){
+		  //alert(d+' '+k+' '+m);
+	  }
+	});
+	
+	$.ajax({
+	  async: true,
+	  url: "/js/plan_fact_fact_opo.php",
+	  type: "POST",
+	  data:{
+		  "action":"redraw_notes",
+		  "user_id":$("#fact_opo_id").val()
+	  },
+	  beforeSend: function(){
+			
+	  },
+	  success: function(data){
+		  $("#notes").html(data);
+		
+	  },
+	  error: function(xhr, status){
+		  
+	  }	 
+	});
+	
+	//подгрузить пол-лей
+	$.ajax({
+	  async: true,
+	  url: "/js/plan_fact_fact_opo.php",
+	  type: "POST",
+	  data:{
+		  "action":"redraw_managers",
+		  "fact_id":$("#fact_opo_id").val()
+	  },
+	  beforeSend: function(){
+			
+	  },
+	  success: function(data){
+		  //alert(data);
+		  $("#fact_opo_user_id_select").html(data);
+		
+	  },
+	  error: function(xhr, status){
+		  
+	  }	 
+	});
+	
+	
+	// OPONewData()
+	$("#fact_opo_dialog").dialog({buttons:{
+			"Ввести данные": function(){
+				
+				 OPOSaveData();
+				
+			},
+			"Отмена": function(){
+				$(this).dialog('close');
+			}
+	}});
+	
+	$("#fact_opo_dialog").dialog('open');
+		
+}
+</script>
+
+
+
+<div id="fact_opo_dialog" title="Введите данные" style="display:none;">
+	<input id="fact_opo_id" type="hidden" value="" />
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_user_id">Менеджер:</label><br />
+
+    
+    <div id="fact_opo_user_unselectable">
+    <input id="fact_opo_user_id" type="hidden" value="" />
+    <input type="text" id="fact_opo_user_id_string" value="" size="40" maxlength="255" disabled="disabled" />
+    </div>
+    
+    <div id="fact_opo_user_selectable">
+    <select id="fact_opo_user_id_select" style="width:250px">
+    
+    </select>
+    </div>
+    
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_month">Месяц:</label><br />
+
+  <!--  <input id="fact_opo_month" type="hidden" value="" />
+    <input type="text" id="fact_opo_month_string" value="" size="8" maxlength="20" disabled="disabled" />
+    -->
+    
+    <select id="fact_opo_month" style="width:80px;" %{if !$can_change_date}% disabled="disabled"%{/if}%>
+    <option value="1">Январь</option>
+    <option value="2">Февраль</option>
+    <option value="3">Март</option>
+    <option value="4">Апрель</option>
+    <option value="5">Май</option>
+    <option value="6">Июнь</option>
+    <option value="7">Июль</option>
+    <option value="8">Август</option>
+    <option value="9">Сентябрь</option>
+    <option value="10">Октябрь</option>
+    <option value="11">Ноябрь</option>
+    <option value="12">Декабрь</option>
+    </select>
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_year">Год:</label><br />
+
+     
+    <input type="text" id="fact_opo_year" value="" size="4" maxlength="20" %{if !$can_change_date}% disabled="disabled"%{/if}% />
+    </div>
+	
+    <br clear="all" />
+    <p />
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_supplier_name">Название клиента:</label><br />
+     
+    <input type="text" id="fact_opo_supplier_name" value="" disabled size="40" maxlength="255"  />
+    
+    <input type="hidden"  id="fact_opo_supplier_id"  value="" />
+    <input type="button" id="fact_opo_supplier_select" value="..." />
+    <input type="button" id="fact_opo_supplier_clear" value="x" />
+    
+    </div>
+    
+   
+    
+    
+    <div style="float:left; margin-right:10px;"><br />
+	<input type="checkbox" id="fact_opo_supplier_is_new" value="1" />
+    <label for="fact_opo_supplier_is_new">Новый клиент</label>
+    </div>
+    
+    
+    <br clear="all" />
+    <p />
+    
+     
+    <div style="float:left; margin-right:10px;"> 
+	 
+    <label for="fact_opo_city_id">Город</label><br />
+	  <input id="fact_opo_city_id" type="hidden" value="" />
+    <input type="text" id="fact_opo_city_id_string" value="" size="58" maxlength="255" disabled="disabled" />
+    <input type="button" value="..." id="fact_opo_select_city" />
+    </div>
+    
+    <br clear="all" />
+    <p />
+    
+     
+     
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_contract_sum">Сумма договора:</label><br />
+     <input type="text" id="fact_opo_contract_sum" value="" size="10" maxlength="40"  />
+    <input type="hidden" id="fact_opo_contract_currency_id" value=""  />
+    <input type="text" id="fact_opo_contract_currency_signature" disabled="disabled" value="" size="2" maxlength="3"  />
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_price_kind_id">Вид цен:</label><br />
+     
+    <select id="fact_opo_price_kind_id" style="width:80px;">
+    <option value="1" selected="selected">DDPM</option>
+    <option value="2">ExW</option>
+    </select>
+    </div>
+    
+     
+    <div style="float:left; margin-right:10px;">
+    <label for="fact_opo_contract_no">Номер договора:</label><br />
+     <input type="text" id="fact_opo_contract_no" value="" size="15" maxlength="40"  />
+   
+    </div>
+    
+    
+     <br clear="all" />
+    <p />
+    
+    
+    <div style="float:left; margin-right:10px;">
+ 	<label for="fact_opo_eq_name">Название станка:</label><br />
+    
+     <!--  <select id="fact_opo_eq_id" style="width:250px;">
+    
+    </select>-->
+     
+    <input type="text" id="fact_opo_eq_name" value="" size="40" maxlength="255"  />
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+	<input type="radio" name="fact_opo_eq_is_new" id="fact_opo_eq_is_new_1" value="1" checked="checked" />
+    <label for="fact_opo_eq_is_new_1">Новое оборудование</label>
+    <br />
+	<input type="radio" name="fact_opo_eq_is_new" id="fact_opo_eq_is_new_0" value="0" />
+    <label for="fact_opo_eq_is_new_0">Б/у</label>
+    <br />
+	    
+    </div>
+    
+    <br clear="all" />
+    <p />
+    
+    
+    <div style="float:left; margin-right:10px;">
+ 	<label for="fact_opo_producer_id">Выберите производителя:</label><br />
+    
+     <select id="fact_opo_producer_id" style="width:265px;">
+    
+    </select>
+     
+    
+    </div>
+    
+     <br clear="all" />
+    <p />
+    
+    <div id="fact_opo_notes_input">
+    <label for="fact_opo_notes">Примечания:</label><br />
+    <textarea id="fact_opo_notes" cols="40" rows="4" style="width:400px; height:90px;"></textarea>
+	</div>
+     
+     <div id="fact_opo_notes_block" style="display:none;">
+     
+    <h4>Примечания:</h4>
+    <div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+            %{*include file="kp/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit*}%
+        </div>
+        
+        %{include file="plan_fact_sales/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=true}%
+       
+    <p />    
+
+     </div>
+    
+</div>

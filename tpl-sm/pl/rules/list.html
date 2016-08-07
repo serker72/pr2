@@ -1,0 +1,100 @@
+%{foreach from=$rules item=rule}%
+<div class="common_block">
+	
+  <div style="float:left; margin-right:0px; width:200px;  ">
+    <h4>%{$rule.kind_name}%</h4>
+	<input type="hidden" id="rule_%{$rule.id}%" value="%{$rule.id}%" />
+    
+    <input type="hidden" id="rule_kind_id_%{$rule.id}%" value="%{$rule.kind_id}%" />
+    <input type="hidden" id="rule_option_id_%{$rule.id}%" value="%{$rule.option_id}%" />
+    
+   
+    
+    <input type="hidden" id="rule_quantity_%{$rule.id}%" value="%{$rule.quantity}%" />
+    <input type="hidden" id="rule_is_fixed_%{$rule.id}%" value="%{$rule.is_fixed}%" />
+    
+
+	<span id="rule_str_%{$rule.id}%">%{$rule.option_id}%  %{$rule.pc_code}% %{$rule.pc_name}%</span>
+    
+   
+    
+    
+    
+    
+    %{if $rule.quantity>0}%
+    <br />
+    количество: %{$rule.quantity}%
+      %{if $rule.is_fixed>0}%
+      <strong>строго</strong>
+      %{/if}%
+	%{/if}%
+    
+    
+     %{if $can_edit}%
+    <a href="#" onclick="launchRuleEdit('%{$rule.id}%'); return false;" class="reestr_edit16 reestr_button16" data-comment="редактировать..."> </a>
+    
+    
+    <a href="#" onclick="launchRuleDel('%{$rule.id}%'); return false; return false;" class="reestr_delete16 reestr_button16"  data-comment="удалить..."> </a>
+    %{/if}%
+    
+	</div>
+	
+    
+    <div style="float:left; width: 550px; margin-right:0px;  ">
+    %{if $can_edit}%
+      <a href="#" onClick="launchItemAdd('%{$rule.id}%'); return false;" data-comment="добавить связанную опцию" class="reestr_add16 reestr_button16" > </a> 
+      
+     %{/if}%
+    
+    %{foreach from=$rule.items item=item}%
+	<div>
+    	
+        
+        <input type="hidden" id="item_%{$item.id}%" value="%{$item.id}%" />
+    
+        <input type="hidden" id="item_kind_id_%{$item.id}%" value="%{$item.kind_id}%" />
+        <input type="hidden" id="item_option_id_%{$item.id}%" value="%{$item.option_id}%" />
+        
+       
+        
+        <input type="hidden" id="item_quantity_%{$item.id}%" value="%{$item.quantity}%" />
+        <input type="hidden" id="item_is_fixed_%{$item.id}%" value="%{$item.is_fixed}%" />
+        <input type="hidden" id="item_is_mandatory_%{$item.id}%" value="%{$item.is_mandatory}%" />
+        
+    
+        <span id="item_str_%{$item.id}%">%{$item.option_id}%  %{$item.pc_code}% %{$item.pc_name}%</span>
+        
+       
+        
+        
+        
+        
+        %{if $item.quantity>0}%
+        <br />
+        количество: %{$item.quantity}%
+          %{if $item.is_fixed>0}%
+          <strong>строго</strong>
+          %{/if}%
+        %{/if}%
+        
+         %{if $item.is_mandatory>0}%<br>
+
+          <strong>обязательное условие</strong>
+          %{/if}%
+    	
+    	
+        %{if $can_edit}%
+        <a href="#" onclick="launchItemEdit('%{$item.id}%'); return false;" class="reestr_edit16 reestr_button16" data-comment="редактировать..."> </a>
+        
+        
+        <a href="#" onclick="launchItemDel('%{$item.id}%'); return false; return false;" class="reestr_delete16 reestr_button16"  data-comment="удалить..."></a>
+        %{/if}%
+    </div>
+    <br>
+    
+    %{/foreach}%	
+  </div>
+  
+  <br clear="all" />
+</div>
+%{/foreach}%

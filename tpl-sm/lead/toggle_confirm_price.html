@@ -1,0 +1,254 @@
+%{if $item.status_id==3}%
+    <nobr><strong>аннулировано</strong></nobr>
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif  $item.is_confirmed==0}%
+    <nobr><strong>заполн-ие не утв.</strong></nobr>
+    %{if $can_confirm_price}%
+    <input type="button" value="Утвердить" id="confirm_price%{$prefix}%_%{$item.id}%"   />
+    %{/if}% 
+    %{else}%
+    <nobr><strong>заполн-ие утв.</strong></nobr>
+    %{if  $can_confirm_price }%
+    <input type="button" value="Не утвердить" id="confirm_price%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed_done==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+    %{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}% %{$item.confirm_price_pdate}%
+    
+  
+    <script type="text/javascript">
+	$(function(){
+		var global_sem2=true;
+		
+		 %{if $can_confirm_price or $can_super_confirm_price}%
+		$("#confirm_price%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			var can_ret=true;
+			%{if $item.is_confirmed==1}%
+			
+			 
+			%{if !$can_unconfirm_price}%
+			 can_ret= can_ret&&false;
+			 alert("У Вас недостаточно прав для снятия утверждения заполнения лида.\nПрава на это действие есть у следующих сотрудников: %{strip}%
+				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
+				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
+				%{/foreach}%
+															 %{/strip}%"); 
+			 
+		 	//в журнал
+				$.ajax({
+					async: true,
+					url: "/js/lead.php",
+					type: "POST",
+					data:{
+						"action":"fail_unconfirm_price",
+						id: "%{$item.id}%"
+					}
+				});
+			%{/if}%
+			
+			
+			if(can_ret) $.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполнения лида %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			 
+			
+			%{elseif $item.is_confirmed==0}%
+			
+			
+			%{if !$can_unconfirm_price}%
+			 can_ret= can_ret&&window.confirm("Внимание! Вы утверждаете заполнение лида.\nУ Вас нет прав для обратного действия - снятия утверждения заполнения лида.\nПросьба проверить корректность заполнения всех данных лида.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+			%{/if}%
+			
+			
+			
+			
+			
+			
+			if(can_ret) $.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm_price",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить заполнение лида %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{/if}%
+			
+			if(!can_ret){
+				return false;	
+			}
+			
+			
+			local_can_ret=true;
+			
+			if(global_sem2) $.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_docs_binded_child",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 
+				 
+				  if(data!=0){
+					  local_can_ret=local_can_ret&&false;
+					   // alert(data);	 
+					  
+					   $("#error_window_text%{$prefix}%").html('<ul>'+data+'</ul>');					   
+					   $("#error_window_dialog%{$prefix}%").dialog("option", "title", "Найдены связанные документы");					   
+					   $("#error_window_dialog_caption%{$prefix}%").html('Обнаружены следующие связанные документы.<br>При утверждении заполнения лида у этих документов также будет утверждено заполнение.<br><br>Вы уверены?');
+					   
+		  
+					   max_height=700; min_height=250;
+						   
+					   our_height=parseInt($("#error_window_text%{$prefix}%").height());
+						
+					   if(our_height>max_height) our_height=max_height;
+					   if(our_height<min_height) our_height=min_height;
+					   
+					  //  alert(data);
+					   
+					   $("#error_window_dialog%{$prefix}%").dialog( "option", "height", our_height+140);
+					   
+					   $("#error_window_dialog%{$prefix}%").dialog({
+							 
+							buttons:{
+								"Да":function(){
+									//
+									
+									 $("#error_window_dialog%{$prefix}%").dialog("close");
+									 global_sem2=false;
+									 $("#confirm_price%{$prefix}%_%{$item.id}%").trigger("click");
+									
+								},
+								"Нет":function(){
+									//
+									
+									 $("#error_window_dialog%{$prefix}%").dialog("close");
+									
+								}
+							}
+						});
+					  
+					   $("#error_window_dialog%{$prefix}%").dialog("open"); 
+					  
+					
+				  } 
+				},
+				error: function(xhr, status){
+					 
+				}	 
+			}); 
+			 
+			if(!local_can_ret) {
+				return false;
+			}
+			
+			  
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm_price",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%" 
+			  },
+			  beforeSend: function(){
+				$("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="17"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+					//alert(data);
+					//alert("#item_row%{$prefix}%_%{$item.id}%");
+					$("#item_row%{$prefix}%_%{$item.id}%").html(data);
+					
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		 %{/if}%
+		 
+		 
+		 %{if $item.status_id==3 and $can_restore}%
+		 
+		
+		  
+		  $("#deaunnul%{$prefix}%_%{$item.id}%").bind("click",function(){
+			 
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="17"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#item_row%{$prefix}%_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+   
+    
+    

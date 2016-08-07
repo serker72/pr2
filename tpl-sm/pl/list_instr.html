@@ -1,0 +1,669 @@
+<div style="float:left; margin-right:10px; margin-left:40px;">
+<!-- ВИД ЦЕН -->
+<label for="price_kind_id%{$prefix}%">Вид цен:</label>
+<select id="price_kind_id%{$prefix}%" name="price_kind_id%{$prefix}%" style="width:200px;">
+ %{$price_kinds}% 
+</select>
+
+<script type="text/javascript">
+	$(function(){
+		$("#price_kind_id%{$prefix}%").bind("change", function(){
+			 
+			if(($("#price_kind_id%{$prefix}%").val()==0)||($("#price_kind_id%{$prefix}%").val()==undefined)){
+				
+				location.href='%{$pagename}%?group_id%{$prefix}%=%{$group_id}%&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val();
+				 
+				
+			}else{
+				//$("#group_id2%{$prefix}%").prop("disabled", false);
+				
+				
+				
+				%{if $group_id and $two_group_id and $producer_id}%
+				 //если было выбрано оборудование, подраздел, пр-ль - переход к другим ценам
+				 location.href='%{$pagename}%?group_id%{$prefix}%=%{$group_id}%&two_group_id%{$prefix}%=%{$two_group_id}%&producer_id%{$prefix}%=%{$producer_id}%&memory%{$prefix}%=1&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val()+'&from_kp%{$prefix}%='+$('#from_kp%{$prefix}%').val()+'&id%{$prefix}%='+$("#for_id%{$prefix}%").val()+'&doShow%{$prefix}%=1';
+				 %{else}%
+				  location.href='%{$pagename}%?group_id%{$prefix}%=%{$group_id}%&memory%{$prefix}%=1&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val();
+				
+				 %{/if}%
+			}
+			
+			
+			
+			
+			
+			
+		});
+		
+		var manager_id=0;
+		var filename_overall='';
+		$("#select_manager_dialog%{$prefix}%").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 450,
+			height: 250,
+			buttons:{
+				"Выбрать менеджера": function(){
+					if(($("#select_manager%{$prefix}%").val()==0)||($("#select_manager%{$prefix}%").val()==undefined)||($("#select_manager%{$prefix}%").val()=='')){
+						alert("Выберите менеджера!");	
+						$("#select_manager%{$prefix}%").focus();
+					}else{
+					
+						$(this).dialog("close");
+						manager_id=$("#select_manager%{$prefix}%").val();
+						DoPrint(filename_overall);
+					}
+				},
+				"Не включать контакты": function(){
+					 $(this).dialog("close");
+					 manager_id=0;
+					 DoPrint(filename_overall); 
+				}
+			}
+		});
+			
+			
+		$("#select_manager_dep%{$prefix}%").bind("change", function(){
+			//обновить сотрудников, дол-ти
+			//alert('zz');
+			$.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_managers",
+					  "user_id":$("#select_manager%{$prefix}%").val(),
+					  "pos_id":$("#select_manager_pos%{$prefix}%").val(),
+					  "dep_id":$("#select_manager_dep%{$prefix}%").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					  $("#select_manager%{$prefix}%").html(data);
+				  }
+			});
+			 
+			$.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_pos",
+					  "user_id":$("#select_manager%{$prefix}%").val(),
+					  "pos_id":$("#select_manager_pos%{$prefix}%").val(),
+					  "dep_id":$("#select_manager_dep%{$prefix}%").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					  $("#select_manager_pos%{$prefix}%").html(data);
+				  }
+			});
+			
+		});
+		
+		$("#select_manager_pos%{$prefix}%").bind("change", function(){
+			//обновить отделы, сотр-ков
+			$.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_managers",
+					  "user_id":$("#select_manager%{$prefix}%").val(),
+					  "pos_id":$("#select_manager_pos%{$prefix}%").val(),
+					  "dep_id":$("#select_manager_dep%{$prefix}%").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					  $("#select_manager%{$prefix}%").html(data);
+				  }
+			});
+			$.ajax({
+				  async: true,
+				  url: "/js/pricelist.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_deps",
+					  "user_id":$("#select_manager%{$prefix}%").val(),
+					  "pos_id":$("#select_manager_pos%{$prefix}%").val(),
+					  "dep_id":$("#select_manager_dep%{$prefix}%").val()
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					  $("#select_manager_dep%{$prefix}%").html(data);
+				  }
+			});
+			
+		});
+		
+		
+		
+		//обработчик действия печати
+		%{if $can_print}%
+		
+		
+		function DoPrint(filename){
+			
+			with_options=1;
+		 	%{if $id==false or $id==0 or $id=='' }%
+			if(!window.confirm("Желаете включить опции в печатную форму прайс-листа?\nОК - да, включить\nОтмена - нет, не включать")) with_options=0;
+			%{/if}%
+			
+			show_price_f=0;
+			%{if $price_kind_id==3 and $can_print_price_f}%
+			if(window.confirm("Желаете вывести цены со скидками?\nОК - да, вывести цены со скидками\nОтмена - нет, вывести базовые цены поставщика")) show_price_f=1;
+			%{/if}%
+			
+			if($("#lang_rus%{$prefix}%").prop("checked")) lang_rus=1;
+			else lang_rus=0;
+			
+			if($("#lang_en%{$prefix}%").prop("checked")) lang_en=1;
+			else lang_en=0;
+			
+			
+			//сформировать URL
+			url=filename+'?price_kind_id%{$prefix}%=%{$price_kind_id}%'+'&group_id%{$prefix}%=%{$group_id}%'+'&two_group_id%{$prefix}%=%{$two_group_id}%'+'&producer_id%{$prefix}%=%{$producer_id}%'+'&id%{$prefix}%=%{$id}%'+'&with_options%{$prefix}%='+with_options+'&show_price_f%{$prefix}%='+show_price_f+'&manager_id%{$prefix}%='+manager_id
+			+'&lang_rus%{$prefix}%='+lang_rus
+			+'&lang_en%{$prefix}%='+lang_en
+			+'&three_group_id%{$prefix}%=%{$three_group_id}%'
+			;
+			
+			zc=window.open(url, 'pricelist', 'width=1100,height=700,toolbar=yes,menubar=yes,resizable=yes,status=yes,scrollbars=yes');
+			 if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');	
+		
+		}
+		function GenPrint(filename){
+			/*Запрашивать печать опций
+			"прайс-лист представлен без опций"
+			если не выбрано конкретное оборудование
+			*/
+			
+			filename_overall=filename;
+			
+			if(window.confirm("Включить в печатную форму прайс-листа Ваши контакты?\nОк - да, включить\nОтмена - нет, не включать")){
+				manager_id="%{$result_id}%";
+				DoPrint(filename);
+			}else{
+				
+				%{if $can_select_another_contact}%
+				
+				//вызвать диалог выбора менеджера из списка	
+				//DoPrint(filename);
+				//показать списки менеджеров, отделов, дол-тей, активен текущий сотрудник
+				$.ajax({
+					  async: true,
+					  url: "/js/pricelist.php",
+					  type: "POST",
+					  data:{
+						  "action":"load_managers",
+						  "user_id":"%{$result_id}%",
+						  "pos_id":0,
+						  "dep_id":0
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						  $("#select_manager%{$prefix}%").html(data);
+					  }
+				});
+				$.ajax({
+					  async: true,
+					  url: "/js/pricelist.php",
+					  type: "POST",
+					  data:{
+						  "action":"load_deps",
+						  "user_id":0,
+						  "pos_id":0,
+						  "dep_id":0
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						  $("#select_manager_dep%{$prefix}%").html(data);
+					  }
+				});
+				$.ajax({
+					  async: true,
+					  url: "/js/pricelist.php",
+					  type: "POST",
+					  data:{
+						  "action":"load_pos",
+						  "user_id":0,
+						  "pos_id":0,
+						  "dep_id":0
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						  $("#select_manager_pos%{$prefix}%").html(data);
+					  }
+				});
+				$("#select_manager_dialog%{$prefix}%").dialog("open");
+				
+				%{else}%
+					DoPrint(filename);
+				%{/if}%
+				
+				
+			}
+			
+			
+			
+			
+		}
+		
+		
+		$("#print_link").bind("click", function(){
+			GenPrint('pricelist_print.php');
+			
+			return false;
+		});
+		
+		$("#pdf_link").bind("click", function(){
+			GenPrint('pricelist_dompdf.php');
+			
+			return false;
+		});
+		%{else}%
+		$("#print_link").bind("click", function(){
+			return false;
+		});
+		
+		$("#pdf_link").bind("click", function(){
+			return false;
+		});
+		 
+		function DoPrint(filename){}
+		function GenPrint(filename){}
+		%{/if}%
+	});
+</script>
+</div>
+
+<!-- 
+диалог выбора менеджера для подстановки в печ. форму
+-->
+<div id="select_manager_dialog%{$prefix}%" title="Выберите менеджера" style="display:none;">
+	<div style="float:left; margin-right:10px;">
+    <label for="select_manager_dep%{$prefix}%">Отдел</label><br />
+	<select id="select_manager_dep%{$prefix}%" style="width:200px">
+    </select>
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="select_manager_pos%{$prefix}%">Должность</label><br />
+	<select id="select_manager_pos%{$prefix}%" style="width:200px">
+    </select>
+    </div>
+    <br clear="all" />
+    <p />
+    <div style="float:left; margin-right:10px;">
+    <label for="select_manager%{$prefix}%">Менеджер</label><br />
+	<select id="select_manager%{$prefix}%" style="width:410px">
+    </select>
+    </div>
+    
+    
+</div>
+
+
+
+%{if  ($price_kind_id<=0 or $price_kind_id=="") and( $producer_id=="" or $producer_id<=0)}%
+<div style="float:left; margin-right:10px;">
+<a href="#" onclick="alert('Выберите раздел прайс-листа, вид цен и производителя!'); return false;" class="reestr_zoom reestr_inactive reestr_button24" data-comment="найти позиции..."></a>
+</div>
+<div style="float:left; margin-right:10px;">
+<a href="#" onclick="return false;" class="reestr_zoom_deselect reestr_inactive reestr_button24" data-comment="сбросить фильтр" ></a>
+
+</div>
+ 
+%{/if}%
+
+<br clear="all" />
+<p />
+
+
+%{if $price_kind_id>0 and $price_kind_id!=""}%
+<div style="white-space:nowrap !important; min-width: 1040px;">
+<nobr>
+
+<!--выбор ПРОИЗВОДИТЕЛЯ-->
+<div style="float:left; margin-right:10px;">
+	<label for="producer_id%{$prefix}%">Производитель:</label>
+ 	<select name="producer_id%{$prefix}%" id="producer_id%{$prefix}%" style="width:200px;">
+    %{section name=prodsec loop=$producers}%
+    	<option value="%{$producers[prodsec].id}%" %{if $producers[prodsec].is_current}%selected="selected"%{/if}%>%{$producers[prodsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+</div>    
+	%{if $can_admin_records}%
+    <div style="float:left; margin-right:10px; white-space:normal !important;">    
+        <a href="#" id="admin_producer" class="reestr_key_add16 reestr_button16" data-comment="управление доступом к выбранному производителю"></a>
+    </div>    
+    <script type="text/javascript">
+	$(function(){
+		$("#admin_producer").bind("click", function(){
+			if(($("#producer_id%{$prefix}%").val()==null)||($("#producer_id%{$prefix}%").val()=="")||($("#producer_id%{$prefix}%").val()==0)||($("#producer_id%{$prefix}%").val()==undefined)){
+				alert("Выберите производителя!");
+				return false;	
+			}
+			AdminRecordsOpenDialog($("#producer_id%{$prefix}%").val(), 'pl_producer', 0, $("#producer_id%{$prefix}% option:selected").html(), 'производитель прайс-листа');
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+ 
+<script type="text/javascript">
+	$(function(){
+		$("#producer_id%{$prefix}%").bind("change", function(){
+			//alert(($("#producer_id%{$prefix}%").val()));
+			
+			%{$restricted_producers}%
+		 
+			
+			if($.inArray( $("#producer_id%{$prefix}%").val() ,  rp)!=-1){
+				alert("У Вас нет доступа к данному производителю!");
+				$("#producer_id%{$prefix}%").val(0);
+				return false;	
+			}
+			
+			if(($("#producer_id%{$prefix}%").val()==0)||($("#producer_id%{$prefix}%").val()==undefined)){
+				$("#group_id2%{$prefix}%").prop("disabled", true);
+				$("#group_id2%{$prefix}%").val(0);
+				
+				$("#group_id3%{$prefix}%").prop("disabled", true);
+				$("#group_id3%{$prefix}%").val(0);
+				
+				//$("#group_id2%{$prefix}%").trigger("change");
+				 location.href='%{$pagename}%?group_id%{$prefix}%='+$("#group_id%{$prefix}%").val()+'&memory%{$prefix}%=%{$memory}%&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val();
+				
+			}else{
+				 location.href='%{$pagename}%?group_id%{$prefix}%='+$("#group_id%{$prefix}%").val()+'&memory%{$prefix}%=%{$memory}%&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val()+'&producer_id%{$prefix}%='+$("#producer_id%{$prefix}%").val();
+				//подгрузить категории по разделу, п-ку
+				
+				
+			}
+		});
+	});
+</script>
+
+<!--выбор группы II-->
+<div style="float:left; margin-right:10px;">
+	<label for="two_group_id%{$prefix}%">Категория:</label>
+    
+    <select name="two_group_id%{$prefix}%" id="group_id2%{$prefix}%" style="width:200px;" >
+    %{section name=two_groupsec loop=$two_group}%
+    	<option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+
+</div>
+%{if $can_admin_records}%
+    <div style="float:left; margin-right:10px; white-space:normal !important;">    
+        <a href="#" id="admin_two_group_id" class="reestr_key_add16 reestr_button16" data-comment="управление доступом к выбранной категории"></a>
+    </div>    
+    <script type="text/javascript">
+	$(function(){
+		$("#admin_two_group_id").bind("click", function(){
+			if(($("#group_id2%{$prefix}%").val()==null)||($("#group_id2%{$prefix}%").val()=="")||($("#group_id2%{$prefix}%").val()==0)||($("#group_id2%{$prefix}%").val()==undefined)){
+				alert("Выберите категорию!");
+				return false;	
+			}
+			AdminRecordsOpenDialog($("#group_id2%{$prefix}%").val(), 'catalog_group', 0, $("#group_id2%{$prefix}% option:selected").html(), 'категория прайс-листа' );
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+
+
+
+<script type="text/javascript">
+	$(function(){
+		
+		
+		$("#group_id2%{$prefix}%").bind("change", function(){
+			
+			can_go=true;
+			
+			if(can_go) if(($("#price_kind_id%{$prefix}%").val()==0)||($("#price_kind_id%{$prefix}%").val()==undefined)){
+				alert("Выберите вид цен!");
+				$("#price_kind_id%{$prefix}%").focus(); 
+				can_go=can_go&&false;
+			}
+			
+			
+			if(can_go) if(($("#group_id%{$prefix}%").val()==0)||($("#group_id%{$prefix}%").val()==undefined)){
+				alert("Выберите раздел прайс-листа!");
+				$("#group_id%{$prefix}%").focus(); 
+				can_go=can_go&&false;
+			}
+			
+			
+			if(can_go) if(($("#producer_id%{$prefix}%").val()==0)||($("#producer_id%{$prefix}%").val()==undefined)){
+				alert("Выберите производителя!");
+				$("#producer_id%{$prefix}%").focus();
+				can_go=can_go&&false;
+			}
+			
+			 
+			
+			%{$restricted_two_groups}%
+						
+			if($.inArray( $("#group_id2%{$prefix}%").val() ,  restricted_two_groups)!=-1){
+				alert("У Вас нет доступа к данной категории!");
+				$("#group_id2%{$prefix}%").val(0);
+				can_go=can_go&&false;
+				return false;	
+			}
+			
+			
+			
+			if(can_go) {
+				  //подгрузка подкатегории
+				 
+				  $.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"toggle_subcategs_by_categ",
+						"group_id2":$("#group_id2%{$prefix}%").val(),
+						"producer_id":$("#producer_id%{$prefix}%").val()
+						 
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#group_id3%{$prefix}%").prop("disabled", false); 
+					  $("#group_id3%{$prefix}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+				 
+				 //подгрузка оборудования
+				/* $.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"toggle_eqs_by_category",
+						"group_id2":$("#group_id2%{$prefix}%").val(),
+						"current_id":$("#for_id%{$prefix}%").val()/*,
+						"price_kind_id":$("#price_kind_id%{$prefix}%").val()
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#for_id%{$prefix}%").prop("disabled", false); 
+					  $("#for_id%{$prefix}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});*/
+			}
+		});
+	});
+	</script>
+
+
+
+
+<!--выбор группы III-->
+<div style="float:left; margin-right:10px;">
+	<label for="three_group_id%{$prefix}%">Подкатегория:</label>
+    
+    <select name="three_group_id%{$prefix}%" id="group_id3%{$prefix}%" style="width:200px;" >
+    %{section name=three_groupsec loop=$three_group}%
+    	<option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+
+</div>
+%{if $can_admin_records}%
+    <div style="float:left; margin-right:10px; white-space:normal !important;">    
+        <a href="#" id="admin_three_group_id" class="reestr_key_add16 reestr_button16" data-comment="управление доступом к выбранной категории"></a>
+    </div>    
+    <script type="text/javascript">
+	$(function(){
+		$("#admin_three_group_id").bind("click", function(){
+			if(($("#group_id3%{$prefix}%").val()==null)||($("#group_id3%{$prefix}%").val()=="")||($("#group_id3%{$prefix}%").val()==0)||($("#group_id3%{$prefix}%").val()==undefined)){
+				alert("Выберите категорию!");
+				return false;	
+			}
+			AdminRecordsOpenDialog($("#group_id3%{$prefix}%").val(), 'catalog_group', 0, $("#group_id3%{$prefix}% option:selected").html(), 'категория прайс-листа' );
+			return false;
+		});
+	});
+	</script>
+    %{/if}%
+
+
+
+<script type="text/javascript">
+	 $(function(){
+		
+		
+		$("#group_id3%{$prefix}%").bind("change", function(){
+			//alert('z');
+			can_go=true;
+			
+			if(can_go) if(($("#price_kind_id%{$prefix}%").val()==0)||($("#price_kind_id%{$prefix}%").val()==undefined)){
+				alert("Выберите вид цен!");
+				$("#price_kind_id%{$prefix}%").focus(); 
+				can_go=can_go&&false;
+			}
+			
+			
+			if(can_go) if(($("#group_id%{$prefix}%").val()==0)||($("#group_id%{$prefix}%").val()==undefined)){
+				alert("Выберите раздел прайс-листа!");
+				$("#group_id%{$prefix}%").focus(); 
+				can_go=can_go&&false;
+			}
+			
+			
+			if(can_go) if(($("#producer_id%{$prefix}%").val()==0)||($("#producer_id%{$prefix}%").val()==undefined)){
+				alert("Выберите производителя!");
+				$("#producer_id%{$prefix}%").focus();
+				can_go=can_go&&false;
+			}
+			
+			 
+			
+			%{$restricted_two_groups}%
+						
+			if($.inArray( $("#group_id3%{$prefix}%").val() ,  restricted_two_groups)!=-1){
+				alert("У Вас нет доступа к данной категории!");
+				$("#group_id3%{$prefix}%").val(0);
+				can_go=can_go&&false;
+				return false;	
+			}
+			
+			
+			 
+		});
+	}); 
+	</script>
+
+ 
+
+
+
+ 
+ 
+
+
+<!-- кнопка фильтрации ПЛ -->
+<div style="float:left; margin-right:10px;">
+<a href="#" id="do_filter%{$prefix}%" class="reestr_zoom  reestr_right_button24" data-comment="найти позиции..."></a>
+<script type="text/javascript">
+$(function(){
+	$("#do_filter%{$prefix}%").bind("click", function(){
+		
+		
+		$("#filter_form%{$prefix}%").trigger("submit");
+		return false;
+	});
+	
+	$("#undo_filter%{$prefix}%").bind("click", function(){
+		location.href='%{$pagename}%?group_id%{$prefix}%='+$("#group_id%{$prefix}%").val()+'&producer_id%{$prefix}%='+$("#producer_id%{$prefix}%").val()+'&memory%{$prefix}%=%{$memory}%&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val();
+		
+		return false;
+	});
+});
+</script>
+</div>
+<div style="float:left; margin-right:10px;">
+<a href="#" id="undo_filter%{$prefix}%" class="reestr_zoom_deselect reestr_right_button24" data-comment="сбросить фильтр"></a>
+
+</div>
+
+	
+ 
+
+</nobr>
+
+
+<br clear="all" />
+<p />
+
+</div>
+
+
+
+
+<input type="hidden" name="from_kp%{$prefix}%" id="from_kp%{$prefix}%" value="%{$from_kp}%" />
+
+
+%{* подгружать шаблоны *}%
+%{if $doShow==1}%
+%{include file="pl/$inner_template" }%
+%{/if}%
+
+
+ 
+
+%{else}% %{* of if $price_kind_id>0 and $price_kind_id!="" *}%
+
+%{/if}% %{* of if $price_kind_id>0 and $price_kind_id!="" *}%

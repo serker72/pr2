@@ -1,0 +1,120 @@
+<div id="kind_dialog" title="Виды тендера" style="display:none;">
+      <div id="kind_dic">
+      %{include file="tender/kinds.html"}%
+      </div>
+      
+      Новый вид тендера:<br>
+      <input type="text" id="new_kind" size="30" maxlength="255" />
+      <input type="button" value="Добавить вид тендера" id="add_new_kind"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+        $("#kind_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_kinds_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#kind_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_kinds_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                      $("#kind_id").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+            $(this).dialog("close"); }
+          }
+        
+        });
+        $("#expand_kind").bind("click",function(){
+            $("#kind_dialog").dialog("open");
+        });
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_kinds_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#kind_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_kind").bind("click", function(){
+              if($("#new_kind").val().length<3){
+                  $("#new_kind").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_kind",
+                      "kind":$("#new_kind").val()
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("Вид тендера добавлен!"); 
+                     $("#new_kind").val('');
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления вида тендера.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>

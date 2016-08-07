@@ -1,0 +1,531 @@
+<table width="100%" cellspacing="0" cellpadding="0" border="0" class="blacktable">
+	
+	  
+    %{section name=rowsec loop=$items}%
+    <tr align="left" valign="top">
+    <td>
+    
+    	<div class="common_block">
+        
+        <input type="hidden" id="parent_group_id_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].parent_group_id}%" />
+        <input type="hidden" id="producer_id_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].producer_id}%" />
+  		
+        <input type="hidden" id="discount_id_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].discount_id}%" />
+  		
+        <input type="hidden" id="value_%{$word}%_%{$items[rowsec].id}%" value="%{$items[rowsec].value}%" />
+  		
+        
+        
+       
+         %{if $items[rowsec].group_name!=""}%
+         Раздел: %{$items[rowsec].group_name}%
+         %{/if}%
+         
+         
+         %{if $items[rowsec].prod_name!=""}%
+         Поставщик:  %{$items[rowsec].prod_name}%
+         %{/if}%
+         
+         <br />
+
+         Макс. %{$items[rowsec].kind_name}%:  %{$items[rowsec].value}%%.
+         
+         
+         
+		</div>
+        </td>
+        %{if $can_edit}%
+       <!--<td width="20">
+        <div class="common_block">
+		<a href="#" id="edit_nest_%{$word}%_%{$items[rowsec].id}%" title="редактировать %{$items[rowsec].value|escape:"html"}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt=""  /></a>
+        </div>
+		</td>
+        -->
+        <td width="20">
+        <div class="common_block">
+        <a href="#" id="delete_nest_%{$word}%_%{$items[rowsec].id}%" data-comment="удалить..." 
+class="reestr_delete16 reestr_button16"></a>
+        </div>
+		</td>
+		%{/if}%
+        
+        
+        </tr>
+    %{/section}%
+    
+	</table>
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%
+
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_nest_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 500,
+    height: 250,
+    buttons: {
+        "Готово": function() { 
+        	
+         $(this).dialog("close"); }
+      }
+    
+    });
+	
+	 
+	
+	$("#%{$word}%group_id").bind("change", function(){
+		
+		if(($("#%{$word}%group_id").val()==0)||($("#%{$word}%group_id").val()==undefined)){
+			$("#%{$word}%producer_id").empty();
+			$("#%{$word}%two_group_id").empty();
+			$("#%{$word}%three_group_id").empty();
+		}else{
+			$("#%{$word}%two_group_id").empty();
+			$("#%{$word}%three_group_id").empty();	
+			
+			 $.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"redraw_producer",
+						"group_id":$("#%{$word}%group_id").val() 
+						 
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#%{$word}%producer_id").prop("disabled", false); 
+					  $("#%{$word}%producer_id").html(data);
+					  $("#%{$word}%producer_id").val(0);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			
+		}	
+		
+	});
+	
+	
+	$("#%{$word}%producer_id").bind("change", function(){
+			 
+			
+			if(($("#%{$word}%producer_id").val()==0)||($("#%{$word}%producer_id").val()==undefined)){
+				 
+				 $("#%{$word}%two_group_id").empty();
+				 $("#%{$word}%three_group_id").empty();
+				 
+				
+			}else{
+				 
+				$("#%{$word}%three_group_id").empty();
+				
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"toggle_categs_by_razd_producer",
+						"group_id":$("#%{$word}%group_id").val(),
+						"producer_id":$("#%{$word}%producer_id").val() 
+						 
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#%{$word}%two_group_id").prop("disabled", false); 
+					  $("#%{$word}%two_group_id").html(data);
+					   $("#%{$word}%two_group_id").val(0);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			
+				
+				
+			}
+		});
+	
+	
+	
+	$("#%{$word}%two_group_id").bind("change", function(){
+		
+		if(($("#%{$word}%two_group_id").val()==0)||($("#%{$word}%two_group_id").val()==undefined)){
+			 $("#%{$word}%three_group_id").empty();
+		}else{
+			 
+			  $.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"toggle_subcategs_by_categ",
+						"group_id2":$("#%{$word}%two_group_id").val(),
+						"producer_id":$("#%{$word}%producer_id").val()
+						 
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  $("#%{$word}%three_group_id").prop("disabled", false); 
+					  $("#%{$word}%three_group_id").html(data);
+					  $("#%{$word}%three_group_id").val(0);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			   	
+		}
+	});
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 $("#%{$word}%_parent_group_id").val(0);
+		 $("#%{$word}%_producer_id").val(0);
+		 
+		  $("#%{$word}%value").val(0);
+		  $("#%{$word}%group_id").val(0);
+		  $("#%{$word}%producer_id").empty();
+		  $("#%{$word}%two_group_id").empty();
+		  $("#%{$word}%three_group_id").empty();
+		 
+		
+		 $("#dialog_nest_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					//код добавки
+					//alert( $('input:radio[name="%{$word}%_kind"]:checked').val());
+					
+					
+				   $("#%{$word}%_parent_group_id").val(0);
+				   $("#%{$word}%_producer_id").val(0);
+				   
+					
+				   if(($("#%{$word}%three_group_id").val()!=0)&&($("#%{$word}%three_group_id").val()!=undefined)){
+					    $("#%{$word}%_producer_id").val($("#%{$word}%producer_id").val());
+					  $("#%{$word}%_parent_group_id").val($("#%{$word}%three_group_id").val());
+					  
+				   }
+				   else if(($("#%{$word}%two_group_id").val()!=0)&&($("#%{$word}%two_group_id").val()!=undefined)){
+					    $("#%{$word}%_producer_id").val($("#%{$word}%producer_id").val());
+					   $("#%{$word}%_parent_group_id").val($("#%{$word}%two_group_id").val());
+					  
+				   }
+					else if(($("#%{$word}%producer_id").val()!=0)&&($("#%{$word}%producer_id").val()!=undefined)){
+					   $("#%{$word}%_producer_id").val($("#%{$word}%producer_id").val());
+					   $("#%{$word}%_parent_group_id").val($("#%{$word}%group_id").val());
+					  
+				   }
+				   
+					else if(($("#%{$word}%group_id").val()!=0)&&($("#%{$word}%group_id").val()!=undefined)){
+						 $("#%{$word}%_producer_id").val(0);
+					   $("#%{$word}%_parent_group_id").val($("#%{$word}%group_id").val());
+					  
+				   }
+				   
+					
+				   res=true;	
+				   
+				   if(($("#%{$word}%_parent_group_id").val()==0)&&($("#%{$word}%_producer_id").val()==0)){
+						res=res&&false;
+						alert("Выберите раздел, группу или категорию оборудования!");   
+						
+				   }
+				   
+				   val=$("#%{$word}%value").val().replace(/\,/,'.');
+				   if(res&&(isNaN(val)||(parseFloat(val)<=0)||(parseFloat(val)>99.99))){
+					   res=res&&false;
+						alert("Укажите корректное значение скидки в %!");
+						$("#%{$word}%value").focus();  
+				   }
+				   
+				   	
+				   if(res){	
+				   		//
+						$.ajax({
+							async: true,
+							url: "/js/user_s.php",
+							type: "POST",
+							data:{
+								"action":"add_%{$word}%",
+								"parent_group_id":$("#%{$word}%_parent_group_id").val(), 
+								"producer_id":$("#%{$word}%_producer_id").val(),
+								"discount_id":$("#%{$word}%dis_kind").val(),
+								"value":val,
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+								//alert("%{$user_id}%");
+								
+							  //alert(data); 
+							   $.ajax({
+								  async: true,
+								  url: "/js/user_s.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+									 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');	
+								  },
+								  success: function(data){
+									 //alert(data);
+									  $("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+										//alert('e');  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("Ошибка добавления %{$named}%.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+				   }
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		
+		 $("#dialog_nest_%{$word}%").dialog("open");
+		 return false;
+	});
+	
+	%{section name=rowsec loop=$items}%
+	
+	
+	
+	
+	/*правка контакта*/
+	/*$("#edit_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			 
+			 
+			  
+		 $("#%{$word}%_parent_group_id").val($("#parent_group_id_%{$word}%_%{$items[rowsec].id}%").val());
+		 $("#%{$word}%_producer_id").val($("#producer_id_%{$word}%_%{$items[rowsec].id}%").val());
+		 
+		  $("#%{$word}%value").val($("#value_%{$word}%_%{$items[rowsec].id}%").val());
+		  
+		  
+		  $("#%{$word}%group_id").val(0);
+		  var group_id=$("#parent_group_id_%{$word}%_%{$items[rowsec].id}%").val();
+		  var producer_id=$("#producer_id_%{$word}%_%{$items[rowsec].id}%").val();
+		  
+		  //есть ли группа среди родительских разделов???
+		  var has=false;
+		  $.each($("#%{$word}%group_id option"), function(k,v){
+			  if($(v).val()==group_id){
+				  has=true;  
+			  }
+		  });
+		  
+		  //alert(has);
+		  
+		  if(!has){
+			  //группы среди родительских разделов нет, проверим поставщика
+			  if(producer_id!=0){
+				//по поставщику получить id раздела
+				//подставить его в Разделы
+				//подгрузить поставщиков
+				//выбрать нашего
+				//подгрузить категории
+				//есть ли среди них группа?
+				//да - выбрать ее, стоп.
+				//нет - получить все возможные подкатегории (по поставщику), найти нашу среди них, получить родительскую категорию
+				//выбрать ее среди категорий, подгрузить подкатегории, затем выбрать нашу подкатегорию из них.
+			  	
+			  }
+		  }else {
+			  $("#%{$word}%group_id").val(group_id);
+			  //$("#%{$word}%group_id").trigger("change");
+			  
+			   //группы среди родительских разделов есть, проверим поставщика, если он не нуль - нужно выбрать его
+			     $.when( $.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"redraw_producer",
+						"group_id":$("#%{$word}%group_id").val() 
+						 
+											},
+				success: function(data){
+					  //alert(data);
+					  $("#%{$word}%producer_id").prop("disabled", false); 
+					  $("#%{$word}%producer_id").html(data);
+					  $("#%{$word}%producer_id").val(0);
+					  
+					} 	 
+				})).then(function(){
+				 
+				  		//console.log('i done');
+					   // alert();
+					   if(producer_id!=0) {
+						   $("#%{$word}%producer_id").val(producer_id).trigger("change");
+						   
+					   }
+				  });
+			  
+			  
+		  }
+		  
+		  
+		  
+		 
+		  $("#%{$word}%dis_kind").val($("#discount_id_%{$word}%_%{$items[rowsec].id}%").val());	 
+			 
+			 
+			  $("#dialog_nest_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						$.ajax({
+							async: true,
+							url: "/js/user_s.php",
+							type: "POST",
+							data:{
+								"action":"edit_nest_%{$word}%",
+								 
+								"parent_group_id":$("#%{$word}%_parent_group_id").val(), 
+								"producer_id":$("#%{$word}%_producer_id").val(),
+								"discount_id":$("#%{$word}%dis_kind").val(),
+								"value":val,
+								"id":"%{$items[rowsec].id}%",
+								"user_id":"%{$user_id}%"
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  
+							  $.ajax({
+								  async: true,
+								  url: "/js/user_s.php",
+								  type: "POST",
+								  data:{
+									  "action":"redraw_%{$word}%",
+									  "user_id":"%{$user_id}%"
+								  },
+								  beforeSend: function(){
+									 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');		
+								  },
+								  success: function(data){
+									$("#%{$word}%").html(data);
+									
+								  },
+								  error: function(xhr, status){
+									  
+								  }	 
+							  });
+							},
+							error: function(xhr, status){
+								alert("%{$named}%: Ошибка редактирования.");	
+							}	 
+						});
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_nest_%{$word}%").dialog("open");
+			
+			
+			return false;
+		});
+	
+	*/
+	
+	
+	/*удаление контакта*/
+	$("#delete_nest_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+		if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+			$.ajax({
+				async: true,
+				url: "/js/user_s.php",
+				type: "POST",
+				data:{
+					"action":"delete_nest_%{$word}%",
+					"id":"%{$items[rowsec].id}%",
+					"user_id":%{$user_id}%
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/user_s.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%",
+						  "user_id":"%{$user_id}%"
+					  },
+					  beforeSend: function(){
+							 $("#%{$word}%").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" border="0" />');	
+					  },
+					  success: function(data){
+						$("#%{$word}%").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("%{$named}%: Ошибка удаления.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+	
+	
+	
+	
+	%{/section}%
+	
+	
+				
+		
+	});
+</script>

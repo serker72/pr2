@@ -1,0 +1,56 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		cookie: { expires: 14, name: 'alltendersTab' }  
+  });
+  $("#tabsm").tabs({
+		cookie: { expires: 14, name: 'alltendersmonTab' }  
+  });
+});
+</script>
+
+<div id="tabs">
+  <ul>
+   
+    
+     
+    <li><a href="#tabs-2">Тендеры</a></li>
+    
+    %{if $can_monitor}%
+    <li><a href="#tabs-3">Что мониторить?</a></li>
+    %{/if}%
+    
+    
+  
+  </ul>
+  
+  
+  <div id="tabs-2">
+    <p>
+    %{$log1}%
+    
+    </p>
+   </div>
+   
+   
+    %{if $can_monitor}%
+   <div id="tabs-3">
+    	<div id="tabsm">
+        	<ul>
+                <li><a href="#tabms-1">Виды оборудования</a></li>
+                <li><a href="#tabms-2">Контрагенты</a></li>
+            </ul>
+            <div id="tabms-1">
+            	%{$log2}%
+            </div>
+            <div id="tabms-2">
+            	%{$log3}%
+            </div>
+        </div>
+        
+   </div>
+   %{/if}%
+ 
+</div>

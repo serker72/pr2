@@ -1,0 +1,33 @@
+<a href="suppliers_import.php">назад к выбору файла</a><br />
+<br />
+
+
+<h2>Записи %{$from}% - %{$from+$max_records}%</h2> 
+
+%{if $to_proceed==0}%
+
+<strong><span style="color:green;">Загрузка завершена!</span></strong>
+		  <p /><a href="suppliers.php" >Вы будете перенаправлены в реестр контрагентов.<br /> Если переход не происходит, нажмите здесь.</a>
+		  
+		  <script language="JavaScript" type="text/javascript">
+				  <!--
+				  function goAway(){
+					  location.href="suppliers.php";
+				  }
+				  window.setTimeout("goAway()",3000);
+				  //-->
+		  </script>
+		  
+%{else}%		  
+ <br /><a href="suppliers_import_fon.php?from=%{$from+$max_records}%" >Вы будете перенаправлены. Если переход не происходит, нажмите здесь.</a>
+		  
+		  
+		  <script language="JavaScript" type="text/javascript">
+				  <!--
+				  function goAway(){
+					  location.href="suppliers_import_fon.php?from=%{$from+$max_records}%";
+				  }
+				  window.setTimeout("goAway()",3000);
+				  //-->
+		  </script>
+%{/if}%

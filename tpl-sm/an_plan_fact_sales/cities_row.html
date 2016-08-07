@@ -1,0 +1,16 @@
+  <tr align="left" valign="top" id="city_row_%{$city.id}%%{$prefix}%">
+    	
+    
+    <td width="*">
+      %{$city.fullname}% 
+      <input type="hidden" value="%{$city.id}%" id="city_selected_%{$city.id}%%{$prefix}%" name="city_selected_%{$city.id}%%{$prefix}%" />
+    </td>
+    <td width="15">
+  
+     
+    <a href="#" onClick="$('#city_row_%{$city.id}%%{$prefix}%').remove(); 	return false;" title="удалить"><img src="/img/del.gif" width="15" height="15" border="0" alt=""  /></a>
+  
+   
+    </td>
+    
+   </tr>

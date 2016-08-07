@@ -1,0 +1,45 @@
+
+<tr align="left" valign="top" id="pos_block_%{$tempid}%">
+	 <td width="30">
+    <span id="no_%{$id}%">%{$no}%</span>
+    </td>
+    
+    <td width="*">
+    %{$name}%
+	
+    </td>
+     <td width="50">
+    %{$dim_name}%
+    </td>
+    <td width="50">
+    %{$kol_init}%
+    </td>
+	<td width="50">
+   <span id="kol_%{$id}%" %{if $kol!=$kol_init and ($kol!=$in_pol or $kol==0) and ($komplekt_ved.status_id==1 or $komplekt_ved.status_id==2 or $komplekt_ved.status_id==12)}%style=" font-weight:bold; "%{/if}%>%{$kol}%</span>
+    </td>
+   %{if $printmode==1}%
+  <td width="50">
+    %{$in_bills}%
+    </td>
+    <td width="50">
+    %{$in_sh}%
+    </td>
+    <td width="50">
+    %{$in_pol}%
+    </td>
+    
+    <td width="50">
+     %{*$in_free*}%
+    
+    %{$kol-$in_bills-$in_sh-$in_pol}%
+    </td>
+    
+    %{/if}%
+    
+   <td width="50">
+    	%{$storage_name|default:"-"}%
+    </td>
+
+</tr>
+
+

@@ -1,0 +1,76 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{elseif $tab_page==3}%	
+	selected: 2
+
+%{/if}%	
+  
+  });
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+
+ 
+.blacktable th.small, td.small{
+	font-size:10px !important;
+	 
+}
+ 
+</style>
+
+ 
+<div id="tabs">
+  <ul>
+    %{if $has_tenders}%
+    <li><a href="#tabs-1">Тендеры</a></li>
+    %{/if}%
+    
+    %{if $has_leads}%
+    <li><a href="#tabs-3">Лиды</a></li>
+    %{/if}%
+    
+    
+    %{if $has_monitor}%
+    <li><a href="#tabs-2">Что мониторить?</a></li>
+    %{/if}%
+  </ul>
+   %{if $has_tenders}%
+  <div id="tabs-1">
+    <p>
+    <h2>Отчет Тендеры</h2>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+   %{if $has_leads}%
+   <div id="tabs-3">
+    <p>
+    <h2>Отчет Лиды</h2>
+    %{$log2}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   
+   %{if $has_monitor}%
+   <div id="tabs-2">
+    <p>
+    <h2>Отчет Что мониторить?</h2>
+    %{$log3}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

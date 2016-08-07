@@ -1,0 +1,72 @@
+<br>
+<input type="button" value="Добавить %{$named}%..." id="add_%{$word}%" %{if !$can_edit}% disabled="disabled"%{/if}% />
+
+
+<div id="dialog_nest_%{$word}%" title="%{$named}%" style="display:none;">
+	<input type="hidden" id="%{$word}%_parent_group_id" value="0" />
+    <input type="hidden" id="%{$word}%_producer_id" value="0" />
+  
+    <label for="%{$word}%dis_kind">Вид скидки:</label><br />
+    <select id="%{$word}%dis_kind">
+    %{section name=kindsec loop=$dis_kinds}%
+    <option value="%{$dis_kinds[kindsec].id}%">%{$dis_kinds[kindsec].name}%</option>
+    %{/section}%
+    </select>
+    
+    <p />
+    
+
+    
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="%{$word}%group_id">Раздел:</label><br />
+	<select id="%{$word}%group_id" style="width:200px;">
+    <option value="0" selected="selected">-выберите-</option>
+    %{section name=csec loop=$cat_groups}%
+    <option value="%{$cat_groups[csec].id}%">%{$cat_groups[csec].name}%</option>
+    %{/section}%
+    </select>
+    
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    
+    
+    <label for="%{$word}%producer_id">Производитель:</label><br />
+	<select id="%{$word}%producer_id" style="width:200px;">
+    
+    </select>
+    </div>
+    
+    <br clear="all" />
+    
+    <div style="float:left; margin-right:10px;">
+    
+     <label for="%{$word}%two_group_id">Категория:</label><br />
+	<select id="%{$word}%two_group_id" style="width:200px;">
+    
+    </select>
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    
+      <label for="%{$word}%three_group_id">Подкатегория:</label><br />
+	<select id="%{$word}%three_group_id" style="width:200px;">
+    
+    </select>
+    </div> 
+    
+    <br clear="all" />
+    <p />
+    
+    <label for="%{$word}%value">Максимальная скидка, %</label>
+    <input type="text" id="%{$word}%value" value="" size="5" maxlength="5" />
+
+   
+
+</div>
+
+
+

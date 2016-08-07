@@ -1,0 +1,141 @@
+%{section name=rowsec loop=$opfs_total}%
+
+<div style="white-space:nowrap;"><input type="text" size="35" maxlength="255" id="%{$word}%_%{$opfs_total[rowsec].id}%" value="%{$opfs_total[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" /><br />
+
+
+<input type="text" size="35" maxlength="255" id="%{$word}%_en_%{$opfs_total[rowsec].id}%" value="%{$opfs_total[rowsec].name_en|escape:"html"}%" style="width:250px; background-color:silver;" />
+
+<input type="text" size="3" maxlength="4" id="ord_%{$word}%_%{$opfs_total[rowsec].id}%" value="%{$opfs_total[rowsec].ord}%" style="width:30px; background-color:silver;" />
+
+<a href="#" id="edit_%{$word}%_%{$opfs_total[rowsec].id}%" data-comment="редактировать вопрос" class="reestr_edit16 reestr_button16"> </a>
+<a href="#" id="delete_%{$word}%_%{$opfs_total[rowsec].id}%" data-comment="удалить вопрос" class="reestr_delete16 reestr_button16"></a>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#edit_%{$word}%_%{$opfs_total[rowsec].id}%").unbind("click");
+	
+	$("#edit_%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		/*alert('editing');
+		*/
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+			$("#%{$word}%_en_%{$opfs_total[rowsec].id}%").css("background-color","white");
+			$("#ord_%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			
+			//alert("%{$opfs_total[rowsec].id}%");
+			
+			$.ajax({
+				async: true,
+				url: "/js/pricelist.php",
+				type: "POST",
+				data:{
+					"action":"edit_%{$word}%",
+					"question":$("#%{$word}%_%{$opfs_total[rowsec].id}%").val(),
+					"question_en":$("#%{$word}%_en_%{$opfs_total[rowsec].id}%").val(),
+					"ord":$("#ord_%{$word}%_%{$opfs_total[rowsec].id}%").val(),
+					"id":"%{$opfs_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/pricelist.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#%{$word}%_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования %{$named}%.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+			
+		}
+	});
+	$("#%{$word}%_en_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#%{$word}%_en_%{$opfs_total[rowsec].id}%").css("background-color","white");
+			
+		}
+	});
+	
+	$("#ord_%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_%{$word}%_%{$opfs_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#ord_%{$word}%_%{$opfs_total[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_%{$word}%_%{$opfs_total[rowsec].id}%").bind("click",function(){
+		if(window.confirm("Вы действительно хотите удалить %{$named}% %{$opfs_total[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/pricelist.php",
+				type: "POST",
+				data:{
+					"action":"delete_%{$word}%",
+					"id":"%{$opfs_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/pricelist.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_%{$word}%_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#%{$word}%_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления %{$named}%.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

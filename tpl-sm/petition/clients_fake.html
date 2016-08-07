@@ -1,0 +1,94 @@
+
+    <tr align="left" valign="top" id="%{$word}%_%{$tempid}%">
+	<td width="*" >
+    <span id="span_client_name_%{$tempid}%">%{$client_name}%</span>
+    <input type="hidden" id="client_name_%{$tempid}%" name="client_name_%{$tempid}%" value="%{$client_name|escape}%" />
+    
+    </td>
+    <td width="*" >
+	<span id="span_purpose_name_%{$tempid}%">%{$purpose_name}%</span>
+    
+    <span id="span_purpose_txt_%{$tempid}%">%{$purpose_txt}%</span>
+    
+    
+    
+    
+	<input type="hidden" id="purpose_name_%{$tempid}%"   value="%{$purpose_name|escape}%" />
+    <input type="hidden" id="purpose_txt_%{$tempid}%" name="purpose_txt_%{$tempid}%" value="%{$purpose_txt|escape}%" />
+    
+    <input type="hidden" id="purpose_id_%{$tempid}%" name="purpose_id_%{$tempid}%" value="%{$purpose_id|escape}%" />
+    </td>
+    <td width="32">
+    <a href="#" id="delete_%{$word}%_%{$tempid}%" title="удалить %{$named}%"><img src="/img/del.gif" width="15" height="15" border="0" alt="" align="right" /></a>        
+    <a href="#" id="edit_%{$word}%_%{$tempid}%" title="редактировать %{$named}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_%{$word}%_%{$tempid}%" border="0" alt="" align="right" /></a>
+    
+    </td>
+   
+    </tr>
+   
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$tempid}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$("#%{$word}%_%{$tempid}%").remove();	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$tempid}%").bind("click",function(){
+			  
+			 $("#%{$word}%_client_name").val($("#client_name_%{$tempid}%").val());
+		 	$("#%{$word}%_purpose_txt").val($("#purpose_txt_%{$tempid}%").val());
+		 	$("#%{$word}%_purpose_id").val($("#purpose_id_%{$tempid}%").val());
+			 
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						res=true; 
+						if(res&&($("#%{$word}%_client_name").val().length<3)){
+							res=res&&false;
+							alert("Заполните поле Название клиента!");
+							$("#%{$word}%_client_name").focus();
+						}
+						
+						if(res&&(($("#%{$word}%_purpose_id").val()==0)||($("#%{$word}%_purpose_id").val()==null)||($("#%{$word}%_purpose_id").val()==undefined))){
+							res=res&&false;
+							alert("Заполните поле Цель визита!");
+							$("#%{$word}%_purpose_id").focus();
+						}
+						
+						if(res&&($("#%{$word}%_purpose_has_txt_"+$("#%{$word}%_purpose_id").val()).val()==1)&&($("#%{$word}%_purpose_txt").val().length==0)){
+							res=res&&false;
+							alert("Укажите описание цели визита!");
+							$("#%{$word}%_purpose_txt").focus();
+						}
+						
+						if(res){
+							 $("#client_name_%{$tempid}%").val($("#%{$word}%_client_name").val());
+							 $("#purpose_txt_%{$tempid}%").val($("#%{$word}%_purpose_txt").val());
+							 $("#purpose_id_%{$tempid}%").val( $("#%{$word}%_purpose_id").val());
+							 $("#purpose_name_%{$tempid}%").val( $("#%{$word}%_purpose_id option:selected").html());
+							
+							 $("#span_client_name_%{$tempid}%").html($("#%{$word}%_client_name").val());
+							 $("#span_purpose_txt_%{$tempid}%").html($("#%{$word}%_purpose_txt").val());
+							 
+							$("#span_purpose_name_%{$tempid}%").html( $("#%{$word}%_purpose_id option:selected").html());
+							$(this).dialog("close");
+						}
+						
+						
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+	});
+	</script>
+   

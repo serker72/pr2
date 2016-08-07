@@ -1,0 +1,140 @@
+<div id="fail_dialog" title="Причины отказа" style="display:none;">
+      <div id="fail_dic">
+      %{include file="lead/fails.html"}%
+      </div>
+      
+      Новая причина отказа:<br>
+      <input type="text" id="new_fail" size="30" maxlength="255" />
+      <input type="button" value="Добавить причину" id="add_new_fail"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+        $("#fail_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/lead.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fails_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#fail_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/lead.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fails_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                      $("#task_comment_change_id").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+            $(this).dialog("close"); }
+          }
+        
+        });
+        $("#expand_fails").bind("click",function(){
+            $("#fail_dialog").dialog("open");
+			 
+			 $.ajax({
+                  async: true,
+                  url: "/js/lead.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fails_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+					 
+                    $("#fail_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+        });
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/lead.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fails_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#fail_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_fail").bind("click", function(){
+              if($("#new_fail").val().length<3){
+                  $("#new_fail").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/lead.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_fail",
+                      "opf":$("#new_fail").val()
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("Причина отказа добавлена!"); 
+                     $("#new_fail").val('');
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления причины отказа.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>

@@ -1,0 +1,1217 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<!--<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+-->
+
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.js"></script> 
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.numeric.extensions.js"></script> 
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+ 	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_course").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});  
+	 
+	 
+	
+	//$("#pdate_end").datepicker({changeYear:true, yearRange: '2012:+15'});
+ 
+	$("#EditAndNewVersion").bind("click", function(){
+		return window.confirm("Вы действительно хотите создать новую версию документа?");
+	});
+	
+	$("#version_id").change(function(){
+		location.href='ed_bdr.php?action=1&id='+$('#id').val()+'&version_id='+$(this).val();
+	});
+	
+	
+%{if $bill.total_is_working}%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_total").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_total").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_total").html($days)	;
+	
+	$("#work_hours_total").html($hours)	;
+	
+	$("#work_mins_total").html($mins)	;
+	
+	$("#work_secs_total").html($secs);
+	$("#working_times_total").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+
+%{if $bill.5_is_working }%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_5").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_5").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_5").html($days)	;
+	
+	$("#work_hours_5").html($hours)	;
+	
+	$("#work_mins_5").html($mins)	;
+	
+	$("#work_secs_5").html($secs);
+	$("#working_times_5").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+ 
+
+%{if $bill.6_is_working}%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_6").val());	
+	 
+	$working_time+=1;
+	$("#working_time_unf_6").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_6").html($days)	;
+	
+	$("#work_hours_6").html($hours)	;
+	
+	$("#work_mins_6").html($mins)	;
+	
+	$("#work_secs_6").html($secs);
+	$("#working_times_6").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%		
+
+	//маски для прибыли
+	if($("#gain_val").val().length!=0) $("#gain_val").inputmask("currency", {removeMaskOnSubmit:true});
+	if($("#gain_percent").val().length!=0) $("#gain_percent").inputmask("currency", {removeMaskOnSubmit:true});
+	if($("#gain_ebitda").val().length!=0) $("#gain_ebitda").inputmask("currency", {removeMaskOnSubmit:true});
+	if($("#gain_chp").val().length!=0) $("#gain_chp").inputmask("currency", {removeMaskOnSubmit:true});
+		
+
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="bdrs.html" prefix="" description="Информация о редактировании БДР" style="float:right" is_right=true}%
+ 
+ 
+
+
+ 
+
+<h1>Редактирование БДР</h1>
+
+<form action="ed_bdr.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+ 
+
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="status_change_comment" id="status_change_comment" value="" />
+<input type="hidden" name="status_change_comment_id" id="status_change_comment_id" value="%{$bill.fail_reason_id}%" />
+
+
+ 
+<input type="hidden"  id="lead_id" value="%{$bill.lead_id}%"> 
+
+ <input type="hidden"  id="tz_id" value="%{$bill.tz_id}%">
+<input type="hidden"  id="kp_in_id" value="%{$bill.kp_in_id}%">
+<input type="hidden"   id="kp_out_id" value="%{$bill.kp_out_id}%">
+ 
+
+
+
+<div style="float:right; margin-right:0px; min-width:110px; height:50px;" id="toggle_annul">
+%{include file="bdr/toggle_annul_card.html"}%
+
+</div>
+
+<div style="float:right;  margin-right:20px; ">
+	<label for="version_id">Версия док-та:</label>
+    <br>
+	
+    <div style="float:left;">
+    <select id="version_id" name="version_name" style="width:180px;"  >
+    	%{foreach from=$versions item=ver}%
+    	<option value="%{$ver.vid}%" %{if $ver.vid==$bill.vid}% selected%{/if}%>№%{$ver.version_no}% от %{$ver.given_pdate}%</option>
+        %{/foreach}%
+    </select>
+    </div>
+	
+    
+      <div class=" reestr_right_button24" data-comment="Создать новую версию" style=" float:left; margin-left:10px; ">
+    <input id="EditAndNewVersion" name="EditAndNewVersion"  value="" type="submit" style="background-color:transparent; border-color:transparent;" %{if !$can_make_version}%disabled%{/if}% class=" reestr_plus %{if !$can_make_version}%reestr_inactive %{/if}%" />
+    </div>
+    
+</div>
+ 
+ 
+ 
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. обр-ки  фин. службой:</strong><br>
+   
+    <div id="working_times_5" class="working_times"> 
+    <span id="work_days_5">%{$bill.times_5.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_5">%{$bill.times_5.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_5">%{$bill.times_5.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_5">%{$bill.times_5.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_5" type="hidden" value="%{$bill.working_time_unf_5|default:"0"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. обр-ки ген. директором:</strong><br>
+   
+    <div id="working_times_6" class="working_times"> 
+    <span id="work_days_6">%{$bill.times_6.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_6">%{$bill.times_6.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_6">%{$bill.times_6.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_6">%{$bill.times_6.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_6" type="hidden" value="%{$bill.working_time_unf_6|default:"0"}%" />
+</div>
+
+ 
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Общее вр. обр-ки:</strong><br>
+   
+    <div id="working_times_total" class="working_times"> 
+    <span id="work_days_total">%{$bill.times_total.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_total">%{$bill.times_total.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_total">%{$bill.times_total.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_total">%{$bill.times_total.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_total" type="hidden" value="%{$bill.working_time_unf_total|default:"0"}%" />
+</div>
+  
+ 
+ 
+
+<p />
+<br clear="all">
+
+
+ 
+
+
+<div style="float:right;  margin-right:0px; height:50px;">
+  %{if $bill.status_id==27}%
+  <a href="#" onClick="alert('Невозможно распечатать БДР в статусе Не актуально!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+   %{elseif $bill.is_confirmed==1 and $bill.is_confirmed_version==1 and $bill.is_confirmed_version1==1}%
+  <a id="print_form" href="#"   class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+  
+  <div id="is_print_dialog" title="Выберите форму для печати" style="display:none;">
+    <strong>Выберите форму для печати:</strong><br />
+<br>
+
+    	<input type="checkbox" id="do_print_0" value="1"   /><label for="do_print_0">БДР</label><br />
+		<input type="checkbox" id="do_print_1" value="1" /><label for="do_print_1">БДДС</label>
+        
+       
+       
+      
+      
+    </div>
+    
+    <script type="text/javascript">
+	$(function(){
+		 
+		
+		$("#is_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 250,
+			height: 180,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					 //
+					
+					if($("#do_print_0").prop("checked")){
+						zc=window.open('ed_bdr_pdf.php?action=1&id=%{$bill.id}%&print=1&print_mode=0');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					if($("#do_print_1").prop("checked")){
+						zc=window.open('ed_bdr_pdf.php?action=1&id=%{$bill.id}%&print=1&print_mode=1');	
+						
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					 
+					
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});
+		
+		$("#print_form").bind("click", function(){
+			$("#is_print_dialog").dialog("open");
+			
+			return false;
+		});
+		
+		%{if $force_print==1}%
+		$("#print_form").trigger("click");
+		%{/if}%
+		
+	});
+	</script>
+  
+  
+  
+  %{else}%
+  <a href="#" onClick="alert('Для печати БДР необходимо утвердить его заполнение, утвердить проверку финансовой службой и генеральным директором!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+  %{/if}%
+</div>  
+
+
+
+
+
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 	%{if $bill.status_id==27}%
+   <a href="#" onClick="alert('Невозможно отправить на электронную почту БДР в статусе Не актуально!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+   %{elseif $bill.is_confirmed==1 and $bill.is_confirmed_version==1 and $bill.is_confirmed_version1==1}%
+    <a href="#" id="bdr_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="bdr/pdf_actions.html" mode=0}%
+    %{else}%
+    <a href="#" onClick="alert('Для отправки на электронную почту БДР необходимо утвердить его заполнение, утвердить проверку финансовой службой и генеральным директором!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+    %{/if}%
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    <input type="hidden" id="pdate" value="%{$bill.pdate_d}%" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+	<strong>Период проекта:</strong>
+    
+    <strong>с:</strong>
+<br>
+
+	<select name="beg_month" id="beg_month" style="width:80px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+    %{html_options values=$months selected=$bill.beg_month output=$month_names}%
+    </select>
+    
+    <select name="beg_year" id="beg_year" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+    %{html_options values=$years selected=$bill.beg_year output=$year_names}%
+    </select>
+    
+    
+</div>
+
+<div style="float:left; margin-right:20px; height:50px;">
+	 
+    
+    <strong>по:</strong>
+<br>
+
+	<select name="end_month" id="end_month" style="width:80px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+     %{html_options values=$months selected=$bill.end_month output=$month_names}%
+    </select>
+    
+    <select name="end_year" id="end_year" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+    
+     %{html_options values=$years selected=$bill.end_year output=$year_names}%
+    </select>
+    
+    
+</div>
+
+
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <label for="lead_str">Лид:</label> <br>
+
+  
+    <a href="ed_lead.php?action=1&id=%{$bill.lead_id}%&from_begin=1" target="_blank">%{$lead.code}%</a>
+     
+	 
+</div>
+
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">ТЗ:</label> <br>
+    <a href="ed_tz.php?action=1&id=%{$tz.id}%&from_begin=1" target="_blank">%{$tz.code}%</a>
+    
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">КП вх.:</label> <br>
+    <a href="ed_kp_in.php?action=1&id=%{$kp_in.id}%&from_begin=1" target="_blank">%{$kp_in.code}%</a>
+    
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">КП исх.:</label> <br>
+    <a href="ed_kp_in.php?action=1&id=%{$kp_out.id}%&from_begin=1" target="_blank">%{$kp_out.code}%</a>
+    
+</div>
+
+
+
+<br clear="all">
+<p />
+
+
+
+
+
+<h2>1. Вводная информация</h2>
+
+ 
+
+<div style="float:left; margin-right:20px;">
+		 
+        <strong>Наименование:</strong>
+         <br />
+        
+        
+     
+         %{section name=supsec loop=$suppliers}%
+        	 	<a href="supplier.php?action=1&id=%{$suppliers[supsec].id}%" target="_blank" >%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%,
+      
+      	      %{foreach from=$suppliers[supsec].contacts item=contact}%	 
+                
+                
+                %{$contact.name}%, %{$contact.position}% 
+                
+                %{/foreach}%
+                </a>
+     
+		%{/section}%
+     
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+	<label for="eq_str">Наименование станка:</label><br>
+    <input type="text"  id="eq_str"  value="%{$eq_str|escape}%"  disabled size="40" maxlength="255" style="width:200px;" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="srok_str">Срок поставки:</label><br>
+    <input type="text"  id="srok_str"  value="%{$srok_str|escape}%"  disabled size="40" maxlength="255" style="width:100px;" />
+</div>
+
+ <div style="float:left; margin-right:10px;">
+	<label for="manager_select">Ответственный сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:200px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+<h2>2. Фин. параметры</h2>
+
+
+<div style="float:left; margin-right:20px;">
+	<strong>Курс $:</strong><br>
+	<span id="course_dol_span">%{$bill.course_dol}%</span>
+    
+    <input type="hidden"  id="course_dol" name="course_dol" value="%{$bill.course_dol}%" %{if !$can_modify}% disabled="disabled"%{/if}%  />
+</div>
+
+<div style="float:left; margin-right:20px;">
+	<strong>Курс &euro;:</strong><br>
+    <span id="course_euro_span">%{$bill.course_euro}%</span>
+    
+     <input type="hidden"  id="course_euro" name="course_euro" value="%{$bill.course_euro}%" %{if !$can_modify}% disabled="disabled"%{/if}%  />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="pdate_course">Дата курса:</label><br>
+	<input type="text" id="pdate_course" name="pdate_course" value="%{$bill.pdate_course}%" %{if !$can_modify}% disabled="disabled"%{/if}%  size="10" maxlength="10" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<strong></strong><br>
+	<input type="checkbox" value="1" id="is_my_course" name="is_my_course" %{if !$can_modify}% disabled="disabled"%{/if}%  %{if $bill.is_my_course}% checked %{/if}%   /><label for="is_my_course">Ввести свой курс</label>
+
+</div>
+
+%{include file="bdr/course_actions.html"}%
+
+
+
+<div style="float:left; margin-right:20px;">
+	<label for="curr_str">Валюта расчета:</label><br>
+    
+    <select name="currency_id" id="currency_id"  %{if !$can_modify}% disabled="disabled"%{/if}% style="width:45px;"     >
+    %{section name=cursec loop=$currs}%
+    <option value="%{$currs[cursec].id}%" %{if $currs[cursec].id==$bill.currency_id}% selected="selected"%{/if}%>%{$currs[cursec].signature}%</option>
+    %{/section}%
+    </select>
+    
+ 
+</div>
+
+
+<br clear="all">
+<p />
+
+<h2>3. Выручка	</h2>
+
+%{include file="bdr/p_actions.html" items=$pdata can_modify=$can_modify}%
+
+<br clear="all">
+<p />
+
+
+
+<h2>4. Затраты</h2>
+
+%{include file="bdr/m_actions.html" items=$mdata can_modify=$can_modify}%
+
+<br clear="all">
+<p />
+
+
+
+<h2>5. Прибыль проекта</h2>
+
+<div style="float:left; margin-right:20px;">
+	<label for="gain_val">ВП проекта <br>
+ = выручка - себест-ть</label>	<br>
+	
+    <input type="text" disabled id="gain_val" size="20" maxlength="20" value="%{$bill.gain_val}%" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">	
+    <label for="gain_percent">ВМ проекта<br>
+= ВП / выручка	</label><br>
+	
+    <input type="text" disabled id="gain_percent" size="20" maxlength="20" value="%{$bill.gain_percent}%" />
+
+</div>	
+
+<div style="float:left; margin-right:20px;">
+	
+    <label for="gain_ebitda">EBITDA по проекту<br>
+ = ВП - КиАУР	</label><br>
+	
+    <input type="text" disabled id="gain_ebitda" size="20" maxlength="20" value="%{$bill.gain_ebitda}%" />	
+
+</div>	
+    
+<div style="float:left; margin-right:0px;">    
+    <label for="gain_chp">ЧП по проекту<br>
+ = EBITDA - налоги	</label><br>
+	
+    <input type="text" disabled id="gain_chp" size="20" maxlength="20" value="%{$bill.gain_chp}%" />	
+
+ 
+</div>
+
+<div style="float:left; margin-right:20px; padding-top:36px;">
+	%{if $can_calc_gain}%
+    <a href="#" id="calculate_gain" class="reestr_calc reestr_right_button24" data-comment="Расчет прибыли"></a>
+    <script>
+	$(function(){
+		$("#calculate_gain").bind("click", function(){
+			//собрать данные таблиц, выполнить по ним расчет
+			
+			mfields=new Array();
+			$("input[id^=m_cost_]").each(function(index, element) {
+				id=$(element).attr("id").replace(/^m_cost_/,'');
+				
+				$(element).inputmask('remove'); 
+				mfields.push(id+"|"+$(element).val()+"|"+$("#m_notes_"+id).val());
+				$(element).inputmask("currency", {removeMaskOnSubmit:true});
+				
+			});
+			
+			pfields=new Array();
+			$("input[id^=p_cost_]").each(function(index, element) {
+				id=$(element).attr("id").replace(/^p_cost_/,'');
+				
+				 $(element).inputmask('remove');
+				pfields.push(id+"|"+$(element).val()+"|"+$("#p_notes_"+id).val());
+				$(element).inputmask("currency", {removeMaskOnSubmit:true});
+				
+			});
+			
+			$.ajax({
+				async: true,
+				url: "/js/bdrs.php",
+				dataType:"json",
+				type: "GET",
+				data:{
+					"action":"calc_gain",
+					"id":$("#id").val(),
+					"version_id":$("#version_id").val(),
+					"mfields":mfields,
+					"pfields":pfields
+					 
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					// $("#m_block").html(data);
+				  //alert(data);
+				  $("#gain_val").val(data.gain_val);
+				  $("#gain_percent").val(data.gain_percent);
+				  $("#gain_ebitda").val(data.gain_ebitda);
+				  $("#gain_chp").val(data.gain_chp);
+				  
+				  $("#gain_val").inputmask("currency", {removeMaskOnSubmit:true});
+				  $("#gain_percent").inputmask("currency", {removeMaskOnSubmit:true});
+					$("#gain_ebitda").inputmask("currency", {removeMaskOnSubmit:true});
+					$("#gain_chp").inputmask("currency", {removeMaskOnSubmit:true});
+		
+
+				  
+				},
+				error: function(xhr, status){
+					
+				} 	 
+			});
+			
+			
+			return false;
+		});
+		
+		
+	})
+	</script>
+    %{else}%
+     <a href="#" onClick="return false;" class="reestr_calc reestr_inactive reestr_right_button24" data-comment="Расчет прибыли"></a>
+    %{/if}%
+
+</div>
+
+<br clear="all">
+<p />
+
+
+
+
+ 
+<div style="float:left; margin-right: 0px; width:100%;">
+<label for="description">Комментарий:</label><br>
+<textarea id="description" name="description" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:100%; height:75px;">%{$bill.description|escape:"html"}%</textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'50px'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+</div> 
+
+ 
+
+<br clear="all">
+<p />
+ 
+   
+
+ 
+  
+ 
+
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="bdr/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="bdr/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+ 
+ <br clear="all" />
+
+
+ 
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	
+	 
+	
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0){
+			 
+		}
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 
+		 
+		  $("#is_confirmed_version").prop("checked",false);
+			 $("#is_confirmed_version").trigger("click");
+			  $("#is_confirmed_version").prop("checked",false);
+			  
+			  
+		 $("#is_confirmed_version1").prop("checked",false);
+			 $("#is_confirmed_version1").trigger("click");
+			  $("#is_confirmed_version1").prop("checked",false);
+			  	  
+			  
+		/*	  $("#force_eq_in").prop("checked",false);
+			 $("#force_eq_in").trigger("click");
+			  $("#force_eq_in").prop("checked",false);   */  
+
+		}
+	});
+});
+</script>
+
+ 
+<br>
+
+
+
+
+
+<div style="min-width:480px; width:100%; overflow:hidden; ">
+
+<fieldset id="fs_is_confirmed_version"  style="float:left; width:49%; min-width:200px; margin-right:10px; border:1px solid silver; padding:10px 10px;">
+
+	<legend>Проверка: Финансовая служба</legend>
+
+    
+    <input type="checkbox"  id="is_confirmed_version" name="is_confirmed_version" value="1" onchange="" %{if $bill.is_confirmed_version==1}% checked="checked"%{/if}% %{if $can_modify_v==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_version">Утверждаю</label>
+    
+    <span id="is_confirmed_version_confirmer">%{$is_confirmed_version_confirmer}%</span>
+    
+    <br>
+
+    
+    <label for="confirm_version_notes">Примечания:</label><br>
+    <textarea id="confirm_version_notes" name="confirm_version_notes" %{if !$can_modify_v or $bill.is_confirmed_version==1}% disabled="disabled"%{else}% %{/if}% style="width:100%; height:75px;">%{$bill.confirm_version_notes|escape:"html"}%</textarea>
+    
+    
+
+</fieldset>
+ 
+
+<fieldset id="fs_is_confirmed_version1"  style="float:right; width:49%; min-width:200px; margin-right:00px; border:1px solid silver; padding:10px 10px;">
+	<legend>Проверка: Генеральный директор</legend>
+
+    <input type="checkbox"  id="is_confirmed_version1" name="is_confirmed_version1" value="1" onchange="" %{if $bill.is_confirmed_version1==1}% checked="checked"%{/if}% %{if $can_modify_v1==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed_version1">Утверждаю</label>
+    
+    <span id="is_confirmed_version1_confirmer">%{$is_confirmed_version1_confirmer}%</span>
+    
+    <br>
+
+    
+    <label for="confirm_version_notes1">Примечания:</label><br>
+    <textarea id="fulfil_kp_not1" name="confirm_version_notes1" %{if !$can_modify_v1 or $bill.is_confirmed_version1==1}% disabled="disabled"%{else}% %{/if}% style="width:100%; height:75px;">%{$bill.confirm_version_notes1|escape:"html"}%</textarea>
+    
+
+</fieldset>
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_version").bind("click",function(){
+		
+		if(	$("#is_confirmed_version").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_version_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_version_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			  /*
+			   $("#force_eq_in").prop("checked",false);
+			 $("#force_eq_in").trigger("click");
+			  $("#force_eq_in").prop("checked",false);  */
+		} 
+		
+
+		
+	}); 
+	
+	
+	$("#is_confirmed_version1").bind("click",function(){
+		
+		if(	$("#is_confirmed_version1").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_version1_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_version1_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			  /*
+			   $("#force_eq_in").prop("checked",false);
+			 $("#force_eq_in").trigger("click");
+			  $("#force_eq_in").prop("checked",false);  */
+		} 
+		
+
+		
+	}); 
+	
+});
+</script>
+
+
+
+<br clear="all">
+<p />
+ 
+
+
+<!--
+
+<input type="checkbox" id="is_confirmed_version" name="is_confirmed_version" value="1" onchange="" %{if $bill.is_confirmed_version==1 }% checked="checked"%{/if}% %{if $can_confirm_done==false  or $bill.force_eq_in==1}% disabled="disabled"%{/if}% /><label for="is_confirmed_version">Утверждаю прибыль</label>
+ 
+
+<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
+
+
+
+-->
+ 
+ 
+ 
+ 
+
+
+<!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку БДР" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='leads.php';
+}else location.href='leads.php';" />
+
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	 
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+	 
+	 
+	
+    can_go=true;	
+	
+   function CheckFields(){
+		can_ret=true;
+		
+		$("input[id^=m_cost_]").each(function(index, element) {
+			
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+        });	
+		
+		
+		$("input[id^=p_cost_]").each(function(index, element) {
+			
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+        });	
+		
+		return can_ret;
+	}
+	
+	
+	if(!CheckFields()){
+		alert("Введите корректные данные в блок прибыли и затрат!");
+		 
+		//return false;	
+		can_go=can_go&&false;
+	}
+	
+	
+	
+	if(can_go){
+		newd=new Date( $("#pdate_course").val().substr(6,4),  parseInt($("#pdate_course").val().substr(3,2))-1,  $("#pdate_course").val().substr(0,2));
+			
+		controld=new Date( $("#pdate").val().substr(6,4),  parseInt($("#pdate").val().substr(3,2))-1,  $("#pdate").val().substr(0,2));
+		
+		controld.setHours(controld.getHours()-30*24);
+		
+		//alert(newd+ ' vs ' + controld);
+		today=new Date();
+		if((newd>today)||(newd<controld)){
+			alert("Дата курса не может быть позднее, чем дата БДР, и не может быть ранее даты БДР более, чем на 30 дней.");	
+			can_go=can_go&&false;
+			$("#pdate_course").focus();
+		}	
+		
+	}
+	
+	//проверка корректности периода: дб выбраны все значения, начало < конца
+	if(can_go){
+		if(
+		 ($("#beg_month").val()==0)||($("#beg_month").val()==null)||($("#beg_month").val()==undefined)||
+		 ($("#end_month").val()==0)||($("#end_month").val()==null)||($("#end_month").val()==undefined)||
+		 ($("#beg_year").val()==0)||($("#beg_year").val()==null)||($("#beg_year").val()==undefined)||
+		 ($("#end_year").val()==0)||($("#end_year").val()==null)||($("#end_year").val()==undefined)
+		 ){
+			alert("Укажите начало и конец периода проекта!");	
+			can_go=can_go&&false;	 
+		 }
+		
+	}
+	if(can_go){
+		
+		if(	parseInt($("#end_year").val())< parseInt($("#beg_year").val())){
+			alert("Укажите корректный период проекта!");	
+			can_go=can_go&&false;	 
+		}else if(	
+				( parseInt($("#end_year").val())== parseInt($("#beg_year").val()) )  &&
+				( parseInt($("#end_month").val())< parseInt($("#beg_month").val()) )
+		 ){
+			alert("Укажите корректный период проекта!");	
+			can_go=can_go&&false;
+		}
+	}
+	
+	
+	//попытка утвердить заполнение тендера
+	if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
+			
+			%{if !$can_unconfirm}%
+			if(can_go) return window.confirm("Внимание! Вы утверждаете заполнение БДР. У Вас нет прав для обратного действия - снятия утверждения заполнения БДР.\nПросьба проверить корректность заполнения всех данных ТЗ.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+			%{/if}%
+	}
+	
+	if(!can_go){
+		 
+		//вернуть все маски
+		$("input[id^=m_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_nds_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_costwo_nds_]").inputmask("currency", {removeMaskOnSubmit:true});
+		
+	 
+	}
+	 
+	return can_go; 
+}
+
+//frmvalidator.addValidation("given_pdate","req","Укажите дату ТЗ!");
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{else}%
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	var can_ret=true;
+	
+	
+	 
+		
+	
+	
+	
+	
+	//проверка доступности снятия утверждения цены
+		if(can_ret&&(%{$bill.is_confirmed}%==1)&&($("#is_confirmed").prop("checked")==false)){
+			
+			%{if !$can_unconfirm}%
+				can_ret=can_ret&&false;
+				alert("У Вас недостаточно прав для снятия утверждения заполнения БДР.\nПрава на это действие есть у следующих сотрудников: %{strip}%
+				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
+				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
+				%{/foreach}%
+															 %{/strip}%");
+				$("#is_confirmed").prop("checked", true).trigger("change");
+				
+				//в журнал
+				$.ajax({
+					async: true,
+					url: "/js/bdrs.php",
+					type: "POST",
+					data:{
+						"action":"fail_unconfirm_price",
+						id: "%{$bill.id}%"
+					}
+				});
+			%{/if}%
+			
+			
+			
+			if(can_ret)  $.ajax({
+				async: false,
+				url: "/js/bdrs.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполнения БДР. Причина: "+data+"."); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния БДР. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+	
+ 	 
+	
+	
+		  
+	
+	/*alert($("#fulful_kp_2").prop("checked"));
+	can_ret=can_ret&&false;	
+		*/		
+	
+		
+	return can_ret; 
+}
+
+ 
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{/if}%

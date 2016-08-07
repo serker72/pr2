@@ -1,0 +1,33 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $smarty.section.rowsec.total>0}%
+<strong>Количества позиций в межскладе превышают доступный остаток:</strong><br>
+<table class="blacktable" width="100%" cellspacing="0" cellpadding="1">
+<tr align="left" valign="top">
+	<th width="40">Код</th>
+    <th>Позиция</th>
+    <th width="40">Ед. изм.</th>
+    <th width="40">Доступный остаток</th>
+    <th width="40">В межскладе</th>
+    
+</tr>
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top">
+	<td width="40">%{$items[rowsec].id}%</td>
+    <td>%{$items[rowsec].name}%</td>
+    <td width="40">%{$items[rowsec].dim_name}%</td>
+    <td width="40">%{$items[rowsec].max}%</td>
+    <td width="40">
+    
+    
+    <input type="text" size="5" maxlength="127" id="new_qua_%{$items[rowsec].id}%" value="%{$items[rowsec].needed}%" />
+    </td>
+
+
+
+</tr>
+%{/section}%
+</table>
+<strong>Введите допустимое количество позиций и нажмите "Внести изменения".</strong>
+
+%{/if}%

@@ -1,0 +1,43 @@
+
+<input type="checkbox" value="1" id="memo_email_file_all"><label for="memo_email_file_all">Выбрать все</label><br>
+
+<input type="checkbox" value="s0" id="memo_email_files_s0"><label for="memo_email_files_s0">PDF-форма документа (без подписей)</label><br>
+
+<input type="checkbox" value="s1" id="memo_email_files_s1" %{if  $field_rights.to_print_sign==false  }% disabled="disabled"%{/if}%  ><label for="memo_email_files_s1">PDF-форма документа (с подписями)</label><br>
+
+
+
+%{foreach name=ff from=$items item=files}%
+
+
+<input type="checkbox" value="%{$files.id}%" id="memo_email_files_%{$files.id}%"><label for="memo_email_files_%{$files.id}%">%{$files.orig_name}% %{$files.txt}%</label><br>
+
+
+
+%{/foreach}%
+<script>
+$(function(){
+	$("#memo_email_file_all").bind("change", function(){
+		state= $(this).prop("checked");
+		
+		$.each($("input[id^=memo_email_files_]"), function(k,v){
+			if($(v).prop("disabled")==false) $(v).prop("checked", state);
+		})
+		
+		
+	});
+	
+	$("input[id^=memo_email_files_]").bind("change", function(){
+		
+		total=0; //$("input[id^=doc_vn_email_files_]").length;
+		$.each($("input[id^=memo_email_files_]"), function(k,v){
+			if($(v).prop("disabled")==false) total++;
+		});
+		
+		checked=$("input[id^=memo_email_files_]:checked").length;
+		
+		$("#memo_email_file_all").prop("checked", ((checked>0)&&(total==checked)));
+		
+	});
+});
+</script>

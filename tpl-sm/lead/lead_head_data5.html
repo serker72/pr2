@@ -1,0 +1,114 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Лид</th>
+   <th>Статус</th>
+   <th width="80">Состояние</th>
+   <th>Название</th>
+    <th width="100">Прогноз. дата закл-ия конт-та</th>
+   <th></th>
+   <th></th>
+   
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="lead_remind_id%{$data_kind}%_%{$item.id}%" value="%{$item.id}%" />
+        <input type="hidden" id="lead_remind_code%{$data_kind}%_%{$item.id}%" value="%{$item.code}%" />
+        
+        <input type="hidden" id="lead_refuse_counts%{$data_kind}%_%{$item.id}%" value="%{$item.refuse_counts}%" />
+        
+        
+         <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td width="*">
+%{$item.status_name}%
+</td>
+<td>
+    %{if $item.probability>=0 and  $item.probability<=29.99}% 
+    <span style="color:#aaaaaa;"> холодный</span>
+    %{elseif $item.probability>=30 and  $item.probability<=69.99}%
+    <span style="color:#3a87ad;  ">теплый</span>
+    %{elseif $item.probability>=70}%
+    <span style="color:#e9510f;  ">горячий</span>
+    %{/if}%
+
+</td>
+<td>
+%{$item.topic}%
+</td>
+<td>
+%{$item.pdate_finish}%
+</td>
+
+<td width="180">         
+         <label for="lead_remind_status_id%{$data_kind}%_%{$item.id}%_1">Написать комментарий</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id%{$data_kind}%_%{$item.id}%" id="lead_remind_status_id%{$data_kind}%_%{$item.id}%_1" value="1">
+
+         
+       <div id="lead_remind_results%{$data_kind}%_%{$item.id}%" style="display:none;">
+	         
+             <br>
+    
+             <label for="lead_remind_comment%{$data_kind}%_%{$item.id}%"><strong>Комментарий:</strong></label><br>
+    		 
+             
+             <textarea cols="73" rows="5" id="lead_remind_comment%{$data_kind}%_%{$item.id}%" style="width:100%; height:70px;"></textarea><br> 
+
+             
+            
+            
+         
+         </div>
+          
+</td>
+<td width="80">
+        <label for="lead_remind_status_id%{$data_kind}%_%{$item.id}%_0">Спросить позже</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id%{$data_kind}%_%{$item.id}%" id="lead_remind_status_id%{$data_kind}%_%{$item.id}%_0" value="0">
+
+         
+          
+         
+             
+</td> 
+
+ 
+    
+    
+<td width="24">
+ <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 
+<script>
+$(function(){
+	$("input[id^=lead_remind_status_id%{$data_kind}%_]").bind("change", function(){
+			name=$(this).attr("name");
+			id=name.replace(/lead_remind_status_id%{$data_kind}%_/,'');
+			
+			
+			//alert($("input[name=tedner_remind_status_id_"+id+"]:checked").val());
+			 
+			
+			if($("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val()==1){
+				$("#lead_remind_results%{$data_kind}%_"+id).show();
+			}else{
+				$("#lead_remind_results%{$data_kind}%_"+id).hide();
+			}
+		});
+		
+		 
+});
+</script>
+

@@ -1,0 +1,183 @@
+
+ <td width="100" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% id="status%{$prefix}%_%{$items[rowsec].id}%" %{if $items[rowsec].color!="black"}%style="color:%{$items[rowsec].color}%;"%{/if}%>
+%{if $item.status_id==3}%
+    <strong>аннулировано</strong>
+   
+%{elseif $item.is_confirmed==0}%
+    
+    <strong>не утверждено</strong>
+
+    %{else}%
+    
+    
+    %{if $item.status_id==2}%
+    <strong>утверждено</strong>
+    %{elseif $item.status_id==7}%
+     <strong>не выполнено</strong>
+    %{elseif $item.status_id==8}%
+     <strong>выполнено</strong>
+    %{/if}%
+    
+   
+    %{/if}%
+</td>
+
+<td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% id="status_button_%{$items[rowsec].id}%" %{if $items[rowsec].color!="black"}%style="color:%{$items[rowsec].color}%;"%{/if}%>
+
+
+%{if $item.status_id==3}%
+   
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="shi_deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif $item.is_confirmed==0}%
+    
+   
+    %{if $can_confirm}%
+    <input type="button" value="Утвердить" id="shi_confirm%{$prefix}%_%{$item.id}%" />
+    %{/if}% 
+    %{else}%
+    
+    
+  
+    
+    %{if  ($can_unconfirm ) or $can_super_confirm}%
+    <input type="button" value="Не утвердить" id="shi_confirm%{$prefix}%_%{$item.id}%" />
+    %{/if}% 
+    %{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}% %{$item.confirmed_price_login}% %{$item.confirm_pdate}%
+    
+   
+    <script type="text/javascript">
+	$(function(){
+		 %{if $can_confirm or $can_super_confirm}%
+		$("#shi_confirm%{$prefix}%_%{$item.id}%").bind("click",function(){
+			%{if $item.is_confirmed==1}%
+			//alert("По данному распоряжению есть выполненные поступления: %{$item.accs_list}%. Невозможно снять утверждение данного распоряжения.");
+			//return false;
+			//сделать ajax-проверку
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					"id": "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение распоряжения %{$item.id}%. Причина:\n"+data+"\nДля снятия утверждения распоряжения необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения.");
+					can_ret=false;	
+				}
+			});
+			
+			if(can_ret==false) return false;
+			%{/if}%
+			
+			
+			
+			%{if $item.is_confirmed==0}%
+			//alert("Невозможно утвердить поступление. Причина: %{$item.can_confirm_reason}%.");
+			
+			
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					"id": "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 if(data!=0){
+					
+					 alert("Невозможно утвердить распоряжение на приемку. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения на приемку. Пожалуйста, попытайтесь утвердить распоряжение на приемку снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			
+			
+			if(can_ret==false) return can_ret;
+			%{/if}%
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%"
+			  },
+			  beforeSend: function(){
+					//$("#status_%{$item.id}%").html('<img src="/img/wait.gif" width="32" height="32" alt="">');
+					$("#shi_item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="12"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+				 //$("#status_%{$item.id}%").html(data);
+				  $("#shi_item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+				
+			  },
+			  error: function(xhr, status){
+				//  alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		  
+		});
+		%{/if}%
+		
+		 %{if $item.status_id==3 and $can_restore}%
+		  $("#shi_deaunnul%{$prefix}%_%{$items[rowsec].id}%").bind("click",function(){
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$items[rowsec].id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#shi_item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="12"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#shi_item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+ </td> 
+    
+    

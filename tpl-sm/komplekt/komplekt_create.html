@@ -1,0 +1,578 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#begin_pdate").datepicker();
+	 $("#end_pdate").datepicker();
+	 
+	 
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	 
+	touchScrollXY('notes');
+	try{
+		touchScrollXY('pos_rows');
+	}catch(e){}
+	try{
+		touchScrollXY('pcg_pos_rows');
+	}catch(e){}
+});
+</script>
+
+
+<h1 style="float:left;">Создание заявки</h1>
+
+%{include file="every_help_dialog.html" filename="komplekt_create.htm" prefix="" description="создание заявки"  style="float:right;  margin-right:5px;"}%
+
+<br clear="all" />
+
+<form action="ed_komplekt.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+<input type="hidden" name="id" id="id" value="" />
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="name">Заданный номер:</label><br />
+<input type="text" size="20" maxlength="255" id="code"  name="code" %{if !$can_edit_given_no}% disabled="disabled"%{/if}% />
+<input type="hidden" id="check_code" value="0" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+%{$pdate}%
+</div>
+
+
+
+
+<div style="float:right; margin-right:0px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+<strong>Статус:</strong><br />
+
+новая 
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="sector_id">Участок:</label><br />
+<select name="sector_id" id="sector_id" style="width:250px;">
+%{html_options values=$group_ids selected=$group_id output=$group_names}%
+</select>
+</div>
+<script type="text/javascript">
+$(function(){
+	function CheckCode(){
+		$.ajax({
+		  async: true,
+		  url: "/js/komplekt.php",
+		  type: "POST",
+		  data:{
+			  "action":"check_code",
+			  "sector_id":$("#sector_id").val(),
+			  "except_id":$("#id").val(),
+			  "code":$("#code").val()
+		  },
+		  beforeSend: function(){
+			
+		  },
+		  success: function(data){
+			$("#check_code").val(data);  
+		  },
+		  error: function(xhr, status){
+				
+		  }	 
+		});		
+		
+	}
+	
+	
+	$("#code").bind("change",function(){
+		CheckCode();
+	});
+	
+	
+	$("#storage_id").bind("change",function(){
+		
+		//каскадом обновить объекты в заявке
+		$.each($("#position_table tbody tr td input[id^=storage_id_]"),function(k,v){
+			//alert($(v).value);
+			$(v).val($("#storage_id").val());
+			if(($("#storage_id").val()==null)||($("#storage_id").val()==0)) $("#storage_name_"+$(v).attr("id")).html('-');
+			else $("#storage_name_"+$(v).attr("id")).html($("#storage_id option:selected").html());
+			
+		});
+		
+	});
+	$("#sector_id").bind("change",function(){
+		CheckCode();
+		
+		if(($("#sector_id").val()==null)||($("#sector_id").val()==0)){
+			$("#storage_id").empty();
+			return false;	
+		}
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/komplekt.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_storages",
+			  "sector_id":$("#sector_id").val(),
+			  "current_id":0
+		  },
+		  beforeSend: function(){
+			//alert("Загрузка реквизитов.");
+		  },
+		  success: function(data){
+			$("#storage_id").html(data);  
+		  },
+		  error: function(xhr, status){
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+	});
+});
+</script>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="storage_id">Объект:</label><br />
+<select name="storage_id" id="storage_id" style="width:250px;">
+%{html_options values=$obgroup_ids selected=$obgroup_id output=$obgroup_names}%
+</select>
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:5px;">
+<strong>Период:</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="begin_pdate">с:</label><br />
+<input type="text" size="10" maxlength="10" value="" name="begin_pdate" id="begin_pdate" />
+<input type="hidden" value="0" id="begin_pdate_check" name="begin_pdate_check" />
+<input type="hidden" value="%{$now}%" id="now_pdate_check" name="now_pdate_check" />
+<script type="text/javascript">
+$(function(){
+	function CheckByCurrent(){
+		//alert($("#end_pdate").attr("value"));
+		$.ajax({
+			async: false,
+			url: "/js/komplekt.php",
+			type: "POST",
+			data:{
+				"action":"pdate_current_check",
+				"begin_pdate":$("#begin_pdate").attr("value"),
+				"end_pdate":$("#end_pdate").attr("value"),
+				"now_pdate":$("#now_pdate_check").attr("value")
+			},
+			beforeSend: function(){
+			  
+			},
+			success: function(data){
+				//alert(data);
+			
+			  
+			  $("#pdate_check_code").val(data);
+			},
+			error: function(xhr, status){
+			   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			}	 
+		  });
+	}
+	
+	
+	$("#begin_pdate").bind("change",function(){
+		
+					 CheckByCurrent();
+		
+	});
+	
+	$("#end_pdate").bind("change",function(){
+		
+					 CheckByCurrent();
+		
+	});
+});
+</script>
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="end_pdate">по:</label><br />
+<input type="text" size="10" maxlength="10" value="" name="end_pdate" id="end_pdate" />
+<input type="hidden" value="0" id="end_pdate_check" name="end_pdate_check" />
+
+<input type="hidden" id="pdate_check_code" value="1" />
+</div>
+
+
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+<strong>Позиции каталога:</strong><br />
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+<input type="button" id="add_pos" value="Добавить позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+</td>
+<td width="50%" align="right">
+
+
+
+ <a href="#" onclick="alert('Заявка не утверждена. Пожалуйста, утвердите заявку!'); return false;"><img src="/img/icons/new-gr.png" width="24" height="24" alt="создать новый счет..." title="создать новый счет..." border="0" /></a> 
+
+	%{if $can_edit_position_names}%
+    <a href="#" id="edit_position_names"><img src="/img/icons/folder.gif" width="24" height="24" alt="сменить наименование..." title="сменить наименование..." border="0" /></a>
+    
+    %{include file="komplekt/position_change_dialog.html"}%
+     <script type="text/javascript">
+        
+		//функция замены найденной позиции
+		function ChangeToSel(){
+			var ck=0; var new_id=null;
+			$.each($("input[id^=pcg_pos_]"), function(k,v){
+				ck++;
+				if($(v).prop("checked")){
+					new_id=$(v).val();
+						
+				}
+			});
+			
+			if((ck>0)&&(new_id!=null)){
+				
+				
+				//выполнить проверку, есть ли такой ряд. если такой ряд есть - то в него прибавить наше количество $("#pcg_begin_kol").val()
+				
+				var row_it=null;
+				$.each($("#positions input[type=hidden][id^=resolve_]"),function(k,v){
+					id=$(v).attr('id').replace(/^resolve_/,'');	
+					
+					
+					if(id==new_id){
+						row_it=id;	
+					}
+				});
+				
+				if(row_it!=null){
+					//alert('row exists: '+row_it);
+					
+					if(window.confirm("Внимание! Выбранная Вами позиция уже сушествует в заявке. Количества исходной и существующей позиции будут сложены. Продолжить?")){
+					  //добавим кол-во в результ. ряд
+					  new_kol=parseFloat($("#kol_"+row_it).html()) + parseFloat($("#pcg_begin_kol").val());
+					  $("#kol_"+row_it).html( new_kol);
+					  $("#pos_"+$("#resolve_"+$("#pcg_begin_id").val()).val()+"_"+row_it).val( new_kol );
+					  
+					  $("#in_free_"+row_it).html( new_kol );
+					  $("#kol_init_"+row_it).html( new_kol );
+					  
+					  
+					  //удалим наш ряд
+					  $("#pos_block_"+$("#resolve_"+$("#pcg_begin_id").val()).val()).remove();
+					  
+					  //как-то вписать номер...
+					  var temp_cter=0;
+					  $.each($("#positions tr"),function(kk,vv){
+						  temp_cter++;
+						  
+						  $("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+					  });
+					}
+					
+					
+				}else{
+				//если такого ряда нет - то выполнить замену в нашем ряду: ajax удалить и вставить заново
+					var ids_list=new Array();
+					ids_list.push(new_id);
+					
+					var kols=new Array();
+					kols.push($("#pcg_begin_kol").val());
+					
+					//добавим новый ряд
+					$.ajax({
+					  async: true,
+					  url: "/js/komplekt.php",
+					  type: "POST",
+					  data:{
+						  "action":"put_to_form",
+						  "ids[]":ids_list,
+						  "kols[]":kols,
+						  "storage_id":$("#pcg_begin_storage_id").val()
+					  },
+					  beforeSend: function(){
+						
+					
+					  },
+					  success: function(data){
+						//удалим наш ряд
+					 	$("#pos_block_"+$("#resolve_"+$("#pcg_begin_id").val()).val()).remove();
+						
+						
+						$("#positions").append(data);
+						//как-то вписать номер...
+						var temp_cter=0;
+						$.each($("#positions tr"),function(kk,vv){
+							temp_cter++;
+							
+							$("#"+$(vv).attr("id")+" td:first span").html(temp_cter);
+						});
+						
+						
+						
+						
+					  },
+					  error: function(xhr, status){
+						 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					  }	 
+					});
+					
+				}
+				
+				
+				
+			}else{
+				alert("Позиция не выбрана: изменений не внесено.");	
+			}
+				
+		}
+				
+		
+		$(function(){
+			$("#edit_position_names").bind("click",function(){
+				
+				
+				
+				counter=0; 
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для смены наименования.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(counter>1){
+					alert("Внимание! Во избежание ошибок в утвержденной или частично утвержденной заявке можно единовременно поменять только одну позицию.");
+					return false;
+				}
+				
+				
+				
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				  
+				  id=$(value).attr('id').replace(/^to_bill_/,'');
+				  $("#pcg_begin_kol").val($('#kol_'+id).text());
+				  $("#pcg_begin_storage_id").val($('#storage_id_'+$("#resolve_"+id).val()+'_'+id).val());
+				  $("#pcg_begin_id").val(id);
+				  $("#pcg_positions_dialog").dialog("open");
+				  
+				  
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+    
+    
+    
+    %{else}%
+    <a href="#" onclick="alert('Невозможно сменить наименование позиций: у Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/folder_inactive.gif" width="24" height="24" alt="сменить наименование..." title="сменить наименование..." border="0" /></a>
+    %{/if}%
+    
+    
+	%{if $can_edit_quantities}%
+    
+       
+        <a href="#" id="edit_quantities"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+         <script type="text/javascript">
+        $(function(){
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#position_table input[id^=to_bill_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_bill_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text(), $('#kol_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#name_'+id).text()+', '+$('#dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else usl=false;
+					  
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#kol_'+id).html(res);
+					 $('#pos_'+id).val(res);
+					  %{if $has_primary_confirm==false}%
+					 //менять кол-во в первоначальной ячейке
+					 $('#kol_init_'+id).html(res);
+					 %{/if}%
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+       
+    %{else}%
+    
+    	
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций: у Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+        
+    %{/if}%
+
+
+  <a href="#" target="_blank" onclick="alert('В данном режиме печать заявки недоступна. Пожалуйста, нажмите кнопку Создать заявку и перейти к утверждению для получения возможности печати заявки.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать заявки..." title="печать заявки..." border="0" /></a>
+  
+  
+     
+      <a href="#" onclick="alert('В данном режиме выравнивание позиций недоступно! Пожалуйста, создайте заявку.'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a> 
+     
+    
+</td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2">
+%{include file="komplekt/position_block.html" action=0}%
+ </td>
+</tr>
+</table>
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="komplekt/d_notes_dialog_fake.html" word="notes" named="Примечания"  can_edit=$can_notes_edit}%
+    %{/if}%
+<p /> 
+
+<div style="float:right">
+
+
+<input type="checkbox" id="cannot_eq" name="cannot_eq" value="1"  title="на заявку не распространяется автовыравнивание" %{if !$can_cannot_eq}% disabled="disabled"%{else}% onchange="alert('Внимание! Отключение автовыравнивания заявки производится только после утверждения начальником участка и до полного утверждения заявки всеми ответственными лицами.'); $(this).prop('checked',false);"%{/if}% /><label for="cannot_eq" title="на заявку не распространяется автовыравнивание"  >без автовыравнивания</label>
+<br />
+
+<input type="checkbox" id="cannot_an" name="cannot_an" value="1" %{if !$can_cannot_an}% disabled="disabled"%{else}% onchange="alert('Внимание! Отключение автоаннулирования заявки производится только после утверждения начальником участка и до полного утверждения заявки всеми ответственными лицами.'); $(this).prop('checked',false);"%{/if}% title="на заявку не распространяется автоаннулирование" /><label for="cannot_an" title="на заявку не распространяется автоаннулирование" >без автоаннулирования</label>
+
+</div>
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать заявку" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать заявку и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='komplekt.php';
+}else location.href='komplekt.php';" />
+
+
+</form>
+<script type="text/javascript">
+
+function DoCustomValidation()
+{
+	if($("#positions tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить заявку без позиций! Пожалуйста, укажите позиции заявки!');
+		return false;
+	}else return true;
+}
+
+ var frmvalidator  = new Validator("crea_form");
+ frmvalidator.addValidation("check_code","lt=1","Заданный номер заявки уже используется для такого участка! Укажите другой номер.");
+ 
+ 
+ 
+ frmvalidator.addValidation("begin_pdate","req","Укажите начальную дату действия заявки!");
+ frmvalidator.addValidation("begin_pdate","minlen=10","Укажите начальную дату действия заявки!");
+ 
+  frmvalidator.addValidation("end_pdate","req","Укажите конечную дату действия заявки!");
+ frmvalidator.addValidation("end_pdate","minlen=10","Укажите конечную дату действия заявки!");
+ 
+ 
+ frmvalidator.addValidation("pdate_check_code","lt=1","Внимание! Минимальный срок выполнения заявки - 3 календарных дня, не считая дня подачи заявки. Заявка может быть сохранена только с датой начала действия - сегодня.");
+ 
+ //frmvalidator.addValidation("end_pdate_check","geelmnt=begin_pdate_check","Неправильно выбран Период заявки: укажите начальную дату раньше конечной даты!");
+ 
+ //frmvalidator.addValidation("begin_pdate_check","geelmnt=now_pdate_check","Неправильно выбран Период заявки: Начальная дата заявки не должна быть раньше сегодняшней даты.");
+ 
+ frmvalidator.addValidation("sector_id","dontselect=0","Укажите участок заявки!");
+ frmvalidator.addValidation("storage_id","dontselect=0","Укажите объект заявки!");
+ 
+ frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+ 
+</script>

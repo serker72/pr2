@@ -1,0 +1,45 @@
+ 
+%{section name=supsec loop=$items}%
+<tr align="center" valign="top">
+    	
+    
+   <td width="80" class="bl3 bt1 %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+    	 
+     	%{if $items[supsec].id!=0}%
+        %{$items[supsec].code}% 
+        %{/if}%
+    </td>
+    
+     
+    
+   <td align="left" width="*" class="bl3 bt1 %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+       %{$items[supsec].name}%
+    
+    </td>
+    
+     
+   <td align="right" width="100" class="bl3 bt1 %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+       %{$items[supsec].cost}% 
+    	
+     
+        
+    </td>
+    <td width="100" class="bl3 bt1 %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+     </td>
+    
+   <td width="300" colspan="3" class="bl3 bt1 %{if $smarty.section.supsec.last}%  bb3%{else}% bb1 %{/if}% br3">
+     
+    	 
+        %{$items[supsec].notes}% 
+    
+    </td>
+     
+    
+   </tr> 
+%{/section}%
+   
+ 
+ 
+ 
+
+ 

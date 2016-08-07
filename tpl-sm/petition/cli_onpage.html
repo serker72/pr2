@@ -1,0 +1,28 @@
+%{foreach from=$clients item=d}%
+<tr id="new_cli_row_%{$d.id}%" valign="top" align="left">
+	<td>%{$d.name}%
+    <input id="new_client_name_%{$d.id}%" name="new_client_name_%{$d.id}%" type="hidden" value="%{$d.name|escape}%" />
+    </td>
+    <td>
+    
+    %{$d.purpose_name}%
+    
+    %{$d.purpose_txt}%
+    
+    
+    
+    <input type="hidden" id="new_purpose_txt_%{$d.id}%" name="new_purpose_txt_%{$d.id}%" value="%{$d.purpose_txt|escape}%" />
+    
+    <input type="hidden" id="new_purpose_id_%{$d.id}%" name="new_purpose_id_%{$d.id}%" value="%{$d.purpose_id|escape}%" />
+    
+    
+    
+    
+    </td>
+    <td width="32">
+    %{if $can_modify}%
+    <a href="#"  data-comment="удалить клиента" onClick="if(window.confirm('Вы действительно хотите удалить клиента?')) $('#new_cli_row_%{$d.id}%').remove(); return false;" class="reestr_delete16 reestr_button16"></a> 
+    %{/if}%
+           </td>
+</tr>
+%{/foreach}%

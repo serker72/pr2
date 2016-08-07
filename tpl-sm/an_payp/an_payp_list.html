@@ -1,0 +1,253 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate%{$prefix}%_1").datepicker();
+	 $("#pdate%{$prefix}%_2").datepicker();
+	 
+	$("#only_vyp%{$prefix}%").bind("click",function(){
+		if($(this).prop("checked")) $("#only_not_vyp%{$prefix}%").prop("checked",false);
+	});
+	
+	$("#only_not_vyp").bind("click",function(){
+		if($(this).prop("checked")) $("#only_vyp%{$prefix}%").prop("checked",false);
+	});
+	
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#supplier_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_supplier.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});	
+	
+	
+});
+</script>
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" >
+
+<input type="hidden" name="tab_page" value="%{$tab_page}%" id="tab_page" />
+
+
+<input type="hidden" name="print" value="0" id="print" />
+
+
+%{include file="every_help_dialog.html" filename="an_payp.htm" prefix=$prefix description="отчет план оплаты"  style="float:right;  margin-right:10px;"}%
+
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+
+<label for="supplier_name%{$prefix}%">Контрагент:</label><br />
+<input type="text" value="%{$supplier_name}%" id="supplier_name%{$prefix}%" name="supplier_name%{$prefix}%" size="40" maxlength="512" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong>
+</div>
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate%{$prefix}%_1">с:</label><br />
+<input type="text" name="pdate%{$prefix}%_1" id="pdate%{$prefix}%_1" size="10" maxlength="10" value="%{$pdate2_1}%" style="height:13px;"  />
+
+<p />
+	<label for="pdate%{$prefix}%_2">по:</label><br />
+    <input type="text" name="pdate%{$prefix}%_2" id="pdate%{$prefix}%_2"  size="10" maxlength="10" value="%{$pdate2_2}%" style="height:13px;" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="only_vyp%{$prefix}%" id="only_vyp%{$prefix}%" value="1" %{if $only_vyp==1}%checked="checked"%{/if}% />
+<label for="only_vyp%{$prefix}%">Только выполненные счета</label>
+<br />
+
+
+<input type="checkbox" name="only_not_vyp%{$prefix}%" id="only_not_vyp%{$prefix}%" value="1" %{if $only_not_vyp==1}%checked="checked"%{/if}% />
+<label for="only_not_vyp%{$prefix}%">Только невыполненные счета</label>
+<br />
+
+
+<input type="checkbox" name="only_not_payed%{$prefix}%" id="only_not_payed%{$prefix}%" value="1" %{if $only_not_payed==1}%checked="checked"%{/if}% />
+<label for="only_not_payed%{$prefix}%">Только неоплаченные счета</label>
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<input type="image" src="/img/icons/old-zoom-original.png" value="Вывести" alt="Вывести" title="Вывести" name="doSub%{$prefix}%"  />
+
+<a href="an_ds.php?doSub%{$prefix}%=1&tab_page=%{$tab_page}%"><img src="../../img/icons/old-zoom-deselect.png" border="0" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+ 
+  <a href="#" id="print_table%{$prefix}%"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+		only_vyp=0;
+		if($("#only_vyp%{$prefix}%").prop("checked")) only_vyp=1;
+		
+		only_not_vyp=0;
+		if($("#only_not_vyp%{$prefix}%").prop("checked")) only_not_vyp=1;
+		
+		only_not_payed=0;
+		if($("#only_not_payed%{$prefix}%").prop("checked")) only_not_payed=1;
+			
+			
+	
+		zc=window.open('an_ds.php?tab_page=%{$tab_page}%&print=1'+'&supplier_name%{$prefix}%='+encodeURI($("#supplier_name%{$prefix}%").val())+'&pdate%{$prefix}%_1='+$("#pdate%{$prefix}%_1").val()+'&pdate%{$prefix}%_2='+$("#pdate%{$prefix}%_2").val()+'&doSub%{$prefix}%=1&only_vyp%{$prefix}%='+only_vyp+'&only_not_payed%{$prefix}%='+only_not_payed+'&only_not_vyp%{$prefix}%='+only_not_vyp+'&sortmode%{$prefix}%=%{$sortmode}%', 'payp','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			 
+			 if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+
+
+</div>
+
+<br clear="all" />
+
+</form>
+
+<p />
+<small>
+1. По умолчанию показаны не оплаченные, либо частично оплаченные %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета и акты корректировки взаиморасчетов в роли отгрузки за все время работы программы. 
+<br />
+<strong>Счет считается не оплаченным, если:</strong><br />
+а) по счету нет %{if $is_incoming==1}%поступлений%{else}%реализаций%{/if}% и нет ни одной оплаты;<br />
+б) по счету есть %{if $is_incoming==1}%поступления%{else}%реализации%{/if}%, но нет ни одной оплаты;<br />
+<br />
+<strong>Счет считается частично оплаченным, если:</strong>
+<br />
+а) по счету нет %{if $is_incoming==1}%поступлений%{else}%реализаций%{/if}%, но есть оплаты, при этом сумма оплат меньше суммы счета;<br />
+б) по счету есть %{if $is_incoming==1}%поступления%{else}%реализации%{/if}% и есть оплаты, при этом сумма оплат меньше суммы по %{if $is_incoming==1}%поступлениям%{else}%реализациям%{/if}% счета.
+<br />
+<br />
+<strong>Акты корректировки взаиморасчетов в роли отгрузки</strong> включаются в отчет, только если по ним есть оплаты, и сумма оплат меньше суммы отгрузки.
+<br />
+<br />
+
+2. <strong>Фильтр "Период".</strong> При выборе <strong>периода</strong> %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета отбираются по плановым датам оплаты (датам оплаты по договору), попадающим в выбранный период.<br />
+<br />
+
+3. Фильтр  <strong>"Контрагент"</strong>. 
+
+
+Вы можете осуществлять отбор %{if $is_incoming==1}%входящих%{else}%исходящих%{/if}% счетов по нескольким контрагентам.
+<br />
+Для этого в форму поиска нужно вписать фрагмент названия искомого контрагента.
+Программа выдаст список вариантов названий. Выберите в списке требуемого контрагента щелчком мыши по его названию.
+При необходимости отобрать в отчет счета по еще одному контрагенту - снова наберите фрагмент его названия и выберите контрагента из всплывшего списка вариантов названий контрагентов.
+<br />
+После выбора всех необходимых контрагентов нажмите кнопку <img src="/img/icons/old-zoom-original.png" alt="Вывести" title="Вывести" border="0" />.
+<br />
+<br />
+
+4. <strong>Фильтр "Только выполненные счета"</strong> позволяет показать только те %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета, позиции по которым полностью завезены (т.е. счета в статусе "выполнен").
+<br />
+<strong>Фильтр "Только невыполненные счета"</strong> позволяет показать только %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета, позиции которых не завезены, либо завезны частично (т.е. счета в статусе "не выполнен", "утвержден").
+<br />
+Одновременно может быть отмечен только один из этих двух фильтров.<br />
+<br />
+
+
+<strong>Фильтр "Только неоплаченные счета"</strong> позволяет показать только те %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета, по которым не было ни одной оплаты (т.е. в графе "Оплачено по счету" 0 руб.).<br />
+<br />
+
+Фильтры можно сочетать:<br />
+Сочетание фильтров  <strong>Только выполненные счета</strong> и <strong>Только неоплаченные счета</strong> выдаст %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета в статусе "выполнен", по которым не было оплат.
+<br />
+
+Сочетание фильтров  <strong>Только невыполненные счета</strong> и <strong>Только неоплаченные счета</strong> выдаст %{if $is_incoming==1}%входящие%{else}%исходящие%{/if}% счета в статусах "не выполнен", либо "утвержден", по которым не было оплат.
+
+</small>
+<p />
+
+
+%{if $do_it}%
+%{include file="an_payp/an_payp_table.html"}%
+
+
+
+
+
+%{/if}%
+
+
+
+
+
+
+
+
+
+
+%{$pages}%

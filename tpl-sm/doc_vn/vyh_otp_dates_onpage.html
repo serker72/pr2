@@ -1,0 +1,13 @@
+%{foreach from=$vyh_otp_dates item=d}%
+<tr id="vyh_otp_dates_row_%{$d.id}%">
+	<td>%{$d.pdate}%
+    <input id="new_vyh_otp_date_pdate_%{$d.id}%" name="new_vyh_otp_date_pdate_%{$d.id}%" type="hidden" value="%{$d.pdate}%" />
+    </td>
+     
+    <td width="24">
+    %{if $can_modify}%
+    <a href="#"  data-comment="удалить дату" onClick="if(window.confirm('¬ы действительно хотите удалить дату отпуска за работу в выходные?')) $('#vyh_otp_dates_row_%{$d.id}%').remove(); return false;" class="reestr_delete16 reestr_button16"></a> 
+    %{/if}%
+           </td>
+</tr> 
+%{/foreach}%

@@ -1,0 +1,238 @@
+ 
+<div id="tender_remind_gialog%{$data_kind}%" title="Напоминания о тендерах" style="display:none;">
+	
+    <h2>Внимание! По Вашим тендерам нет движения:</h2>
+    <br>
+
+   
+    
+	<strong>Выберите необходимый вариант:</strong><br>
+
+	<div id="tender_reminders_block%{$data_kind}%">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+function CalcNewTenders%{$data_kind}%(){
+
+	 if(_window_is_active) $.ajax({
+		  async: true,
+		  url: "/js/tender_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind%{$data_kind}%"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+			 
+		  	 if((data>0)&& !$("#tender_remind_gialog%{$data_kind}%").dialog("isOpen")) $("#tender_remind_gialog%{$data_kind}%").dialog("open");
+			 else if((data==0) && $("#tender_remind_gialog%{$data_kind}%").dialog("isOpen"))  $("#tender_remind_gialog%{$data_kind}%").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+$(function(){
+	$("#tender_remind_gialog%{$data_kind}%").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth_no',
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		 
+		closeOnEscape: false,
+		 
+		 
+		buttons:{
+			"Готово": function(){
+				 
+			
+			
+			var can_ret=true;
+			
+				 function doBlink(v){
+			
+					var blr=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=tender_remind_id%{$data_kind}%_]"), function(k,v){
+					
+					id=$(v).val();
+					
+					mode=$("input[name=tender_remind_mode%{$data_kind}%_"+id+"]:checked").val();
+					
+					
+						
+					
+					
+					if((mode==null)||(mode==undefined)){
+						can_ret=can_ret&&false;
+						err_fields.push($("label[for=tender_remind_mode%{$data_kind}%_"+id+"_0]"));
+						err_fields.push($("label[for=tender_remind_mode%{$data_kind}%_"+id+"_1]"));
+						err_fields.push($("label[for=tender_remind_mode%{$data_kind}%_"+id+"_2]"));
+					}
+					
+					
+					//если выбран коммент - требовать его ввода
+					if((mode==0)&&($("#tender_remind_comment%{$data_kind}%_"+id).val().length<10)){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("#tender_remind_comment%{$data_kind}%_"+id));
+					}
+					
+					//если выбран отказ - ввести причину
+					if((mode==1)&&(($("#tender_remind_reason%{$data_kind}%_"+id).val()==0)||($("#tender_remind_rcomment%{$data_kind}%_"+id).val().length<10))){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("#tender_remind_rcomment%{$data_kind}%_"+id));
+						err_fields.push($("#tender_remind_reason%{$data_kind}%_"+id));
+						
+						
+					}
+					
+					
+					 
+				});
+				
+				 
+				if(can_ret){
+					 
+					do_go=true;
+				 
+					
+					if(do_go){
+					  
+						//все ОК, формируем аргументы
+						var data=new Array();
+						$.each($("input[id^=tender_remind_mode%{$data_kind}%_]:checked"), function(k,v){
+							id=$(v).attr("name").replace(/tender_remind_mode%{$data_kind}%_/,'');
+							if($(v).val()!=2){
+								
+								
+								hashed="";
+								
+								hashed+=id+"/"+$(v).val();
+								
+								if($(v).val()==0) hashed+="/"+$("#tender_remind_comment%{$data_kind}%_"+id).val();
+								else hashed+="/";
+								
+								if($(v).val()==1) hashed+="/"+$("#tender_remind_reason%{$data_kind}%_"+id).val()+"/"+$("#tender_remind_rcomment%{$data_kind}%_"+id).val();
+								else hashed+="//";
+								
+								
+								 
+								//alert(hashed);
+								data.push(hashed);	
+							}else{
+								window.open("ed_lead.php?action=0&tender_id="+id);
+							}
+							 
+						});
+						//alert(data);
+						//отправляем аргументы
+						$.ajax({
+							  async: false,
+							  url: "/js/tender_checknew.php",
+							  type: "POST",
+							  data:{
+								  "action":"put_work_statuses%{$data_kind}%",
+								  "data[]":data
+								  
+							  }
+							 
+						  }); 
+						
+						
+						 
+						 
+						$("#tender_remind_gialog%{$data_kind}%").dialog("close");
+					}
+					 
+				}else {
+					alert("Введите корректные данные в отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					 
+				}
+				 
+			 
+				
+				
+			}
+		},
+		open: function( event, ui ) {
+			
+			 
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/tender_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind%{$data_kind}%",
+				  "kind":"%{$data_kind}%"
+			  },
+			  beforeSend: function(){
+				 $("#tender_reminders_block%{$data_kind}%").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#tender_reminders_block%{$data_kind}%").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=150;
+				 
+				   our_height=parseInt($("#tender_reminders_block%{$data_kind}% table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#tender_reminders_block%{$data_kind}%").css('height', our_height);
+				   
+				   $("#tender_remind_gialog%{$data_kind}%").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewTenders%{$data_kind}%()', 60000);
+});
+</script>

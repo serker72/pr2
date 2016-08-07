@@ -1,0 +1,622 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		 
+	//$("#received_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	 $.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	
+ 
+		
+%{if $field_rights.to_reply}%
+$("#to_reply").bind("click", function(){
+	window.open("ed_doc_out.php?action=0&doc_in_id=%{$bill.id}%");
+});
+%{/if}%
+ 
+
+	 
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="doc_in.html" prefix="" description="Информация о создании входящего документа" style="float:right" is_right=true}%
+
+%{include file="error_window.html"   prefix="" }%
+
+
+%{include file="doc_in/comment_dialog.html" }%
+%{include file="doc_in/reg_dialog.html" }%
+
+<h1>Входящее КП</h1>
+
+<form action="ed_doc_in.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+
+ 
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="status_change_comment" id="status_change_comment" value="" />
+<input type="hidden" name="status_change_comment_id" id="status_change_comment_id" value="%{$bill.fail_reason_id}%" />
+
+
+<input type="hidden" value="%{$bill.reg_no|escape:"html"}%" id="reg_no"  name="reg_no"  />
+<input type="hidden" value="%{if $bill.reg_pdate!=0}%%{$bill.reg_pdate}%%{/if}%" id="reg_pdate" name="reg_pdate" />
+
+
+
+<div style="float:right; margin-right:0px; min-width:110px; height:50px;" id="toggle_annul">
+%{include file="doc_in/toggle_annul_card.html"}%
+
+</div>
+
+
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 		%{if $field_rights.to_email}%
+    <a href="ed_doc_in_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать документа..."></a>
+       
+    %{else}%
+    <a href="#" onClick=" return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать документа..."></a>
+    %{/if}%
+</div>
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 		%{if $field_rights.to_email}%
+    <a href="#" id="doc_in_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="doc_in/pdf_actions.html" mode=0}%
+    %{else}%
+    <a href="#" onClick=" return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+    %{/if}%
+</div>
+
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 		%{if $field_rights.to_copy and $can_copy}% 
+         <a href="ed_doc_in.php?action=0&copyfrom=%{$bill.id}%"  target="_blank"  class="reestr_copy reestr_right_button24" data-comment="копировать документ..."></a>
+           %{else}%
+    <a href="#" onClick="return false;" class="reestr_copy reestr_inactive reestr_right_button24" data-comment="копировать документ..."></a>
+    
+     %{/if}%
+</div>
+
+
+%{if $field_rights.to_view}%
+<div style="float:left; margin-right:10px; margin-top:10px;">
+	<input type="submit" name="to_view" id="to_view" value="Отправить на рассмотрение"  />
+</div>
+%{/if}%
+
+
+
+%{if $field_rights.to_reply}%
+<div style="float:left; margin-right:10px; margin-top:10px;">
+	<input type="button" name="to_reply" id="to_reply" value="Создать ответ..."  />
+</div>
+%{/if}%
+
+
+ 
+
+<br clear="all" />
+ 
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    
+</div>
+
+ 
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+	<input type="hidden" name="kind_id" id="kind_id" value="%{$bill.kind_id}%" />
+
+    
+    <label for="kind_id"> 
+Вид исх. док-та:</label> <br>
+
+  
+    %{$bill.kind_name}%
+     
+ 
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+ <br>
+
+	<input type="checkbox" name="is_urgent" id="is_urgent" value="1" %{if $bill.is_urgent==1}% checked%{/if}% %{if !$can_modify}% disabled%{/if}% />
+    <label for="is_urgent">Срочно</label> 
+
+</div>    
+     
+
+
+<br clear="all" />
+ 
+	
+ 
+ 
+<div style="float:left; margin-right: 0px; width:100%;">
+
+ 
+
+    <label for="topic">
+   Тема:
+    </label><br />
+    <input type="text" id="topic" name="topic" style="width:100%;" value="%{$bill.topic|escape:"html"}%" %{if !$field_rights.topic_txt}% disabled%{/if}% />
+    
+
+</div> 
+
+<br clear="all">
+<p />
+
+
+<div style="float:left; margin-right: 0px; width:100%;">
+<label for="description">Текст:</label><br>
+<textarea id="description" name="description" style="width:100%; height:400px;" %{if !$field_rights.topic_txt}% disabled%{/if}%>%{$bill.description|escape:"html"}%</textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'400px'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+</div> 
+
+<br clear="all">
+<p />
+
+ 
+ %{$files}%
+ 
+ 
+<br clear="all" />
+ 
+  
+
+ 
+   
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="doc_in/supplier_many_actions.html" many=false can_modify=$can_modify}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+ <div style="float:left; margin-right:20px;">
+
+	<label for="lead_select">Лид:</label><br>
+
+	<input type="hidden"  id="lead_id" name="lead_id" value="%{$bill.lead_id}%" />
+   
+    <input type="text"  id="lead_string"  value="%{$bill.lead_string|escape}%"  disabled size="40" maxlength="255" style="width:100px;" />
+  
+
+	
+	<input type="button" id="lead_select" %{if !$can_modify}% disabled%{/if}% value="..." />
+    <input type="button" id="lead_clear" %{if !$can_modify}% disabled%{/if}% value="x" />
+    
+    <input type="button" id="to_lead" value="Перейти в лид" />
+	
+    %{include file="doc_in/lead_actions.html" can_modify=$can_modify}%
+    
+</div> 
+
+ 
+ <div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Адресат:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$bill.manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+
+	
+	<input type="button" id="manager_select" %{if !$can_modify_manager}% disabled%{/if}% value="..." />
+    <input type="button" id="manager_clear" %{if !$can_modify_manager}% disabled%{/if}% value="x" />
+	
+    %{include file="doc_in/manager_actions.html" can_modify=$can_modify_manager}%
+    
+</div> 
+ 
+<br clear="all" />
+<p />
+
+ 
+ 
+%{$lenta}%
+
+
+<input type="hidden" id="lenta_len" value="%{$lenta_len|default:"0"}%" />
+
+
+ 
+
+
+
+<br clear="all" />
+ 
+
+<h2>Связанные документы</h2>
+
+%{foreach name=fb from=$binded item=doc}%
+<a href="ed_doc_out.php?action=1&id=%{$doc.id}%&from_begin=1" target="_blank">%{$doc.name}%</a>%{if !$smarty.foreach.fb.last}%, %{/if}%
+%{foreachelse}%
+-
+%{/foreach}%
+
+<br clear="all" />
+<p />
+
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if !$can_confirm or !$field_rights.to_confirm}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_viewed").prop("disabled",true);
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/lead.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			/* $("#is_confirmed_done").prop("checked",false);
+			 $("#is_confirmed_done").trigger("click");
+			  $("#is_confirmed_done").prop("checked",false);
+			  
+			*/   
+			  
+			  $("#is_viewed").prop("checked",false);
+			 $("#is_viewed").trigger("click");
+			  $("#is_viewed").prop("checked",false); 
+		 
+
+		}
+	});
+});
+</script>
+
+
+<br />
+ 
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+
+    <input type="checkbox"  id="is_viewed" name="is_viewed" value="1" onchange="" %{if $bill.is_viewed==1}% checked="checked"%{/if}% %{if !$can_confirm_viewed or !$field_rights.is_viewed}% disabled="disabled"%{/if}% /><label for="is_viewed">Рассмотрено</label>
+     
+    <br>
+    <span id="is_viewed_confirmer">%{$is_viewed_confirmer}%</span>
+</div>
+<div style="float:left; margin-right:20px;">
+	<label for="view_comment">Комментарий:</label><br>
+    <textarea cols="60" rows="3" name="view_comment" id="view_comment" %{if !$can_confirm_viewed or !$field_rights.view_comment}% disabled="disabled"%{/if}%>%{$bill.view_comment|escape:"html"}%</textarea>
+	
+    
+</div>
+
+ 
+<script type="text/javascript">
+$(function(){
+	$("#is_viewed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		//if(state==0) $("#is_confirmed_done").prop("disabled",true);
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/lead.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_viewed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_viewed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			/* $("#is_confirmed_done").prop("checked",false);
+			 $("#is_confirmed_done").trigger("click");
+			  $("#is_confirmed_done").prop("checked",false);
+			  
+			   
+			  
+			  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); 
+		 */
+
+		}
+	});
+});
+</script>
+
+
+<br clear="all">
+<br>
+
+
+
+
+
+ 
+<!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку вх. документов" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='doc_ins.php';
+}else location.href='doc_ins.php';" />
+
+ 
+
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	  
+	
+	
+	
+	$("#crea_form").bind("submit",function(){
+		function isUcfirst(str) {
+			str += '';
+			upper = str.charAt(0).toUpperCase();
+			original = str.charAt(0);
+		
+			return upper == original;
+		}
+		
+		
+		var res=true;
+		var error_fields=new Array();
+		
+		%{if $can_modify}%
+		 
+		if($("tr[id^=our_supplier_row_]").length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"suppliers",
+				"name":"Контрагент",
+				"error":"Укажите контрагента и контактное лицо!"
+			});	
+			
+		}
+		 
+		  if(($("#manager_id").val()==0)||($("#manager_id").val()=="")){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"manager_string",
+				"name":"Адресат",
+				"error":"Укажите адресата!"
+			});	
+		}
+		
+		
+			//попытка утвердить заполнение тендера
+		if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
+				
+				%{if !$can_unconfirm}%
+				
+				 if(! window.confirm("Внимание! Вы утверждаете заполнение вх. документа. У Вас нет прав для обратного действия - снятия утверждения заполнения вх. документа.\nПросьба проверить корректность заполнения всех данных вх. документа.\nПродолжить?\nОК - Да, Отмена - Нет")) return false;
+				 
+				 
+				%{/if}%
+		}
+		
+		 
+		
+		%{/if}% 
+		
+		
+		
+		
+		 
+		%{if $field_rights.topic_txt}%  
+		if($.trim($("#topic").val()).length<5){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"topic",
+				"name":"Тема",
+				"error":"Укажите тему (мин. 5 символов)!"
+			});	
+		}
+		
+	 
+			
+		if(!$("#topic").val().match(/^КП/)){
+			res=res&&false;
+		 
+			error_fields.push({
+				"id":"topic",
+				"name":"Тема",
+				"error":"Для входящего коммерческого предложения тема должна начинаться с КП!"
+			});		
+		}			
+		 
+		%{/if}%
+		
+		
+		
+		%{if $field_rights.view_comment}%
+		
+		//проверка доступности утверждения рассмотрения
+		if((%{$bill.is_viewed}%==0)&&($("#is_viewed").prop("checked")==true)){
+			
+				
+			 
+			
+			if($.trim($("#view_comment").val()).length==0){
+				res=res&&false;
+				error_fields.push({
+					"id":"view_comment",
+					"name":"Комментарий",
+					"error":"Укажите комментарий по рассмотрению документа!"
+				});	
+			}
+			 
+			
+			 
+			 
+		}
+		%{/if}% 
+		
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+	
+});
+
+ 
+</script>

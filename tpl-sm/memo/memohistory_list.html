@@ -1,0 +1,100 @@
+
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+
+
+});
+</script>
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $can_create_task}%
+<input type="button" value="Добавить событие..." onclick="location.href='memohistory_create.php?id=%{$id}%';" />
+<p />
+%{/if}%
+
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    <th scope="col" width="110">Дата 
+   
+    </th>
+    
+    <th scope="col" width="*">Описание 
+   
+    </th>
+    
+    <th scope="col" width="110">Прикрепленные файлы 
+   
+    </th>
+	
+    
+    <th scope="col" width="80">Кто внес
+   
+    </th>
+    <th scope="col" width="80">Статус
+   
+    </th>
+    <th scope="col" width="80">Новые данные
+   
+    </th>    
+  
+    
+</tr>
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	
+    <td width="110">%{$items[rowsec].pdate}%</td>
+    <td width="*" align="left" title="Описание события|%{$items[rowsec].txt|escape:"html"}%" id="txt_%{$items[rowsec].id}%">%{$items[rowsec].txt}%
+    <script type="text/javascript">
+	$(function(){
+		$("#txt_%{$items[rowsec].id}%").cluetip({
+		splitTitle: "|"
+	  });
+	});
+	</script>
+    
+    </td>
+    <td width="110" align="left">
+    %{section name=filesec loop=$items[rowsec].files}%
+    <a href="load_memo.html?id=%{$items[rowsec].files[filesec].id}%"><img src="img/doc.gif" width="13" height="13" alt="" border="0" />%{$items[rowsec].files[filesec].orig_name}%</a>
+    
+    %{$items[rowsec].files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+    <br />
+    %{/section}%
+    
+   
+    </td>
+    
+    <td width="80"><a href="info.html?name=%{$items[rowsec].login}%">
+   %{$items[rowsec].name_s}% (%{$items[rowsec].login}%)
+    </a></td>
+    <td width="80">%{$items[rowsec].last_status}%</td>
+   
+    <td width="80">
+    %{if $items[rowsec].is_new}%
+    <img src="/img/new_message.gif" width="13" height="10" border="0" alt="новые данные" title="новые данные" /> %{/if}% </td>
+    
+   
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям событий не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

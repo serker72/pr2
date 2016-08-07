@@ -1,0 +1,411 @@
+
+
+
+<table cellpadding="2" cellspacing="0" class="blacktable" %{if $print==1}% style="width:780px !important;" border="1"%{else}%  width="100%"%{/if}%>
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="40">
+    Номер
+     %{if $print==0}%
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+     
+    <th scope="col" width="100">
+  Дата
+размещ- ия
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=15"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=14"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    
+    <th scope="col" width="100">
+ Срок подачи
+заявок
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=17"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=16"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    <th scope="col" width="100">
+  Дата оконч- ия
+рассмотр- ия
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=19"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=18"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    
+       <th scope="col" width="80">
+  Вид тендера
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+      <th scope="col" width="80">
+  Тип оборудования
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    
+    
+     <th scope="col" width="280" style="min-width:280px;">
+  Название тендера
+    %{if $print==0}%
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    
+     %{if $has_content}%
+      <th scope="col" width="50%">
+    Содержание
+    
+       
+    </th>
+%{/if}%
+    
+    
+     
+      <th scope="col" width="80">
+    Контрагент
+     %{if $print==0}%
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+     <th scope="col" width="80">
+    Макс. цена
+       
+    </th>
+    %{if $print==0}%
+       <th scope="col" width="100">
+    Ссылка на тенд. док-цию
+      
+        </th>      
+    %{/if}%
+   
+     <th scope="col" width="50">
+    ФЗ
+      
+        </th>    
+    
+      <th scope="col" width="80">
+      
+    Ответственный
+     %{if $print==0}%
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+   
+      
+      <th scope="col" width="*" style="min-width:250px;">
+    Статус
+     %{if $print==0}%
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+        </th>
+   
+   
+ 
+  
+      
+      
+     <th scope="col" width="80">
+    Создал
+   
+   
+    </th>
+    
+ 
+   %{if $print==0}%
+    <th scope="col" width="24">&nbsp;</th>
+    
+      %{/if}%
+   
+</tr>
+
+ 
+</thead>
+<tbody>
+ 
+%{section name=rowsec loop=$items}%
+ 
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+ 
+	
+    <td width="40" align="left" class="  %{if $items[rowsec].is_confirmed==0  }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+    
+    
+    
+    	  %{if $can_edit}%
+    <a href="ed_tender.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" title="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+  
+    
+    %{if $can_edit}%
+    </a>
+    %{/if}%
+    	
+       
+      
+      </td>
+      
+      
+       
+     <td width="100" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%"><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+  
+    %{$items[rowsec].pdate_placing}% 
+
+    
+    </td>
+    
+    
+     <td width="100" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%item_expired%{/if}%"><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+      
+    %{if $items[rowsec].expired}%
+    <div class="expired%{$prefix}%">
+    %{/if}%
+    %{$items[rowsec].pdate_claiming}% 
+%{$items[rowsec].ptime_claiming}% 
+
+     
+     %{if $items[rowsec].expired}%
+    </div>
+    %{/if}%
+    
+    
+    </td>
+    
+    
+    
+    
+    <td width="100" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%"><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+    
+    
+    %{$items[rowsec].pdate_finish}% 
+
+    %{$items[rowsec].ptime_finish}% 
+
+    
+    
+   
+    
+    </td>
+    
+    
+     
+     <td width="80" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+     %{$items[rowsec].kind_name}% 
+    </td>
+    
+    
+        
+        
+         <td width="80" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+     %{$items[rowsec].eq_name}% 
+    </td>
+    
+     <td width="280" style="min-width:280px;" align="left" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" style="text-align:left;">
+     %{$items[rowsec].topic}% 
+    </td>
+   
+    
+         %{if $has_content}%
+     <td width="50%" align="left" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+    
+    %{$items[rowsec].description}% 
+    
+        <br>
+	%{$items[rowsec].files}%
+
+    <br>
+	%{foreach from=$items[rowsec].content item=item}%
+      <div class=""  >
+     
+        
+          
+        <strong>%{$item.pdate}%</strong>
+        %{$item.name_s}%: 
+        <br />
+    
+        
+       <div style="border:1px solid #aeaeae; padding:1px 1px;">
+        %{$item.txt}%
+       </div>
+       
+       %{section name=filesec loop=$item.files}%%{/section}%
+       
+        %{section name=filesec loop=$item.files}%
+      	%{if $print==0}%
+         <a href="tender_lenta_file.html?id=%{$item.files[filesec].id}%" class="sched_report_file_link">
+        %{/if}%
+        %{$item.files[filesec].orig_name}%
+        	%{if $print==0}%
+        </a>
+          %{/if}%
+        %{$item.files[filesec].size|string_format:"%.3f&nbsp;МБ"}%
+        <br />
+        %{/section}%
+ 
+       
+        
+    </div>
+    <br>
+
+    %{/foreach}%
+       
+    </td>
+%{/if}%
+
+    
+      <td width="100"  class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+     <small>
+     %{foreach from=$items[rowsec].suppliers item=item}%
+    <a href="supplier.php?action=1&id=%{$item.id}%" target="_blank">%{$item.opf_name}% %{$item.full_name}%</a> 
+   
+   
+    
+    <br>
+
+     %{/foreach}%
+     </small> 
+    </td>
+    
+     <td width="90" align="right" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" style="text-align:right;  ">
+     <small><nobr>
+     %{$items[rowsec].max_price_formatted}%  %{$items[rowsec].currency_signature}%  
+     </nobr></small>
+    </td>
+    
+    %{if $print==0}%
+      <td width="80" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+     
+     <a href="%{$items[rowsec].link}%" target="_blank"><em>ссылка</em></a>
+      
+    </td>
+    %{/if}%
+    
+      <td width="50" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+     
+     %{$items[rowsec].fz_name}%  
+      
+    </td>
+    
+    
+    
+      <td width="80" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+    <small>
+     %{$items[rowsec].manager_name}%  
+    </small> 
+    </td>
+    
+    
+    
+    
+     <td width="*" style="min-width:250px;" class="  %{if $items[rowsec].is_confirmed==0}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%" >
+  %{$items[rowsec].status_name}% 
+  
+   %{if $items[rowsec].status_id==34 or $items[rowsec].status_id==37}% 
+   <br>
+
+   причина: 
+   %{$items[rowsec].fail_name}%, %{$items[rowsec].fail_reason}%  
+   %{/if}%
+    </td>
+   
+   
+    
+   
+     
+    
+     
+    
+   
+ 
+    
+  
+  
+    
+     <td width="80" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+     <small>
+    %{$items[rowsec].cr_name}% 
+    
+     %{$items[rowsec].pdate}%
+     </small>
+    </td>
+    
+     %{if $print==0}%
+    
+    <td width="24" class="  %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}%">
+    %{if $can_edit}%
+    <a href="ed_tender.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    
+    
+    
+    
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_right_button24 reestr_inactive"></a>
+    
+   
+    %{/if}%
+   
+    
+   
+    
+    </td>
+      %{/if}%
+    
+    
+     
+ 
+</tr>
+
+ 
+%{/section}%
+ 
+</tbody>
+</table>
+
+
+
+<br>
+<strong>Всего тендеров: %{$no}% по  %{$sup_no}% контрагентам,  по  %{$otv_no}% ответственным сотрудникам.</strong>

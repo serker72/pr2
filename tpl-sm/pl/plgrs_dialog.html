@@ -1,0 +1,137 @@
+<div id="%{$word}%_dialog" title="%{$named}%" style="display:none;">
+  <div id="%{$word}%_dic">
+  %{include file="pl/plgrs.html"}%
+  </div>
+  
+  <label for="new_%{$word}%">%{$named}%:</label><br>
+  <input type="text" id="new_%{$word}%" size="30" maxlength="255" />
+  <p />
+  
+  
+  <label for="new_en_%{$word}%">%{$named}%:</label><br>
+  <input type="text" id="new_en_%{$word}%" size="30" maxlength="255" />
+  <p />
+  
+  <label for="ord_%{$word}%">Порядок сортировки:</label><br>
+  <input type="text" id="ord_%{$word}%" size="3" maxlength="4" />
+  
+  
+  
+  <input type="button" value="Добавить %{$named}%" id="add_new_%{$word}%"  />
+  </div>
+  
+  
+  <script type="text/javascript">
+  $(function(){
+    $("#%{$word}%_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 400,
+    height: 490,
+    buttons: {
+        "Готово": function() { 
+        	$.ajax({
+              async: true,
+              url: "/js/pricelist.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#%{$word}%_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+          
+          $.ajax({
+              async: true,
+              url: "/js/pricelist.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_page"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                  $("#pl_group_id").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+        
+        $(this).dialog("close"); }
+      }
+    
+    });
+    $("#expand_%{$word}%").bind("click",function(){
+        $("#%{$word}%_dialog").dialog("open");
+    });
+    
+    function Redraw%{$word}%(){
+          $.ajax({
+              async: true,
+              url: "/js/pricelist.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_%{$word}%_dics"
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                $("#%{$word}%_dic").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+      }
+      
+      $("#add_new_%{$word}%").bind("click", function(){
+          if($("#new_%{$word}%").val().length<3){
+              $("#new_%{$word}%").focus();
+              return false;
+          }
+          
+          $.ajax({
+              async: true,
+              url: "/js/pricelist.php",
+              type: "POST",
+              data:{
+                  "action":"add_%{$word}%",
+                  "%{$word}%":$("#new_%{$word}%").val(),
+				  "%{$word}%_en":$("#new_en_%{$word}%").val(),
+				  "ord":$("#ord_%{$word}%").val()
+              },
+              beforeSend: function(){
+                    
+              },
+              success: function(data){
+                 alert("%{$named}% добавлен!"); 
+                 $("#new_%{$word}%").attr("value","");
+				 $("#ord_%{$word}%").val("");
+                 Redraw%{$word}%();
+                // location.reload();
+              },
+              error: function(xhr, status){
+                  alert("Ошибка добавления %{$named}%.");	
+              }	 
+          });
+          
+      });
+    
+  });
+  </script>
+  
+	

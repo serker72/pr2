@@ -1,0 +1,68 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+ //$("#tabs").tabs(%{if $do_show_log}%{selected:%{if $has_admin}%2%{else}%1%{/if}%}%{/if}%);
+  
+   $("#tabs").tabs({
+	%{if $from_begin==1}%	
+	selected:0
+	%{elseif $do_show_bills}%	
+	selected:1
+	%{elseif $do_show_log}%	
+	selected: %{if $has_admin}%2%{else}%0%{/if}%
+	%{else}%
+	cookie: { expires: 14, name: 'isTab' }  
+	 %{/if}%
+  });
+  
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Распоряжение на межсклад</a></li>
+    <li><a href="#tabs-4">Связанные документы</a></li>
+   
+    
+    %{if $has_admin}%
+    <li><a href="#tabs-2">Администрирование</a></li>
+    %{/if}%	
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+  
+   <div id="tabs-4">
+    <p>
+    %{$bills}%
+    
+    </p>
+  </div>
+  
+  
+  %{if $has_admin}%
+  <div id="tabs-2">
+    <p>
+    %{$admin}%
+    
+    </p>
+  </div>
+  %{/if}%
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+</div>

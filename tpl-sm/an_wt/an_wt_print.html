@@ -1,0 +1,144 @@
+ <h1>Отчет Время обработки документов</h1> 
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+  
+  <div style="float:left; margin-right:20px;   ">
+    
+  <strong>Вид документа:</strong><br>
+
+  
+     %{if $kind_0==1 or $all_kinds==1}% Тендер<br>
+%{/if}% 
+           %{if $kind_1==1 or $all_kinds==1}% Лид<br>
+%{/if}%  
+           %{if $kind_2==1 or $all_kinds==1}% ТЗ<br>
+%{/if}%  
+          %{if $kind_3==1 or $all_kinds==1}% КП вх.<br>
+%{/if}%  
+           %{if $kind_4==1 or $all_kinds==1}% КП исх.<br>
+%{/if}% 
+           %{if $kind_5==1 or $all_kinds==1}% БДР/БДДС<br>
+%{/if}%  
+        
+        
+         
+  </div>  
+  
+  
+  
+  <div style="float:left; margin-right:20px;   ">
+    
+  <strong>Обработчик:</strong><br>
+
+  
+     %{if $dep_0==1 or $all_deps==1}% Менеджер<br>
+%{/if}% 
+           %{if $dep_1==1 or $all_deps==1}% Отдел закупок<br>
+%{/if}%  
+           %{if $dep_2==1 or $all_deps==1}% Технический отдел<br>
+%{/if}%  
+          %{if $dep_3==1 or $all_deps==1}% Поставщик<br>
+%{/if}%  
+           %{if $dep_4==1 or $all_deps==1}% Координатор ДПиМ<br>
+%{/if}% 
+           %{if $dep_5==1 or $all_deps==1}% Финансовая служба<br>
+%{/if}%  
+        
+        
+        %{if $dep_6==1 or $all_deps==1}% Генеральный директор<br>
+%{/if}%  
+        
+         
+  </div>  
+     
+    <div style="float:left; margin-right:20px;   ">
+    
+      <strong> Статусы: </strong><br>
+    
+       %{if $status_id_18==1 or $all_statuses==1}% Создан<br>%{/if}% 
+
+ %{if $status_id_33==1 or $all_statuses==1}% Новый<br>%{/if}% 
+ %{if $status_id_1==1 or $all_statuses==1}% Не утвержден<br>%{/if}% 
+ %{if $status_id_2==1 or $all_statuses==1}% Утвержден<br>%{/if}% 
+
+  %{if $status_id_28==1 or $all_statuses==1}% В работе<br>%{/if}% 
+ %{if $status_id_40==1 or $all_statuses==1}% Проверен<br>%{/if}% 
+
+ %{if $status_id_37==1 or $all_statuses==1}% Подтвердить отказ<br>%{/if}% 
+  %{if $status_id_34==1 or $all_statuses==1}% Отказ<br>%{/if}% 
+  %{if $status_id_35==1 or $all_statuses==1}% На рассмотрении<br>%{/if}% 
+  %{if $status_id_25==1 or $all_statuses==1}% Отложен<br>%{/if}% 
+
+ %{if $status_id_32==1 or $all_statuses==1}% Отменен<br>%{/if}% 
+ %{if $status_id_36==1 or $all_statuses==1}% Упущен<br>%{/if}% 
+  %{if $status_id_26==1 or $all_statuses==1}% Ждет контроля<br>%{/if}% 
+ %{if $status_id_23==1 or $all_statuses==1}% Ждет выполнения<br>%{/if}% 
+
+
+ %{if $status_id_29==1 or $all_statuses==1}% Заявлен<br>%{/if}% 
+ %{if $status_id_30==1 or $all_statuses==1}% Выигран<br>%{/if}% 
+  %{if $status_id_31==1 or $all_statuses==1}% Проигран<br>%{/if}% 
+
+
+
+  %{if $status_id_24==1 or $all_statuses==1}% Выполняется<br>%{/if}%  
+
+  %{if $status_id_38==1 or $all_statuses==1}% Ожидание КП<br>%{/if}%  
+ %{if $status_id_39==1 or $all_statuses==1}% КП отправлено клиенту<br>%{/if}%  
+
+ %{if $status_id_27==1 or $all_statuses==1}% Не актуально<br>%{/if}% 
+
+
+      </div>
+    
+   <div style="float:left; margin-right:20px;   ">
+    <strong>Дата создания:</strong>
+    <br>
+    
+    
+    с:&nbsp; %{$pdate_1}% 
+     &nbsp;&nbsp;
+    по:&nbsp; %{$pdate_2}%
+    
+    </div>
+    
+    
+     
+     %{if $manager_name!=""}% 
+   <div style="float:left; margin-right:20px;   ">
+    
+    
+        <strong>Отв. сотрудник: </strong><br>
+        %{$manager_name}%
+        
+        
+    
+    
+    </div>
+    %{/if}%
+     
+    
+    
+    
+
+ 
+
+
+
+ 
+
+<br clear="all" />
+<p /> 
+ 
+
+%{if $do_it}%
+%{include file="an_wt/an_wt_table.html"}%
+%{/if}%
+
+
+
+
+

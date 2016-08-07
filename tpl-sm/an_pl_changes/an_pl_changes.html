@@ -1,0 +1,351 @@
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		
+		
+		
+		$( "#manager_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_mission_manager.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+			
+			/*$( "#eq_name%{$prefix}%" ).bind("change", function(){
+			  $.ajax({
+				async: true,
+				url: "/js/an_kp_eq_name.php",
+				type: "GET",
+				data:{
+					"term":"Gen"
+				},
+				success: function(data){
+				  alert(data);				
+				},
+				error: function(xhr, status,m){
+				 	alert(status+m);
+				}	 
+			  });
+			});*/
+			
+			$( "#eq_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_pl_changes_eq_name.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					
+					if(terms.length>0){
+						$("#group_id%{$prefix}%").val(0);
+						$("#group_id%{$prefix}%").prop("disabled", true);
+						
+						$("#two_group_id%{$prefix}%").val(0);
+						$("#two_group_id%{$prefix}%").prop("disabled", true);
+						
+						$("#producer_id%{$prefix}%").val(0);
+						$("#producer_id%{$prefix}%").prop("disabled", true);
+						
+					}else{
+						$("#group_id%{$prefix}%").prop("disabled", false);
+						$("#two_group_id%{$prefix}%").prop("disabled", false);
+						$("#producer_id%{$prefix}%").prop("disabled", false);
+					}
+					
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+			
+			$( "#eq_name%{$prefix}%" ).bind("change", function(){
+				if($("#eq_name%{$prefix}%").val().length==0){
+					$("#group_id%{$prefix}%").prop("disabled", false);
+						$("#two_group_id%{$prefix}%").prop("disabled", false);
+						$("#producer_id%{$prefix}%").prop("disabled", false);	
+				}
+			});
+			
+			
+			//подгрузка полей
+			$("#group_id%{$prefix}%").bind("change", function(){
+				if($("#group_id%{$prefix}%").val()==0){
+					$("#producer_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#producer_id%{$prefix}%").val(0);
+					
+					$("#two_group_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#two_group_id%{$prefix}%").val(0)
+				}else{
+					 $.ajax({
+						async: true,
+						url: "/js/an_pl_changes_eq_name.php",
+						type: "POST",
+						data:{
+							"action":"toggle_producers",
+							"group_id":$("#group_id%{$prefix}%").val()
+						},
+						success: function(data){
+						  //alert(data);
+						  $("#producer_id%{$prefix}%").html(data);				
+						},
+						error: function(xhr, status,m){
+							//alert(status+m);
+						}	 
+					  });
+					
+				}		
+				
+			});
+			
+			$("#producer_id%{$prefix}%").bind("change", function(){
+				if($("#producer_id%{$prefix}%").val()==0){
+					 
+					
+					$("#two_group_id%{$prefix}%").html('<option value="0">-все-</option>');	
+					$("#two_group_id%{$prefix}%").val(0)
+				}else{
+					$.ajax({
+						async: true,
+						url: "/js/an_pl_changes_eq_name.php",
+						type: "POST",
+						data:{
+							"action":"toggle_two_groups",
+							"group_id":$("#group_id%{$prefix}%").val(),
+							"producer_id":$("#producer_id%{$prefix}%").val()
+						},
+						success: function(data){
+							$("#two_group_id%{$prefix}%").html(data);				
+						},
+						error: function(xhr, status,m){
+							//alert(status+m);
+						}	 
+					  });
+				}
+			});
+			
+	
+});
+</script>
+ 
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" id="sortmode%{$prefix}%" />
+
+
+<div class="report_filter_right">
+
+
+	<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+	<input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub%{$prefix}%"  />
+	</div>
+    
+<a href="%{$pagename}%?doSub%{$prefix}%=1"  class="reestr_zoom_deselect reestr_right_button24"  data-comment="Сбросить фильтры"  ></a>
+	
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table" class="reestr_print reestr_right_button24"  data-comment="Печать отчета"></a>
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	 
+	  $("#print_table").bind("click",function(){
+		
+		
+		
+		zc=window.open('%{$pagename}%?tab_page=1&print='+'1'+
+						
+						'&pdate1%{$prefix}%='+$("#pdate1%{$prefix}%").val()+
+						'&pdate2%{$prefix}%='+$("#pdate2%{$prefix}%").val()+
+						'&manager_name%{$prefix}%='+encodeURI($("#manager_name%{$prefix}%").val())+
+						//'&price_kind_id%{$prefix}%='+$("#price_kind_id%{$prefix}%").val()+
+						'&eq_name%{$prefix}%='+encodeURI($("#eq_name%{$prefix}%").val())+
+						'&group_id%{$prefix}%='+$("#group_id%{$prefix}%").val()+
+						'&producer_id%{$prefix}%='+$("#producer_id%{$prefix}%").val()+
+						'&two_group_id%{$prefix}%='+$("#two_group_id%{$prefix}%").val()+
+						'&doSub%{$prefix}%=1', 'an_pl_changes','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"   class="reestr_print reestr_inactive reestr_right_button24"  data-comment="Печать отчета"></a>
+ %{/if}%
+ 	
+	
+	%{include file="every_help_dialog.html" filename="an_delta_pl.html" description="Отчет Изменения в прайс-листе"  prefix=$prefix style="display:inline-block;  margin-right:0px;" is_right=true}%
+
+
+
+</div>
+
+
+<div class="report_filter_left">
+
+ <div class="report_filter">
+	<h3>Период</h3>
+  <div style="float:left; margin-right:10px;">
+  
+  
+  <label for="pdate1%{$prefix}%">с:</label><br />
+  <input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+  
+  <div style="float:left; margin-right:10px;">
+  
+      <label for="pdate2%{$prefix}%">по:</label><br />
+      <input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%"  %{if $current_month==1}% disabled="disabled"%{/if}% />
+  </div>
+ </div>
+ 
+	<div class="report_filter">
+    <label for="eq_name%{$prefix}%">Наименование оборудования:</label><br />
+	<input type="text" value="%{$eq_name}%" id="eq_name%{$prefix}%" name="eq_name%{$prefix}%" size="40" maxlength="512" style="width:200px;" />
+    </div>
+    
+    
+    
+    <div class="report_filter">
+    <label for="group_id%{$prefix}%">Вид оборудования:</label><br />
+   	<select name="group_id%{$prefix}%" id="group_id%{$prefix}%" style="width:200px" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+  <option value="0" %{if $group_id==0}% selected="selected"%{/if}%>-все-</option>
+  %{foreach from=$groups item=pk}%
+  	<option value="%{$pk.id}%" %{if $pk.id==$group_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+  %{/foreach}%
+  </select> 
+	</div>
+    
+   <div class="report_filter">
+    <label for="producer_id%{$prefix}%">Производитель:</label><br />
+   	<select name="producer_id%{$prefix}%" id="producer_id%{$prefix}%" style="width:200px" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+  <option value="0" %{if $producer_id==0}% selected="selected"%{/if}%>-все-</option>
+  %{foreach from=$producers item=pk}%
+  	<option value="%{$pk.id}%" %{if $pk.id==$producer_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+  %{/foreach}%
+  </select> 
+    </div>
+    
+   <div class="report_filter">
+    <label for="two_group_id%{$prefix}%">Категория:</label><br />
+   	<select name="two_group_id%{$prefix}%" id="two_group_id%{$prefix}%" style="width:200px" %{if $eq_name!=""}% disabled="disabled"%{/if}%>
+  <option value="0" %{if $two_group_id==0}% selected="selected"%{/if}%>-все-</option>
+  %{foreach from=$two_groups item=pk}%
+  	<option value="%{$pk.id}%" %{if $pk.id==$two_group_id}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+  %{/foreach}%
+  </select> 
+  	</div>
+    
+    
+    <div class="report_filter">
+	<label for="manager_name%{$prefix}%">Внес изменения:</label><br />
+	<input type="text" value="%{$manager_name}%" id="manager_name%{$prefix}%" name="manager_name%{$prefix}%" size="88" maxlength="512" style="width:300px;" />
+</div>
+
+</div>
+
+
+
+
+
+ 
+
+ 
+
+
+<br clear="all" />
+<p />
+
+
+
+</form>
+
+<br />
+
+
+%{if $do_it}%
+%{include file="an_pl_changes/an_pl_changes_table.html"}%
+%{/if}%
+
+
+
+
+

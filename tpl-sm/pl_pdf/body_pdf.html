@@ -1,0 +1,224 @@
+<html>
+<head>
+<style>
+body{
+	margin-top:25px;
+}
+body, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:11px;
+}
+</style>
+</head>
+<body> 
+
+<h2>%{$group.name}%, вид цен: %{$pki.fullname}%%{if $price_kind_id==3 and $show_price_f==1}%, цена со скидкой%{elseif $price_kind_id==3 and $show_price_f==0}%, базовая цена поставщика %{/if}%</h2>
+
+
+<h2>Вы выбрали:</h2>
+ 
+<strong>Производитель: %{$producer_names}%,</strong>
+ 
+<br />
+
+ 
+<strong>категория: %{$category_names}%,</strong>
+ 
+<br />
+
+%{if $id>0}%
+<strong>Оборудование: %{$pi.name}%.</strong>
+%{else}%
+<strong>все оборудование.</strong>
+%{/if}%
+<br />
+
+%{if $with_options==1}%
+
+%{else}%
+<em>Прайс-лист представлен без опций.</em>
+%{/if}%
+<br />
+
+%{if $manager_id>0}%
+	<strong>Ваш менеджер:</strong><br />
+<strong>%{$m_user.name_s}%</strong><br />
+%{$m_user.position_name}%<br />
+
+%{$opf.name}% "%{$org.full_name}%"<br />
+%{$org.legal_address}%<br />
+
+
+  %{foreach from=$m_contacts item=contact}%
+     %{if $contact.kind_id==1 or $contact.kind_id==3 or $contact.kind_id==5}%
+     %{$contact.pc_name}%:
+     
+     %{if $contact.kind_id==5}%
+      <a href="mailto:%{$contact.value}%">%{$contact.value}%</a>
+     %{else}% 
+     %{$contact.value}%
+     %{/if}%
+      
+      <br />
+
+	%{/if}%
+%{/foreach}%
+<a href="http://www.aerotechgroup.ru">www.aerotechgroup.ru</a> <br />
+<br />
+
+%{/if}%
+
+<table width="100%" border="1" cellpadding="0" cellspacing="0">
+<thead>
+	<tr align="center" valign="top">
+    	<th width="24">Код по пр-ме</th>
+        <th width="50">Код</th>
+        <th width="*">Наименование</th>
+        <th width="100">
+        %{if $price_kind_id==3}%
+        Базовая цена поставщика 
+        %{else}%
+        Цена
+        %{/if}%
+        </th>
+        %{if $price_kind_id==3 and $show_price_f==1}%
+        <th width="80">Базовая скидка пост-ка, %</th>
+        <th width="80">Доп. скидка пост-ка, %</th>
+        <th width="100">Итоговая цена</th>
+        %{/if}%
+    </tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="100%" colspan="%{if $price_kind_id==3 and $show_price_f==1}%7%{else}%4%{/if}%" align="center"><h3>%{$items[rowsec].name}%</h3></td>
+</tr>
+%{foreach from=$items[rowsec].cats item=cat }%	
+<tr align="center" valign="top">
+	<td width="100%" colspan="%{if $price_kind_id==3 and $show_price_f==1}%7%{else}%4%{/if}%"  align="center"><h4>%{$items[rowsec].name}%: %{$cat.name}%</h4></td>
+</tr>
+%{foreach from=$cat.goods item=good }%
+%{section name=opsec loop=$good.opts}%%{/section}%
+%{if $with_options==1 and $smarty.section.opsec.total>0}%
+ <!-- группа опций -->
+    <tr align="center" valign="top">
+        <td class="eq" colspan="%{if $price_kind_id==3 and $show_price_f==1}%7%{else}%4%{/if}%"  align="center"><strong>ОБОРУДОВАНИЕ</strong></td>
+    </tr>
+%{/if}%
+<tr align="center" valign="top">
+    	<td width="24" class="eq"><strong>%{$good.id}%</strong></td>
+        <td width="50" class="eq"> <strong>%{$good.code}%</strong> </td>
+        <td width="*" class="eq" align="left"><strong>%{$good.name}%</strong></td>
+        <td width="100" align="right" class="eq"><strong>
+        
+        %{$good.price}%&nbsp;%{$good.signature}%</strong></td>
+         
+          %{if $price_kind_id==3 and $show_price_f==1}%
+          <td width="80" align="right" class="eq">
+         <strong> %{$good.discount_base}% </strong> 
+          </td>
+          <td width="80" align="right" class="eq">
+         <strong> %{$good.discount_add}%  </strong>
+          </td>
+          <td width="100" align="right" class="eq">
+          <strong> %{$good.price_f}%&nbsp;%{$good.signature}%</strong>
+          </td>
+          %{/if}%
+    </tr>
+    
+    %{section name=opsec loop=$good.opts}%%{/section}%
+    %{foreach from=$good.opts item=option}%
+    %{if $option.kind=="group"}%
+    <!-- группа опций -->
+    <tr align="center" valign="top">
+        <td colspan="%{if $price_kind_id==3 and $show_price_f==1}%7%{else}%4%{/if}%"  align="center"><strong>
+        %{if $lang_rus==1}%
+        %{$option.name}%
+        %{/if}%
+        %{if $lang_rus==1 and $lang_en==1}%
+        /
+        %{/if}%
+        %{if $lang_en==1}%
+        %{$option.name_en}%
+        %{/if}%
+        
+        
+        </strong></td>
+    </tr>
+    %{else}%
+    <tr align="center" valign="top">
+        <td width="24">%{$option.id}%</td>
+        <td width="50"> %{$option.code}% </td>
+        <td width="*" align="left">
+        %{if $lang_rus==1}%
+        %{$option.name}%
+        %{/if}%
+        %{if $lang_rus==1 and $lang_en==1}%
+        /
+        %{/if}%
+        %{if $lang_en==1}%
+        %{$option.name_en}%
+        %{/if}%
+        
+        
+        </td>
+        <td width="100" align="right">
+        
+        %{$option.price}%&nbsp;%{$option.signature}%</td>
+        
+         %{if $price_kind_id==3 and $show_price_f==1}%
+          <td width="80" align="right">
+          </td>
+           <td width="80" align="right">
+           
+           </td>
+         
+         <td width="80" align="right">
+           %{$option.price_f}%&nbsp;%{$option.signature}%</td>
+         %{/if}%
+    </tr>
+    %{/if}%
+    %{/foreach}%
+    %{if $smarty.section.opsec.total>0}%
+    <!--</tbody>
+    </table>
+    <table width="100%" border="1" cellpadding="0" cellspacing="0">
+<thead>
+	<tr align="center" valign="top">
+    	<th width="24">Код по пр-ме</th>
+        <th width="50">Код</th>
+        <th width="*">Наименование</th>
+        <th width="80">Цена</th>
+    </tr>
+</thead>
+<tbody>-->
+    %{/if}%
+%{/foreach}%
+
+%{/foreach}%
+%{/section}%
+</tbody>
+
+</table>
+
+
+
+
+
+
+
+
+
+
+
+   </p><br />
+<br />
+<br />
+<br />
+
+    <p>
+Отчет сформирован %{$pdate}% пользователем %{$username}%.
+</p> 
+
+</body>
+</html>

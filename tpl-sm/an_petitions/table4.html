@@ -1,0 +1,173 @@
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="40">
+    Номер 
+    
+     
+    </th>
+    
+     
+     
+    
+     <th scope="col" width="60">
+    Дата создания
+     
+    </th>
+    
+      <th scope="col" width="100">
+    Вид
+    
+    </th>
+    
+    
+     <th scope="col" width="60">
+    Дата действия
+    
+    </th>
+    
+    
+      <th scope="col" width="*" >Причина
+   
+    </th>
+    
+    
+      <th scope="col" width="*" >Комментарий
+   
+    </th>
+    
+    	 
+   
+     <th scope="col" width="*" >Ответственный в документе
+   
+    </th>
+    
+  
+     
+     
+    
+    <th scope="col" width="100" >Статус 
+    
+    </th>
+    
+ 
+    
+     %{if $print==0}%
+         
+    <th scope="col" width="50">
+   
+    </th>
+    %{/if}%
+    
+</tr>
+
+</thead>
+ 
+
+%{section name=rowsec loop=$wdata.items}%
+ 
+<tr align="center" valign="top" id="item_row_%{$wdata.items[rowsec].id}%">
+ 
+	<td width="40"  style="%{if $items[rowsec].status_id==5}% color:red;%{else}%color:%{$wdata.items[rowsec].color}%;%{/if}% white-space:nowrap;">%{$wdata.items[rowsec].code}%
+    
+    
+    </td>
+	 
+    <td width="60" style="color:%{$wdata.items[rowsec].color}%;">
+    %{$wdata.items[rowsec].pdate}%
+    </td>
+     <td width="100" style="color:%{$wdata.items[rowsec].color}%;">
+    %{$wdata.items[rowsec].kind_name}%
+    </td>
+   
+    <td width="60" style="color:%{$wdata.items[rowsec].color}%;">
+    %{$wdata.items[rowsec].given_pdate}%
+    
+    
+    %{if $wdata.items[rowsec].kind_id==4 or $wdata.items[rowsec].kind_id==5 }%
+    %{$wdata.items[rowsec].time_h|string_format:"%02d"}%:%{$wdata.items[rowsec].time_m|string_format:"%02d"}%
+    
+    %{elseif $wdata.items[rowsec].kind_id==6 or $wdata.items[rowsec].kind_id==7 }%
+   <br />
+с&nbsp;%{$wdata.items[rowsec].time_from_h|string_format:"%02d"}%:%{$wdata.items[rowsec].time_from_m|string_format:"%02d"}%
+   по&nbsp;%{$wdata.items[rowsec].time_to_h|string_format:"%02d"}%:%{$wdata.items[rowsec].time_to_m|string_format:"%02d"}%
+   
+   
+    %{elseif $wdata.items[rowsec].kind_id==3}% 
+   	%{foreach name=datefor from=$wdata.items[rowsec].v_dates item=dat}% 
+    %{$dat.pdate}%%{if !$smarty.foreach.datefor.last}%, %{/if}%
+    %{/foreach}%
+   %{else}%
+    с %{$wdata.items[rowsec].begin_pdate}%<br />
+
+    по %{$wdata.items[rowsec].end_pdate}%
+    
+   
+    %{/if}%
+    </td>
+   
+   
+  
+  <td width="*" style="color:%{$wdata.items[rowsec].color}%;">
+     %{$wdata.items[rowsec].rease_name}% 
+    </td>
+    
+      
+      <td width="*" style="color:%{$wdata.items[rowsec].color}%;">
+     %{$wdata.items[rowsec].txt}% 
+    </td>
+    
+      
+    
+    <td width="*" style="color:%{$wdata.items[rowsec].color}%;">
+     %{$wdata.items[rowsec].name_s}% 
+    </td>
+    
+      
+   
+  
+   
+    
+    
+    
+    
+     <td width="100" style="%{if $items[rowsec].status_id==5}% color:red;%{else}%color:%{$wdata.items[rowsec].color}%;%{/if}%">
+     %{$wdata.items[rowsec].status_name}%
+    </td>
+    
+    
+    
+    
+    
+   
+     %{if $print==0}%
+      <td width="50" style="color:%{$wdata.items[rowsec].color}%;">
+    %{if $can_edit}%
+    <a href="petition_my_history.php?id=%{$wdata.items[rowsec].id}%" target="_blank" data-comment="просмотр карты заявления" class="reestr_edit reestr_right_button24"></a>
+    %{else}%
+    
+   <a href="#" onclick="alert('У Вас недостаточно прав для просмотра заявления!'); return false;" data-comment="просмотр карты заявления" class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    %{/if}%
+    
+      %{if $items[rowsec].field_rules.to_print_sz}%
+      <a href="petition_my_history.php?id=%{$wdata.items[rowsec].id}%&force_print=1" target="_blank" data-comment="печать карты заявления" class="reestr_print reestr_right_button24"></a>
+       %{else}%
+     <a href="#" onclick=" return false;" data-comment="печать карты заявления" class="reestr_print reestr_inactive reestr_right_button24"></a>
+     %{/if}%
+      
+   
+    
+    
+    
+    
+    </td>
+    
+%{/if}%
+ 
+</tr>
+ 
+%{/section}%
+
+ 
+</table>
+<br>

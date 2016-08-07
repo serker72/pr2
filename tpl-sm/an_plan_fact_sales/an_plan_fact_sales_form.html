@@ -1,0 +1,50 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+ %{elseif $tab_page==2}%
+	selected: 1
+%{/if}%	
+  
+  });
+});
+</script>
+
+ 
+<div id="tabs">
+  <ul>
+    %{if $has_kp}%
+    <li><a href="#tabs-1">План/факт продаж (сводный)</a></li>
+    %{/if}%
+    
+    
+      %{if $has_kp}%
+    <li><a href="#tabs-2">План/факт продаж (дополн. опции)</a></li>
+    %{/if}%
+    
+    
+  </ul>
+   %{if $has_kp}%
+  <div id="tabs-1">
+    <p>
+    <h2>Отчет План/факт продаж (сводный)</h2>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+   
+     %{if $has_kp}%
+  <div id="tabs-2">
+    <p>
+    <h2>Отчет План/факт продаж (дополн. опции)</h2>
+    %{$log2}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+   
+
+</div>

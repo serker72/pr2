@@ -1,0 +1,387 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	 VidgetMultiReport('%{$prefix}%statuses', 'Выберите статус', 'Все статусы', 'Cнять выбор', '# из # выбрано', "Выбраны статусы: ", 'Статусы не выбраны', 250);
+	 
+	   
+	  VidgetMultiReport('%{$prefix}%kinds', 'Выберите вид', 'Все виды', 'Cнять выбор', '# из # выбрано', "Выбраны виды: ", 'Виды не выбраны', 200 );
+	  
+	  VidgetMultiReport('%{$prefix}%is_fulfil', 'Выберите действия', 'Все действия', 'Cнять выбор', '# из # выбрано', "Выбраны действия: ", 'Действия не выбраны', 200 );
+	  
+	/*
+	 
+	  
+	    VidgetMultiReport('%{$prefix}%planfact', 'Выберите план/факт', 'План+факт', 'Cнять выбор', '# из # выбрано', "Выбрано: ", 'План/факт не выбран' );
+	*/
+	 
+	 	
+	function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+ 	//SelectSupplierGo2("supplier%{$prefix}%");
+	 
+ 
+	
+});
+</script>
+
+ 
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+ 
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$id}%" /> 
+
+
+ 
+
+
+
+
+
+<div class="report_filter_right">
+ 
+        
+        
+    
+     <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="ed_lead.php?action=1&id=%{$id}%&doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+  
+  %{if $can_print}%
+  
+   
+  <!--
+   <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>-->
+  
+  <script type="text/javascript">
+  $(function(){
+	  
+	  
+	  
+	  
+	  
+	  $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+			
+		 	 window.open('ed_lead.php?'+'action=1&id=%{$id}%'+'&doSub%{$prefix}%=1&print=1&supplier%{$prefix}%=%{$id}%&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		   
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+ <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."</a>
+ %{/if}%
+  	
+    
+    
+%{include file="every_help_dialog.html" filename="lead_actions.html;ed_lead.html" prefix=$prefix description="Действия по лиду"  style="display:inline-block; margin-right:0px;" is_right=true}%
+
+
+
+
+ 
+</div> 
+ 
+<br clear="all" />
+<p />
+
+<div class="report_filter_left">
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:15px; white-space:nowrap;">
+<strong>Период:</strong>
+<br>
+
+
+<label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10" class="sched_report_field" />
+ &nbsp;&nbsp;
+<label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10" class="sched_report_field" />
+
+</div>
+
+
+ 
+
+ 
+ 
+<div style="float:left; margin-right:20px;     margin-bottom:15px;   overflow:hidden;">
+
+ 
+
+
+    <label for="%{$prefix}%kinds" class="statuses_report_label">Виды действий:</label><br>
+
+    <select id="%{$prefix}%kinds" name="%{$prefix}%kinds[]" multiple="multiple">
+   
+    <option value="3" %{if $kind_id_3==1 or $all_kinds==1}% selected%{/if}% >Встреча</option>
+    <option value="1" %{if $kind_id_1==1 or $all_kinds==1}% selected%{/if}% >Задача</option>
+    <option value="5" %{if $kind_id_5==1 or $all_kinds==1}% selected%{/if}% >Заметка</option>
+    <option value="4" %{if $kind_id_4==1 or $all_kinds==1}% selected%{/if}% >Звонок</option>
+    <option value="2" %{if $kind_id_2==1 or $all_kinds==1}% selected%{/if}% >Командировка</option>
+    
+    
+    <option value="6" %{if $kind_id_6==1 or $all_kinds==1}% selected%{/if}% >Служебные записки на командировку</option>
+    <option value="7" %{if $kind_id_7==1 or $all_kinds==1}% selected%{/if}% >Входящий документ</option> 
+    <option value="8" %{if $kind_id_8==1 or $all_kinds==1}% selected%{/if}% >Исходящий документ</option> 
+     
+     
+   
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%kinds_caption" class="statuses_report_caption" style="width:200px !important;">
+    
+    </div>
+
+
+</div>
+
+
+<!--<div style="float:left; margin-right:20px;     margin-bottom:15px;   overflow:hidden;">
+	<label for="%{$prefix}%is_fulfil" class="statuses_report_label">Совершенные/несовершенные действия:</label><br>
+
+    <select id="%{$prefix}%is_fulfil" name="%{$prefix}%is_fulfil[]" multiple="multiple">
+   
+    <option value="1" %{if $is_fulfil_1==1 or $all_is_fulfil==1}% selected%{/if}% >Совершенные</option>
+    <option value="2" %{if $is_fulfil_2==1 or $all_is_fulfil==1}% selected%{/if}% >Несовершенные</option>
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%is_fulfil_caption" class="statuses_report_caption" style="width:200px !important;">
+    
+    </div>
+
+	
+
+</div>
+ -->
+
+ 
+<div style="float:left; margin-right:10px;     margin-bottom:15px;   overflow:hidden;">
+
+ 
+
+
+    <label for="%{$prefix}%statuses" class="statuses_report_label">Статусы:</label><br>
+
+    <select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+   
+    <option value="23" %{if $status_id_23==1 or $all_statuses==1}% selected%{/if}% >Ждет выполнения</option>
+    <option value="24" %{if $status_id_24==1 or $all_statuses==1}% selected%{/if}% >Выполняется</option>
+    <option value="25" %{if $status_id_25==1 or $all_statuses==1}% selected%{/if}% >Отложена</option>
+     <option value="9" %{if $status_id_9==1 or $all_statuses==1}% selected%{/if}% >Не выполнен(а)</option>
+    <option value="10" %{if $status_id_10==1 or $all_statuses==1}% selected%{/if}% >Выполнен(а)</option>
+    <option value="26" %{if $status_id_26==1 or $all_statuses==1}% selected%{/if}% >Ждет контроля</option>
+    
+     
+    <option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утвержден</option>
+    <option value="22" %{if $status_id_22==1 or $all_statuses==1}% selected%{/if}% >Запланирован</option>
+     
+     
+   <option value="18" %{if $status_id_18==1 or $all_statuses==1}% selected%{/if}% >Создан</option>
+
+	<option value="33" %{if $status_id_33==1 or $all_statuses==1}% selected%{/if}% >Новый</option>
+	<option value="28" %{if $status_id_28==1 or $all_statuses==1}% selected%{/if}% >В работе</option>
+
+ 
+
+
+<option value="41" %{if $status_id_41==1 or $all_statuses==1}% selected%{/if}% >На согласовании</option>
+<option value="42" %{if $status_id_42==1 or $all_statuses==1}% selected%{/if}% >Согласован</option>
+
+<option value="43" %{if $status_id_43==1 or $all_statuses==1}% selected%{/if}% >На утверждении</option>
+ 
+
+<option value="52" %{if $status_id_52==1 or $all_statuses==1}% selected%{/if}% >Не согласован</option>
+<option value="1"  %{if $status_id_1==1 or $all_statuses==1}% selected%{/if}%>Не утвержден</option>
+   
+    <option value="8" %{if $status_id_8==1 or $all_statuses==1}% selected%{/if}% >Выполнен</option>
+ 
+ 
+<option value="48" %{if $status_id_48==1 or $all_statuses==1}% selected%{/if}% >Отчет на согласовании</option>
+<option value="49" %{if $status_id_49==1 or $all_statuses==1}% selected%{/if}% >Отчет согласован</option>
+
+<option value="50" %{if $status_id_50==1 or $all_statuses==1}% selected%{/if}% >Отчет на утверждении</option>
+<option value="51" %{if $status_id_51==1 or $all_statuses==1}% selected%{/if}% >Отчет утвержден</option>
+<option value="35" %{if $status_id_35==1 or $all_statuses==1}% selected%{/if}% >На рассмотрении</option>
+<option value="47" %{if $status_id_47==1 or $all_statuses==1}% selected%{/if}% >Рассмотрен</option>
+<option value="44" %{if $status_id_44==1 or $all_statuses==1}% selected%{/if}% >Зарегистрирован</option>
+<option value="45" %{if $status_id_45==1 or $all_statuses==1}% selected%{/if}% >Отправлен</option>
+
+<option value="46" %{if $status_id_46==1 or $all_statuses==1}% selected%{/if}% >Отслежен </option>
+ 
+
+   
+    
+    </select>
+    
+    
+    
+    <br clear="all" />
+    
+    <div id="%{$prefix}%statuses_caption" class="statuses_report_caption" style="width:240px !important;">
+    
+    </div>
+
+
+</div>
+
+
+
+<div style="float:left; margin-right:0px; margin-bottom:15px; max-width:250px;">
+<label for="user%{$prefix}%">Сотрудник:</label><br />
+<input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:240px;"  />
+</div>
+ </div>
+
+<br clear="all" />
+ 
+</form>
+ 
+
+
+<small>
+
+1. Показаны документы, у которых утверждено заполнение, по следующим критериям:
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Встречи, Задачи, Звонки, Заметки</strong> - контрагент по текущему лиду является контрагентом по этой активности планировщика</li>
+<li  style="display:inline-block;"><strong>Служебные записки на командировку</strong>  - текущий лид прикреплен к служебной записке на командировку</li>
+<li style="display:inline-block;"><strong>Командировки</strong> - на командировку создана служебная записка, к которой прикреплен текущий лид</li>
+<li  style="display:inline-block;"><strong>Входящие документы</strong> - ко входящему документу прикреплен текущий лид</li>
+<li  style="display:inline-block;"><strong>Исходящие документы</strong>  - к исходящему документу прикреплен текущий лид</li>
+</ul>
+<br>
+<br>
+
+
+2. <strong>Фильтр Период</strong>: поиск записей планировщика осуществляется по попаданию в выбранный период следующей даты: 
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Встречи</strong> - дата  встречи</li>
+<li style="display:inline-block;"><strong>Задачи</strong> - крайний срок выполнения задачи</li>
+<li style="display:inline-block;"><strong>Звонки</strong> - дата звонка</li>
+<li style="display:inline-block;"><strong>Заметки</strong> - дата создания заметки</li>
+<li  style="display:inline-block;"><strong>Командировки</strong> - дата начала командировки</li>
+<li  style="display:inline-block;"><strong>Служебные записки на командировку</strong>  - дата начала командировки</li>
+<li  style="display:inline-block;"><strong>Входящие документы</strong> - дата создания входящего документа</li>
+<li  style="display:inline-block;"><strong>Исходящие документы</strong>- дата создания исходящего документа</li>
+ </ul>
+<br>
+<br>
+ 
+<!--2. <strong>Совершенные/несовершенные действия</strong>: совершенными считаются следующие действия: 
+<ul style="display:inline-block;">
+
+
+<li style="display:inline-block;"><strong>Встречи</strong> - утвержден прием работы</li>
+<li style="display:inline-block;"><strong>Задачи</strong> - утверждено выполнение</li>
+<li style="display:inline-block;"><strong>Звонки</strong> - утверждено выполнение</li>
+<li style="display:inline-block;"><strong>Командировки</strong> - утвержден прием работы</li>
+<li style="display:inline-block;"><strong>Лиды</strong> - утвержден прием работы</li>
+<li style="display:inline-block;"><strong>Тендеры</strong> - утвержден прием работы</li>
+
+ </ul>
+ <br>
+Прочие действия считаются несовершенными.-->
+ 
+ </small>
+ <br />
+<br>
+
+
+
+
+
+%{if $do_it}%
+
+ 
+%{include file="lead/action_table.html"}%  
+ 
+
+%{/if}%

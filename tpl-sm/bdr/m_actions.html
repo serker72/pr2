@@ -1,0 +1,16 @@
+%{if $can_modify}%
+<input type="button" value="Добавить статью затрат..." id="m_add" /><br>
+<br>
+
+
+
+%{/if}%
+
+%{include file="bdr/maccounts_actions.html"}%
+
+<div id="m_block" style="border:1px solid silver; min-width:480px; width:100%;">
+<fieldset id="m_block_set">
+%{include file="bdr/m_table.html" has_header=true}%
+
+</fieldset>
+</div>

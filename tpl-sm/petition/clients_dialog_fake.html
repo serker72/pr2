@@ -1,0 +1,113 @@
+<input type="button" value="Добавить..." id="add_%{$word}%" />
+<div id="dialog_%{$word}%" title="%{$named}%" style="display:none;">
+	
+    <label for="%{$word}%_client_name">Название клиента:</label><br />
+	<input type="text" id="%{$word}%_client_name" value="" size="40" maxlength="255" />
+    <br />
+	<p />
+    
+   <label for="%{$word}%_purpose_id">Выберите цель визита:</label> <br />
+   <select id="%{$word}%_purpose_id" style="width:200px;">
+   <option value="0" selected="selected">-выберите-</option>
+   %{foreach from=$purposes item=pur}%
+    <option value="%{$pur.id}%" >%{$pur.name}%</option>
+   %{/foreach}%
+   </select>
+   
+   %{foreach from=$purposes item=pur}%
+   <input type="hidden" id="%{$word}%_purpose_has_txt_%{$pur.id}%" value="%{$pur.has_text}%" size="40" maxlength="255" />
+   %{/foreach}%
+   
+   <input type="text" id="%{$word}%_purpose_txt" value="" size="40" maxlength="255" />
+   <p />
+   <br />
+   
+   
+  
+    
+
+</div>
+<script type="text/javascript">
+  $(function(){
+    $("#dialog_%{$word}%").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 550,
+    height: 350,
+    buttons: {
+        "Готово": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	$("#add_%{$word}%").bind("click",function(){
+		 
+		 $("#%{$word}%_client_name").val("");
+		 $("#%{$word}%_purpose_id").val(0);
+		 $("#%{$word}%_purpose_txt").val("");
+		 
+		 
+		 $("#dialog_%{$word}%").dialog({
+			buttons:{
+				"Добавить": function(){
+					
+					res=true;
+					
+					 
+					if(res&&($("#%{$word}%_client_name").val().length<3)){
+						res=res&&false;
+						alert("Заполните поле Название клиента!");
+						$("#%{$word}%_client_name").focus();
+					}
+					
+					if(res&&(($("#%{$word}%_purpose_id").val()==0)||($("#%{$word}%_purpose_id").val()==null)||($("#%{$word}%_purpose_id").val()==undefined))){
+						res=res&&false;
+						alert("Заполните поле Цель визита!");
+						$("#%{$word}%_purpose_id").focus();
+					}
+					
+					if(res&&($("#%{$word}%_purpose_has_txt_"+$("#%{$word}%_purpose_id").val()).val()==1)&&($("#%{$word}%_purpose_txt").val().length==0)){
+						res=res&&false;
+						alert("Укажите описание цели визита!");
+						$("#%{$word}%_purpose_txt").focus();
+					}
+					
+					//код добавки
+					if(res){
+						$.ajax({
+							async: true,
+							url: "/js/petition.php",
+							type: "POST",
+							data:{
+								"action":"add_%{$word}%_fake",
+								"client_name": $("#%{$word}%_client_name").val(),
+								"purpose_txt": $("#%{$word}%_purpose_txt").val(),
+								"purpose_id": $("#%{$word}%_purpose_id").val()
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							  // alert("%{$named}% добавлены!"); 
+							   $("#%{$word}%").append(data);
+							},
+							error: function(xhr, status){
+								alert("Ошибка добавления %{$named}%.");	
+							}	 
+						});
+							
+						$(this).dialog("close");
+					}
+				},
+				"Отмена": function(){$(this).dialog("close");}	
+			}
+		 });
+		
+		$("#dialog_%{$word}%").dialog("open");
+	});
+	
+});
+</script>

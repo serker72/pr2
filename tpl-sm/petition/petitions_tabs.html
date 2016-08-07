@@ -1,0 +1,37 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+
+ 
+
+<script type="text/javascript">
+
+ 
+	
+$(function(){
+  $("#tasks").tabs({
+  	cookie: { expires: 14, name: 'startTabpetitions' }
+  });
+  
+	
+	 
+ 
+});
+</script>
+
+
+<div id="tasks">
+  <ul>
+     
+    <li><a href="#tabs-2">Мои заявления</a></li>
+   
+  </ul>
+   
+  <div id="tabs-2">
+    <p>
+    %{$petitions_2}%
+    
+    </p>
+  </div>
+   
+
+</div>

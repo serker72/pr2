@@ -1,0 +1,24 @@
+%{foreach from=$items item=wdata}%
+
+<h2>Заявления вида: %{$wdata.kind_name}%</h2>
+
+%{if $wdata.kind_id==1}%
+%{include file="an_petitions/table1.html"}%
+%{elseif $wdata.kind_id==2}%
+%{include file="an_petitions/table2.html"}%
+%{elseif $wdata.kind_id==3}%
+%{include file="an_petitions/table3.html"}%
+%{elseif $wdata.kind_id==4}%
+%{include file="an_petitions/table4.html"}%
+%{elseif $wdata.kind_id==5}%
+%{include file="an_petitions/table5.html"}%
+%{elseif $wdata.kind_id==6}%
+%{include file="an_petitions/table6.html"}%
+%{elseif $wdata.kind_id==7}%
+%{*include file="an_petitions/table7.html"*}%
+%{elseif $wdata.kind_id==8}%
+%{include file="an_petitions/table8.html"}%
+%{/if}%
+
+
+%{/foreach}%

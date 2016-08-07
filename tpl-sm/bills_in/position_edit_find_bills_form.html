@@ -1,0 +1,351 @@
+	 <strong>Поиск позиции</strong><br />
+    
+    <table width="*" border="0" cellspacing="3" cellpadding="0" id="positions_search_set2_bills" style="display:table; float:left;">
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" style="width:450px;" size="80" maxlength="255" id="qry2_bills" /></td>
+        <td>&nbsp;</td>
+        <td><a href="#" id="do_ext_search_bills"><img src="/img/icons/plus.png" width="24" height="24" border="0" alt="Расширенный поиск" title="Расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#do_ext_search_bills").unbind("click");
+			$("#do_ext_search_bills").bind("click",function(){
+				
+				$("#qry_bills").attr("value",$("#qry2_bills").val());
+				
+				
+				$("#positions_search_set2_bills").css("display","none");
+				$("#positions_search_set_bills").css("display","table");
+				$("#positions_search_set3_bills").css("display","table");
+				$("#qry2_bills").attr("value","");
+				return false;
+			});
+		});
+		</script>
+        
+        </td>
+        
+   </tr>
+    <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        </tr>
+   </table>
+   
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left" id="positions_search_set_bills" style="display:none; float:left;" >
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" size="40" maxlength="255" id="qry_bills" /></td>
+        <td>
+        <select id="dimension_id_bills" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="length_bills" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="width_bills" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="height_bills" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="weight_bills" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="volume_bills" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="diametr_bills" /></td>
+        
+        <td><a href="#" id="donot_ext_search_bills"><img src="/img/icons/minus.jpg" width="24" height="24" border="0" alt="Скрыть расширенный поиск" title="Скрыть расширенный поиск" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#donot_ext_search_bills").unbind("click");
+			$("#donot_ext_search_bills").bind("click",function(){
+				
+				$("#qry2_bills").attr("value",$("#qry_bills").val());
+				$("#qry_bills").attr("value","");
+				$("#positions_search_set_bills").css("display","none");
+				$("#positions_search_set3_bills").css("display","none");
+				$("#dimension_id_bills").val("");
+				$("#length_bills").val("");
+				$("#width_bills").val("");
+				$("#height_bills").val("");
+				$("#weight_bills").val("");
+				$("#volume_bills").val("");
+				$("#diametr_bills").val("");
+				
+				$("#tov_grp_bills").val("");
+				$("#group_id2_bills").val("");
+				$("#group_id3_bills").val("");
+				$("#supplier_name_bills").val('');
+				$("#out_bill_code_bills").val('');
+				$("#positions_search_set2_bills").css("display","table");
+				return false;
+			});
+		});
+		</script>
+        </td>
+      </tr>
+      <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        <td><small>ед. изм.</small></td>
+        <td><small>Длина, мм</small></td>
+        <td><small>Ширина, мм</small></td>
+        <td><small>Высота/ <br />
+толщина, мм</small></td>
+
+		<td><small>Вес <br />
+1 ед., кг</small></td>
+        <td><small>Объем <br />
+1 ед., м<sup>3</sup></small></td>
+
+        <td><small>Диаметр, мм</small></td>
+      </tr>
+    </table>
+	&nbsp;
+    &nbsp;
+  
+	
+    <table width="*" border="0" cellspacing="3" cellpadding="0" style="float:left;">
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><input type="button" value="Найти" id="doSrch_bills"  /></td>
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td>
+        %{include file="every_help_dialog.html" filename="bill_positions.html" prefix="kfp" description="Информация о поиске позиций номенклатуры"  style="display:inline;"}%
+        
+        </td>
+      </tr>
+    </table>
+
+ 	
+    
+    <br clear="all" />
+	
+   
+    <table width="*" border="0" cellspacing="3" cellpadding="0" id="positions_search_set3_bills" style="display:none" >
+  <tr align="left" valign="top">
+    <td>
+    <select id="tov_grp_bills" style="width:150px;">
+    %{html_options values=$tov_group_ids selected=$tov_group_id output=$tov_group_names}%
+    </select>
+    </td>
+    <td>
+    <select id="group_id2_bills" style="width:150px;">
+    
+    </select>
+    </td>
+    <td>
+    <select id="group_id3_bills" style="width:150px;">
+   
+    </select>
+    </td>
+    <td>
+    <input type="text" id="supplier_name_bills" value="" size="30" maxlength="255" />
+    </td>
+    
+     <td>
+    <input type="text" id="out_bill_code_bills" value="" size="7" maxlength="255" />
+    </td>
+    <td>
+    
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <small>товарная группа</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;1&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;2&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>контрагент</small>
+    </td>
+    <td>
+    <small>исход.&nbsp;счет</small>
+    </td>
+  </tr>
+</table>
+
+<span style="color:red;">
+<small><em>Для подстановки количества позиции из исходящего счета дважды кликните поле "количество" у этой позиции.</em></small></span>
+<br />
+
+
+<script type="text/javascript">
+$(function(){
+	//поиск позиций по филтьру
+	$("#doSrch_bills").bind("click",function(){
+		ret=true;
+		
+		if(($("#qry_bills").attr("value").length>0)||($("#tov_grp_bills").val()!=0)||
+		($("#dimension_id_bills").val()!=0)||
+		($("#length_bills").attr("value").length>0)||
+		($("#width_bills").attr("value").length>0)||
+		($("#height_bills").attr("value").length>0)||
+		($("#diametr_bills").attr("value").length>0)||
+		
+		($("#weight_bills").attr("value").length>0)||
+		($("#volume_bills").attr("value").length>0)||
+		($("#qry2_bills").attr("value").length>0)||
+		($("#supplier_name_bills").attr("value").length>0)||
+		($("#out_bill_code_bills").attr("value").length>0)
+		
+		){
+			//alert("loading");
+			
+			group_id=0;
+			if($("#group_id3_bills").val()>0) group_id=$("#group_id3_bills").val();
+			else if($("#group_id2_bills").val()>0) group_id=$("#group_id2_bills").val();
+			else if($("#tov_grp_bills").val()>0) group_id=$("#tov_grp_bills").val();
+			
+			var qry='';
+			if($("#qry_bills").attr("value").length>0) qry=$("#qry_bills").attr("value");
+			else qry=$("#qry2_bills").attr("value");
+			
+			var except_pairs=new Array();
+			
+			$("#putting_positions input[id^=pl_position_id_]").each(function(k,v) {
+               //except_ids.push($(v).val()); 
+			   hash=$(v).attr("id").replace(/^pl_position_id_/, '');
+			   //alert(hash);
+			   out_bill_id=$("#out_bill_id_"+hash).val();
+			   if(parseInt( out_bill_id)>0){
+					except_pairs.push($(v).val()+';'+out_bill_id);   
+			   }
+			   
+            });
+			//alert(except_pairs);
+			$.ajax({
+              async: true,
+              url: "/js/bill_in.php",
+              type: "POST",
+              data:{
+                  "action":"find_pos_other_bills",
+				  "group_id":group_id,
+				  "qry":qry,
+				  "dimension_id":$("#dimension_id_bills").val(),
+				  "length":$("#length_bills").attr("value"),
+				  "width":$("#width_bills").attr("value"),
+				  "height":$("#height_bills").attr("value"),
+				  "diametr":$("#diametr_bills").attr("value"),
+				  
+				  "weight":$("#weight_bills").attr("value"),
+				  "volume":$("#volume_bills").attr("value"),
+				  "supplier_name":$("#supplier_name_bills").val(),
+				  "out_bill_code":$("#out_bill_code_bills").val(),
+				  
+				  "except_pairs[]":except_pairs
+				  
+              },
+              beforeSend: function(){
+                $("#other_founded_positions").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+              },
+              success: function(data){
+                $("#other_founded_positions").html(data);
+                
+              },
+              error: function(xhr, status){
+                  $("#other_founded_positions").html("Ошибка загрузки позиций.");	
+              }	 
+          });
+		  
+		  
+		}else ret=ret&&false;
+		
+		return ret;
+	});
+	
+	
+		/*выборка товарной группы*/
+		$("#tov_grp_bills").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#tov_grp_bills").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				  $("#group_id3_bills").empty();
+				  $("#group_id2_bills").html('<option value=""></option>'+data);				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2_bills").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2_bills").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3_bills").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	
+	/*автоподстановка к-та*/
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#supplier_name_bills" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_supplier.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+
+});
+</script>

@@ -1,0 +1,80 @@
+<h1>Отчет "Ж"</h1>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период:</strong>
+<b>с:</b><br />
+%{$pdate1}%
+
+
+<p />
+	<b>по:</b><br />
+    %{$pdate2}%
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+
+<b>Участок:</b><br />
+
+
+<select id="sector_id" name="sector_id" style="width:150px;" disabled="disabled">
+<option value="0">-все участки-</option>
+%{html_options values=$sector_ids selected=$sector_id output=$sector_names}%
+</select>
+<p />
+
+<b>Объект:</b><br />
+
+
+<select id="storage_id" name="storage_id" style="width:150px;" disabled="disabled">
+<option value="0">-все объекты-</option>
+%{html_options values=$storage_ids selected=$storage_id output=$storage_names}%
+</select>
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+%{if $only_active_sectors==1 or $only_active_storages==1}%
+<strong>Вы выбрали:</strong>
+%{/if}%
+<br />
+
+%{if $only_active_sectors==1}%только активные участки<br />%{/if}%
+
+
+
+%{if $only_active_storages==1}%только активные объекты%{/if}%
+<br />
+
+
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+
+	<b>Статус:</b><br />
+ <select name="status_id" id="status_id" style="width:150px;" disabled="disabled">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все расп. на списание</option>
+    <option value="17"  %{if $status_id==17}% selected="selected"%{/if}%>выполнено</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>утвержден</option>
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>не утвержден</option>
+   
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>аннулирован</option>
+   </select>  
+</div>
+
+
+
+
+<div style="float:left; margin-right:5px;"><br />
+
+
+
+
+%{include file="an_j/an_j_table_print.html"}%  

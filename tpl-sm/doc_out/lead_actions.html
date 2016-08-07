@@ -1,0 +1,471 @@
+<script type="text/javascript">
+$(function(){
+	
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	 $("#lead_pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#lead_pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+
+
+	$("#lead_select").bind("click", function(){
+		%{if $can_modify}%
+		
+		  
+		$("#lead_dialog").dialog("open"); 
+	 
+		%{/if}%
+		
+		
+		return false;
+	});
+	
+	
+	$("#to_lead").bind("click", function(){
+		if($("#lead_id").val()!=""){
+			window.open("ed_lead.php?action=1&id="+$("#lead_id").val()+"&from_begin=1");	
+		}
+	});
+
+
+
+	 
+	
+	function rebuild(){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=lead_radio]:checked").val()==0)||($("input[name=lead_radio]:checked").val()==null)||($("input[name=lead_radio]:checked").val()==undefined)  ){
+			
+			alert("Выберите лид!");
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=lead_radio]:checked").val()
+		   
+	  
+	  
+	 
+	  
+	  if($("#lead_id").val()!=selected_supplier){
+		  $("#lead_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_lead",
+				  "id":selected_supplier
+				  
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#lead_string").val(data.code);
+				$("#lead_id").val(data.id);
+				
+			 
+				
+				 
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#lead_dialog").dialog("close"); 
+	}
+ 
+	
+	 
+	
+	$("#lead_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1200,
+		height: 490,
+		 
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	 
+	
+	
+	
+	$("#lead_select").bind("click",function(){
+		
+		 $.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  dataType:"json",
+			  type: "GET",
+			  data:{
+				  "action":"load_eq_types" 
+				  
+			  },
+			  beforeSend: function(){
+				   
+			  },
+			  success: function(data){
+				// alert(data);
+				html='';
+				$.each(data, function(k,v){
+					html+='<option value="'+v.id+'">'+v.name+'</option>';
+				});
+				$("#lead_eq_name").html(html); $("#lead_eq_name").val('');
+			  },
+			  error: function(xhr, status){
+				  
+			  }	
+			  
+		 });
+		 
+		 $.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  dataType:"json",
+			  type: "GET",
+			  data:{
+				  "action":"load_prod_names" 
+				  
+			  },
+			  beforeSend: function(){
+				   
+			  },
+			  success: function(data){
+				// alert(data);
+				html='';
+				$.each(data, function(k,v){
+					html+='<option value="'+v.id+'">'+v.name+'</option>';
+				});
+				$("#lead_prod_name").html(html); $("#lead_prod_name").val('');
+			  },
+			  error: function(xhr, status){
+				  
+			  }	
+			  
+		 });
+		 
+		 $.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  dataType:"json",
+			  type: "GET",
+			  data:{
+				  "action":"load_states" 
+				  
+			  },
+			  beforeSend: function(){
+				   
+			  },
+			  success: function(data){
+				// alert(data);
+				html='';
+				$.each(data, function(k,v){
+					html+='<option value="'+v.id+'">'+v.name+'</option>';
+				});
+				$("#lead_states").html(html); $("#lead_states").val('');
+			  },
+			  error: function(xhr, status){
+				  
+			  }	
+			  
+		 });
+		 
+		  $.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  dataType:"json",
+			  type: "GET",
+			  data:{
+				  "action":"load_kinds" 
+				  
+			  },
+			  beforeSend: function(){
+				   
+			  },
+			  success: function(data){
+				// alert(data);
+				html='';
+				$.each(data, function(k,v){
+					html+='<option value="'+v.id+'">'+v.name+'</option>';
+				});
+				$("#lead_kinds").html(html); $("#lead_kinds").val('');
+			  },
+			  error: function(xhr, status){
+				  
+			  }	
+			  
+		 });
+		
+		 
+		  
+		
+		
+	//	$("#doFind").trigger("click");
+		$("#lead_dialog").dialog("open");
+	});
+	
+	$("#lead_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+		
+		
+		$("#lead_string").val("");
+	 
+		
+		$("#lead_id").val("");
+		 
+		
+	});
+	
+	
+	
+	$("#lead_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#lead_pdate1").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#lead_pdate2").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#lead_topic").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#lead_supplier_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#lead_manager_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#leaddoFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#leaddoFind").bind("click",function(){
+		ret=true;
+
+		already_loaded=new Array();
+		
+		
+		$.ajax({
+			  async: true,
+			  url: "/js/doc_outs.php",
+			  type: "POST",
+			  data:{
+				  "action":"find_many_leads",
+				  
+				  "code":$("#lead_code").val(),
+				  "pdate1":$("#lead_pdate1").val(),
+				  "pdate2":$("#lead_pdate2").val(),
+				  "state_name":$("#lead_states").val(),
+				  "kind_name":$("#lead_kinds").val(),
+				  "eq_name":$("#lead_eq_name").val(),
+				  
+				  "topic":$("#lead_topic").val(),
+				  
+				  "supplier_name":$("#lead_supplier_name").val(), 
+				  "prod_name":$("#lead_prod_name").val(), 
+				  
+				  "manager_name":$("#lead_manager_name").val(),
+				  
+				  "already_loaded[]":already_loaded
+				  
+			  },
+			  beforeSend: function(){
+				$("#leads_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				//  alert(data);
+				$("#leads_found").html(data);
+				 },
+			  error: function(xhr, status){
+				  $("#leads_found").html("Ошибка загрузки лидов.");	
+			  }	
+			  
+		 });
+		
+	});
+	   
+	   
+	
+	 
+});
+</script>
+
+<div id="lead_dialog" title="Выберите лид" style="display:none;">
+
+
+   <div id="leads_table">
+   
+   
+   <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+       
+        
+        <th scope="col">№</th>
+        <th scope="col">Прогнозир- мая дата закл. контр- та: </th>
+        <th scope="col">Вер- ть закл- ия контр- та, %</th>
+        <th scope="col">Состояние</th>
+        <th scope="col">Вид лида </th>
+        <th scope="col">Тип оборудования </th>
+        
+        
+        <th scope="col">Название лида </th>
+        <th scope="col">Контрагент</th>
+        <th scope="col">Произв- ль </th>
+        <th scope="col">Макс. цена контр- та </th>
+        <th scope="col">Ответственный </th>
+        <th scope="col">Статус </th>
+        <th scope="col"> Создал  </th>
+        
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        
+       
+        <td>
+        <input id="lead_code" type="text" size="5" maxlength="128" value="" />
+        </td>
+        <td>
+         
+          с: <input id="lead_pdate1" type="text" size="10" maxlength="10" value="" />
+          <br>
+
+          по: <input id="lead_pdate2" type="text" size="10" maxlength="10" value="" />
+
+       
+        </td>
+         <td>
+          
+       
+        </td>
+         <td>
+         
+              <select id="lead_states"  style="width:80px;">
+    %{foreach from=$states item=item}%
+    <option value="%{$item.id}%" %{if $item.id==$state_name}% selected%{/if}%>%{$item.name}%</option>
+    %{/foreach}%
+    </select>
+       
+        </td>
+        <td>
+         <select  id="lead_kinds" style="width:80px;">
+    %{foreach from=$kinds item=item}%
+    <option value="%{$item.id}%" %{if $item.id==$kind_name}% selected%{/if}%>%{$item.name}%</option>
+    %{/foreach}%
+    </select>
+        </td>
+        <td>
+         <select   id="lead_eq_name" style="width:80px;">
+    %{foreach from=$eqs item=item}%
+    <option value="%{$item.id}%" %{if $item.id==$eq_name}% selected%{/if}%>%{$item.name}%</option>
+    %{/foreach}%
+    </select>
+        </td>
+        
+        
+        <td>
+        <input id="lead_topic" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+         <td>
+        <input id="lead_supplier_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        
+         <td>
+           <select  id="lead_prod_name" style="width:80px;">
+    %{foreach from=$prods item=item}%
+    <option value="%{$item.id}%" %{if $item.id==$prod_name}% selected%{/if}%>%{$item.name}%</option>
+    %{/foreach}%
+    </select>
+        </td>
+        
+        <td>
+        </td>
+        
+        
+          
+    <td  >
+     <input type="text"  id="lead_manager_name" size="10" maxlength="255" value="%{$manager_name}%" style="width:80px;" /><br />
+    
+    
+    </td>
+          <td>
+        </td>
+        
+          <td>
+        </td>
+        
+        <td>
+        <input type="button" value="Найти" id="leaddoFind" />
+        
+        </td>
+    </tr>
+    <tbody id="leads_found">
+   
+    </tbody>
+    </table>
+   
+   </div>
+
+
+  
+ 
+</div>
+ 
+  

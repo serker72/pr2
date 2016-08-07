@@ -1,0 +1,120 @@
+<script type="text/javascript">
+$(function(){
+	 
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+
+});
+</script>
+<form action="currency_rates.php" method="get" id="filter_form">
+
+%{include file="every_help_dialog.html" filename="currencies.htm" prefix="" description="история курсов валют"  style="float:right;  " is_right=true}%
+
+
+
+
+ 
+
+
+
+<div style="float:left; margin-right:10px;">
+%{if $can_refresh_rates}%
+<a href="currency_rates.php?action=0" class="reestr_rates reestr_button32" data-comment="Получить актуальные данные">	</a>
+
+
+%{/if}%
+ 
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+
+<table width="*" border="0" cellpadding="3" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	<th scope="col" width="100">Дата
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+     
+   
+    <th scope="col" width="120">1 &euro;
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="120"> 1 $
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+    
+</tr>
+<tr align="center" valign="top">
+	<td width="100" align="left">
+    
+    &nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /> 
+    
+    <br />
+
+	по:&nbsp;<input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /><br />
+    
+    </td>
+    
+    
+    
+     <td width="120">
+     
+    </td>   
+    
+    <td width="120">
+     <input name="doFilter" type="submit" value="Найти" />
+    </td>  
+    
+    
+</tr>
+
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="100" align="left" ><a name="user_%{$items[rowsec].id}%"></a>%{$items[rowsec].pdate}%</td>
+    
+    
+    <td width="120"   >%{$items[rowsec].ra2_rates}% руб.</td>
+    
+    <td width="120"  >%{$items[rowsec].ra3_rates}% руб.</td>
+    
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям курсов валют не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

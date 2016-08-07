@@ -1,0 +1,27 @@
+ 
+    %{section name=possec loop=$pos}%
+    <p>
+        <strong>%{$smarty.section.possec.index+1}%.
+        
+        %{$pos[possec].login}%
+        
+      	 %{$pos[possec].name_s}% </strong>
+       
+       	%{if $pos[possec].is_confirmed==1}% Утверждаю: <small> %{$pos[possec].confirm_confirmer}%</small>
+        %{else}%
+        Не утверждено
+        %{/if}% 
+        
+        %{if $pos[possec].is_not_to_next==1}%
+        <br />
+		 Не отправлять дальше:
+          %{$pos[possec].not_to_next_confirmer}%
+         
+         %{/if}%
+
+<!--    %{$pos[possec].confirm_confirmer}% 
+        %{$pos[possec].not_to_next_confirmer}%-->
+        
+    </p>
+    %{/section}%
+   

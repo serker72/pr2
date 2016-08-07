@@ -1,0 +1,219 @@
+
+<div id="tender_remind_gialog" title="Напоминания о тендерах" style="display:none;">
+	
+    <h2>Внимание! Проверьте, что по данным тендерам конкурс заявлен:</h2>
+    <br>
+
+	<div id="tender_reminders_block">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+function CalcNewTenders1(){
+	 if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/tender_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind1"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#tender_remind_gialog").dialog("isOpen")) $("#tender_remind_gialog").dialog("open");
+			 else if((data==0) && $("#tender_remind_gialog").dialog("isOpen"))  $("#tender_remind_gialog").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+$(function(){
+	$("#tender_remind_gialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		dialogClass: 'semi_auth',
+		close: function( event, ui ) {
+			
+			
+			 
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				
+				var can_ret=true;
+			
+				function doBlink(v){
+			
+					var blr=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=tedner_remind_status_id_]:checked"), function(k,v){
+					if($(v).val()==29){
+						//проверять: дату, комеентарий, файлы
+						id=$(v).attr("name").replace(/tedner_remind_status_id_/,'');
+						
+						
+						
+						
+						if(($.trim($("#tedner_remind_comment_"+id).val()).length<10)){
+							//	alert("Укажите комментарий (мин. 10 символов)!");
+								
+							can_ret=can_ret&&false;
+							err_fields.push($("#tedner_remind_comment_"+id));
+							 
+						}
+						
+						if(($.trim($("#tedner_remind_pdate_"+id).val()).length<10)){
+						
+							//alert("Укажите дату подведения итогов конкурса!");
+							
+							can_ret=can_ret&&false; 
+							 
+							err_fields.push($("#tedner_remind_pdate_"+id));
+						}
+						
+						if($("#tedner_remind_uploaded_files_"+id+" input[name^=tender_upload_file_]").length==0){
+						
+							//alert("Прикрепите файл уведомления!");
+							
+							can_ret=can_ret&&false; 
+							err_fields.push($("#tedner_remind_uploaded_files_"+id));	
+							
+						}	 
+					}
+				});
+				
+				if(can_ret){
+					//все ОК, формируем аргументы
+					var data=new Array();
+					$.each($("input[id^=tedner_remind_status_id_]:checked"), function(k,v){
+						if($(v).val()!=0){
+							id=$(v).attr("name").replace(/tedner_remind_status_id_/,'');
+							
+							hashed="";
+							
+							hashed+=id+"/"+$(v).val();
+							
+							if($(v).val()==29){
+								hashed+="/"+$("#tedner_remind_pdate_"+id).val()+"/"+$("#tedner_remind_comment_"+id).val();
+								files1=new Array(); files2=new Array();
+								$.each($("#tedner_remind_uploaded_files_"+id+" input[name^=tender_upload_file_]"), function(f1,f2){
+									files1.push($(f2).attr("name").replace(/^tender_upload_file_/,'').replace(/_tmp$/,".tmp"));
+									files2.push($(f2).val());
+								});
+								
+								hashed+="/"+files1.join('|')+'/'+files2.join('|');
+							}
+							
+							//alert(hashed);
+							data.push(hashed);	
+						}
+						 
+					});
+					
+					//отправляем аргументы
+					$.ajax({
+						  async: false,
+						  url: "/js/tender_checknew.php",
+						  type: "POST",
+						  data:{
+							  "action":"put_statuses",
+							  "data[]":data
+							  
+						  }
+						 
+					  });
+					
+					
+					
+					$("#tender_remind_gialog").dialog("close");
+					
+					
+				}else {
+					alert("Введите корректные данные в отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					 
+				}
+					
+				
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/tender_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind1"
+			  },
+			  beforeSend: function(){
+				 $("#tender_reminders_block").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#tender_reminders_block").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=150;
+				 
+				   our_height=parseInt($("#tender_reminders_block table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#tender_reminders_block").css('height', our_height);
+				   
+				   $("#tender_remind_gialog").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	//window.setInterval('CalcNewTenders1()', 60000);
+});
+</script>

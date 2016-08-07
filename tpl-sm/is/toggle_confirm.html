@@ -1,0 +1,280 @@
+%{if $item.status_id==3}%
+    <strong>аннулировано</strong>
+    %{if $can_restore}%
+    <input type="button" value="Восстановить" id="deaunnul_%{$item.id}%" />
+    %{/if}%
+%{elseif $item.is_confirmed==0}%
+    <strong>не утв.</strong>
+    %{if $can_confirm}%
+    <input type="button" value="Утвердить" id="confirm_%{$item.id}%" />
+    %{/if}% 
+    %{else}%
+    <strong>утв.</strong>
+    %{if  ($can_confirm ) or $can_super_confirm}%
+    <input type="button" value="Не утвердить" id="confirm_%{$item.id}%" %{if $item.is_confirmed_wf==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+%{/if}%
+    <br />
+
+    %{$item.confirmed_price_name}% %{$item.confirmed_price_login}% %{$item.confirm_pdate}%
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		%{if $can_confirm or $can_super_confirm}%
+		$("#confirm_%{$item.id}%").bind("click",function(){
+			
+			%{if $item.is_confirmed==0 and $item.can_confirm==false}%
+			alert("Невозможно утвердить распоряжение на межсклад. Причина: %{$item.can_confirm_reason}%.");
+			return false;
+			%{/if}%
+			
+			var can_go=true;
+			
+			%{if $item.is_confirmed==0}%
+				$.ajax({
+					async: false,
+					url: "/js/is.php",
+					type: "POST",
+					data:{
+						"action":"check_confirm_fill",
+						id: "%{$item.id}%"
+					},
+					beforeSend: function(){
+						//alert('zz');   
+					},
+					success: function(data){
+						//alert(data);
+						if(data==0){
+							
+						}else{
+							alert("Утверждение отгрузки товара невозможно. Причина:\n"+data);
+							
+							can_go=can_go&&false;
+						}
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления вопроса.");	
+					}	 
+				});
+			%{elseif $item.is_confirmed==1}%
+				$.ajax({
+					async: false,
+					url: "/js/is.php",
+					type: "POST",
+					data:{
+						"action":"check_unconfirm_fill",
+						id: "%{$item.id}%"
+					},
+					beforeSend: function(){
+						//alert('zz');   
+					},
+					success: function(data){
+						//alert(data);
+						if(data==0){
+							
+						}else{
+							alert("Невозможно снять утверждение отгрузки товара. Причина:\n"+data);
+							
+							can_go=can_go&&false;
+						}
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления вопроса.");	
+					}	 
+				});
+			%{/if}%
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		%{if $item.is_confirmed==0}%
+		$.ajax({
+				async: false,
+				url: "/js/is.php",
+				type: "POST",
+				data:{
+					"action":"check_komplekts",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					//alert('zz');   
+				},
+				success: function(data){
+					//alert(data);
+					if(data==1){
+						
+					}else{
+						alert("Утверждение отгрузки товара невозможно, так как нет заявки на участок "+$("#receiver_sector_name_"+"%{$item.id}%").text()+", объект "+$("#receiver_storage_name_"+"%{$item.id}%").text()+" на позиции распоряжения на межсклад!\nСоздайте соответствующую заявку.");
+						
+						can_go=can_go&&false;
+					}
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления вопроса.");	
+				}	 
+			});
+		%{/if}%
+			
+			if(can_go){
+				$.ajax({
+				  async: true,
+				  url: "/js/%{$filename}%",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_confirm",
+					  "id":"%{$item.id}%",
+					  "shorter":"%{$shorter}%"
+				  },
+				  beforeSend: function(){
+						$("#item_row_%{$items[rowsec].id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item_row_%{$items[rowsec].id}%").html(data);
+					
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		});
+		
+		%{/if}%
+		
+		
+		
+		 %{if $item.status_id==3 and $can_restore}%
+		  
+		  var new_values%{$items[rowsec].id}%=new Array();
+		  $("#deaunnul_%{$items[rowsec].id}%").bind("click",function(){
+				  
+				  
+				  $.ajax({
+				  async: false,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"confirm_annul",
+					  "id":"%{$items[rowsec].id}%",
+					  "new_values[]":new_values%{$items[rowsec].id}%
+				  },
+				  beforeSend: function(){
+						//$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+				     //alert(data);
+				  	 if(data==0){
+				  		 /*$.each(new_values%{$items[rowsec].id}%, function(k,v){
+								 alert(v); 
+							  });*/
+							  
+						$.ajax({
+							async: false,
+							url: "/js/%{$filename}%",
+							type: "POST",
+							data:{
+								"action":"toggle_annul",
+								"id":"%{$items[rowsec].id}%",
+								"shorter":"%{$shorter}%",
+								"new_values[]":new_values%{$items[rowsec].id}%
+							},
+							beforeSend: function(){
+								  $("#item_row_%{$items[rowsec].id}%").html('<td colspan="14"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+							},
+							success: function(data){
+							   //alert(data);
+							   $("#item_row_%{$items[rowsec].id}%").html(data);
+							  
+							},
+							error: function(xhr, status){
+							  //  alert("Ошибка добавления %{$named}%.");	
+							}	 
+						});
+					 }else{
+						 
+						 
+						 $("#annul_dialog").dialog({
+							autoOpen: false,
+							modal: true,
+							width: 500,
+							height: 350,
+							stack: true,
+							buttons:{
+								"Внести изменения":function(){
+									//new_values%{$items[rowsec].id}%=new Array();
+									var can_can=true;
+									
+									$.each($("input[id^=new_qua_]"), function(k,v){
+										//alert($(v).val());
+										//сделать проверки корректности (>=0, chislo)
+										if(isNaN($(v).val())||(parseFloat($(v).val())<0)){
+											can_can=can_can&&false;	
+											$(v).focus();
+										}
+										key=$(v).attr('id').replace('new_qua_', '');
+										//alert(key);
+										
+										hash=key+';'+$(v).val();
+										
+										index=-1;
+										$.each(new_values%{$items[rowsec].id}%, function(kk, vv){
+											if(vv.indexOf(key+';')!=-1) index=kk;
+										});
+										if(index>-1) new_values%{$items[rowsec].id}%[index]=hash;
+										else new_values%{$items[rowsec].id}%.push(hash);
+										
+										
+										/*if($.inArray(hash, new_values%{$items[rowsec].id}%)!=-1) new_values%{$items[rowsec].id}%[$.inArray(hash, new_values%{$items[rowsec].id}%)]=hash;
+										else new_values%{$items[rowsec].id}%.push(hash);*/
+									});
+									
+									if(can_can){
+										$("#annul_dialog").dialog("close");
+										$("#deaunnul_%{$items[rowsec].id}%").trigger("click");
+									}else{
+										alert("Введите корректное значение количества!");
+									}
+								},
+								
+								"Отмена":function(){
+									new_values%{$items[rowsec].id}%=new Array();
+									$("#annul_dialog").dialog("close");
+								}
+							}
+						});
+						 
+						 
+						 
+						 $('#annul_dialog').dialog({ title: "Невозможно восстановить распоряжение на межсклад" });
+						
+						$('#annul_dialog').dialog('open'); 
+						$('#annul_dialog_text').html('Невозможно восстановить распоряжение на межсклад № %{$items[rowsec].id}%.<br /> Причина:<br /> '+data+'.');
+   						 $('#annul_dialog').dialog('open'); 
+						 
+					 }
+					 
+					 
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+		  });
+		  %{/if}%
+		
+	});
+	</script>
+    
+    
+   
+    
+    
+    

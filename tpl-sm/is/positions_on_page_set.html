@@ -1,0 +1,137 @@
+<!-- таблица на странице -->
+<!-- 1= мен€ем распор€жение, счет 0=не мен€ем -->
+<input type="hidden" name="change_low_mode" id="change_low_mode" value="%{$change_low_mode}%" />
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="is_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="20">є п/п</th>
+    	<th scope="col" width="24"> од</th>
+        <th scope="col" width="*">Ќоменклатура</th>
+        <th scope="col" width="60">≈д. изм.</th>
+        <th scope="col" width="60"> ол-во к перемещению</th>
+        <th scope="col" width="60">‘актически перемещаемое количество</th>
+        <th scope="col" width="60">‘актически получено</th>
+        <th scope="col" width="60">Ќедостача</th>
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+    	<td width="24">
+         <span id="new_val_position_code_%{$pospos[pospossec].id}%">%{$pospos[pospossec].id|string_format:"%05d"}%</span>
+        </td>
+        <td width="*">
+        <span id="new_val_position_name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+        
+       
+        </td>
+        <td width="60">
+        <span id="new_val_position_dim_name_%{$pospos[pospossec].id}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="60">
+		 %{if $bill.is_confirmed_wf==1}%
+        %{$pospos[pospossec].quantity_initial}%
+        %{else}%       
+        %{$pospos[pospossec].quantity}%
+         %{/if}%
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].id}%" name="new_quantity_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+        <td width="60">
+       
+        %{$pospos[pospossec].fact_quantity}%
+      
+       <input type="hidden" id="new_fact_quantity_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].fact_quantity}%"  />
+    	</td>
+        
+        <td width="60" title="количество позиций в св€занном утвержденном поступлении">
+        %{if $pospos[pospossec].fact_received>0}%
+       <a href="ed_acc.php?action=1&id=%{$pospos[pospossec].fact_received_id}%" target="_blank" >%{$pospos[pospossec].fact_received}%</a>
+        %{else}%
+        0
+        %{/if}%
+        </td>
+        
+        <td width="60" title="количество позиций в св€занном акте списани€">
+         %{if $pospos[pospossec].fact_writeoff>0}%
+        <a href="ed_wf.php?action=1&id=%{$pospos[pospossec].fact_writeoff_id}%" target="_blank">%{$pospos[pospossec].fact_writeoff}%</a>
+        %{else}%
+        0
+        %{/if}%
+        </td>
+        
+       
+        <td width="24">
+       
+       %{if $can_modify}%
+       %{if $can_del_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+         %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].id}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+			
+		
+    	</td>
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+    
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			var position_ids=new Array(); var quantities=new Array();
+		
+			function BuildRows(){
+			   position_ids=new Array();  quantities=new Array();
+			
+			  $.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+				  
+				  //вычленить айди позиции, заполнить массивы данными
+				  if(value.id.indexOf('new_position_id_')!=-1){
+					  //alert(value.id);
+					  position_id=value.value;
+					  position_ids.push(value.value);
+					  quantities.push($("#new_quantity_"+position_id).attr("value"));
+					
+				  }
+			  });	  
+			}
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].id}%").bind("click",function(){
+				%{if $can_modify}%
+				%{if $can_del_positions}%
+				if(window.confirm('¬ы действительно хотите удалить позицию распор€жени€ на межсклад?')){ 
+					$('#new_row_%{$pospos[pospossec].id}%').remove();
+					BuildRows();
+					var temp_cter=0;
+					$.each($("#is_positions_table tbody tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first").html(temp_cter);
+					});
+				}
+				%{else}%
+				alert("” ¬ас недостаточно прав, чтобы удалить позиции распор€жени€ на межсклад!");
+				%{/if}%
+				%{else}%
+				alert("Ќевозможно удалить позиции утвержденного распор€жени€ на межсклад!");
+				%{/if}%
+				return false;
+			});
+    	%{/section}%
+	
+	});
+      </script>

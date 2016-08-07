@@ -1,0 +1,50 @@
+<div id="kp_re_dialog" title="Рентабельность КП" style="display:none;">
+
+
+	Коммерческое предложение: <span id="kp_re_dialog_code"></span>
+    
+    <br> 
+
+
+    Клиент: <span id="kp_re_dialog_client_name"></span> 
+<br>
+ 
+    
+    Сумма закупки: <span id="kp_re_dialog_cost"></span>  
+<br>
+ 
+    
+    
+    
+    Рентабельность:  <span id="kp_re_dialog_re"></span>
+    
+<br><br>
+
+	%{if $can_view_re_extended}%
+    
+   
+    <div id="kp_re_dialog_extended">
+    
+    </div>
+    %{/if}%
+
+
+</div>
+
+<script type="text/javascript">
+
+$("#kp_re_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 450,
+	 
+		height: 400,
+		buttons:{
+			"OK": function(){
+				$("#kp_re_dialog").dialog("close");
+			},
+		}
+});
+ 
+</script>

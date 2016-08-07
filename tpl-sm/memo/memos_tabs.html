@@ -1,0 +1,33 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+
+
+ 
+
+<script type="text/javascript">
+$(function(){
+  $("#tasks").tabs({
+  	cookie: { expires: 14, name: 'startTabMemos' }
+  });
+  
+	
+	 
+});
+</script>
+
+
+<div id="tasks">
+  <ul>
+   
+    <li><a href="#tabs-3">Служебные записки </a></li>
+    
+  </ul>
+   
+  <div id="tabs-3">
+    <p>
+    %{$memos_all}%
+    
+    </p>
+  </div>
+  
+
+</div>

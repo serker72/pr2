@@ -1,0 +1,147 @@
+
+<div id="tender_remind_gialog2" title="Напоминания о тендерах" style="display:none;">
+	
+    <h2>Внимание! По данным тендерам не созданы, либо не утверждены дочерние лиды:</h2><br>
+
+    <ul>
+    <li>
+	Для создания дочернего лида перейдите в карту тендера, на вкладку "Лиды" и нажмите "Создать лид"
+    <li>Если лид создан, но не утвержден, перейдите в его карту по ссылке в таблице и утвердите лид.  
+    <li>Если требуется выставить статус "Отказ" по тендеру - перейдите в его карту и нажмите кнопку "Отказ".   
+    </ul>
+
+<br>
+
+	<div id="tender_reminders_block2">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+function CalcNewTenders2(){
+	  if(_window_is_active) $.ajax({
+		  async: true,
+		  url: "/js/tender_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind2"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#tender_remind_gialog2").dialog("isOpen")) $("#tender_remind_gialog2").dialog("open");
+			 else if((data==0) && $("#tender_remind_gialog2").dialog("isOpen"))  $("#tender_remind_gialog2").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+$(function(){
+	$("#tender_remind_gialog2").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		dialogClass: 'semi_auth',
+		close: function( event, ui ) {
+			var data=new Array();
+			 
+			/*$.each($("#tender_reminders_block input[id^=sched_reminder_id_]"), function(k,v){
+				//	data.push($(v).val());
+				st='';
+				
+				st=st+$(v).val();
+				st=st+";"+$("input[name=next_remind_"+$(v).val()+"]:checked").val();
+				
+				if($("input[name=next_remind_"+$(v).val()+"]:checked").val()==0){
+					st=st+";"+$("#remind_period_"+$(v).val()).val();
+				}
+				
+				data.push(st);	
+			});
+			
+			
+			$.ajax({
+				  async: false,
+				  url: "/js/sched.php",
+				  type: "POST",
+				  data:{
+					  "action":"put_read_plans",
+					  "data[]":data
+					  
+				  }
+				 
+			  });
+			//alert(data);
+			*/
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				$("#tender_remind_gialog2").dialog("close");
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/tender_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind2"
+			  },
+			  beforeSend: function(){
+				 $("#tender_reminders_block2").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#tender_reminders_block2").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=700; min_height=150;
+				 
+				   our_height=parseInt($("#tender_reminders_block2 table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#tender_reminders_block2").css('height', our_height);
+				   
+				   $("#tender_remind_gialog2").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewTenders2()', 60000);
+});
+</script>

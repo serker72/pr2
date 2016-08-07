@@ -1,0 +1,139 @@
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+<form action="ed_storage.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+%{include file="every_help_dialog.html" filename="storage_create.htm" prefix="" description="создание объекта"  style="float:right;  margin-right:10px;"}%
+
+<label for="name">Название:</label><br />
+<input type="text" size="40" maxlength="255" name="name" />
+<p />
+
+
+
+<label for="fact_address">Фактический адрес:</label><br />
+<textarea name="fact_address" cols="100" rows="5"></textarea>
+<p />
+
+<!--
+<div style="float:left; margin-right:10px;">
+<label for="nach_user_id">Начальник объекта:</label><br />
+<select name="nach_user_id" style="width:200px;">
+%{html_options values=$nach_user_ids selected=$nach_user_id output=$nach_user_names}%
+</select>
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="zamnach_user_id">Заместитель начальника объекта:</label><br />
+<select name="zamnach_user_id" style="width:200px;">
+%{html_options values=$zamnach_user_ids selected=$zamnach_user_id output=$zamnach_user_names}%
+</select>
+</div>
+
+<br clear="all" />
+<p />
+-->
+
+<strong>Режим работы (МСК):</strong>
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_from_h_s">с:</label>
+<select name="time_from_h_s" style="width:40px">
+	%{html_options values=$from_hrs selected=$from_hr output=$from_hrs}%
+</select>час. 
+<select name="time_from_m_s" style="width:40px">
+	%{html_options values=$from_ms selected=$from_m output=$from_ms}%
+</select>мин.
+</div>
+
+<div style="float:left; margin-right:30px; white-space:nowrap;">
+<label for="time_to_h_s">по:</label>
+<select name="time_to_h_s" style="width:40px">
+	%{html_options values=$to_hrs selected=$to_hr output=$to_hrs}%
+</select>час. 
+<select name="time_to_m_s" style="width:40px">
+	%{html_options values=$to_ms selected=$to_m output=$to_ms}%
+</select>мин.
+</div>
+<br clear="all" />
+<p />
+
+
+<!--
+<label for="notes">Примечания:</label><br />
+<textarea name="notes" cols="100" rows="5"></textarea>
+<p />
+-->
+
+<input type="checkbox" name="is_active" value="1" />
+<label for="is_active">Объект активен</label><br />
+<p />
+
+
+<strong>Участки, работающие с объектом:</strong><br />
+%{section name=rowsec loop=$storages}%
+%{if $smarty.section.rowsec.index==0 or $smarty.section.rowsec.index==$div}%
+<div style="float:left; margin-right:20px;">
+%{/if}%
+
+<input type="checkbox" value="1" name="sector_id_%{$storages[rowsec].id}%" %{if $can_modify_ss==false}% disabled="disabled"%{/if}% /><label for="storage_id_%{$storages[rowsec].id}%" %{if $storages[rowsec].is_active==0}% class="item_inactive"%{/if}%>%{$storages[rowsec].name}%</label><br />
+%{if $smarty.section.rowsec.last or $smarty.section.rowsec.index_next==$div}%
+</div>
+%{/if}%
+%{/section}%
+<br clear="all" />
+<p />
+
+
+<input type="checkbox" value="1" name="post_hran" %{if $can_post_hran==false}% disabled="disabled"%{/if}% /><label for="post_hran">Объект постоянного хранения</label>
+<br />
+
+<strong><span style="color:red;">Внимание! При установке поля "Объект постоянного хранения" сотрудники, имеющие соответствующие права, смогут работать с документами по всем участкам данного объекта!</span></strong>
+<br />
+
+<div style="float:right;">
+<input type="checkbox" value="1" name="s_s" %{if $can_s_s==false}% disabled="disabled"%{/if}% /><label for="s_s" >S/S</label>
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать объект" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать объект и остаться на странице" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='storage.php';
+}else location.href='storage.php';" />
+
+
+</form>

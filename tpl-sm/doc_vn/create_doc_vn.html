@@ -1,0 +1,658 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		 
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	$("#vyh_reason_id").bind("change", function(){
+		if($(this).val()==2){
+			 $("#vyh_dates").show();
+			 $("#vyh_dates_later").show();
+		}else {
+			$("#vyh_dates").hide();
+			 $("#vyh_dates_later").hide();
+	
+		}
+	});
+	
+	$("#vyh_later").bind("change", function(){
+		if($(this).prop("checked")){
+			$("#vyh_otp_dates_tb").empty();
+			$("#add_vyh_otp").prop("disabled",true);
+			$("#vyh_petition").prop("disabled", true);
+		}else{
+			$("#add_vyh_otp").prop("disabled",false);
+			$("#vyh_petition").prop("disabled", false);
+		}
+	});
+	 
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="doc_vn.html" prefix="" description="Информация о создании входящего документа" style="float:right" is_right=true}%
+
+%{include file="error_window.html"   prefix="" }%
+
+<h1>Создать внутренний документ</h1>
+
+<form action="ed_doc_vn.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+
+ 
+
+
+<div style="float:right; margin-right:0px; min-width:120px; height:50px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" style="float:right;" class="reestr_right_button24 reestr_delete" data-comment="Аннулировать/Восстановить...">
+ 
+</a>
+
+<strong>Статус:</strong><br />
+
+создан
+
+
+</div>
+
+<div style="float:right;  margin-right:10px; height:50px; ">
+  <a href="#"   onclick="alert('В данном режиме печать документа недоступна. Пожалуйста, нажмите кнопку Создать документ и остаться в карте для получения возможности печати документа.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать документа..."></a>
+</div>  
+
+
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 	 
+    <a href="#" onClick="alert('В данном режиме отправка документа на электронную почту недоступна. Пожалуйста, нажмите кнопку Создать документ и остаться в карте для получения возможности отправки документа на электронную почту.');  return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+    
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+    
+    
+        <label for="pdate">
+        Дата создания: 
+        </label><br />
+        
+         
+        <input type="text" value="%{$now_date}%" name="pdate" id="pdate" size="10" maxlength="10" />
+    
+    </div>
+ 
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <label for="kind_id"> 
+Вид вх. док-та:</label> <br>
+	<input type="hidden" name="kind_id" id="kind_id" value="%{$kind_id}%" />
+  
+    %{$kind_name}% 
+     
+ 
+</div>
+
+
+
+<br clear="all" />
+<p /> 
+ 
+<h2>Командировка</h2> 
+ 
+<div style="float:left; margin-right:20px; ">
+	<label for="sched_select">
+    Командировка:
+    </label><br>
+
+    <input type="text" id="sched_str" value="" disabled size="15" />
+    <input type="hidden" id="sched_id" name="sched_id" value="" />
+    &nbsp;
+    
+    <input type="button" id="sched_select" value="..." />
+    <input type="button" id="sched_clear" value="x" />
+    
+    <input type="button" id="sched_open" value="В карту командировки..." />
+    
+    %{include file="doc_vn/mission_actions.html" can_modify=true}%
+    
+</div>
+
+<div style="float:left; margin-right:20px;">
+    
+   
+<label for="pdate_beg">
+    Дата начала: 
+    </label> <br>
+
+    
+    <input type="text" value="%{$now}%" id="pdate_beg"  size="10"   maxlength="10" disabled />
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_beg">Время начала:</label> <br>
+
+    
+     <select id="ptime_beg_h" style="width:60px" disabled>
+        %{html_options values=$ptime_beg_h selected=$ptime_beg_hr output=$ptime_beg_h}%
+    </select>: 
+    <select   id="ptime_beg_m" style="width:60px" disabled>
+        %{html_options values=$ptime_beg_m selected=$ptime_beg_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;">
+    
+   
+<label for="pdate_end">
+    Дата окончания: 
+    </label> <br>
+
+    
+    <input type="text" value="%{$pdate_end}%" id="pdate_end"   size="10"   maxlength="10"  disabled />
+
+</div>
+<div style="float:left; margin-right:20px;">
+
+
+
+    
+    <label for="ptime_end">Время окончания:</label> <br>
+
+  
+     <select   id="ptime_end_h" style="width:60px" disabled>
+        %{html_options values=$ptime_beg_h selected=$ptime_end_hr output=$ptime_beg_h}%
+    </select>: 
+    <select  id="ptime_end_m" style="width:60px" disabled>
+        %{html_options values=$ptime_beg_m selected=$ptime_end_mr output=$ptime_beg_m}%
+    </select>
+     
+
+</div>
+ 
+ 
+ 
+<br clear="all" />
+<p /> 
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">  
+
+   
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Город(а) командировки:</h3>
+    </div>
+     
+    <br clear="all" />
+    <p />
+    
+    
+     
+     
+    <div id="supplier_cities" style="border:1px solid silver;  min-width:480px; width:100%; height:50px; overflow:auto;">
+    %{*include file="plan/cities_table.html" has_header=true*}%
+    
+    
+    </div>
+
+
+ 
+</div>
+
+ <br clear="all" />
+<p />
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+   
+
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент(ы) командировки:</h3>
+    </div>
+     
+    <br clear="all" />
+    <p />
+    
+    
+    <div id="suppliers" style="border:1px solid silver; min-width:480px; width:100%;  height:250px;  overflow:auto;">
+%{*include file="plan/suppliers_many_table.html" has_header=true*}%
+
+
+	</div>
+    
+</div>
+ 
+ <br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Сотрудник:</label><br>
+
+	 
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+ 
+    
+</div> 
+<br clear="all" />
+<p />
+
+
+<div id="vyh_reason" style="display:none;">
+	
+    
+    <div style="float:left; margin-right:20px;">
+    	 <h3>Укажите режим работы в выходные</h3>
+
+         
+         <select name="vyh_reason_id"  id="vyh_reason_id" style="width:400px" >
+        %{html_options values=$vyh_reason_ids selected=$vyh_reason_id output=$vyh_reason_names}%
+    </select>
+    
+   	</div>
+    
+     <div id="vyh_dates" style="float:left; margin-right:20px; display:none;">
+     <strong>Укажите дни отдыха (всего доступно <span id="hd_count"></span>):</strong><br>
+		<input type="hidden" id="vyh_hd_count" name="vyh_hd_count" value="0" />
+     	
+        
+        <input type="button" id="add_vyh_otp" value="Редактировать даты" /> 
+  
+		%{include file="doc_vn/vyh_otp_actions.html"}%
+        
+        
+        <br clear="all"><br>
+
+
+        <input type="button" value="Создать заявление..." id="vyh_petition" onClick="alert('Для создания связанного заявления утвердите заполнение документа!');" />
+        
+     </div>
+     
+      <div id="vyh_dates_later" style="float:left; margin-right:20px; display:none;">
+      <input type="checkbox" name="vyh_later" id="vyh_later" /><label for="vyh_later">Предоставить даты позднее</label>
+      </div>
+    
+	<br clear="all" />
+    <p />
+</div>
+
+
+ 
+  
+ 
+
+ <div style="float:left; margin-right:20px;">
+
+	<label for="lead_select">Лид:</label><br>
+
+	<input type="hidden"  id="lead_id" name="lead_id" value="%{$old_doc.lead_id}%" />
+   
+    <input type="text"  id="lead_string"  value="%{$old_doc.lead_string|escape}%"  disabled size="40" maxlength="255" style="width:100px;" />
+  
+
+	
+	<input type="button" id="lead_select" %{if !true}% disabled%{/if}% value="..." />
+    <input type="button" id="lead_clear" %{if !true}% disabled%{/if}% value="x" />
+    
+    <input type="button" id="to_lead" value="Перейти в лид" />
+	
+    %{include file="doc_vn/lead_actions.html" can_modify=true}%
+    
+</div> 
+
+  
+ 
+<br clear="all" />
+<p />
+
+
+<h2>Расходы по командировке</h2>
+
+%{include file="doc_vn/exp_actions.html" items=$pdata can_modify_plan=true can_modify_fact=false}%
+
+<br clear="all" />
+<p />
+ 
+
+ <div>
+    
+    
+
+   <strong>Приложите файлы:</strong><br />
+
+
+    <input type="file" id="file" /> 
+     
+    <em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+    
+    <div id="uploaded_files">
+    %{$filetext}%    
+    </div>
+     
+     
+    
+    <script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+    
+    <div id="queue"></div>
+    
+    <script type="text/javascript">
+    $(function(){
+                function AddCode(inname, realname){
+                $.ajax({
+                    async: true,
+                    url: "/js/doc_vn_upload_draw.php",
+                    type: "POST",
+                    data:{
+                        "action":"add_file_entry",
+                        "factname":inname,
+                        "realname":realname
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      
+                       $("#uploaded_files").append(data);
+                       
+                        
+                       //перерисовать блок сообщений
+                                    },
+                    error: function(xhr, status){
+                            
+                    }	 
+                });	
+                
+            }
+            
+            $('#file').uploadifive({
+                    'auto'             : true,
+                    'buttonText' : 'Выберите файл...',
+                'fileTypeDesc' : 'Все файлы',
+                'fileTypeExts' : '*.*', 
+                    'fileSizeLimit' : '512 MB', 
+                    'width'           : 120,
+                    'formData'         : {
+                                           "PHPSESSID" : "%{$session_id}%"
+                                         },
+                    'queueID'          : 'queue',
+                    'uploadScript'     : '/swfupl-js/doc_vn_upload_file.php',
+                    'onUploadComplete' : function(file, data) { 
+                            eval(data)
+							//alert(data)
+                    
+                    }
+                });
+            
+         
+    });
+     </script>
+
+    
+   
+</div>
+ 
+ 
+<br clear="all" />
+ 
+
+
+<br>
+
+
+ 
+
+
+
+
+
+
+ 
+ 
+ <!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+ 
+
+
+
+<input type="submit" value="Создать документ" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать документ и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='doc_inners.php';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		function isUcfirst(str) {
+			str += '';
+			upper = str.charAt(0).toUpperCase();
+			original = str.charAt(0);
+		
+			return upper == original;
+		}
+		
+		
+		var res=true;
+		var error_fields=new Array();
+		
+		 
+		
+		
+		
+		
+		 if(($("#sched_id").val()==0)||($("#sched_id").val()=="")){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"sched_str",
+				"name":"Командировка",
+				"error":"Укажите командировку!"
+			});	
+		}
+		
+		 
+		 
+		 if(($("#manager_id").val()==0)||($("#manager_id").val()=="")){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"manager_string",
+				"name":"Ответственный сотрудник",
+				"error":"Укажите ответственного сотрудника!"
+			});	
+		}
+		
+		if(($("#vyh_reason").css("display")=="block")&&( ($("#vyh_reason_id").val()=="")||($("#vyh_reason_id").val()==null)||($("#vyh_reason_id").val()==undefined)|| ($("#vyh_reason_id").val()==0)  )){
+			
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"vyh_reason_id",
+				"name":"Режим работы в выходные",
+				"error":"Укажите режим работы в выходные!"
+			});	
+		}
+		
+		if(($("#vyh_reason").css("display")=="block")&&($("#vyh_reason_id").val()==2)&&($("#vyh_later").prop("checked")==false)&&( $("#vyh_otp_dates_tb tr").length!=$("#vyh_hd_count").val()  )){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"vyh_otp_dates_tb",
+				"name":"Дни отдыха",
+				"error":"Указано недопустимое число дней отдыха: "+$("#vyh_otp_dates_tb tr").length+", доступно: "+$("#vyh_hd_count").val()+" !"
+			});	
+			
+		}
+		
+		//поля таблицы
+		can_ret=true;
+		$("input[id^=exp_plan_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				res=res&&false;
+			 
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });	
+		
+		$("select[id^=exp_plan_currency_id_]").each(function(index, element) {
+			 
+			val=$(element).val().replace(/,/,'.');
+            if((val==0)||(val==null)||(val==undefined)){
+				can_ret=can_ret&&false;
+				res=res&&false;
+			 
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			 
+        });
+		
+		
+		
+		
+		$.ajax({
+			async: false,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"check_create",
+				sched_id: $("#sched_id").val()
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  if(data!=0){
+				 
+				// alert("Невозможно утвердить служебную записку. Причина: "+data+""); 
+				 //can_ret=false;
+				 res=res&&false;
+				 
+				 error_fields.push({
+					"id":"sched_str",
+					"name":"Командировка",
+					"error":"Невозможно утвердить служебную записку. Причина:"+data+" !"
+				});	
+				
+				 
+			  }else{
+				 //can_ret=true;
+			  }
+			},
+			error: function(xhr, status){
+				
+				//alert("Ошибка при проверке состояния служебной записки. Пожалуйста, попытайтесь сохранить служебную записку снова.");
+				//can_ret=false;
+				
+				res=res&&false;
+				 
+				 error_fields.push({
+					"id":"sched_str",
+					"name":"Командировка",
+					"error":"Ошибка при проверке состояния служебной записки. Пожалуйста, попытайтесь сохранить служебную записку снова."
+				});	
+			}	 
+		});
+		
+		if(!can_ret){
+			error_fields.push({
+				"id":"items_tbody",
+				"name":"Расходы по командировке",
+				"error":"В таблицу расходов по командировке введены некорректные значения!"
+			});	 
+		}
+		 
+		
+		if(res) if(!window.confirm("Внимание! Система не предусматривает удаление документов! Пожалуйста, проверьте корректность внесения всех данных!")) return false; 
+		 
+		
+		%{if $can_confirm}% 
+		if(res) if(window.confirm("Желаете ли вы утвердить заполнение документа?")){
+			$("#do_confirm").val(1);	
+		}else $("#do_confirm").val(0);	
+		%{/if}%
+		
+		
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+	
+});
+
+ 
+</script>

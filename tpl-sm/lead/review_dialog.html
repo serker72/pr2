@@ -1,0 +1,56 @@
+<div id="review_comment_dialog" title="Подтверждение" style="display:none;">
+	 
+
+	<div style="float:left; display:block; width:40px; margin-right:-50px; " >
+		<img src="/img/gydex_tiny.png" width="40" height="46" /> 
+	</div>
+    <div style="float:left; padding-left:50px;">
+    	
+         
+
+        <div id="review_comment_dialog_caption" style="font-weight:bold; display:inline-block;" >
+   Для перевода лида в статус "На рассмотрение" подтвердите, что:
+    
+    
+    	</div>
+    
+    <br><br>
+
+
+
+
+	<ul>
+    	<li><input type="checkbox" id="review_comment_1" value="" /><label for="review_comment_1">Коммерческое предложение по лиду согласовано</label></li>
+        <li><input type="checkbox" id="review_comment_2" value="" /><label for="review_comment_2">Коммерческое предложение по лиду получено покупателем</label></li>
+        <li><input type="checkbox" id="review_comment_3" value="" /><label for="review_comment_3">Покупатель по коммерческому предложению претензий не имеет</label></li>
+    
+    </ul>
+    </div> 
+   
+    
+   
+</div>
+
+<script>
+$(function(){
+	$("#review_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 550,
+	  height: 250,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	
+	
+});
+</script>

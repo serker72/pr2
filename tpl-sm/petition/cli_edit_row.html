@@ -1,0 +1,46 @@
+%{foreach name=vd from=$clients item=d}%
+<tr id="cli_row_%{$d.id}%" align="left" valign="top">
+	<td> 
+    <input id="client_name_%{$d.id}%" type="text" size="30" maxlength="255" value="%{$d.name|escape}%" />
+    </td>
+    <td>
+    
+    <label for="purpose_id_%{$d.id}%">Выберите цель визита:</label> <br />
+   <select id="purpose_id_%{$d.id}%" style="width:200px;">
+   <option value="0" >-выберите-</option>
+   %{foreach from=$purposes item=pur}%
+    <option value="%{$pur.id}%" %{if $d.purpose_id==$pur.id}% selected="selected"%{/if}% >%{$pur.name}%</option>
+   %{/foreach}%
+   </select>
+   
+   
+   
+   <input type="text" id="purpose_txt_%{$d.id}%" value="%{$d.purpose_txt|escape}%" size="30" maxlength="255" %{if $d.purpose_id!=7}% style="display:none;"%{/if}%  />
+   
+   
+   
+    </td>
+    <td width="24">
+    %{if $can_modify}%
+    
+    
+    <a href="#" id="delete_cli_%{$d.id}%" data-comment="удалить клиента" onClick="if(window.confirm('Вы действительно хотите удалить клиента?')) $('#cli_row_%{$d.id}%').remove(); return false;" style="%{if $smarty.foreach.vd.last}% display:none;%{/if}%" class="reestr_delete16 reestr_button16"></a> 
+    
+     <a href="#" id="add_cli_%{$d.id}%" data-comment="добавить клиента" onclick="CliAdd(); return false;" style="%{if !$smarty.foreach.vd.last}% display:none;%{/if}%" class="reestr_add16 reestr_button16"></a> 
+   
+    
+    %{/if}%
+    <script type="text/javascript">
+	$(function(){
+		$("#purpose_id_%{$d.id}%").bind("change", function(){
+			if($("#purpose_id_%{$d.id}%").val()==7){
+				$("#purpose_txt_%{$d.id}%").css("display","inline");
+				$("#purpose_txt_%{$d.id}%").focus();	
+			}else $("#purpose_txt_%{$d.id}%").css("display","none");
+		});
+	
+	});
+	</script>
+           </td>
+</tr>
+%{/foreach}%

@@ -1,0 +1,51 @@
+
+<input type="checkbox" value="1" id="doc_vn_email_file_all"><label for="doc_vn_email_file_all">Выбрать все</label><br>
+
+<input type="checkbox" value="s0" id="doc_vn_email_files_s0"><label for="doc_vn_email_files_s0">Служебная записка на командировку</label><br>
+
+<!--<input type="checkbox" value="s1" id="doc_vn_email_files_s1"><label for="doc_vn_email_files_s1">Служебная записка на работу в выходной день</label><br>
+
+<input type="checkbox" value="s2" id="doc_vn_email_files_s2"><label for="doc_vn_email_files_s2">Заявление на работу в выходной день</label><br>-->
+
+<input type="checkbox" value="s3" id="doc_vn_email_files_s3"><label for="doc_vn_email_files_s3">Отчет по подотчетным суммам</label><br>
+
+
+<input type="checkbox" value="s4" id="doc_vn_email_files_s4"><label for="doc_vn_email_files_s4">Служебная записка на командировку c подписью</label><br>
+
+<input type="checkbox" value="s5" id="doc_vn_email_files_s5"><label for="doc_vn_email_files_s5">Отчет по подотчетным суммам c подписью</label><br>
+
+
+%{foreach name=ff from=$items item=files}%
+
+
+<input type="checkbox" value="%{$files.id}%" id="doc_vn_email_files_%{$files.id}%"><label for="doc_vn_email_files_%{$files.id}%">%{$files.orig_name}% %{$files.txt}%</label><br>
+
+
+
+%{/foreach}%
+<script>
+$(function(){
+	$("#doc_vn_email_file_all").bind("change", function(){
+		state= $(this).prop("checked");
+		
+		$.each($("input[id^=doc_vn_email_files_]"), function(k,v){
+			if($(v).prop("disabled")==false) $(v).prop("checked", state);
+		})
+		
+		
+	});
+	
+	$("input[id^=doc_vn_email_files_]").bind("change", function(){
+		
+		total=0; //$("input[id^=doc_vn_email_files_]").length;
+		$.each($("input[id^=doc_vn_email_files_]"), function(k,v){
+			if($(v).prop("disabled")==false) total++;
+		});
+		
+		checked=$("input[id^=doc_vn_email_files_]:checked").length;
+		
+		$("#doc_vn_email_file_all").prop("checked", ((checked>0)&&(total==checked)));
+		
+	});
+});
+</script>

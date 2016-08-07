@@ -1,0 +1,55 @@
+<script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+
+
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		%{if $from_begin==1}%
+		selected:0
+		%{else}%
+		 
+		cookie: { expires: 14, name: 'edbdrTab' }
+		%{/if}%	
+  });
+});
+</script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">БДР</a></li>
+    <li><a href="#tabs-2">БДДС</a></li>
+    
+   
+    
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+ 
+     <div id="tabs-2">
+    <p>
+    %{$bdds}%
+    
+    </p>
+  </div>
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

@@ -1,0 +1,56 @@
+
+<tr id="upbranch_row_%{$parent_id}%"></tr>
+  %{if $can_edit_branch and $parent_id==0}%
+  <tr align="left" valign="top" >
+    <td>&nbsp;</td>
+    <td width="48" >
+   
+     <a href="#" onClick="add_branch('%{$parent_id}%'); return false;"><img src="/img/icons/add-small.png" width="16" height="16" alt="" title="ƒобавить статью затрат"/></a>
+      
+      
+       </td>
+    </tr> 
+ %{/if}%
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="branch_row_%{$pos[possec].id}%" >
+    	<td %{if $parent_id!=0}% %{if $parent_parent_id!=0}% style="padding-left:30px;"%{else}% style="padding-left:15px;"%{/if}% %{/if}% >
+        
+        <input type="radio" id="branch_radio_%{$pos[possec].id}%" name="branch_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_branch}% checked="checked"%{/if}% %{if $pos[possec].has_subbranches or $pos[possec].from_kp_in}% disabled%{/if}% />
+        <label for="branch_radio_%{$pos[possec].id}%">%{$pos[possec].code}% %{$pos[possec].name}%</label>
+        
+        <input type="hidden" id="branch_code_%{$pos[possec].id}%" value="%{$pos[possec].code|escape:"html"}%" />
+        <input type="hidden" id="branch_name_%{$pos[possec].id}%" value="%{$pos[possec].name|escape:"html"}%" />
+        
+       
+        </td>
+        
+       
+      
+        <td width="96">
+        
+        
+        
+       
+        
+          <a href="#" onClick="load_branches('%{$pos[possec].id}%'); return false;" title="раскрыть статью затрат"><img src="/img/icons/zoom-small.png" width="16" height="16" alt="раскрыть статью затрат"/></a> 
+          
+        
+       
+        
+         %{if $can_edit_branch}% 
+          %{if $parent_parent_id==0}%
+           <a href="#" onClick="add_branch('%{$pos[possec].id}%'); return false;"><img src="/img/icons/add-small.png" width="16" height="16" alt="" title="ƒобавить статью затрат"/></a>
+           %{/if}%
+		 <a href="#" onClick="edit_branch('%{$pos[possec].id}%', '%{$parent_id}%'); return false;" title="–едактировать статью затрат"><img src="/img/icon_edit_16x16.gif" width="16" height="16"  border="0" alt=""  /></a>
+          <a href="#" onClick="del_branch('%{$pos[possec].id}%', '%{$parent_id}%'); return false;" title="”далить статью затрат"><img src="/img/del.gif" width="15" height="15" border="0" alt=""  /></a>    
+	 
+   
+        %{/if}%
+      
+        </td>
+</tr>
+<tr id="subbranch_row_%{$pos[possec].id}%" ></tr> 	     
+    
+<tr id="subbranch_row1_%{$pos[possec].id}%" ></tr>     
+%{/section}%    
+<tr id="downbranch_row_%{$parent_id}%" ></tr> 	

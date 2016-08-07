@@ -1,0 +1,232 @@
+
+<div id="lead_remind_gialog%{$data_kind}%" title="Напоминания о лидах" style="display:none;">
+	
+    <h2>Внимание! По указанным лидам не было комментариев 7 дней и более:</h2>
+    <br>
+
+	<div id="lead_reminders_block%{$data_kind}%">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+function CalcNewLeads%{$data_kind}%(){
+	 
+	 if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/lead_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind5",
+			  "kind":"%{$data_kind}%"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#lead_remind_gialog%{$data_kind}%").dialog("isOpen")) $("#lead_remind_gialog%{$data_kind}%").dialog("open");
+			 else if((data==0) && $("#lead_remind_gialog%{$data_kind}%").dialog("isOpen"))  $("#lead_remind_gialog%{$data_kind}%").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	 
+	
+$(function(){
+	$("#lead_remind_gialog%{$data_kind}%").dialog({
+		autoOpen: false,
+	 
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		dialogClass: 'semi_auth_no',
+		close: function( event, ui ) {
+			
+			
+			 
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				 
+				var can_ret=true;
+			
+				function doBlink(v){
+			
+					var blr4=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr4);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//уточняем число отказов принять в работу
+				
+				
+				
+			 
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=lead_remind_id%{$data_kind}%_]"), function(k,v){
+					id=$(v).attr("id").replace(/lead_remind_id%{$data_kind}%_/,'');
+					
+					//выбор не сделан - поле некооректно!
+				 	if(($("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val()==null)||($("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val()==undefined)){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("label[for^=lead_remind_status_id%{$data_kind}%_"+id+"]"));
+					}
+					 
+					 
+					//выбран статус 1 - потребовать причину
+					if(($("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val()==1)&&($("#lead_remind_comment%{$data_kind}%_"+id).val().length<10)){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("#lead_remind_comment%{$data_kind}%_"+id));
+						 
+						
+					}
+					 
+					 
+				});
+				
+			 
+				
+				if(can_ret){
+					//показать предупреждения, где отказов 2 и больше!
+					do_go=true;
+					
+					refuse_ids=new Array(); refuse_codes=new Array();
+					$.each($("input[id^=lead_remind_id%{$data_kind}%_]"), function(k,v){
+							id=$(v).attr("id").replace(/lead_remind_id%{$data_kind}%_/,'');
+							if(($("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val()==0)&&($("#lead_refuse_counts%{$data_kind}%_"+id).val()>=2)){
+								refuse_ids.push(id);
+								refuse_codes.push($("#lead_remind_code%{$data_kind}%_"+id).val());
+							}
+					});
+					if(refuse_codes.length>0){
+						do_go=window.confirm("Внимание!\nВы отказываетесь в третий раз подряд дать комментарии по следующим лидам:\n"+refuse_codes.join('; ')+"\nОб этом будет сообщено Вашему непосредственному руководителю.\nПродолжить?");
+					}	
+					
+					if(do_go){
+					 
+						//все ОК, формируем аргументы
+						var data=new Array();
+						$.each($("input[id^=lead_remind_id%{$data_kind}%_]"), function(k,v){
+							 
+								id=$(v).attr("id").replace(/lead_remind_id%{$data_kind}%_/,'');
+								
+								hashed="";
+								
+								hashed+=id+"/"+$("input[name=lead_remind_status_id%{$data_kind}%_"+id+"]:checked").val();
+								 
+								hashed+="/"+$("#lead_remind_comment%{$data_kind}%_"+id).val();
+								
+								  
+								
+								//alert(hashed);
+								data.push(hashed);	
+							 
+							 
+						});
+						
+						//отправляем аргументы
+						$.ajax({
+							  async: false,
+							  url: "/js/lead_checknew.php",
+							  type: "POST",
+							  data:{
+								  "action":"put_work_statuses5",
+								  "kind":"%{$data_kind}%",
+								  "data[]":data
+								  
+							  }
+							 
+						  });
+						 
+						  
+						 
+						
+						$("#lead_remind_gialog%{$data_kind}%").dialog("close");
+					}
+					
+				}else {
+					alert("Сделайте выбор для всех лидов и корректно заполните отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					 
+				} 
+					 
+				
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/lead_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind5",
+				  "kind":"%{$data_kind}%"
+			  },
+			  beforeSend: function(){
+				 $("#lead_reminders_block%{$data_kind}%").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#lead_reminders_block%{$data_kind}%").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=150;
+				 
+				   our_height=parseInt($("#lead_reminders_block%{$data_kind}% table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#lead_reminders_block%{$data_kind}%").css('height', our_height);
+				   
+				   $("#lead_remind_gialog%{$data_kind}%").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewLeads%{$data_kind}%()', 60000);
+});
+</script>

@@ -1,0 +1,103 @@
+<html>
+<head>
+ <style>
+  body, div, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12pt;
+ }
+table, td{
+	border-collapse:collapse;
+	border:1px solid black;
+}
+ </style>
+
+</head>
+<body >
+ 
+ 
+ 
+  
+<p align="right">
+Генеральному директору<br>
+
+ООО «Аэротэк»<br>
+
+Матюше А.А.<br>
+от сотрудника:<br>
+
+%{$ruk.name_s}%, <br>
+%{$ruk.position_name}% 
+
+
+
+</p>
+
+
+
+
+<br>
+<br>
+
+<p align="center">
+<strong>СЛУЖЕБНАЯ ЗАПИСКА</strong>
+</p>
+<br>
+
+
+
+<p>
+В связи с производственной необходимостью:<br>
+
+Командировка  %{$bill.sched_str}%  в %{section name=citisec loop=$cities}%
+  %{$cities[citisec].name}%, %{$cities[citisec].okrug_name}%, %{$cities[citisec].region_name}%,  %{$cities[citisec].country_name}%%{if $smarty.section.citisec.last==false}%, %{/if}%
+
+%{/section}%
+ к контрагенту %{section name=supsec loop=$suppliers}%
+ 	%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%%{if $smarty.section.supsec.last==false}%, %{/if}%
+%{/section}% в период: с %{$bill.pdate_beg}% по %{$bill.pdate_end}%
+
+<br>
+
+прошу Вас разрешить работу в выходной день 
+%{foreach name=hd from=$hdays item=item}%
+%{$item}%%{if $smarty.foreach.hd.last==false}%, %{/if}%
+%{/foreach}%
+ сотруднику
+ 
+ %{$bill.manager_string}%
+</p>
+
+<p>
+Дата заполнения: %{$bill.pdate}%
+</p>
+
+ 
+
+<p>
+Заполнил:  
+<br>
+
+%{$is_ruk_confirmer}%
+
+</p>
+ 
+
+<p>
+
+СОГЛАСОВАНО:<br>
+
+Генеральный директор
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;__________________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%{$is_dir_confirmer}%  
+</p>
+<br>
+ 
+
+ 
+
+    <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 
+
+</body>
+</html>

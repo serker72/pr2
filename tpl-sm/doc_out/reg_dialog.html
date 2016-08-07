@@ -1,0 +1,49 @@
+<div id="reg_comment_dialog" title="Введите комментарий" style="display:none;">
+	 
+	 <div style="float:left; margin-right:20px;">
+     	<label for="reg_reg_no">
+        Регистрационный номер:
+        </label><br>
+		<input type="text" value="" id="reg_reg_no" size="20" maxlength="255" />
+     </div>
+     
+     <div style="float:left; margin-right:20px;">
+     	<label for="reg_reg_pdate">
+        Дата регистрации:
+        </label><br>
+		<input type="text" value="" id="reg_reg_pdate" size="10" maxlength="10" />
+     </div>
+     
+     
+     
+     
+</div>
+
+ 
+
+<script>
+$(function(){
+	$("#reg_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 350,
+	  height: 150,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+  
+  $.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+  $("#reg_reg_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+		
+	
+	
+});
+</script>

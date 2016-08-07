@@ -1,0 +1,244 @@
+
+
+%{if $print==1}%
+
+<style>
+
+/*ДЛЯ ОТЧЕТА ВОРОНКА ПРОДАЖ*/
+.graf_group_report{
+	min-width:670px; float:left;
+
+	overflow:hidden;
+	margin-bottom:10px;
+	page-break-inside:avoid !important;
+}
+.graf_group_container{
+	 overflow:auto; 
+	width: 300px;
+	height:300px;
+	float:left;
+	 
+		margin-right:10px;
+}
+.graf_group_report .graf_group_container: last-child{
+	margin-right:0px;	
+}
+.graf_group_report .graf_group_container:first-child{
+	width: 350px !important;
+}
+.graf_group_container table td, .graf_group_container table tr{
+	font-size:10px;	
+}
+</style>
+<script type="text/javascript" src="../js/jquery-1.7.1.min.js"></script>
+<script src="../js/hc/highcharts.js"></script>
+<script src="../js/hc/modules/funnel.js"></script>
+<!--<script src="../js/hc/modules/exporting.js"></script>-->
+
+%{else}%
+
+<script src="/js/hc/highcharts.js"></script>
+<script src="/js/hc/modules/funnel.js"></script>
+<!--<script src="/js/hc/modules/exporting.js"></script>-->
+
+%{/if}%
+
+
+
+%{section name=rowsec loop=$items}%
+
+
+<div class="graf_group_report">
+    <div id="graf_container_%{$smarty.section.rowsec.index+1}%" class="graf_group_container" >
+    
+    </div>
+    
+    <div id="table_container_%{$smarty.section.rowsec.index+1}%" class="graf_group_container">
+       
+        <table class="reptable" %{if $print==1}% border="1" cellpadding="2" cellspacing="0"%{/if}%>
+            <thead>
+            <tr>
+                <th width="*">
+                Данные
+                </th>
+                <th width="60">
+                Норма
+                </th>
+                <th width="60">
+                Факт
+                </th>
+                <th width="60">
+                % отклонения
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            	<tr>
+                    <td width="*" align="left">
+                    Звонки
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].calls}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td width="*" align="left">
+                    Встречи
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].meets}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>
+               <!-- <tr>
+                    <td width="*" align="left">
+                    Командировки
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].missions}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>-->
+                <tr>
+                    <td width="*" align="left">
+                    КП
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].kps}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td width="*" align="left">
+                    Лиды
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].leads}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>
+                <tr>
+                    <td width="*" align="left">
+                    Контракты
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                    <td width="60">
+                    %{$items[rowsec].contracts}%
+                    </td>
+                    <td width="60">
+                    
+                    </td>
+                </tr>
+            
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+
+%{/section}%
+<div class="clear"></div>
+
+<script type="text/javascript">
+$(function(){
+%{section name=rowsec loop=$items}%	
+ 
+	$('#graf_container_%{$smarty.section.rowsec.index+1}%').highcharts({
+        chart: {
+           type: 'pyramid',
+            marginRight: 100,
+			/*marginTop: 80,*/
+			borderWidth: 1,
+			
+			borderColor: '#ebebeb',
+			 
+			style: {
+				fontFamily: 'IstokWeb, Tahoma, Geneva, sans-serif'
+			},
+			backgroundColor: '#fafafa'
+        },
+        title: {
+            text: ' %{$items[rowsec].caption|escape:"html"}%',
+            x: -0,
+			/*y: 50,*/
+			style: {
+										  color:'#464646',
+										  fontSize:'14px',
+										  fontWeight:'bold'
+									  }
+        },
+		credits: {
+			enabled: false
+		},
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b> ({point.y:,.0f})',
+                    color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || '#464646',
+                    softConnector: false,
+					style: {
+													fontWeight: 'normal',
+													color: '#464646'
+												} 
+                },
+               
+				%{if $print==1}%
+				enableMouseTracking: false,
+				animation:false,
+				shadow :false
+				%{/if}%
+
+                //-- Other available options
+                // height: pixels or percent
+                // width: pixels or percent
+            }
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            name: 'Количество',
+            data: [
+                ['Звонки',   %{$items[rowsec].calls}%],
+				['Встречи',   %{$items[rowsec].meets}%],
+			/*	['Командировки',   %{$items[rowsec].missions}%],*/
+                ['КП',       %{$items[rowsec].kps}%],
+                ['Лиды', %{$items[rowsec].leads}%],
+                ['Контракты',    %{$items[rowsec].contracts}%]
+            ]
+        }],
+		colors: ['#8bc1ea', '#62a2d4', '#398fcd', '#105fa6', '#143d69', '#e65425']
+    });
+%{/section}%
+});
+</script>  

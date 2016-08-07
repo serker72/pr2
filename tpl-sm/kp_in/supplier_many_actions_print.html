@@ -1,0 +1,61 @@
+ 
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+    
+    <th scope="col" width="*">
+    Контрагент
+    </th>
+    
+    
+       <th scope="col" width="*">
+   Контакт(ы) контрагента
+    </th>
+    
+    <th scope="col" width="*">
+    Примечания
+    </th>
+     
+    </tr>
+    </thead>
+ <tbody id="suppliers_tbody">
+ 
+%{section name=supsec loop=$suppliers}%
+  <tr align="left" valign="top" id="supplier_row_%{$suppliers[supsec].id}%">
+    	
+    
+    <td width="*">
+    
+      %{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}% 
+    </td>
+    
+    
+     <td width="*">
+     <small>
+     %{foreach from=$suppliers[supsec].contacts item=contact}%	 
+   
+    
+    <span id="supplier_contact_name_%{$suppliers[supsec].id}%_%{$contact.id}%">%{$contact.name}%, %{$contact.position}%</span><br>
+
+    
+    
+    %{/foreach}%
+     </small>
+    </td>
+    
+    
+    
+    <td width="*">
+    	%{$suppliers[supsec].note}%
+    
+    
+    </td>
+     
+    
+   </tr> 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+

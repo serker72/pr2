@@ -1,0 +1,834 @@
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+});
+</script>
+
+%{include file="every_help_dialog.html" filename="pricelist_non.htm" prefix="" description="Раздел Прайс-лист: Номенклатура не в прайс-листе" style="float:right;  margin-right:10px;"}%
+
+<br clear="all" />
+
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+<p />
+
+
+
+
+<form action="pricelist.php" method="get" id="filter_form%{$prefix}%">
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    
+    <th scope="col" width="40">
+    Код ном-ры
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    <th scope="col" width="*"  style="min-width:150px;">
+    Наименование
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+     <th width="30" scope="col">
+    ед. изм.
+   
+    </th>
+    
+    <th scope="col" width="80">
+    Товарная группа/ подгруппа&nbsp;1&nbsp;ур./ подгруппа&nbsp;2&nbsp;ур.
+   
+    </th>
+    
+    <th width="50" scope="col">
+    ГОСТ/ТУ
+   
+    </th>
+    
+   
+    
+     <th width="30" scope="col">
+    Длина, мм
+   
+    </th>
+    <th width="30" scope="col">
+    Ширина, мм
+   
+    </th>
+    <th width="30" scope="col">
+    Высота/ толщина, мм
+   
+    </th>
+    <th width="30" scope="col">
+    Диаметр, мм:
+    </th>
+    
+   
+   	 <th width="50" scope="col">
+    Цена, руб.
+   
+    </th>
+    
+    
+    %{section name=discssec loop=$discs}%
+     <th width="50" scope="col">
+    %{$discs[discssec].name}%
+   
+    </th>
+    %{/section}%
+    
+    
+  
+    
+    <th width="50" scope="col">
+    Итоговая цена, руб.
+   
+    </th>
+    
+    <th scope="col" width="40">
+    Файлы
+    </th>
+    <th width="24" scope="col">
+    %{if $can_add}%
+      <a href="#" id="saveSelected%{$prefix}%"><img src="/img/icons/new.png" width="24" height="24" title="Добавить в прайс-лист выбранные позиции" alt="Добавить в прайс-лист выбранные позиции" border="0" /></a>
+      <script type="text/javascript">
+	  $(function(){
+		$("#saveSelected%{$prefix}%").bind("click", function(){
+			
+			if($("input[id^=do_updaten_]:checked").length==0){
+				alert("Выделите позиции для добавления в прайс-лист!");	
+				return false;
+			}
+			
+			if(window.confirm("Вы действительно хотите добавить в прайс-лист выбранные позиции?")){
+			
+				//changing ajax
+				var checked_ids=new Array();
+				var price=new Array();
+				
+				var discount_id=new Array();
+				var discount_value=new Array();
+				var discount_rub_or_percent=new Array();
+				
+				var dl_value=new Array();
+				var dl_rub_or_percent=new Array();
+				
+			
+				var res=true;
+				$("input[id^=do_updaten_]:checked").each(function(index, el) {
+                 	res=res&&IsCorrectMaxSk%{$prefix}%($(el).val());
+					if(res) res=res&&IsCorrectSk%{$prefix}%($(el).val());
+				   	if(res) res=res&&IsCorrectBounds%{$prefix}%($(el).val());
+				   	if(res) res=res&&RecalcPrice%{$prefix}%($(el).val());
+				 
+				});
+				if(!res){
+					return false;	
+					
+				}
+				
+				
+				
+				$("input[id^=do_updaten_]:checked").each(function(index, el) {
+                    
+					
+					checked_ids.push($(el).val());
+					id=$(el).val();
+					
+					price.push($("#price"+id+"%{$prefix}%").val());
+					
+					
+					//перебрать данные для всех скидок. какая ненулевая и есть ли такая - определить серверный скрипт
+					discount_id_1=new Array();
+					discount_value_1=new Array();
+					discount_rub_or_percent_1=new Array();
+					
+					dl_value_1=new Array();
+					dl_rub_or_percent_1=new Array();
+					
+					
+					%{foreach from=$discs item=discs1}%
+					discount_id_1.push("%{$discs1.id}%");
+					discount_value_1.push($("#discount_%{$discs1.id}%_"+id+"%{$prefix}%").val().replace("\,","\.")); 
+					discount_rub_or_percent_1.push($("#discount_rub_or_percent_%{$discs1.id}%_"+id+"%{$prefix}%").val().replace("\,","\.")); 
+					
+					dl_value_1.push($("#dl_value_%{$discs1.id}%_"+id+"%{$prefix}%").val().replace("\,","\.")); 
+					dl_rub_or_percent_1.push($("#dl_rub_or_percent_%{$discs1.id}%_"+id+"%{$prefix}%").val().replace("\,","\.")); 
+					 
+					%{/foreach}%
+					
+					discount_id.push(discount_id_1);
+					discount_value.push(discount_value_1);
+					discount_rub_or_percent.push(discount_rub_or_percent_1);
+					
+					dl_value.push(dl_value_1);
+					dl_rub_or_percent.push(dl_rub_or_percent_1);
+					
+						
+                });
+				
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"add_items",
+						"checked_ids[]":checked_ids,
+						"price[]":price,
+						"discount_id[]":discount_id,
+						"discount_value[]":discount_value,
+						"discount_rub_or_percent[]":discount_rub_or_percent,
+						"dl_value[]":dl_value,
+						"dl_rub_or_percent[]":dl_rub_or_percent
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  location.reload();
+					  //$("#group_id3%{$prefix}%").html('<option value=""></option>'+data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			}
+			return false;
+		});
+	  });
+	  </script>
+     %{/if}% </th>
+    
+   
+    
+    
+     <th scope="col" width="24">&nbsp;
+     
+     
+     </th>
+    
+   
+</tr>
+<tr align="center" valign="top">
+	
+    
+    <td width="40">
+	 <input type="text" size="4" maxlength="255" value="%{$id}%" name="id%{$prefix}%" id="id%{$prefix}%" style="width:40px;"  />
+    
+    </td>
+	<td width="*"  style="min-width:150px;">
+   <input type="text" size="10" maxlength="255" value="%{$name}%" name="name%{$prefix}%" id="name%{$prefix}%"  />
+    
+    </td>
+    
+     <td width="30">
+    <select name="dimension_id%{$prefix}%" id="dimension_id%{$prefix}%" style="width:30px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    </td>
+    
+    <td width="80">
+   
+   
+    <select name="group_id%{$prefix}%" id="group_id%{$prefix}%" style="width:80px;">
+    %{section name=groupsec loop=$group}%
+    	<option value="%{$group[groupsec].id}%" %{if $group[groupsec].is_current}%selected="selected"%{/if}%>%{$group[groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="two_group_id%{$prefix}%" id="group_id2%{$prefix}%" style="width:80px;">
+    %{section name=two_groupsec loop=$two_group}%
+    	<option value="%{$two_group[two_groupsec].id}%" %{if $two_group[two_groupsec].is_current}%selected="selected"%{/if}%>%{$two_group[two_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <select name="three_group_id%{$prefix}%" id="group_id3%{$prefix}%" style="width:80px;">
+    %{section name=three_groupsec loop=$three_group}%
+    	<option value="%{$three_group[three_groupsec].id}%" %{if $three_group[three_groupsec].is_current}%selected="selected"%{/if}%>%{$three_group[three_groupsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    <script type="text/javascript">
+	$(function(){
+		$("#group_id%{$prefix}%").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id%{$prefix}%").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3%{$prefix}%").empty();
+				  $("#group_id2%{$prefix}%").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2%{$prefix}%").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2%{$prefix}%").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3%{$prefix}%").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	});
+	</script>
+    
+    </td>
+     <td width="50">
+    <input type="text" size="8" maxlength="255" value="%{$gost_tu}%" name="gost_tu%{$prefix}%" id="gost_tu%{$prefix}%" style="width:50px;"  />
+    
+    </td>    
+   
+     <td width="30">
+     
+     <input type="text" size="4" maxlength="255" value="%{$length}%" name="length%{$prefix}%" id="length%{$prefix}%" style="width:30px;"  />
+   
+    </td>
+    <td width="30">
+    <input type="text" size="4" maxlength="255" value="%{$width}%" name="width%{$prefix}%" id="width%{$prefix}%" style="width:30px;"  />
+   
+    </td>
+    <td width="30">
+    <input type="text" size="4" maxlength="255" value="%{$height}%" name="height%{$prefix}%" id="height%{$prefix}%" style="width:30px;"  />
+   
+    </td>
+    <td width="30">
+    <input type="text" size="4" maxlength="255" value="%{$diametr}%" name="diametr%{$prefix}%" id="diametr%{$prefix}%" style="width:30px;"  />
+    
+    </td>
+    
+     <td width="50">
+    <input type="text" size="5" maxlength="255" value="%{$price}%" name="price%{$prefix}%" id="price%{$prefix}%" style="width:50px;"  />
+   
+    </td>
+    
+      %{section name=discssec loop=$discs}%
+   <td width="50"></td>
+    %{/section}%
+    
+    
+    <td width="40"></td>
+    
+     
+    
+     
+    <td width="24">&nbsp;
+    
+   
+    </td>
+    
+     <td width="24">
+    <input type="checkbox" id="selectAll%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}%  />
+   <script type="text/javascript">
+   $(function(){
+	  $("#selectAll%{$prefix}%").bind("change", function(){
+		 $("input[type=checkbox][id^=do_updaten_]").prop('checked', $(this).prop("checked"));
+	  });
+   });
+   </script>
+    </td>
+   
+   
+    <td width="24">
+   <!-- <input name="doFilter%{$prefix}%" type="submit" value="Найти" />-->
+    <input name="doFilter%{$prefix}%" type="image" src="/img/icons/old-zoom-original.png" alt="Найти" />
+    </td>
+    
+     
+  
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top">
+	 <td width="40"><a name="#user_%{$items[rowsec].id}%%{$prefix}%"></a>%{$items[rowsec].id|string_format:"%05d"}%</td>
+    <td width="*"  style="min-width:150px;">%{$items[rowsec].name}%</td>
+      <td width="30">%{$items[rowsec].dim_name}%</td>
+    
+    <td width="80">%{$items[rowsec].group_name}%</td>
+    <td width="50">%{$items[rowsec].gost_tu}%</td>
+  
+   
+    <td width="30">
+   
+    %{$items[rowsec].length|default:"-"}%
+    </td>
+    <td width="30">
+	 %{$items[rowsec].width|default:"-"}%
+    </td>
+    <td width="30">
+	 %{$items[rowsec].height|default:"-"}%
+    </td>
+	
+ 	<td width="30">
+    %{$items[rowsec].diametr|default:"-"}%
+    </td>
+    
+   
+    <td width="30">
+    <input type="text" size="7" maxlength="255" value="0" name="price%{$items[rowsec].id}%%{$prefix}%" id="price%{$items[rowsec].id}%%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}% style="width:30px;" />
+   
+    </td>
+    
+    
+    %{foreach from=$discs item=discs1}%
+	<td width="50" style="white-space:nowrap;" align="left">
+    
+    %{if $discs1.id==1}%
+    <input type="text" size="4" maxlength="255" value="0" name="discount_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="discount_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}% />
+   <select id="discount_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" name="discount_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" style="width:45px;" %{if !$can_add}% disabled="disabled"%{/if}%>
+   <option value="0"  >руб.</option>
+   <option value="1" selected="selected" >%</option>
+   </select>
+    %{else}%
+    <input type="text" size="4" maxlength="255" value="0" name="discount_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="discount_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}% />
+   <select id="discount_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" name="discount_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" style="width:45px;" %{if !$can_add}% disabled="disabled"%{/if}%>
+   <option value="0" >руб.</option>
+   <option value="1" selected="selected" >%</option>
+   </select>
+    %{/if}%
+    
+    
+    
+    %{if $can_max_val}%
+    <!-- ecли есть ограничения, нужно их также выписать -->
+    <br />
+    Макс. скидка:<br />
+
+	<input type="text" size="4" maxlength="255" value="" name="dl_value_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="dl_value_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}% />
+    
+    <select id="dl_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" name="dl_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" style="width:45px;" %{if !$can_add}% disabled="disabled"%{/if}%>
+   <option value="0" >руб.</option>
+   <option value="1" selected="selected"  >%</option>
+   </select>
+    
+    
+    %{else}%
+    
+    <input type="hidden" value="" name="dl_value_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="dl_value_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" />
+    <input type="hidden" value="0" name="dl_rub_or_percent%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="dl_rub_or_percent%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" />
+    
+    %{/if}%
+    <input type="hidden" value="%{$discs1.id}%" name="dl_discount_id_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" id="dl_discount_id_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%" />
+     
+    </td>
+    %{/foreach}%
+    
+    
+   
+   
+    <td width="50" style="white-space:nowrap;" >
+   
+   
+   <span id="price_f%{$items[rowsec].id}%%{$prefix}%">0</span>
+    </td>
+   
+   
+   
+  
+  
+     <td width="40">
+      <!--<a href="pos_files.php?bill_id=%{$items[rowsec].id}%" target="_blank"><img src="/img/files.png" width="47" height="25" alt="Файлы" border="0" /></a>  -->
+      
+      <input type="button" value="Файлы" style="width:47px; padding-left:4px;" onClick="window.open('pos_files.php?bill_id=%{$items[rowsec].id}%');" />                
+      </td>
+                        
+        <td width="24">
+  
+  <input type="checkbox" id="do_updaten_%{$items[rowsec].id}%%{$prefix}%" %{if !$can_add}% disabled="disabled"%{/if}% value="%{$items[rowsec].id}%"  />
+     </td>
+                        
+                        
+                        
+    <td width="24">
+    %{if $can_edit}%
+   
+    <a href="position.php?action=1&id=%{$items[rowsec].id}%" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="карточка товара в номенклатуре..." title="карточка товара в номенклатуре..." border="0" /></a>
+    
+    %{/if}%
+    </td>
+    
+   
+</tr>
+%{/section}%
+</tbody>
+</table>
+
+
+<script type="text/javascript">
+%{if $can_add}%
+
+//перерасчет цены (без проверки корр-ти)
+function RecalcPrice%{$prefix}%(id){
+	res=true;
+	
+	
+	sum=$("#price"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	sum=parseFloat(sum);
+	
+	skidka=0;
+	
+	mode='';
+	//найти любую скидку не нулевую
+	%{section name=discssec loop=$discs}%
+	sk=$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk!="")&&!isNaN(sk)&&(parseFloat(sk)>0)){
+		 skidka=parseFloat(sk);
+		 mode="%{$discs[discssec].id}%";
+	}
+	%{/section}%
+	
+	if(mode!=""){
+		if($("#discount_rub_or_percent_"+mode+"_"+id+"%{$prefix}%").val()==1){
+			sum=roundPlus(parseFloat(sum)-parseFloat(sum)*parseFloat(skidka)/100,2);	
+		}else{
+			sum=roundPlus(parseFloat(sum)-parseFloat(skidka),2);
+		}
+	}
+	
+	$("#price_f"+id+"%{$prefix}%").text(sum);
+	
+	return res;
+}
+
+//проверка корр-ти макс. скидки (любой)
+function IsCorrectMaxSk%{$prefix}%(id){
+	res=true;
+
+	
+	%{section name=discssec loop=$discs}%
+	
+	
+	local_res=true;
+	sk=$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk!="")&&(isNaN(sk)||(parseFloat(sk)<0))){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+		
+		$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	
+	//если выбраны ПРОЦЕНТЫ: то не более 99.99 процентов
+	if(local_res){
+	  if((sk!="")&&!isNaN(sk)&&($("#dl_rub_or_percent_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").focus();
+			alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+			
+			$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+			
+	  }else $("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	}
+	
+	
+	
+	%{/section}%
+	
+	return res;
+}
+
+
+//проверка корр-ти скидки (любой)
+function IsCorrectSk%{$prefix}%(id){
+	res=true;
+
+	
+	%{section name=discssec loop=$discs}%
+	
+	local_res=true;
+	sk=$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля %{$discs[discssec].name}%!");
+		
+		$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	
+	//если выбраны ПРОЦЕНТЫ: то не более 99.99 процентов
+	if(local_res){
+	  if(!isNaN(sk)&&($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").focus();
+			alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+			
+			$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+			
+	  }else $("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	}
+	
+	if(local_res){
+		
+		
+		sum=$("#price"+id+"%{$prefix}%").val();	
+		sum=sum.replace("\,","\.");
+		sum=parseFloat(sum);
+		
+		if(!isNaN(sk)&&($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val()==0)&&(parseFloat(sk)>sum)){	
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").focus();
+			alert("Введенная %{$discs[discssec].name}% в рублях превышает цену позиции!");
+			
+			$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+		}else{
+			$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+		}
+	}
+	
+	
+	%{/section}%
+	
+	return res;
+}
+
+//проверка корр-ти цены
+function IsCorrectPrice%{$prefix}%(id){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#price"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<=0)){
+		$("#price"+id+"%{$prefix}%").addClass("wrong");
+		alert("Некорректно заполнено поле Цена!");
+		$("#price"+id+"%{$prefix}%").focus();
+		res=res&&false;	
+	}else{
+		$("#price"+id+"%{$prefix}%").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка на взаимокорректность скидок (скидка не м.б. больше максимальной)
+function IsCorrectBounds%{$prefix}%(id){
+	res=true;
+	
+	%{section name=discssec loop=$discs}%
+	
+	local_res=true;
+	sum=$("#price"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	
+	sk=$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	
+	max_sk=$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val();	
+	max_sk=max_sk.replace("\,","\.");
+	
+	
+	sk_in_rub=0;
+	max_sk_in_rub=0;
+	
+	if($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val()==1){
+		sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(sk)/100,2);	
+	}else{
+		sk_in_rub=roundPlus(sk,2);
+	}
+	
+	if(max_sk!=""){
+		if($("#dl_rub_or_percent_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").val()==1){
+			max_sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(max_sk)/100,2);	
+		}else{
+			max_sk_in_rub=roundPlus(max_sk,2);
+		}
+	}else max_sk_in_rub=sum;
+	
+	
+	
+	
+		
+	if(sk_in_rub>max_sk_in_rub){
+		res=res&&false;
+		alert("Введенная скидка превышает максимальную скидку!");
+		$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");
+		$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").addClass("wrong");	
+	}else{
+		$("#discount_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");
+		$("#dl_value_"+"%{$discs[discssec].id}%"+"_"+id+"%{$prefix}%").removeClass("wrong");	
+	}
+	
+	
+	%{/section}%
+	
+	return res;	
+}
+
+
+
+
+
+
+
+
+
+
+
+%{section name=rowsec loop=$items}%
+	$("#price%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].id}%");
+		if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+		
+		 if(res) $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", false);
+		
+		
+	});
+	
+	
+	
+	 %{foreach from=$discs item=discs1}%
+	 
+	 //обработчик изменения макс скидки (любой)
+	 $("#dl_value_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		 res=true;
+		  res=res&&IsCorrectMaxSk%{$prefix}%("%{$items[rowsec].id}%");
+		  if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		  if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+		  
+		   if(res) $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", false);
+	 });
+	 $("#dl_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectMaxSk%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+		 
+		  if(res) $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", false);
+	 });
+	 
+	 //обработчик изменения скидки (любой)
+	 $("#discount_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		 
+		  
+		  //сброс прочих скидок
+		  if(parseFloat($(this).val())!==0){
+				%{foreach from=$discs item=discs2}%
+				 %{if $discs2!=$discs1}%
+				 $("#discount_%{$discs2.id}%_%{$items[rowsec].id}%%{$prefix}%").val('0');
+				 %{/if}%
+				 %{/foreach}% 
+		  }
+		  
+		  res=true;
+		  res=res&&IsCorrectSk%{$prefix}%("%{$items[rowsec].id}%");
+		  if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		  if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+		  
+		   if(res) $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", false);
+	 });
+	 $("#discount_rub_or_percent_%{$discs1.id}%_%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectSk%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+		 
+		 if(res) $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").prop("checked", false);
+	 });
+	 
+	 %{/foreach}%
+	
+	
+	
+	
+	
+	
+	
+	
+	$("#do_updaten_%{$items[rowsec].id}%%{$prefix}%").bind("change", function(){
+		if($(this).prop("checked")){
+			 res=true;
+		 res=res&&IsCorrectMaxSk%{$prefix}%("%{$items[rowsec].id}%");
+		  if(res) res=res&&IsCorrectSk%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&IsCorrectBounds%{$prefix}%("%{$items[rowsec].id}%");
+		 if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].id}%");
+			
+			
+			if(!res) $(this).prop("checked", false);
+		}
+	});
+%{/section}%
+
+%{/if}%
+</script>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям позиций не найдено.</em><br />
+%{/if}%
+
+%{$pages}%

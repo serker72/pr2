@@ -1,0 +1,122 @@
+%{section name=rowsec loop=$kinds_total}%
+
+<div style="white-space:nowrap;">
+
+<input type="text" size="35" maxlength="255" id="kind_%{$kinds_total[rowsec].id}%" value="%{$kinds_total[rowsec].name|escape:"html"}%" style="width:250px; background-color:silver;" />
+
+
+<a href="#" id="edit_kind_%{$kinds_total[rowsec].id}%" data-comment="редактировать" class="reestr_edit16 reestr_button16"> </a>
+
+%{if  $kinds_total[rowsec].can_delete}%
+<a href="#" id="delete_kind_%{$kinds_total[rowsec].id}%" data-comment="удалить" class="reestr_delete16 reestr_button16"> </a>
+%{else}%
+<a href="#" onClick="return false;" data-comment="удалить" class="reestr_delete16 reestr_button16 reestr_inactive"> </a>
+%{/if}%
+
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#edit_kind_%{$kinds_total[rowsec].id}%").bind("click",function(){
+		/*alert('editing');
+		*/
+		if($("#icon_kind_%{$kinds_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			//включаем редактирование
+			$("#icon_kind_%{$kinds_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#kind_%{$kinds_total[rowsec].id}%").css("background-color","white");
+		}else{
+			//вносим изменения
+			
+			$.ajax({
+				async: true,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"edit_kind",
+					"question":$("#kind_%{$kinds_total[rowsec].id}%").val(),
+					"id":"%{$kinds_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/tender.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_kinds_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#kind_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				},
+				error: function(xhr, status){
+					alert("Ошибка редактирования вида тендера.");	
+				}	 
+			});
+		}
+		
+		return false;
+	});
+	
+	$("#kind_%{$kinds_total[rowsec].id}%").bind("click",function(){
+		if($("#icon_kind_%{$kinds_total[rowsec].id}%").attr("src")=="/img/icon_edit_16x16.gif"){
+			$("#icon_kind_%{$kinds_total[rowsec].id}%").attr("src", "/img/icon_save_active_16x16.gif");
+			$("#kind_%{$kinds_total[rowsec].id}%").css("background-color","white");
+		}
+	});
+	
+	//удаление
+	$("#delete_kind_%{$kinds_total[rowsec].id}%").unbind("click");
+	$("#delete_kind_%{$kinds_total[rowsec].id}%").bind("click",function(){
+		if(window.confirm("Вы действительно хотите удалить вид тендера %{$kinds_total[rowsec].name|escape:"html"}%?")){
+			$.ajax({
+				async: true,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"delete_kind",
+					"id":"%{$kinds_total[rowsec].id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $.ajax({
+					  async: true,
+					  url: "/js/tender.php",
+					  type: "POST",
+					  data:{
+						  "action":"redraw_kinds_dics"
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+						$("#kind_dic").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  //alert("Ошибка добавления вопроса.");	
+					  }	 
+				  });
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка удаления вида тендера.");	
+				}	 
+			});	
+		}
+		return false;
+	});
+});
+</script>
+%{/section}%

@@ -1,0 +1,68 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="suppliertz_row_%{$pos[possec].id}%" >
+    	 
+        
+       
+        <td id="full_name_%{$pos[possec].id}%">
+        
+        <input type="radio" id="suppliertz_radio_%{$pos[possec].id}%" name="suppliertz_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_supplier}% checked="checked"%{/if}% %{if !$pos[possec].can_edit}% disabled %{/if}% />
+        <label for="suppliertz_radio_%{$pos[possec].id}%">
+        
+        %{$pos[possec].full_name}%
+        
+        </label> 
+         <input type="hidden" id="is_confirmedtz_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" />
+         
+         
+          %{foreach from=$pos[possec].cities item=city}%	 
+            <input type="hidden" id="new_suppliertz_city_id_%{$pos[possec].id}%_%{$city.id}%" value="%{$city.city_id}%"/>
+            
+           
+            
+            %{/foreach}%
+         
+        
+        </td>
+         <td id="opf_name_%{$pos[possec].id}%">%{$pos[possec].opf_name}%</td>
+        <td>%{$pos[possec].inn}%</td>
+        <td>%{$pos[possec].kpp}%</td>
+       <td>
+       
+           <small>
+     %{foreach from=$pos[possec].cities item=item}%
+     %{$item.name}%, %{$item.okrug_name}%, %{$item.region_name}%,  %{$item.country_name}%<br>
+
+     %{/foreach}%
+     </small>
+        
+        </td>
+        <td>
+          %{if $do_show_contacts}%
+         %{foreach from=$pos[possec].contacts item=item}%
+     <strong>%{$item.name}%, %{$item.position}%</strong><br>
+       
+     %{/foreach}%
+     		%{/if}%	
+          </td>
+       
+        <td>
+        <input type="hidden" id="is_orgtz_%{$pos[possec].id}%" value="%{$pos[possec].is_org}%" />
+         %{if $pos[possec].can_edit}%
+   
+    <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_button16">
+    </a>
+    
+      
+    %{else}%
+    <a href="#" data-comment="Подробно..."  class="reestr_edit reestr_inactive reestr_button16" onClick="return false;"> </a>
+    
+    %{/if}%
+       
+        </td>
+    </tr>
+    <tr align="left" valign="top" id="suppliertz_contact_row_%{$pos[possec].id}%" >
+    
+    </tr>
+   
+%{/section}%    
+ 	

@@ -1,0 +1,242 @@
+
+
+
+<div id="vyh_otp_dates_dialog" title="Даты отпуска за работу в выходные" style=" display:none;">
+	<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:20px;" />
+	<div id="vyh_otp_dates_details" style="float:left; padding-top:5px; margin-bottom:10px;"></div>
+    
+    <br clear="all" />
+
+</div>
+
+
+<script type="text/javascript">
+function VyhOtpPdateAdd(){
+	 $.ajax({
+			async: true,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"transfer_empty_otp_date" 
+			},
+			beforeSend: function(){
+			  //alert("Загрузка реквизитов.");
+			  
+			},
+			success: function(data){
+			 // $("#vyh_otp_dates_edit_tb a[id^=add_vyh_otp_date_]").css("display", "none");	
+			  // $("#vyh_otp_dates_edit_tb a[id^=delete_vyh_otp_date_]").css("display", "inline");	
+			  $("#vyh_otp_dates_edit_tb").append(data); 
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+}
+
+$(function(){
+	$("#vyh_otp_dates_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 280,
+    height: 220,
+    buttons: {
+        "Готово": function() { 
+        	
+        	var res=true;
+			
+			$.each($("input[id^=vyh_otp_date_pdate_]"),function(k,v){
+				var local_res=true;
+				
+				hash=$(v).attr("id").replace(/^vyh_otp_date_pdate_/,'');
+				
+				 
+					if(local_res) if($(v).val().length==0){
+						local_res=local_res&&false;
+						alert("Укажите дату!");
+						$(v).focus();
+						$(v).addClass("wrong");
+					}else $(v).removeClass("wrong");
+					
+					
+				if(local_res) $.each($("input[id^=vyh_otp_date_pdate_]"),function(k1,v1){	 
+					hash1=$(v1).attr("id").replace(/^vyh_otp_date_pdate_/,'');
+					if((local_res)&&(hash!=hash1)&&($(v1).val()==$(v).val())){
+						local_res=local_res&&false;
+						alert("Указанная дата "+$(v1).val()+" уже была выбрана ранее!");
+						$(v1).focus();
+						$(v1).addClass("wrong");
+						
+					}
+				});
+				
+				res=res&&local_res;
+			});
+			
+			
+			//поиск одинаковых значений
+			$.each($("input[id^=vyh_otp_date_pdate_]"),function(k,v){
+				//var local_res=true;
+				
+				$.each($("input[id^=vyh_otp_date_pdate_]"),function(k1,v1){
+					
+					if(res) if(($(v).val()==$(v1).val())&&(k!=k1)){
+						res=res&&false;
+						alert("Выбраны две или более одинаковые даты!");
+					}
+				});
+				
+				//res=res&&local_res;
+			});
+			
+			//контроль доступности дат
+			
+			if(res){
+				
+				dates=new Array();
+				$.each($("input[id^=vyh_otp_date_pdate_]"),function(k,v){
+					dates.push($(v).val());
+				});
+				
+				$.ajax({
+				  async: false,
+				  url: "/js/petition.php",
+				  type: "POST",
+				  data:{
+					  "action":"check_vyh_bol_date",
+					  "dates[]":dates,
+					 
+					  "id":$("#id").val(),
+					  "user_id":$("#manager_id").val()
+				  },
+				  beforeSend: function(){
+					//$("#vyh_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+				  },
+				  success: function(data){
+					//alert(data);
+					if(data!=0){
+						res=res&&false;
+						alert("Невозможно выбрать указанные даты:\n"+data);
+					}
+					
+					   
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+			}
+			
+			
+			if(res){
+				
+				var complex_positions=new Array();
+		
+				$.each($("input[id^=vyh_otp_date_pdate_]"),function(k,v){
+					hash=$(v).attr("id").replace(/^vyh_otp_date_pdate_/,'');
+						
+					hashed_string='';
+					hashed_string+=$("#vyh_otp_date_pdate_"+hash).val();
+					 
+					
+					
+					complex_positions.push(hashed_string);
+					
+					
+				});
+				
+			   $.ajax({
+				  async: true,
+				  url: "/js/petition.php",
+				  type: "POST",
+				  data:{
+					  "action":"transfer_vyh_otp_date",
+					   
+					  "complex_positions[]":complex_positions
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					$("#vyh_otp_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+				  },
+				  success: function(data){
+					$("#vyh_otp_dates_tb").html(data); 
+					
+					   
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+			
+				$(this).dialog("close"); 
+			}
+		
+		},
+		 "Отмена": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	
+	
+	$("#add_vyh_otp").bind("click", function(){
+		
+		var complex_positions=new Array();
+		
+		$.each($("input[id^=new_vyh_otp_date_pdate_]"),function(k,v){
+			hash=$(v).attr("id").replace(/^new_vyh_otp_date_pdate_/,'');
+				
+			hashed_string='';
+			hashed_string+=$("#new_vyh_otp_date_pdate_"+hash).val();
+		 
+			
+			complex_positions.push(hashed_string);
+			
+			
+		});
+		
+	   $.ajax({
+			async: true,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"load_vyh_otp_date",
+				 
+				"complex_positions[]":complex_positions
+			},
+			beforeSend: function(){
+			  //alert("Загрузка реквизитов.");
+			  $("#vyh_otp_dates_details").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			},
+			success: function(data){
+			  $("#vyh_otp_dates_details").html(data); 
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+		$("#vyh_otp_dates_dialog").dialog("open");
+	});
+});
+</script>
+
+
+<table border="1" width="*" class="blacktable" cellpadding="2" cellspacing="0">
+<thead>
+<tr>
+	<th>Дата</th>
+    <th>День недели</th>
+    <th width="24"></th>
+</tr>
+</thead>
+<tbody id="vyh_otp_dates_tb">
+%{include file="petition/vyh_otp_dates_onpage.html"}%
+</tbody>
+</table>    

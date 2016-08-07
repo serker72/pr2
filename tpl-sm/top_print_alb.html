@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<title>%{$SITETITLE}%</title>
+<script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+<style type="text/css">
+body, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+}
+@page { size:landscape; }
+</style>
+<script type="text/javascript">
+window.onload=function(){
+	max_page=10;
+	
+	xval=document.body.scrollHeight;
+	if((xval/1300/max_page)>1){
+		if(window.confirm("Внимание! Документ, готовый к печати, содержит порядка "+Math.round((xval/1300))+" страниц. Вы уверены, что хотите распечатать такой объем информации?")) window.print() ;
+	}else{
+		window.print() ;
+	}
+};
+</script>
+
+%{if $do_restrict}%
+	<script type="text/javascript">
+	 document.ondragstart = diskey; 
+document.onselectstart = diskey; 
+document.oncontextmenu = diskey; 
+function diskey() { 
+return false; 
+} 
+document.oncontextmenu; 
+function catchControlKeys(event){ 
+var code=event.keyCode ? event.keyCode : event.which ? event.which : null; 
+if (event.ctrlKey){ 
+// Ctrl+U 
+if (code == 117) return false; 
+if (code == 85) return false; 
+// Ctrl+C 
+if (code == 99) return false; 
+if (code == 67) return false; 
+// Ctrl+A 
+if (code == 97) return false; 
+if (code == 65) return false; 
+} 
+} 
+	</script>
+%{/if}%  
+</head>
+
+<body>
+
+<table width="1200" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="*">

@@ -1,0 +1,144 @@
+<script type="text/javascript">
+	
+	
+	
+	
+	
+	function cityrebuild(){
+	    var selected_city_id=0;
+		var res=true;
+		$.each($("input[id^=city_]:checked"),function(k,v){
+			
+			
+			
+			
+			selected_city_id=$(v).val();
+		});
+		
+		 
+	  //внести выбранных поставщиков в карту....
+	   if(res) {
+			
+			
+			$("#city_id").val(selected_city_id);
+			$.ajax({
+				async: true,
+				url: "/js/mission.php",
+				type: "POST",
+				data:{
+					"action":"transfer_city",
+					"selected_city_id":selected_city_id,
+					"supplier_id":$("#supplier_id").val()
+				   
+				},
+				beforeSend: function(){
+				 // $("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					
+				  $("#city_id_string").val(data);
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка загрузки города.");	
+				}	 
+			});
+			
+			
+		
+			$("#city_dialog").dialog("close"); 
+	   }
+	}
+$(function(){
+	
+	
+	
+	
+	$("#city_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 450,
+		height: 300,
+		buttons: {
+			"Готово": cityrebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#selectCity").bind("click",function(){
+		
+		if((parseInt($("#supplier_id").val())==0)||($("#supplier_id").val()=="")){
+			
+			alert("Для выбора города выберите, пожалуйста, контрагента!");
+			return false;	
+		}
+		
+		$.ajax({
+					  async: true,
+					  url: "/js/mission.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_city",
+						  "supplier_id":$("#supplier_id").val(),
+						  "selected_city_id":$("#city_id").val()
+						  
+					  },
+					  beforeSend: function(){
+						$("#cities_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#cities_found").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  $("#cities_found").html("Ошибка загрузки городов.");	
+					  }	 
+				  });
+		
+		$("#city_dialog").dialog("open");
+		
+	});
+	
+	$("#clearCity").bind("click",function(){
+		 $("#city_id_string").val("-");  
+		 $("#city_id").val(0);
+		
+	});
+	
+	
+	
+	 
+});
+</script>
+
+<div id="city_dialog" title="Выберите город контрагента">
+
+
+
+    
+    
+    
+
+<div id="cities" style="overflow:auto; width: 380px; height:220px;"  > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Город</th>
+        
+        <th scope="col">Федеральный округ</th>
+        <th scope="col">Регион</th>
+       
+    </tr>
+   
+    <tbody id="cities_found">
+   	%{include file="mission/cities_list.html" pos=$suppliers}%
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>

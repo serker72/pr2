@@ -1,0 +1,49 @@
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+  <thead>
+  <tr align="left" valign="top">
+    <th scope="col" width="30">
+    № п/п
+    </th>
+    <th scope="col" width="*">Наименование</th>
+    <th scope="col" width="50">
+     ед. изм.
+    </th>
+    <th scope="col" width="50">
+     Первоначально по заявке
+    </th>
+    <th scope="col" width="50">
+     Всего по заявке
+    </th>
+   %{if $printmode==1}%
+    <th scope="col" width="50">
+     Во вх. счетах
+    </th>
+    <th scope="col" width="50">
+    В расп. на приемку
+    </th>
+    <th scope="col" width="50">
+    Получено
+    </th>
+    <th scope="col" width="50">
+    Доступно
+    </th>
+    %{/if}%
+    
+    <th scope="col" width="50">
+    Объект получения
+    </th>
+   
+  </tr>
+  </thead>
+  <tbody id="positions">
+  
+  %{section name=possec loop=$pos}%
+%{include file="komplekt/put_to_form_print.html" no=$smarty.section.possec.index+1 tempid=$pos[possec].id id=$pos[possec].position_id name=$pos[possec].position_name kol=$pos[possec].quantity_confirmed kol_init=$pos[possec].quantity_initial in_bills=$pos[possec].in_bills in_sh=$pos[possec].in_sh in_free=$pos[possec].in_free in_pol=$pos[possec].in_pol storage_name=$pos[possec].storage_name storage_id=$pos[possec].storage_id  dim_name=$pos[possec].dim_name}%
+%{/section}%
+  
+  </tbody>
+</table>
+
+
+ 

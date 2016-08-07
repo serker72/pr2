@@ -1,0 +1,103 @@
+<div id="groups_dic" style="display:none;">
+
+%{include file="every_help_dialog.html" filename="tov_grp.htm" prefix="_tg" description="редактирование товарных групп"  style="float:right;  margin-left:10px;"}%
+
+
+<div style="float:left; margin-right:10px;">
+
+<strong>Товарная группа:</strong><br />
+<div style="float:left; margin-right:0px;">
+<select id="one_group_id" style="width:200px;" size="25">
+	%{html_options values=$group_ids selected=$group_id output=$group_names}%
+</select>
+</div>
+<div style="float:left; margin-right:0px;">
+	%{if $can_edit_group}%
+    <a href="#" id="edit_one_group" title="редактировать выбранную группу"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+    
+    %{if $can_admin_group}%
+    <a href="#" id="admin_one_group" title="права доступа к выбранной группе"><img src="/img/icons/key_add.png" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+    
+    %{if $can_delete_group}%
+<a href="#" id="delete_one_group" title="удалить группу"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+	%{/if}%
+</div>
+<br clear="all" />
+
+%{if $can_add_group}%
+
+Новая товарная группа:<br />
+<input type="text" id="new_one_group" size="15" maxlength="255" />
+<input type="button" value="Добавить" id="add_new_one_group" />
+%{/if}%
+
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Подгруппа 1 ур.:</strong><br />
+<div style="float:left; margin-right:0px;">
+<select id="two_group_id" style="width:200px;" size="25">
+	%{html_options values=$two_group_ids selected=$two_group_id output=$two_group_names}%
+</select>
+</div>
+<div style="float:left; margin-right:0px;">
+	%{if $can_edit_group}%
+	<a href="#" id="edit_two_group" title="редактировать выбранную группу"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+    
+     %{if $can_admin_group}%
+    <a href="#" id="admin_two_group" title="права доступа к выбранной группе"><img src="/img/icons/key_add.png" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+    %{if $can_delete_group}%
+<a href="#" id="delete_two_group" title="удалить группу"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+	%{/if}%
+</div>
+<br clear="all" />
+
+%{if $can_add_group}%
+Новая подгруппа 1 ур.:<br />
+<input type="text" id="new_two_group" size="15" maxlength="255" />
+<input type="button" value="Добавить" id="add_new_two_group" />
+%{/if}%
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Подгруппа 2 ур.:</strong><br />
+<div style="float:left; margin-right:0px;">
+<select id="three_group_id" style="width:200px;" size="25">
+	%{html_options values=$three_group_ids selected=$three_group_id output=$three_group_names}%
+</select>
+</div>
+<div style="float:left; margin-right:0px;">
+	%{if $can_edit_group}%
+	<a href="#" id="edit_three_group" title="редактировать выбранную группу"><img src="/img/icon_edit_16x16.gif" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+     %{if $can_admin_group}%
+    <a href="#" id="admin_three_group" title="права доступа к выбранной группе"><img src="/img/icons/key_add.png" width="16" height="16" border="0" alt="" /></a>
+    %{/if}%
+    
+    %{if $can_delete_group}%
+<a href="#" id="delete_three_group" title="удалить группу"><img src="/img/del.gif" width="15" height="15" border="0" alt="" /></a>
+%{/if}%
+</div>
+<br clear="all" />
+%{if $can_add_group}%
+Новая подгруппа 2 ур.:<br />
+<input type="text" id="new_three_group" size="15" maxlength="255" />
+<input type="button" value="Добавить" id="add_new_three_group" />
+%{/if}%
+</div>
+<br clear="all" />
+
+
+</div><br />
+
+

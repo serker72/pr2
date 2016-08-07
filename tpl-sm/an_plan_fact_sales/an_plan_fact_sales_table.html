@@ -1,0 +1,227 @@
+Актуальность курсов валют: %{$rates.pdate_formatted}%<br />
+%{foreach from=$rates.currencies item=c}%
+%{if $c.currency_id!=1}%
+
+%{$c.nominal}% %{$c.signature}% = %{$c.rates}% руб.
+<br />
+
+
+%{/if}%
+%{/foreach}%
+<br />
+
+
+
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0" class="blacktable plan_fact_table">
+<thead>
+
+%{if $rep_monthes_count==12}%
+ <tr align="center" valign="top">
+           <th scope="col" width="200" rowspan="2" style="min-width:200px;">
+           Выполнение плана за квартал: план, %{$curr.signature}%/факт, %{$curr.signature}%/%
+           </th>
+           
+           
+           
+            %{foreach from=$percents_by_quart item=data}%
+          <th scope="col" colspan="2" width="90" class="plan" align="right" title="Выполнение плана за %{$data.name}%, план">
+            %{$data.plan_f}%
+          
+          </th>
+          
+           <th scope="col" colspan="2" width="90" class="fact" align="right" title="Выполнение плана за %{$data.name}%, факт">
+            %{$data.fact_f}%
+           </th>
+            <th scope="col" colspan="2" class="equip" width="90" align="right" title="Выполнение плана за %{$data.name}%, %">
+                %{$data.value}%
+             
+          </th>
+          %{/foreach}%
+          <th scope="col" colspan="2" rowspan="2" width="90" align="right" title="">
+           
+          </th>
+       </tr>
+       
+       <tr align="center" valign="top">
+           
+           
+            %{foreach from=$percents_by_quart item=data}%
+          <th scope="col" colspan="6" width="90" class="equip" align="center" title="Выполнение плана за %{$data.name}%">
+            
+          
+         
+                %{$data.name}%
+             
+          </th>
+          %{/foreach}%
+           
+       </tr>
+%{/if}%
+
+<tr align="center" valign="top">
+	 
+    	
+    <th scope="col"   width="160">
+    Выполнение плана, % 
+    
+    
+    </th>
+    %{foreach from=$percents_by_monthes item=pr}%
+    <th scope="col" align="right" colspan="2" width="160" title="Выполнение плана за %{$pr.name}%">
+    %{$pr.value}%
+    </th>
+    %{/foreach}%
+   <th scope="col"  align="right" colspan="2"  width="160" title="Выполнение плана по отчету">
+   %{$percents_by_rep}%
+   </th>
+    
+</tr>
+<tr align="center" valign="top">
+	 
+    	
+    <th scope="col" rowspan="2" width="100">
+    Отдел/ Сотрудник 
+    
+    </th>
+    
+    
+    %{foreach from=$rep_monthes item=pr}%
+    <th scope="col" colspan="2" width="160">
+    %{$pr.name}% %{$year}%
+    </th>
+    %{/foreach}%
+    <th scope="col" colspan="2"  width="160">
+   Итого
+   </th>
+    
+</tr>
+<tr align="center" valign="top">
+   %{foreach from=$rep_monthes item=month}%
+          <th scope="col"  width="80" class="plan">
+               План, %{$curr.signature}%
+          </th>
+           <th scope="col"  width="80" class="fact">
+               Факт, %{$curr.signature}%
+          </th>
+   %{/foreach}%
+    <th scope="col"  width="80" class="plan">
+               План,  %{$curr.signature}%
+          </th>
+           <th scope="col"  width="80" class="fact">
+               Факт,  %{$curr.signature}%
+          </th>
+</tr>
+
+</thead>
+<tbody>
+%{foreach from=$dep_users item=dep}%
+<tr align="left" valign="top">
+	<td width="100" class="contract" rowspan="2" >
+    %{$dep.name}%
+    
+     </td>
+     
+     %{foreach from=$dep.dep_percent_monthes item=data}%
+    <td width="80" colspan="2" class="contract" align="right" title="Выполнение плана по отделу за %{$data.name}%">
+    %{$data.value_f}%%
+    </td>
+    %{/foreach}%
+     
+     
+      <td  align="right" colspan="2" class="contract"  width="160" title="Выполнение плана по отделу">
+   %{$dep.percents_by_dep_f}%%
+   </td>
+</tr>
+<tr align="left" valign="top">
+	
+    
+    %{foreach from=$dep.dep_monthes item=data}%
+    <td width="80"  %{if $data.plan_or_fact==0}% class="plan"%{else}% class="fact" %{/if}% style="white-space:nowrap;">
+   <strong> %{$data.value_f}%</strong>
+    </td>
+    %{/foreach}%
+    
+    
+    
+    <td width="80" class="plan" style="white-space:nowrap;">
+    <strong> %{$dep.itogo_plan_dep_f}%</strong>
+    </td>
+    
+    <td width="80" class="fact" style="white-space:nowrap;">
+    <strong> %{$dep.itogo_fact_dep_f}%</strong>
+    </td>
+</tr>
+%{foreach from=$dep.users item=user}%
+
+<tr align="left" valign="top">
+	<td width="100" %{if $user.is_active==0}% style="color:red;"%{/if}% >
+    %{$user.name_s}% </td>
+	 
+   
+    %{foreach from=$user.user_monthes item=data}%
+    <td width="80" %{if $user.is_active==0}% style="color:red;"%{/if}% %{if $data.plan_or_fact==0}% class="plan"%{else}% class="fact" %{/if}%>
+    %{$data.value_f}%
+    </td>
+    %{/foreach}%
+   
+      %{foreach from=$user.itogo_by_user item=data}%
+            <td width="80" title="Итого %{$user.name_s}% %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% " %{if $data.plan_or_fact==0}% class="plan"%{else}% class="fact" %{/if}% %{if $user.is_active==0}% style="color:red;"%{/if}% >
+            <strong>%{$data.value_f}%</strong>
+            </td>
+             %{/foreach}%
+</tr>
+%{/foreach}%
+%{/foreach}%
+
+
+
+</tbody>
+<tfoot>
+<tr align="left" valign="top">
+	<th  width="160">
+    Итого
+    </th>
+  	
+     %{foreach from=$itogo_by_monthes item=data}%
+            <th width="45"  title="Итого %{$data.name}% %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% "  %{if $data.plan_or_fact==0}% class="plan"%{else}% class="fact" %{/if}% style="white-space:nowrap;">
+            
+           
+             %{$data.value_f}%  
+          
+            
+            </th>
+            %{/foreach}%
+    
+       %{foreach from=$itogo_by_rep item=data}%
+              <th width="80"  title="Итого по отчету %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% "  %{if $data.plan_or_fact==0}% class="plan"%{else}% class="fact" %{/if}% style="white-space:nowrap;">
+            
+           
+          %{$data.value_f}% 
+          
+          
+          
+            
+            </th>
+            %{/foreach}%
+</tr>
+</tfoot>
+</table>
+<!--
+<strong>Итого за период с %{$pdate1}% по %{$pdate2}% командировано сотрудников: %{$count_of_users}% в %{$count_of_cities}% городов к %{$count_of_suppliers}% контрагентам.</strong>
+<br />
+-->
+<br />
+
+
+<strong>Итого:</strong><br />
+<strong>План: %{$plan}% %{$curr.signature}%</strong><br />
+<strong>Факт: %{$fact}% %{$curr.signature}%</strong><br />
+
+%{if $rep_monthes_count==12}%<strong>Норма выполнения плана: %{$norma_f}% %{$curr.signature}%</strong><br />%{/if}%
+<strong>Выполнение плана: %{$percents_by_rep}%%.</strong><br />
+
+
+
+
+

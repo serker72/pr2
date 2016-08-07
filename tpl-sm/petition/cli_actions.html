@@ -1,0 +1,198 @@
+
+
+
+<div id="cli_dialog" title="Клиенты" style=" display:none;">
+
+	<div id="cli_details"></div>
+
+</div>
+
+
+<script type="text/javascript">
+function CliAdd(){
+	 $.ajax({
+			async: true,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"transfer_empty_cli" 
+			},
+			beforeSend: function(){
+			  //alert("Загрузка реквизитов.");
+			  
+			},
+			success: function(data){
+			  $("#cli_edit_tb a[id^=add_cli_]").css("display", "none");	
+			   $("#cli_edit_tb a[id^=delete_cli_]").css("display", "inline");	
+			  $("#cli_edit_tb").append(data); 
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+}
+
+$(function(){
+	$("#cli_dialog").dialog({
+    autoOpen: false,
+	dialogClass: 'semi_auth',
+    modal: true,
+    width: 600,
+    height: 400,
+    buttons: {
+        "Готово": function() { 
+        	
+        	var res=true;
+			
+			$.each($("input[id^=client_name_]"),function(k,v){
+				local_res=true;
+				
+				hash=$(v).attr("id").replace(/^client_name_/,'');
+				if(local_res) if($(v).val().length==0){
+						local_res=local_res&&false;
+						alert("Укажите название клиента!");
+						$(v).focus();
+						$(v).addClass("wrong");
+					}else $(v).removeClass("wrong");
+					
+					
+					if(local_res) if(($("#purpose_id_"+hash).val()==0)||($("#purpose_id_"+hash).val()==null)||($("#purpose_id_"+hash).val()==undefined)){
+						local_res=local_res&&false;
+						alert("Укажите цель визита!");
+						$("#purpose_id_"+hash).focus();
+						$("#purpose_id_"+hash).addClass("wrong");
+					}else $("#purpose_id_"+hash).removeClass("wrong");
+				 
+					 if(local_res)  if($("#purpose_id_"+hash).val()==7){
+						 if($("#purpose_txt_"+hash).val().length==0){
+							local_res=local_res&&false;
+							alert("Укажите описание цели визита!");
+							$("#purpose_txt_"+hash).focus();
+							$("#purpose_txt_"+hash).addClass("wrong");
+						}else $("#purpose_txt_"+hash).removeClass("wrong");
+					
+					 }
+				 
+				
+				 
+				
+				
+				res=res&&local_res;
+			});
+			
+			
+			if(res){
+				
+				var complex_positions=new Array();
+		
+				$.each($("input[id^=client_name_]"),function(k,v){
+					hash=$(v).attr("id").replace(/^client_name_/,'');
+						
+					hashed_string='';
+					hashed_string+=$("#client_name_"+hash).val();
+					hashed_string+=';'+$("#purpose_id_"+hash).val();
+					hashed_string+=';'+$("#purpose_txt_"+hash).val(); 
+					 
+					
+					
+					complex_positions.push(hashed_string);
+					
+					
+				});
+				
+			   $.ajax({
+				  async: true,
+				  url: "/js/petition.php",
+				  type: "POST",
+				  data:{
+					  "action":"transfer_cli",
+					   
+					  "complex_positions[]":complex_positions
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+					$("#clients").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+				  },
+				  success: function(data){
+					$("#clients").html(data); 
+					
+					   
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+			
+				$(this).dialog("close"); 
+			}
+		
+		},
+		 "Отмена": function() { 
+        	
+        $(this).dialog("close"); }
+      }
+    
+    });
+	
+	 
+	
+	$("#add_cli").bind("click", function(){
+		
+		var complex_positions=new Array();
+		
+		$.each($("input[id^=new_client_name_]"),function(k,v){
+			hash=$(v).attr("id").replace(/^new_client_name_/,'');
+				
+			hashed_string='';
+			hashed_string+=$("#new_client_name_"+hash).val();
+			hashed_string+=';'+$("#new_purpose_id_"+hash).val();
+			hashed_string+=';'+$("#new_purpose_txt_"+hash).val();
+			 
+			
+			complex_positions.push(hashed_string);
+			
+			
+		});
+		
+	   $.ajax({
+			async: true,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"load_cli",
+				 
+				"complex_positions[]":complex_positions
+			},
+			beforeSend: function(){
+			  //alert("Загрузка реквизитов.");
+			  $("#cli_details").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			},
+			success: function(data){
+			  $("#cli_details").html(data); 
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+		$("#cli_dialog").dialog("open");
+	});
+});
+</script>
+
+
+<table border="1" width="530" class="blacktable" cellpadding="2" cellspacing="0">
+<thead>
+	<tr align="left" valign="top">
+    <th>Клиент</th>
+    <th>Цель визита</th>
+    <th width="32"></th>
+    </tr>
+</thead>
+<tbody id="clients">
+%{include file="petition/cli_onpage.html"}%
+</tbody>
+</table>    

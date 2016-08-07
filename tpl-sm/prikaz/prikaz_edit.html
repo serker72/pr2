@@ -1,0 +1,54 @@
+<script type="text/javascript">
+
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+
+});
+</script>
+
+<h1>Приказ № %{$prikaz.id}%</h1>
+
+
+<form action="edit_prikaz.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$prikaz.id}%" />
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Дата создания:</label><br />
+<input type="text" size="10" maxlength="10" name="pdate" id="pdate" value="%{$prikaz.pdate}%" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Входящий №:</label><br />
+<input type="text" size="15" maxlength="255" name="vhod_no" id="vhod_no" value="%{$prikaz.vhod_no}%" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Название:</label><br />
+<input type="text" size="50" maxlength="512" name="name" id="name" value="%{$prikaz.name}%" />
+
+</div>
+
+<br clear="all" />
+<p />
+
+%{if $can_edit}%
+
+
+<input type="submit" value="Сохранить приказ и перейти к списку приказов" name="makePrikaz" />
+
+<input type="submit" value="Сохранить приказ и остаться" name="makePrikazStay" />
+<p />
+%{/if}%
+
+<input type="button" value="Закрыть форму" name="cancelOrder" onclick="location.href='prikaz.php';" />
+
+</form>

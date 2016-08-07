@@ -1,0 +1,101 @@
+<h1>Отчет Коммерческие предложения</h1>
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+	<h3>Период:</h3>
+    
+    <div style="float:left; margin-right:10px;">
+	<strong>с:</strong> %{$pdate1}%
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+    <strong>по:</strong> %{$pdate2}%
+    </div>
+	
+    <br clear="all"/>
+    <p />
+    
+    
+    
+	%{if $supplier_name!=""
+    	or $manager_name!=""
+        or ($price_kind_id!="" and $price_kind_id!=0)
+        or $eq_name!=""
+        or ($producer_id!="" and $producer_id!=0)
+        or ($group_id!="" and $group_id!=0)
+        or ($two_group_id!="" and $two_group_id!=0)
+    
+    }%
+    <h3>Вы выбрали:</h3>
+    
+    %{if $price_kind_id!=""  and $price_kind_id!=0}% <strong>Вид КП:</strong>
+    %{foreach from=$price_kinds item=pk}%
+    %{if $pk.id==$price_kind_id}% %{$pk.name|escape}% %{/if}%
+  	%{/foreach}%
+    <br />
+	%{/if}%
+    
+    %{if $supplier_name!=""}% <strong>Контрагент ("В компанию"):</strong> 
+    %{foreach from=$our_suppliers item=item}%
+%{$item.code}% %{$item.full_name}%, %{$item.opf_name}%<br>
+			 
+				%{/foreach}%
+    %{if $has_holdings}%
+  
+Включая субхолдинги и подчиненные предприятия
+ 
+%{/if}% 				
+ 				
+ 
+    <br />
+	%{/if}%
+    
+    %{if $manager_name!=""}% <strong>Создал:</strong> %{$manager_name}% <br />
+	%{/if}%
+    
+    %{if $eq_name!=""}% <strong>Оборудование:</strong> %{$eq_name}% <br />
+	%{/if}%
+    
+    %{if $group_id!=""  and $group_id!=0}% <strong>Вид оборудования:</strong>
+    %{foreach from=$groups item=pk}%
+    %{if $pk.id==$group_id}% %{$pk.name|escape}% %{/if}%
+  	%{/foreach}%
+    <br />
+	%{/if}%
+    
+    %{if $producer_id!=""  and $producer_id!=0}% <strong>Производитель:</strong>
+    %{foreach from=$producers item=pk}%
+    %{if $pk.id==$producer_id}% %{$pk.name|escape}% %{/if}%
+  	%{/foreach}%
+    <br />
+	%{/if}%
+    
+    %{if $two_group_id!=""  and $two_group_id!=0}% <strong>Категория:</strong>
+    %{foreach from=$two_groups item=pk}%
+    %{if $pk.id==$two_group_id}% %{$pk.name|escape}% %{/if}%
+  	%{/foreach}%
+    <br />
+	%{/if}%
+    
+    %{/if}%
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+%{if $do_it}%
+%{include file="an_kp/an_kp_table.html"}%
+%{/if}%
+
+
+
+
+

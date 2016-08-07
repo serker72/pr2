@@ -1,0 +1,78 @@
+<!-- таблица в диалоге -->
+<strong>Позиции в распоряжении на приемку:</strong>   
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по распоряжению</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+        <th scope="col" width="80" style="display:none;">Цена с НДС</th>
+        <th scope="col" style="display:none;">+/-</th>
+        <th scope="col" width="80" style="display:none;">Итоговая цена</th>
+        <th scope="col" width="80" style="display:none;">Сумма</th>
+        <th scope="col" width="80" style="display:none;">% НДС</th>
+        <th scope="col" width="80" style="display:none;">Сумма НДС</th>
+        <th scope="col" width="80" style="display:none;">Всего, руб.</th>
+         <th scope="col" width="100">Заявка</th>
+    </tr>
+    </thead>
+   <tbody>
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity>0}%
+   %{include file="ships/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+   </tbody>
+   </table>
+   
+   <br />
+<br />
+<br />
+<br />
+<br />
+<br />
+   
+   
+   
+ 	<strong>Доступные позиции в счете:</strong>   
+    
+    <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col"  width="80">Всего по распоряжению</th>
+        
+        <th scope="col" width="80">Доступное кол-во</th>
+        <th scope="col" width="80" style="display:none;">Цена с НДС</th>
+        <th scope="col" style="display:none;">+/-</th>
+        <th scope="col" width="80" style="display:none;">Итоговая цена</th>
+        <th scope="col" width="80" style="display:none;">Сумма</th>
+        <th scope="col" width="80" style="display:none;">% НДС</th>
+        <th scope="col" width="80" style="display:none;">Сумма НДС</th>
+        <th scope="col" width="80" style="display:none;">Всего, руб.</th>
+         <th scope="col" width="100">Заявка</th>
+        
+    </tr>
+    </thead>
+   <tbody>
+
+    
+    %{section name=pospossec loop=$pospos}%
+    %{if $pospos[pospossec].quantity==0}%
+   
+     %{include file="ships/positions_edit_row.html"}%
+    
+    %{/if}%
+    %{/section}%
+    </tbody>
+    </table>
+    

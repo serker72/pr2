@@ -1,0 +1,314 @@
+<h1>Товары в пути</h1>
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Период</strong><br />
+с:<br />
+<strong>%{$pdate_shipping_plan1}%</strong>
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<br />
+	по:<br />
+    <strong>%{$pdate_shipping_plan2}%</strong>
+</div>
+
+
+<br clear="all" />
+<p />
+
+%{if $id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Код позиции:</strong><br />
+%{$id2}%
+</div>
+%{/if}%
+
+
+%{if $name2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Наименование:</strong><br />
+%{$name2}%
+</div>
+%{/if}%
+
+%{if $group_id2!="" or $group_id!="" or $group_id3!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Товарная группа/ подгруппа 1 ур./ подгруппа 2 ур. :</strong><br />
+
+ %{section name=groupsec loop=$group}%
+    	 %{if $group[groupsec].is_current}%%{$group[groupsec].name}%%{/if}%
+    %{/section}%
+ %{section name=two_groupsec loop=$two_group}%
+    	%{if $two_group[two_groupsec].is_current}% - %{$two_group[two_groupsec].name}%%{/if}%
+    %{/section}%
+    
+   %{section name=three_groupsec loop=$three_group}%
+    	%{if $three_group[three_groupsec].is_current}% - %{$three_group[three_groupsec].name}%%{/if}%
+    %{/section}%
+
+</div>
+%{/if}%
+
+%{if $gost_tu2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ГОСТ/ТУ:</strong><br />
+%{$gost_tu2}%
+</div>
+%{/if}%
+
+%{if $dimension_id2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>ед.изм.:</strong><br />
+%{section name=dimsec loop=$dim}%
+    %{if $dim[dimsec].is_current}%%{$dim[dimsec].name}%%{/if}%
+%{/section}%
+</div>
+%{/if}%
+
+%{if $length2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Длина, мм :</strong><br />
+%{$length2}%
+</div>
+%{/if}%
+
+%{if $width2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Ширина, мм :</strong><br />
+%{$width2}%
+</div>
+%{/if}%
+
+%{if $height2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Высота/ толщина, мм :</strong><br />
+%{$height2}%
+</div>
+%{/if}%
+
+%{if $diametr2!=""}%
+<div style="float:left; margin-right:10px;">
+<strong>Диаметр, мм: :</strong><br />
+%{$diametr2}%
+</div>
+%{/if}%
+
+
+<br clear="all" />
+  
+    
+%{if $sortmode==0 or $sortmode==1}%
+<em>сортировка по дате</em>
+%{elseif $sortmode==6 or $sortmode==7}%
+<em>сортировка по менеджеру</em>
+%{elseif $sortmode==8 or $sortmode==9}%
+<em>сортировка по статусу</em>
+%{elseif $sortmode==10 or $sortmode==11}%
+<em>сортировка по контрагенту</em>
+
+
+%{/if}%    
+
+
+
+
+
+<style type="text/css">
+	.blacktable th.small, td.small{
+		font-size:10px !important;
+		/*color:#666;	*/
+	}
+</style>
+
+
+
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  modal: true,
+	  width: 450,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+
+
+
+
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+ <thead>
+  <tr align="center" valign="top">
+    
+    
+    <th scope="col" width="20" rowspan="3">
+    № 
+    
+    </th>
+    
+    
+      <th scope="col" width="40" rowspan="3">
+    Плановая дата поставки
+  
+    </th>
+    
+    
+ 
+  
+   
+   
+      <th scope="col" width="60" rowspan="3">Статус
+    
+    </th>
+    
+    
+   <th scope="col" width="*" colspan="7">Позиции в пути 
+   
+    </th>
+    
+     <th scope="col" width="60" rowspan="3" >Контрагент 
+   
+    </th>
+    
+    <th scope="col" width="80" rowspan="3" >Создал 
+   
+    </th>
+    
+    
+    
+    
+    
+    
+   
+ 
+  </tr>
+  
+  <tr align="center" valign="top">
+  <th scope="col" width="20" class="small" rowspan="2">
+    № п/п
+    </th>
+    <th scope="col" width="*"  class="small" rowspan="2">Наименование</th>
+    <th scope="col" width="20" class="small" style="min-width:20px; width:20px; max-width:30px;" rowspan="2">
+     ед. изм.
+    </th>
+    
+     <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;" colspan="4">
+    по показанному распоряжению на приемку:
+     </tr>
+  
+  <tr align="center" valign="top">
+    
+    
+    
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+     Во вх. счете
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+    В расп. на приемку
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+    Получе- но
+    </th>
+    <th scope="col" width="30" style="min-width:30px; width:30px; max-width:40px;  font-weight:bold;">
+    В пути
+    </th>
+   
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+    %{section name=possec loop=$items[rowsec].positions}%%{/section}%
+   <tr align="left" valign="top">
+    
+    <td width="20" rowspan="%{$smarty.section.possec.total}%"><a href="ed_ship.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].id}%</a> </td>
+    
+     <td width="40"  rowspan="%{$smarty.section.possec.total}%">%{$items[rowsec].pdate_shipping_plan}%&nbsp;</td>
+    
+    
+  
+    
+    
+   
+    
+    
+    <td width="60" rowspan="%{$smarty.section.possec.total}%">
+    
+    
+    
+    %{if $items[rowsec].status_id==3}%
+    аннулировано
+ 
+    %{elseif $items[rowsec].status_id==1}%
+    не утверждено
+    
+    %{elseif $items[rowsec].status_id==2}%
+    утверждено
+    %{elseif $items[rowsec].status_id==7}%
+    не выполнено
+    %{elseif $items[rowsec].status_id==8}%
+    выполнено
+    %{/if}%
+    
+  
+    
+    
+    </td>
+   
+   
+ 
+ 	%{section name=possec loop=$items[rowsec].positions}%
+    %{if $smarty.section.possec.index==0}%
+	%{include file="an_onway/an_row.html"}%
+   %{/if}%
+	%{/section}%
+ 
+ 
+ 
+  <td width="50" rowspan="%{$smarty.section.possec.total}%" >
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].supplier_name}%, %{$items[rowsec].supplier_opf}%</a>
+    </td>
+   
+     <td width="80" rowspan="%{$smarty.section.possec.total}%" >
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    </td>
+    
+   
+  
+    
+     
+   
+     
+   </tr>
+   
+    %{section name=possec loop=$items[rowsec].positions}%
+	 %{if $smarty.section.possec.index>0}%   
+    <tr align="left" valign="top" id="pos_block_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%" class="small">
+	%{include file="an_onway/an_row.html"}%
+    </tr>
+    %{/if}%
+	%{/section}%
+   %{/section}%
+  </tbody>
+</table>

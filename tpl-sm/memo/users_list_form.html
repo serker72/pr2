@@ -1,0 +1,170 @@
+    <table width="600" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	<th scope="col" width="10">№</th>
+        
+        <th scope="col" width="60">Логин</th>
+        
+        <th scope="col" width="200">ФИО</th>
+        <th scope="col" width="200">Должность</th>
+        <th scope="col" width="50">Карта</th>
+        
+       
+    </tr>
+   
+    
+    <tbody id="users_in_card"> 
+    %{section name=possec loop=$pos}%
+    <tr align="left" valign="top" id="users_in_card_row_%{$pos[possec].id}%" >
+    	<td width="10" id="row_number_%{$pos[possec].id}%" rowspan="2">
+        %{$smarty.section.possec.index+1}%.
+        </td>
+        <td width="60">
+        
+        %{$pos[possec].login}%
+        
+       
+        </td>
+        
+       
+        
+        <td width="200" >%{$pos[possec].name_s}%</td>
+        <td width="200">%{$pos[possec].position_name}%</td>
+       
+        <td width="50">
+       
+      
+        <a href="info.html?name=%{$pos[possec].login}%" target="_blank">Карта</a>
+       
+        </td>
+        
+       
+
+    </tr>
+    <tr align="left" valign="top" id="users_confirm_row_%{$pos[possec].id}%" >
+    	 <td width="260" colspan="2">
+        <input type="checkbox" id="is_confirmed_%{$pos[possec].id}%" name="is_confirmed_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" %{if !$pos[possec].can_confirm}% disabled="disabled"%{/if}% %{if $pos[possec].is_confirmed==1}% checked="checked"%{/if}% /><label for="is_confirmed_%{$pos[possec].id}%">Утверждаю</label> 
+         
+         <input type="hidden" id="was_is_confirmed_%{$pos[possec].id}%" name="was_is_confirmed_%{$pos[possec].id}%" value="%{$pos[possec].is_confirmed}%" %{if !$pos[possec].can_confirm}% disabled="disabled"%{/if}% />
+         
+         
+        <small><span id="confirm_confirmer_%{$pos[possec].id}%">%{$pos[possec].confirm_confirmer}%</span></small>
+        </td>
+        <td width="250" colspan="2">
+        <input type="checkbox" id="is_not_to_next_%{$pos[possec].id}%" name="is_not_to_next_%{$pos[possec].id}%" value="%{$pos[possec].is_not_to_next}%" %{if !$pos[possec].can_not_to_next}% disabled="disabled"%{/if}% %{if $pos[possec].is_not_to_next==1}% checked="checked"%{/if}% /><label for="is_not_to_next_%{$pos[possec].id}%">Не отправлять дальше</label> 
+        
+         <input type="hidden" id="was_not_to_next_%{$pos[possec].id}%" name="was_not_to_next_%{$pos[possec].id}%" value="%{$pos[possec].is_not_to_next}%"  %{if !$pos[possec].can_not_to_next}% disabled="disabled"%{/if}% />
+        
+        <small><span id="not_to_next_confirmer_%{$pos[possec].id}%">%{$pos[possec].not_to_next_confirmer}%</span></small>
+        </td>
+    </tr>
+    %{/section}%
+    
+    </tbody>
+    </table>
+    
+    <script type="text/javascript">
+	$(function(){
+		function confirm_togglechange(id){
+			var id=id;
+			if($("#is_confirmed_"+id).prop("checked")){
+				
+				
+				$.ajax({
+					async: true,
+					url: "/js/memo.php",
+					type: "POST",
+					data:{
+						"action":"redraw_is_confirmed_confirmer" 
+					},
+					beforeSend: function(){
+					   $("#confirm_confirmer_"+id).html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+					},
+					success: function(data){
+					  $("#confirm_confirmer_"+id).html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления вопроса.");	
+					}	 
+				});		
+			}else{
+				$("#confirm_confirmer_"+id).empty();	
+				
+				
+				//снять не отпр-ть дальше, сделать его недоступным
+				$("#is_not_to_next_"+id).prop("checked", false);
+				$("#is_not_to_next_"+id).prop("disabled", true);
+				$("#is_not_to_next_"+id).trigger("change");
+				
+				
+				//снять последующее утверждение, сделать его недоступным
+				//найти послед. утв-ие
+				a=$("#users_confirm_row_"+id).next();
+				row_id= $(a).attr("id");
+				//alert(id);
+				if(row_id!=undefined){
+					new_id=row_id.replace(/^users_in_card_row_/,'');
+					
+					//alert(new_id);
+					if(!$("#is_not_to_next_"+new_id).prop("disabled")) {
+						$("#is_not_to_next_"+new_id).prop("checked", false);
+						$("#is_not_to_next_"+new_id).prop("disabled", true);
+						$("#is_not_to_next_"+new_id).trigger("change");	
+					}
+					
+					if(!$("#is_confirmed_"+new_id).prop("disabled")) {
+						$("#is_confirmed_"+new_id).prop("checked", false);
+						$("#is_confirmed_"+new_id).prop("disabled", true);
+						$("#is_confirmed_"+new_id).trigger("change");	
+					}
+				}
+				
+			
+			}
+		}
+		
+		
+		function not_to_next_togglechange(id){
+			if($("#is_not_to_next_"+id).prop("checked")){
+				
+				var id=id;
+				$.ajax({
+					async: true,
+					url: "/js/memo.php",
+					type: "POST",
+					data:{
+						"action":"redraw_is_confirmed_confirmer" 
+					},
+					beforeSend: function(){
+					   $("#not_to_next_confirmer_"+id).html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+					},
+					success: function(data){
+					  $("#not_to_next_confirmer_"+id).html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка добавления вопроса.");	
+					}	 
+				});		
+			}else{
+				$("#not_to_next_confirmer_"+id).empty();
+				//снять последующее утверждение, сделать его недоступным	???
+			}
+		}
+		
+		
+		
+	 %{section name=possec loop=$pos}%	
+		$("#is_confirmed_%{$pos[possec].id}%").bind("change", function(){
+			confirm_togglechange("%{$pos[possec].id}%");
+			
+		});
+		
+		$("#is_not_to_next_%{$pos[possec].id}%").bind("change", function(){
+			not_to_next_togglechange("%{$pos[possec].id}%");
+			
+		});
+		
+	 %{/section}%	
+	});
+	</script> 

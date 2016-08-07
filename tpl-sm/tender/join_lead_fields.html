@@ -1,0 +1,53 @@
+<strong>Выберите значения полей для занесения в лид после прикрепления его к тендеру:</strong>
+
+<br>
+<br>
+
+
+<table class="blacktable" width="100%" id="join_fields_data">
+<thead>
+<tr>
+	<th width="200">
+    Поле
+    </th>
+    <th width="40%">
+    Тендер %{$tender.code}%
+  
+    </th>
+    <th width="40%">
+    Лид %{$lead.code}%
+    
+    </th>
+</tr>    
+</thead>
+<tbody>
+<tr>
+	<td width="200">
+    	 Тип оборудования 
+    </td>
+    <td width="40%">
+    
+    	<input type="radio" name="join_eq_type_id" id="join_eq_type_id_tender" value="tender">
+        <label for="join_eq_type_id_tender">%{$tender.eq_name}%</label>
+        
+    </td>
+    <td width="40%">
+    	<input type="radio" name="join_eq_type_id" id="join_eq_type_id_lead" value="lead" %{if $tender.eq_name==$lead.eq_name}% checked%{/if}%>
+        <label for="join_eq_type_id_lead">%{$lead.eq_name}%</label>
+    </td>
+</tr>
+<tr>
+	<td width="200">
+    	 Максимальная цена контракта 
+    </td>
+    <td width="40%">
+	    <input type="radio" name="join_max_price" id="join_max_price_tender" value="tender">
+        <label for="join_max_price_tender">%{$tender.max_price_f}% %{$tender.curr_name}% </label>
+    </td>
+    <td width="40%">
+    <input type="radio" name="join_max_price" id="join_max_price_lead" value="lead" %{if $tender.max_price_f==$lead.max_price_f and $tender.curr_name==$lead.curr_name}% checked%{/if}%>
+        <label for="join_max_price_lead">%{$lead.max_price_f}% %{$lead.curr_name}% </label>
+    </td>
+</tr>
+</tbody>
+</table>

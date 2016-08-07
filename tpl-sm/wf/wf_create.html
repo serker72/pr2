@@ -1,0 +1,140 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker();
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	//$("#pdate").datepicker();
+	
+	//touchScroll('positions_scroll_block');	
+});
+</script>
+<div style="float:left; margin-right:20px;"><h1>Создание распоряжения на списание</h1></div>
+
+
+%{include file="every_help_dialog.html" filename="wf_create.htm" prefix="" description="создание распоряжения на списание"  style="float:right;  margin-right:5px;"}%
+
+
+
+
+<br clear="all" />
+<p />
+
+<form action="ed_wf.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+<div style="float:left; margin-right:20px;  padding-top:3px;">
+<label for="pdate">Дата создания:</label>
+<strong>%{$now}%</strong>
+<input type="hidden"  value="%{$now}%" name="pdate" id="pdate" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="given_no">Заданный номер:</label>
+<input type="text" size="10" maxlength="512" value="" name="given_no" id="given_no" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждено 
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Позиции распоряжения:</strong> 
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:right; margin-right:5px; min-width:120px; text-align:right;">
+<a href="#" target="_blank" onclick="alert('В данном режиме печать распоряжения на списание недоступна. Пожалуйста, нажмите кнопку Создать распоряжение и перейти к утверждению для получения возможности печати распоряжения на списание.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения на списание..." title="печать распоряжения на списание..." border="0" align="absmiddle" /></a>
+</div>
+
+<br clear="all" />
+<p />
+
+
+
+
+%{include file="wf/position_actions.html"  change_low_mode=0 is_confirmed=0}%
+ 
+<p />
+
+
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать распоряжение" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать распоряжение и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='writeoff.php';
+}else location.href='writeoff.php';" />
+
+
+</form>
+<script type="text/javascript">
+ $(function(){
+	$("#crea_form").bind("submit",function(){
+		can_go=true;
+		
+	
+		
+		if(can_go&&( $("#positions table tbody tr").length==0)){
+			can_go=can_go&&false;
+			alert("Выберите позиции для создания распоряжения на списание!");
+		}
+		
+		
+		return can_go;
+	});
+  });
+ 
+</script>

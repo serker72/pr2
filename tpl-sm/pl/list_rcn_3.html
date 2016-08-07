@@ -1,0 +1,1532 @@
+
+
+%{if $can_add}%
+<div style="float:left; margin-right:10px;">
+ 
+<input type="button" value="Добавить позицию..." id="pl_add_button" />
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#pl_add_button").bind("click", function(){
+		
+		can_go=true;
+			
+		if(can_go) if(($("#price_kind_id%{$prefix}%").val()==0)||($("#price_kind_id%{$prefix}%").val()==undefined)){
+				alert("Выберите вид цен!");
+				$("#price_kind_id%{$prefix}%").focus(); 
+				can_go=can_go&&false;
+			}		
+			
+		if(can_go) if(($("#group_id%{$prefix}%").val()==0)||($("#group_id%{$prefix}%").val()==undefined)){
+			alert("Выберите раздел прайс-листа!");
+			$("#group_id%{$prefix}%").focus(); 
+			can_go=can_go&&false;
+		}
+		
+		
+		if(can_go) if(($("#producer_id%{$prefix}%").val()==0)||($("#producer_id%{$prefix}%").val()==undefined)){
+			alert("Выберите производителя!");
+			$("#producer_id%{$prefix}%").focus();
+			can_go=can_go&&false;
+		}
+		
+		if(can_go) if(($("#group_id2%{$prefix}%").val()==0)||($("#group_id2%{$prefix}%").val()==undefined)){
+			alert("Выберите категорию!");
+			$("#group_id2%{$prefix}%").focus(); 
+			can_go=can_go&&false;
+			 
+		}
+		
+		if(can_go) if(($("#price_kind_id%{$prefix}%").val()>0)&&($("#price_kind_id%{$prefix}%").val()!=undefined)&&($("#price_kind_id%{$prefix}%").val()!=3)&&($("#price_kind_id%{$prefix}%").val()!=5)){
+			alert("Внимание! Новая позиция добавляется только в прайс-лист поставщика!\nВ остальные прайс-листы позиция добавляется при этом автоматически.");
+			can_go=can_go&&false;
+				
+		}
+		
+		if(can_go) location.href='ed_pl_position.php?action=0&group_id='+$("#group_id%{$prefix}%").val()+'&group_id2='+$("#group_id2%{$prefix}%").val()+'&group_id3='+$("#group_id3%{$prefix}%").val()+'&producer_id='+$("#producer_id%{$prefix}%").val()+'&price_kind_id%{$prefix}%='+$('#price_kind_id%{$prefix}%').val();
+		
+		return false;
+	});
+});
+</script>
+%{/if}%
+
+
+%{$pages}%
+
+<br clear="all" />
+ 
+ 
+<table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top" class="equip">
+	<th scope="col" width="24">
+   №
+   
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+    
+    <th scope="col" width="40">
+    Код позиции
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+  
+    <th scope="col" width="*" style="min-width:80px;">
+    Наименование
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+   
+    
+     <th scope="col" width="50">
+   Произво-<br />
+ дитель
+   
+    </th>
+    
+   <th scope="col" width="80">
+   Раздел/ категория
+   
+    </th>
+    
+      <th width="30" scope="col">
+    ед. изм.
+   
+    </th>
+   
+    <th width="50" class="pl_1" scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+    Базовая цена поставщика, руб.
+   
+    </th>
+    
+    
+    
+     <th width="30" class="pl_1" scope="col" style="%{if !$can_view_base_discount}% display:none;%{/if}%">
+   Баз. скидка пост- ка, % 
+   
+    </th>
+    
+     <th width="30" class="pl_1" scope="col" style="%{if !$can_view_base_discount}% display:none;%{/if}%">
+   Доп. скидка пост- ка, % 
+   
+    </th>
+    
+    
+     <th width="50" class="pl_1" scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+    Цена ExW пост-ка, руб.
+   
+    </th>
+    
+    
+    <th width="40" class="pl_2" scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+  Доставка до Москвы, руб.
+   
+    </th>
+    
+    
+    <th width="40" class="pl_2"  scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+  Тамож. НДС, 18%
+   
+    </th>
+    
+    
+    
+    <th width="40" class="pl_2"  scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+  Сбор,  руб.
+   
+    </th>
+    <th width="40"  class="pl_2" scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+  СВХ, брокер,  руб.
+   
+    </th>
+    
+     <th width="30" class="pl_2"  scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+  Страховка, 0,2%
+   
+    </th>
+    
+     <th width="30" class="pl_2"  scope="col" style="%{if !$can_view_base_price}% display:none;%{/if}%">
+ Комиссия за перевод д/с, 1%
+   
+    </th>
+
+
+  
+    <th width="50" class="pl_2"  scope="col">
+    Итоговая цена DDPM ,  руб.
+   
+    </th>
+    
+    
+     <th width="30" class="pl_3"  scope="col" style="%{if !$can_view_rent_koef}% display:none;%{/if}%">
+  Рент- ть ExW, % 
+   
+    </th>
+    
+     <th width="30"  class="pl_3"  scope="col" style="%{if !$can_view_rent_koef}% display:none;%{/if}%">
+  Рент- ть DDPM, % 
+   
+    </th>
+    
+    
+    
+  
+  
+    
+    <th scope="col" width="40">
+    Файлы
+    </th>
+   
+  
+   
+    <th width="24" scope="col">
+      
+     
+      %{if $can_edit}%
+      <a href="#" id="saveSelected%{$prefix}%" class="reestr_save reestr_right_button24" data-comment="Сохранить изменения в выбранных позициях"></a>
+      <script type="text/javascript">
+	  $(function(){
+		$("#saveSelected%{$prefix}%").bind("click", function(){
+			
+			if($("input[id^=do_update_]:checked").length==0){
+				alert("Выделите позиции для редактирования!");	
+				return false;
+			}
+			
+			if(window.confirm("Вы действительно хотите внести изменения в выбранные позиции прайс-листа?")){
+			
+				//changing ajax
+				var checked_ids=new Array();
+				var strs=new Array();
+				var price=new Array();
+				var currency_id=new Array();
+				
+				
+				/*var discount_id=new Array();
+				var discount_value=new Array();
+				var discount_rub_or_percent=new Array();
+				
+				var dl_value=new Array();
+				var dl_rub_or_percent=new Array();
+				*/
+				var discount_bases=new Array();
+				var discount_adds=new Array();
+				var profit_exws=new Array();
+				var profit_ddpms=new Array();
+				
+				var delivery_ddpms=new Array();
+				
+				var duty_ddpms=new Array();
+				var svh_brokers=new Array();
+				
+			
+				var res=true;
+				$("input[id^=do_update_]:checked").each(function(index, el) {
+                 	
+					
+					//Для опций не проверять!!!
+					if($("#parent_id"+$(el).val()+"%{$prefix}%").val()==0){
+						if(res) res=res&&IsCorrectDiscount_base%{$prefix}%($(el).val());	
+					  if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%($(el).val());
+					  if(res) res=res&&IsCorrectProfit_exw%{$prefix}%($(el).val());
+					  if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%($(el).val());
+					  if(res) res=res&&IsCorrectDeliveryDDPM%{$prefix}%($(el).val());
+					  
+					  if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%($(el).val());
+					  if(res) res=res&&IsCorrectSvh%{$prefix}%($(el).val());
+					}
+				   	if(res) res=res&&RecalcPrice%{$prefix}%($(el).val());
+				 
+				});
+				if(!res){
+					return false;	
+					
+				}
+				
+				
+				$("input[id^=do_update_]:checked").each(function(index, el) {
+                    
+					
+					checked_ids.push($(el).val());
+					id=$(el).val();
+					
+					price.push($("#price"+id+"%{$prefix}%").val());
+					
+					currency_id.push($("#currency_id_"+id+"%{$prefix}%").val());
+					
+					discount_bases.push($("#discount_base_"+id+"%{$prefix}%").val());
+					discount_adds.push($("#discount_add_"+id+"%{$prefix}%").val());
+					profit_exws.push($("#profit_exw_"+id+"%{$prefix}%").val());
+					profit_ddpms.push($("#profit_ddpm_"+id+"%{$prefix}%").val());
+					delivery_ddpms.push($("#delivery_ddpm_"+id+"%{$prefix}%").val());
+					duty_ddpms.push($("#duty_ddpm_"+id+"%{$prefix}%").val());
+					svh_brokers.push($("#svh_broker_"+id+"%{$prefix}%").val());
+					
+						
+                });
+				
+				//alert(currency_id); return false;
+				
+				
+				
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"edit_base_items",
+						"checked_ids[]":checked_ids,
+						"price[]":price,
+						"currency_id[]":currency_id,
+						
+						"discount_bases[]":discount_bases,
+						"discount_adds[]":discount_adds,
+						"profit_exws[]":profit_exws,
+						"profit_ddpms[]":profit_ddpms,
+						"delivery_ddpms[]":delivery_ddpms,
+						"duty_ddpms[]":duty_ddpms,
+						"svh_brokers[]":svh_brokers,
+						
+						
+						"price_kind_id":$('#price_kind_id%{$prefix}%').val()
+						
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //alert(data);
+					  location.reload();
+					  //$("#group_id3%{$prefix}%").html('<option value=""></option>'+data);
+					  
+					},
+					error: function(xhr, status,m){
+						//alert("Ошибка сохранения цен."+status+m);	
+					}	 
+				});
+			}
+			return false;
+		});
+	  });
+	  </script>
+     %{/if}%
+     </th>
+    
+   
+    
+    
+     <th scope="col" width="24">
+     
+    
+     
+     
+     </th>
+    <th scope="col" width="24">&nbsp;</th>
+   
+   
+</tr>
+<tr align="center" valign="top" class="equip filter">
+	<td width="24">
+ <input type="text" size="4" maxlength="255" value="%{$pl_id}%" name="pl_id%{$prefix}%" id="id%{$prefix}%" style="width:24px;" />
+    
+    </td>
+    
+    <td width="40">
+	 <input type="text" size="4" maxlength="255" value="%{$code}%" name="code%{$prefix}%" id="code%{$prefix}%" style="width:40px;" />
+    
+    </td>
+    
+   
+	<td width="*" style="min-width:80px;" >
+   <input type="text" size="10" maxlength="255" value="%{$name}%" name="name%{$prefix}%" id="name%{$prefix}%"  />
+    
+    </td>
+    
+    
+    
+     <td width="50">
+     
+       <input type="text" size="5" maxlength="255" value="%{$producer_name}%" name="producer_name%{$prefix}%" id="producer_name%{$prefix}%" style="width:50px;" />
+    </td>
+    
+    
+    <td width="80">
+    </td>
+    
+     <td  width="30">
+    <select name="dimension_id%{$prefix}%" id="dimension_id%{$prefix}%" style="width:30px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select>
+    
+    </td>
+   
+    
+     <td width="50"  class="pl_1"  style="%{if !$can_view_base_price}% display:none;%{/if}%">
+   
+   
+    </td>
+    
+    
+   <td width="30" class="pl_1"  style="%{if !$can_view_base_discount}% display:none;%{/if}%"></td>
+   <td width="30" class="pl_1"  style="%{if !$can_view_base_discount}% display:none;%{/if}%"></td>
+   <td width="40" class="pl_1"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+   <td width="40" class="pl_2"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+     <td width="40" class="pl_2"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+     
+	 <td width="40" class="pl_2"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+      <td width="40" class="pl_2" style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+       <td width="30" class="pl_2"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>    
+     <td width="30" class="pl_2"  style="%{if !$can_view_base_price}% display:none;%{/if}%"></td>
+    
+    <td width="40" class="pl_2" ></td>
+     <td width="30" class="pl_3"  style="%{if !$can_view_rent_koef}% display:none;%{/if}%"></td>
+   <td width="30" class="pl_3"  style="%{if !$can_view_rent_koef}% display:none;%{/if}%"></td>
+    
+     
+    <td width="24">&nbsp;
+    
+   
+    </td>
+    
+     <td width="24">
+    <input type="checkbox" id="selectAll%{$prefix}%" %{if !$can_edit and !$can_create_kp}% disabled="disabled"%{/if}%  />
+   <script type="text/javascript">
+   $(function(){
+	  $("#selectAll%{$prefix}%").bind("change", function(){
+		 $("input[type=checkbox][id^=do_update_]").prop('checked', $(this).prop("checked"));
+	  });
+   });
+   </script>
+    </td>
+   
+   
+    <td width="24">
+    <!--<input name="doFilter%{$prefix}%" type="image" src="/img/icons/old-zoom-original.png" alt="Найти" />-->
+    </td>
+    
+     <td width="24"></td>
+  
+</tr>
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top" class="equip">
+	
+   
+   <td width="24"><a name="#user_%{$option.pl_id}%%{$prefix}%"></a>%{$items[rowsec].pl_id}%
+    <input type="hidden"  value="%{$items[rowsec].parent_id}%" id="parent_id%{$items[rowsec].pl_id}%%{$prefix}%" style="width:30px;" />
+    
+     <input type="hidden"  value="%{$items[rowsec].is_install}%" id="is_install%{$items[rowsec].pl_id}%%{$prefix}%"   />
+     
+   </td>
+   
+    <td width="40"> %{$items[rowsec].code}%</td>
+   
+   
+    <td width="*"  style="min-width:80px;">
+    
+    %{$items[rowsec].name}%
+    
+    
+    </td>
+   
+    <td width="50">%{$items[rowsec].producer_name}%</td>
+   
+    <td width="80">%{$items[rowsec].group_name}%</td>
+    
+    <td width="30">%{$items[rowsec].dim_name}%</td>
+    
+    
+     
+   
+    <td width="50"  class="pl_1" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" size="7" maxlength="255" value="%{$items[rowsec].price}%"  id="price%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_price}% disabled="disabled"%{/if}% style="width:50px;" />
+    
+    
+    <select id="currency_id_%{$items[rowsec].pl_id}%%{$prefix}%" style="width:35px; display:none;" %{if !$can_edit_base_price}% disabled="disabled"%{/if}%>
+    %{foreach from=$currencies item=currency}%
+     <option value="%{$currency.id}%" %{if $items[rowsec].currency_id==$currency.id or ($items[rowsec].currency_id==false and $currency.id==2)}% selected="selected"%{/if}% >%{$currency.signature}%</option>
+    %{/foreach}%
+    </select>
+   
+    <input type="hidden" value="0" id="price_was_changed%{$items[rowsec].pl_id}%%{$prefix}%" />
+  <input type="hidden" value="%{$items[rowsec].currency_id|default:"2"}%" id="old_currency_id_%{$items[rowsec].pl_id}%%{$prefix}%" />
+  
+    </td>
+  
+   
+    
+    
+    <td width="30" class="pl_1"  style="white-space:nowrap; %{if !$can_view_base_discount}% display:none;%{/if}%" align="left">
+     <input type="text" size="4" maxlength="255" value="%{$items[rowsec].discount_base}%" id="discount_base_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_discount}% disabled="disabled"%{/if}% style=" width:30px;" />
+    </td>
+    
+     <td width="30" class="pl_1"  style="white-space:nowrap; %{if !$can_view_base_discount}% display:none;%{/if}%" align="left">
+    <input type="text" size="4" maxlength="255" value="%{$items[rowsec].discount_add}%" id="discount_add_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_discount}% disabled="disabled"%{/if}%  style=" width:30px;" />
+    </td>
+    
+    
+  	<td width="40"  class="pl_1 formula" title="Вычисляемое значение|=Базовая цена поставщика - Баз. скидка пост-ка, % - Доп. скидка пост-ка, %"  style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+     <span id="price_f%{$items[rowsec].pl_id}%%{$prefix}%">%{$items[rowsec].price_f}%</span>
+    <span id="signature%{$items[rowsec].pl_id}%%{$prefix}%" style="display:none;">%{$items[rowsec].signature}%</span>
+   
+   
+    </td> 
+    
+    
+    
+   
+    
+    <td width="40" class="pl_2"  style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    <input type="text" size="4" maxlength="255" value="%{$items[rowsec].delivery_ddpm}%" id="delivery_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_price}% disabled="disabled"%{/if}% />
+    </td>
+ 
+   
+   
+   <td width="40"  class="pl_2 formula" title="Вычисляемое значение|=(Цена ExW пост-ка + 0.7*Доставка до Москвы)*0.18" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" disabled="disabled" value="%{$items[rowsec].nds}%" id="nds_%{$items[rowsec].pl_id}%%{$prefix}%" size="7" maxlength="255" />
+    </td> 
+    
+   
+    <td width="40" class="pl_2" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    <input type="text" size="7" maxlength="255" value="%{$items[rowsec].duty_ddpm}%" id="duty_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_price}% disabled="disabled"%{/if}% />
+    </td>
+    
+    
+     <td width="40" class="pl_2" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    <input type="text" size="7" maxlength="255" value="%{$items[rowsec].svh_broker}%" id="svh_broker_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_base_price}% disabled="disabled"%{/if}% />
+    </td>
+    
+    
+    <td width="40" class="pl_2 formula" title="Вычисляемое значение|=(Цена ExW пост-ка +Доставка до Москвы + Тамож. НДС, 18% + Сбор + СВХ, брокер)*0.002" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" disabled="disabled" value="%{$items[rowsec].insur}%" id="insur_%{$items[rowsec].pl_id}%%{$prefix}%" size="7" maxlength="255" style="width:40px;" />
+    </td> 
+    
+    
+     <td width="40" class="pl_2 formula" title="Вычисляемое значение|=(Цена ExW пост-ка +Доставка до Москвы + Тамож. НДС, 18% + Сбор + СВХ, брокер)*0.01" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" disabled="disabled" value="%{$items[rowsec].commission}%" id="commission_%{$items[rowsec].pl_id}%%{$prefix}%" size="7" maxlength="255" style="width:40px;" />
+    </td> 
+    
+    
+   
+    <td width="50" class="pl_2 formula" title="Вычисляемое значение|=Цена ExW пост-ка +Доставка до Москвы + Тамож. НДС, 18% + Сбор + СВХ, брокер + Страховка, 0,2% + Комиссия за перевод д/с, 1%"  style="white-space:nowrap;" >
+   
+   
+ 
+   
+   
+    <input type="text" disabled="disabled" value="%{$items[rowsec].price_ddpm}%" id="price_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%" size="7" maxlength="255" />
+   
+    </td>
+   
+   
+     <td width="30" class="pl_3" style="white-space:nowrap; %{if !$can_view_rent_koef}% display:none;%{/if}%" align="left">
+    <input type="text" size="4" maxlength="255" value="%{$items[rowsec].profit_exw}%" id="profit_exw_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_rent_koef}% disabled="disabled"%{/if}% style="width:30px;" />
+    </td>
+    
+     <td width="30" class="pl_3"  style="white-space:nowrap; %{if !$can_view_rent_koef}% display:none;%{/if}%" align="left">
+    <input type="text" size="4" maxlength="255" value="%{$items[rowsec].profit_ddpm}%" id="profit_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit_rent_koef}% disabled="disabled"%{/if}%  style="width:30px;" />
+    </td>
+   
+  
+  
+     <td width="40">
+    <!--  <a href="pos_files.php?bill_id=%{$items[rowsec].pl_id}%" target="_blank"><img src="/img/files.png" width="47" height="25" alt="Файлы" border="0" /></a>
+      -->
+      <input type="button" value="Файлы" style="width:47px; padding-left:4px;" onClick="window.open('pos_files.php?bill_id=%{$items[rowsec].pl_id}%');" />
+      
+      </td>
+                        
+ 
+     
+        <td width="24">
+     <input type="checkbox" id="do_update_%{$items[rowsec].pl_id}%%{$prefix}%" %{if !$can_edit  and !$can_create_bill}% disabled="disabled"%{/if}% value="%{$items[rowsec].pl_id}%"  onchange="try{ if(!$('#selectAll%{$prefix}%').prop('disabled')){   x=$('input[type=checkbox][id^=do_update]:enabled').length;  y=$('input[type=checkbox][id^=do_update]:enabled:checked').length;  $('#selectAll%{$prefix}%').prop('checked',(x==y));  };  }catch(e){};"  />
+     </td>
+             
+                        
+    <td width="24">
+    %{if $can_edit}%
+   
+    <a href="ed_pl_position.php?action=1&id=%{$items[rowsec].id}%" target="_blank" title="карточка товара в номенклатуре..." class="reestr_edit reestr_right_button24" data-comment="карточка товара в номенклатуре..."></a>
+    %{else}%
+    <a href="#" onClick="return false" title="карточка товара в номенклатуре..." class="reestr_edit reestr_inactive reestr_right_button24" data-comment="карточка товара в номенклатуре..."></a>
+    
+    %{/if}%
+    </td>
+    
+    <td width="24">
+    %{if $can_delete}%
+    
+    %{if $items[rowsec].can_delete}%
+    <a href="#" onclick="if(window.confirm('Вы действительно хотите удалить позицию прайс-листа %{$items[rowsec].name|escape}%?')) location.href='pricelist.php?action=2&id=%{$items[rowsec].pl_id}%'; return false;" class="reestr_delete reestr_right_button24" data-comment="удалить позицию">
+    
+    </a>
+    %{else}%
+    <a href="#" onclick="return false;" class="reestr_delete reestr_inactive reestr_right_button24"  data-comment="удалить позицию">
+    
+    </a>
+    %{/if}%
+    
+   
+    %{/if}%
+    </td>
+</tr>
+<!-- опции -->
+%{foreach from=$items[rowsec].options item=option}%
+<!-- ряды опций -->
+%{if $option.kind=="group"}%
+<!-- группа опций -->
+<tr align="center" valign="top" class="equip_optgr">
+	<td colspan="23"><strong>%{$option.name}%</strong></td>
+</tr>
+%{else}%
+<!-- опция -->
+<tr align="center" valign="top">
+	<td width="24"><a name="#user_%{$option.pl_id}%%{$prefix}%"></a>%{$option.pl_id}%
+    <input type="hidden"  value="%{$option.parent_id}%" id="parent_id%{$option.pl_id}%%{$prefix}%" style="width:30px;" />
+    
+     
+     <input type="hidden"  value="%{$option.is_install}%" id="is_install%{$option.pl_id}%%{$prefix}%"   />
+     
+    </td>
+   
+    
+    <td width="40"> %{$option.code}%</td>
+   
+   
+    <td width="*" colspan="3"  style="min-width:80px;"> 
+    
+   
+    
+    <div align="left" id="txt_for_kp_small_%{$option.pl_id}%%{$prefix}%">
+    
+    %{$option.name|escape:"html"|truncate:80:false}%
+    %{if $option.name|escape:"html"|truncate:80:false!=$option.name|escape:"html"}%
+    <a href="#" onclick="$('#txt_for_kp_full_%{$option.pl_id}%%{$prefix}%').show(); $('#txt_for_kp_small_%{$option.pl_id}%%{$prefix}%').hide(); return false;">...
+    </a>
+    %{/if}%
+    </div> 
+    
+    <div align="left" id="txt_for_kp_full_%{$option.pl_id}%%{$prefix}%" style="display:none;">
+    %{$option.name}% 
+    
+    <a href="#" onclick="$('#txt_for_kp_full_%{$option.pl_id}%%{$prefix}%').hide(); $('#txt_for_kp_small_%{$option.pl_id}%%{$prefix}%').show(); return false;">свернуть
+    </a>
+    </div> 
+    
+    
+        
+    
+    </td>
+   
+   
+     <td width="30">%{$option.dim_name}%</td>
+   
+    
+   
+    <td width="50" class="pl_1"   style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" size="7" maxlength="255" value="%{$option.price}%" id="price%{$option.pl_id}%%{$prefix}%" %{if !$can_edit_base_price}% disabled="disabled"%{/if}% style="width:50px;" />
+   
+   
+  	<select id="currency_id_%{$option.pl_id}%%{$prefix}%" style="width:35px; display:none;" %{if !$can_edit_base_price}% disabled="disabled"%{/if}%>
+    %{foreach from=$currencies item=currency}%
+     <option value="%{$currency.id}%" %{if $option.currency_id==$currency.id or ($option.currency_id==false and $currency.id==2)}% selected="selected"%{/if}% >%{$currency.signature}%</option>
+    %{/foreach}%
+    </select>
+   
+  	
+    <input type="hidden" value="0" id="price_was_changed%{$option.pl_id}%%{$prefix}%" />
+    <input type="hidden" value="%{$option.currency_id|default:"2"}%" id="old_currency_id_%{$option.pl_id}%%{$prefix}%" />
+  
+    
+  
+    </td>
+    
+    
+    
+    
+   <td width="30"  class="pl_1"   style="white-space:nowrap; %{if !$can_view_base_discount}% display:none;%{/if}%" align="left">
+     
+    </td>
+    
+     <td width="30" class="pl_1"   style="white-space:nowrap; %{if !$can_view_base_discount}% display:none;%{/if}%" align="left">
+    
+    </td>
+    
+   
+    
+     <td width="40" class="pl_1 formula" title="Вычисляемое значение|=Базовая цена поставщика - Баз. скидка пост-ка, % (станка) - Доп. скидка пост-ка, % (станка)"   style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+       <span id="price_f%{$option.pl_id}%%{$prefix}%">%{$option.price_f}%</span>
+   
+   <span id="signature%{$option.pl_id}%%{$prefix}%" style="display:none;">%{$option.signature}%</span>
+     
+     
+  
+    </td>
+    
+     <td width="40" class="pl_2"   style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    
+    </td>
+     <td width="40" class="pl_2 formula" title="Вычисляемое значение|=Цена ExW пост-ка*0.18" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+     <input type="text" disabled="disabled" value="%{$option.nds}%" id="nds_%{$option.pl_id}%%{$prefix}%" size="7" maxlength="255" />
+    </td>
+     <td width="40" class="pl_2" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    
+    </td>
+     <td width="40" class="pl_2" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%" align="left">
+    
+    </td>
+    
+    
+      <td width="40" class="pl_2 formula" title="Вычисляемое значение|=(Цена ExW пост-ка + Тамож. НДС, 18% )*0.002" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" disabled="disabled" value="%{$option.insur}%" id="insur_%{$option.pl_id}%%{$prefix}%" size="7" maxlength="255" style="width:40px;" />
+    </td> 
+    
+    
+     <td width="40" class="pl_2 formula" title="Вычисляемое значение|=(Цена ExW пост-ка + Тамож. НДС, 18%)*0.01" style="white-space:nowrap; %{if !$can_view_base_price}% display:none;%{/if}%">
+    <input type="text" disabled="disabled" value="%{$option.commission}%" id="commission_%{$option.pl_id}%%{$prefix}%" size="7" maxlength="255" style="width:40px;" />
+    </td> 
+    
+    
+    
+   
+   
+    <td width="50" class="pl_2 formula" title="Вычисляемое значение|=Цена ExW пост-ка + Тамож. НДС, 18% + Страховка, 0,2% + Комиссия за перевод д/с, 1%"  style="white-space:nowrap;" >
+   
+     <input type="text" disabled="disabled" value="%{$option.price_ddpm}%" id="price_ddpm_%{$option.pl_id}%%{$prefix}%" size="7" maxlength="255" />
+ 
+    </td>
+   
+     <td width="30" class="pl_3" style="white-space:nowrap; %{if !$can_view_rent_koef}% display:none;%{/if}%" align="left">
+  
+    </td>
+    
+     <td width="30" class="pl_3" style="white-space:nowrap; %{if !$can_view_rent_koef}% display:none;%{/if}%" align="left">
+    
+    </td>
+    
+  
+  
+     <td width="40">
+     <!-- <a href="pos_files.php?bill_id=%{$option.pl_id}%" target="_blank"><img src="/img/files.png" width="47" height="25" alt="Файлы" border="0" /></a>-->
+      
+      <input type="button" value="Файлы" style="width:47px; padding-left:4px;" onClick="window.open('pos_files.php?bill_id=%{$option.pl_id}%');" />
+      </td>
+                        
+     <td width="24">
+     <input type="checkbox" id="do_update_%{$option.pl_id}%%{$prefix}%" %{if !$can_edit  and !$can_create_kp}% disabled="disabled"%{/if}% value="%{$option.pl_id}%"  onchange="try{ if(!$('#selectAll%{$prefix}%').prop('disabled')){   x=$('input[type=checkbox][id^=do_update]:enabled').length;  y=$('input[type=checkbox][id^=do_update]:enabled:checked').length;  $('#selectAll%{$prefix}%').prop('checked',(x==y));  };  }catch(e){};"  />
+     </td>
+                        
+                        
+                        
+    <td width="24">
+    %{if $can_edit}%
+   
+    <a href="ed_pl_position.php?action=1&id=%{$option.id}%" target="_blank" class="reestr_edit reestr_right_button24" data-comment="карточка товара в номенклатуре..."> </a>
+    
+    %{/if}%
+    </td>
+    
+    <td width="24">
+    %{if $can_delete}%
+    
+    %{if $option.can_delete}%
+    <a href="#" onclick="if(window.confirm('Вы действительно хотите удалить позицию прайс-листа %{$option.name|escape}%?')) location.href='pricelist.php?action=2&id=%{$option.pl_id}%'; return false;" class="reestr_delete reestr_right_button24" data-comment="Удаление позиции"></a>
+    %{/if}%
+    
+    
+    
+   
+    %{/if}%
+    </td>
+</tr>
+%{/if}%
+<!-- нужен обработчик для опций -->
+%{/foreach}%
+%{/section}%
+</tbody>
+</table>
+
+
+%{$pages}%
+
+<script type="text/javascript">
+$(function(){
+	$(".formula").cluetip({
+		splitTitle: "|"
+	  });
+});
+
+
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+%{if $can_edit or $can_create_kp}%
+
+
+/*вводимая скидка:
+а) не должна превышать максимальную
+б) обнуляет все другие скидки
+в) пересчитывает итоговую цену
+*/
+
+//перерасчет цены (без проверки корр-ти)
+function RecalcPrice%{$prefix}%(id, recursive){
+	
+	var recursive=recursive||1; //по умолчанию  вызывать себя снова
+	
+	
+	res=true;
+	
+	 
+	
+	var sum_export=0;
+	
+	sum=$("#price"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length>0)&&!isNaN(sum)) sum=parseFloat(sum);
+	else sum=0;
+	
+	skidka1=0; skidka2=0;
+	
+	var quantity=1;
+ 
+	sum=sum*quantity;
+	//alert(quantity);
+	
+	
+	sk='0';
+	if($("#parent_id"+id+"%{$prefix}%").val()==0){
+	  //quantity=$("#quantity"+id+"%{$prefix}%").val();
+	  	id_key=id;
+	}else{
+	 	id_key=$("#parent_id"+id+"%{$prefix}%").val();	
+	}
+	
+	//найти любую скидку не нулевую
+	skidka1=$("#discount_base_"+id_key+"%{$prefix}%").val();
+	skidka2=$("#discount_add_"+id_key+"%{$prefix}%").val();
+	skidka1=skidka1.replace("\,","\."); skidka2=skidka2.replace("\,","\.");
+	
+	sum= sum - skidka1*sum/100 ; 
+	
+	sum= sum - skidka2*sum/100; 
+	
+
+	
+	var currency_id=$("#currency_id_"+id+"%{$prefix}%").val();
+	
+	
+	
+	//sum=roundPlus(sum,2);
+	
+	$("#price_f"+id+"%{$prefix}%").text(roundPlus(sum,0));
+	
+	$("#signature"+id+"%{$prefix}%").text($("#currency_id_"+id+"%{$prefix}% option:selected").html());
+	
+	//обновлять блоки:
+	//$("#nds_%{$items[rowsec].pl_id}%%{$prefix}%
+	//$("#insur_%{$items[rowsec].pl_id}%%{$prefix}%
+	//$("#commission_%{$items[rowsec].pl_id}%%{$prefix}%
+	//$("#price_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%
+	
+	
+	if($("#parent_id"+id+"%{$prefix}%").val()==0){
+		//оборудование
+		nds=0;
+		delivery_ddpm=$("#delivery_ddpm_"+id+"%{$prefix}%").val();
+		delivery_ddpm=delivery_ddpm.replace("\,","\.");
+		delivery_ddpm=parseFloat(delivery_ddpm);
+		
+		nds=(sum+0.7*delivery_ddpm)*0.18; 
+		//alert(nds);
+		$("#nds_"+id+"%{$prefix}%").val(roundPlus(nds,0));
+		
+		insur=0;
+		duty_ddpm=$("#duty_ddpm_"+id+"%{$prefix}%").val();
+		duty_ddpm=duty_ddpm.replace("\,","\.");
+		duty_ddpm=parseFloat(duty_ddpm);
+		
+		svh_broker=$("#svh_broker_"+id+"%{$prefix}%").val();
+		svh_broker=svh_broker.replace("\,","\.");
+		svh_broker=parseFloat(svh_broker);
+		
+		insur=(sum+delivery_ddpm+nds+duty_ddpm+svh_broker)*0.002;
+		$("#insur_"+id+"%{$prefix}%").val(roundPlus(insur,0));
+		
+		
+		commission=0;
+		commission=(sum+delivery_ddpm+nds+duty_ddpm+svh_broker)*0.01;
+		$("#commission_"+id+"%{$prefix}%").val(roundPlus(commission,0));
+		
+		
+		price_ddpm=0;
+		price_ddpm=sum+delivery_ddpm+nds+duty_ddpm+svh_broker+insur+commission;
+		$("#price_ddpm_"+id+"%{$prefix}%").val(roundPlus(price_ddpm,0));
+	}else{
+		//опция	
+		//ПНР
+		 
+		if($("#is_install"+id+"%{$prefix}%").val()==1){
+				sum=$("#price"+id+"%{$prefix}%").val();	
+				sum=sum.replace("\,","\.");
+				if((sum.length>0)&&!isNaN(sum)) sum=parseFloat(sum);
+				else sum=0;
+				
+			 
+				var quantity=1;
+			 
+				sum=sum*quantity;
+				
+				$("#price_f"+id+"%{$prefix}%").text(roundPlus(sum,0));
+				$("#price_ddpm_"+id+"%{$prefix}%").val(roundPlus(sum,0));
+				
+				$("#nds_"+id+"%{$prefix}%").val(0);
+				$("#insur_"+id+"%{$prefix}%").val(0);
+				$("#commission_"+id+"%{$prefix}%").val(0);
+		}else{
+			//НЕ ПНР
+			nds=0;
+		 
+			nds=(sum)*0.18; 
+			//alert(nds);
+			$("#nds_"+id+"%{$prefix}%").val(roundPlus(nds,0));
+			
+			insur=0;
+		 
+			
+			insur=(sum+nds)*0.002;
+			$("#insur_"+id+"%{$prefix}%").val(roundPlus(insur,0));
+			
+			
+			commission=0;
+			commission=(sum+nds)*0.01;
+			$("#commission_"+id+"%{$prefix}%").val(roundPlus(commission,0));
+			
+			
+			price_ddpm=0;
+			price_ddpm=sum+nds+insur+commission;
+			$("#price_ddpm_"+id+"%{$prefix}%").val(roundPlus(price_ddpm,0));
+		}
+	}
+	
+		
+	//если это НЕ опция - то пересчитать суммы по опциям 
+	if($("#parent_id"+id+"%{$prefix}%").val()==0){
+		if(recursive==1){
+		//RecalcPrice%{$prefix}%($("#parent_id"+id+"%{$prefix}%").val());
+		
+			var opts=new  Array();
+			$("input[id^='parent_id']").each( function(i,e){
+				if($(e).val()==id){
+					optid=$(e).attr("id");
+					optid=optid.replace(/^parent_id/, '');
+					optid=optid.replace(/%{$prefix}%$/, '');
+					//opts.push(optid);	
+					RecalcPrice%{$prefix}%(optid, 0);
+				}
+			});
+			//alert(opts);
+		}
+		//
+	}
+	
+	
+	return res;
+}
+
+
+
+//проверка корр-ти Базовая ск-ка пост-ка, % 
+function IsCorrectDiscount_base%{$prefix}%(id){
+	res=true;
+	local_res=true;
+	
+	sk=$("#discount_base_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#discount_base_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля Базовая ск-ка пост-ка, %!");
+		$("#discount_base_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#discount_base_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	
+	if(res) if(!isNaN(sk)&&(parseFloat(sk)>99.99)){		
+		  res=res&&false;
+		  local_res=local_res&&false;	
+		  $("#discount_base_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля Базовая ск-ка пост-ка, %!");
+		$("#discount_base_"+id+"%{$prefix}%").addClass("wrong");
+		  
+	}else $("#discount_base_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	return res;
+}
+
+//
+function IsCorrectDiscount_Add%{$prefix}%(id){
+	res=true;
+	local_res=true;
+	
+	sk=$("#discount_add_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#discount_add_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля Доп. ск-ка пост-ка, % !");
+		$("#discount_add_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#discount_add_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	
+	if(res) if(!isNaN(sk)&&(parseFloat(sk)>99.99)){		
+		  res=res&&false;
+		  local_res=local_res&&false;	
+		  $("#discount_add_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение Доп. ск-ка пост-ка, % !");
+		$("#discount_add_"+id+"%{$prefix}%").addClass("wrong");
+		  
+	}else $("#discount_add_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	return res;
+}
+
+
+function IsCorrectProfit_exw%{$prefix}%(id){
+	res=true;
+	local_res=true;
+	
+	sk=$("#profit_exw_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#profit_exw_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля Рент-ть ExW, %!");
+		$("#profit_exw_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#profit_exw_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	/*
+	if(res) if(!isNaN(sk)&&(parseFloat(sk)>99.99)){		
+		  res=res&&false;
+		  local_res=local_res&&false;	
+		  $("#profit_exw_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение Рент-ть ExW, %!");
+		$("#profit_exw_"+id+"%{$prefix}%").addClass("wrong");
+		  
+	}else $("#profit_exw_"+id+"%{$prefix}%").removeClass("wrong");*/
+	
+	return res;
+}
+
+function IsCorrectProfit_ddpm%{$prefix}%(id){
+	res=true;
+	local_res=true;
+	
+	sk=$("#profit_ddpm_"+id+"%{$prefix}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#profit_ddpm_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение поля Рент-ть DDPM, % !");
+		$("#profit_ddpm_"+id+"%{$prefix}%").addClass("wrong");
+		
+	}else $("#profit_ddpm_"+id+"%{$prefix}%").removeClass("wrong");
+	
+	/*
+	if(res) if(!isNaN(sk) &&(parseFloat(sk)>99.99) ){		
+		  res=res&&false;
+		  local_res=local_res&&false;	
+		  $("#profit_ddpm_"+id+"%{$prefix}%").focus();
+		alert("Некорректно заполнено значение Рент-ть DDPM, % !");
+		$("#profit_ddpm_"+id+"%{$prefix}%").addClass("wrong");
+		  
+	}else $("#profit_ddpm_"+id+"%{$prefix}%").removeClass("wrong");*/
+	
+	return res;
+}
+
+
+
+
+//проверка корр-ти цены
+function IsCorrectPrice%{$prefix}%(id){
+	res=true;
+	
+	//проверим цену
+	sum=$("#price"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<=0)){
+		$("#price"+id+"%{$prefix}%").addClass("wrong");
+		alert("Некорректно заполнено поле Цена!");
+		$("#price"+id+"%{$prefix}%").focus();
+		res=res&&false;	
+	}else{
+		$("#price"+id+"%{$prefix}%").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти DeliveryDDPM
+function IsCorrectDeliveryDDPM%{$prefix}%(id){
+	res=true;
+	
+	//проверим цену
+	sum=$("#delivery_ddpm_"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#delivery_ddpm_"+id+"%{$prefix}%").addClass("wrong");
+		alert("Некорректно заполнено поле Ст-ть услуг по доставке DDPM, €!");
+		$("#delivery_ddpm_"+id+"%{$prefix}%").focus();
+		res=res&&false;	
+	}else{
+		$("#delivery_ddpm_"+id+"%{$prefix}%").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+  
+
+
+//проверка корр-ти сбора
+function IsCorrectDutyDDPM%{$prefix}%(id){
+	res=true;
+	
+	//проверим цену
+	sum=$("#duty_ddpm_"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#duty_ddpm_"+id+"%{$prefix}%").addClass("wrong");
+		alert("Некорректно заполнено поле Сбор, €!");
+		$("#duty_ddpm_"+id+"%{$prefix}%").focus();
+		res=res&&false;	
+	}else{
+		$("#duty_ddpm_"+id+"%{$prefix}%").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти свх
+function IsCorrectSvh%{$prefix}%(id){
+	res=true;
+	
+	//проверим цену
+	sum=$("#svh_broker_"+id+"%{$prefix}%").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#svh_broker_"+id+"%{$prefix}%").addClass("wrong");
+		alert("Некорректно заполнено поле СВХ, брокер, €!");
+		$("#svh_broker_"+id+"%{$prefix}%").focus();
+		res=res&&false;	
+	}else{
+		$("#svh_broker_"+id+"%{$prefix}%").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+  
+
+
+//проверка корр-ти цены
+//проверка корр-ти скидки (любой)
+
+
+
+
+
+$(function(){
+	
+	
+/*подгрузить старые значения, если они есть*/
+%{if $id!=""}%
+%{/if}%
+
+%{section name=rowsec loop=$items}%
+
+	 
+	
+	
+	
+	$("#price%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#price%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#discount_base_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#discount_base_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#discount_add_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#discount_add_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#profit_exw_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#profit_exw_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	$("#profit_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#profit_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	
+	$("#delivery_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#delivery_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	
+	$("#duty_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#duty_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	
+	$("#svh_broker_%{$items[rowsec].pl_id}%%{$prefix}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#svh_broker_%{$items[rowsec].pl_id}%%{$prefix}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	
+	$("#price%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		
+		//менять цены по всем опциям!!!!		
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		$("#price_was_changed%{$items[rowsec].pl_id}%%{$prefix}%").val('1');
+
+		
+	});
+	
+	
+	$("#discount_base_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		
+		//менять цены по всем опциям!!!!
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	
+	$("#discount_add_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	$("#profit_exw_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+	 
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	$("#profit_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+	 
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	
+	$("#delivery_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectDeliveryDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+	 
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	$("#duty_ddpm_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectDeliveryDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+	 
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	$("#svh_broker_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectDeliveryDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		if(res) res=res&&RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+	 
+		 if(res) $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", true);
+		 else $("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").prop("checked", false);
+		
+		 
+		
+	});
+	
+	
+	
+	$("#currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		if($("#price_was_changed%{$items[rowsec].pl_id}%%{$prefix}%").val()==1){
+			//сохраняем цену
+			res=true;
+			res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+			if(res){
+				 
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"update_price",
+						"id":"%{$items[rowsec].pl_id}%", 
+						"currency_id": $("#old_currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val(),
+						"price": $("#price%{$items[rowsec].pl_id}%%{$prefix}%").val(),
+						"price_kind_id": $('#price_kind_id%{$prefix}%').val()
+						
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  
+					  //alert(data);
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	
+				});
+				
+			}else{
+				$("#currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val($("#old_currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val());	
+				return false;
+			}
+		}
+		
+		//получить новую цену и пересчитать price_f
+		$.ajax({
+		  async: true,
+		  url: "/js/pricelist.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_price",
+			  "id":"%{$items[rowsec].pl_id}%", 
+			  "currency_id": $("#currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val(),
+						"price_kind_id": $('#price_kind_id%{$prefix}%').val()
+							  },
+		  beforeSend: function(){
+			  $("#old_currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val($("#currency_id_%{$items[rowsec].pl_id}%%{$prefix}%").val()); 
+			  $("#price%{$items[rowsec].pl_id}%%{$prefix}%").prop("disabled", true); 
+		  },
+		  success: function(data){
+			$("#price%{$items[rowsec].pl_id}%%{$prefix}%").val(data);
+			$("#price%{$items[rowsec].pl_id}%%{$prefix}%").prop("disabled", false);
+			RecalcPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+			//alert(data);
+		  },
+		  error: function(xhr, status){
+			  //alert("Ошибка выбора подгрупп.");	
+		  }	
+	  });
+		//
+	});
+	
+	
+	
+	  
+	
+	
+	
+	
+	
+	
+	
+	$("#do_update_%{$items[rowsec].pl_id}%%{$prefix}%").bind("change", function(){
+		if($(this).prop("checked")){
+			 res=true;
+	res=res&&IsCorrectPrice%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_base%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectDiscount_Add%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_exw%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectProfit_ddpm%{$prefix}%("%{$items[rowsec].pl_id}%");
+			
+		if(res) res=res&&IsCorrectDeliveryDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+	 
+		if(res) res=res&&IsCorrectDutyDDPM%{$prefix}%("%{$items[rowsec].pl_id}%");
+		if(res) res=res&&IsCorrectSvh%{$prefix}%("%{$items[rowsec].pl_id}%");
+		
+		 	
+			
+			
+			if(!res) $(this).prop("checked", false);
+		}
+	});
+	
+	
+	
+	
+ 
+%{/section}%
+});
+
+%{/if}%
+
+</script>

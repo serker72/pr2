@@ -1,0 +1,142 @@
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#cccccc;
+}
+.blacktable th.main{
+	background-color:#e5edf0;
+}
+.blacktable th.contract{
+	background-color:#eee;
+	font-weight:normal;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+<input type="hidden" name="print" value="0" id="print" />
+
+
+%{include file="every_help_dialog.html" filename="an_rent.htm" description="Рентабельность бизнеса"  prefix="" style="float:right;  margin-right:10px;"}%
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong><br />
+<label for="pdate1">с:</label><br />
+<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" /></div>
+
+<div style="float:left; margin-right:10px;">
+<br />
+	<label for="pdate2">по:</label><br />
+    <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<br />
+
+
+
+<input type="checkbox" name="extended_an" id="extended_an" value="1" %{if $extended_an==1}%checked="checked"%{/if}% />
+<label for="extended_an">Расширенная ведомость</label>
+<br />
+
+
+<input type="checkbox" name="by_org" id="by_org" value="1" %{if $by_org==1}%checked="checked"%{/if}% />
+<label for="by_org">С разбивкой по организациям</label>
+<br />
+
+
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<br />
+<br />
+
+<input type="image" src="/img/icons/old-zoom-original.png" value="Вывести" alt="Вывести" title="Вывести" name="doSub"  />
+
+<a href="an_rent.php?doSub=1"><img src="../../img/icons/old-zoom-deselect.png" border="0" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+ 
+  
+  
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	   $("#print_table").bind("click", function(){
+			
+			
+					extended_an=0;
+					if($("#extended_an").prop("checked")) extended_an=1;
+					
+					
+					
+					by_org=0;
+					if($("#by_org").prop("checked")) by_org=1;
+					
+					
+					
+					  zc=window.open('an_rent.php?tab_page=1&print='+'1'+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&extended_an='+extended_an+'&by_org='+by_org+'&doSub=1&do_print_ved=1', 'ved','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			   
+					  if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+					  
+			 return false; 		
+		});
+	  
+	  
+	  
+	
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+
+
+</div>
+
+<br clear="all" />
+
+
+
+<p />
+
+
+
+
+</form>
+
+%{if $do_it}%
+%{include file="an_rent/an_rent_table.html"}%
+%{/if}%
+
+
+
+
+

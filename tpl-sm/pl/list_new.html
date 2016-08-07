@@ -1,0 +1,135 @@
+ 
+
+<style>
+.alblinks1{
+	margin-bottom:-10px;
+	
+}
+</style>
+
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+<input type="hidden" name="memory%{$prefix}%" value="%{$memory}%" />
+<input type="hidden" name="lead_id%{$prefix}%" value="%{$lead_id}%" />
+
+
+ <input type="hidden"  value="1" name="doShow%{$prefix}%" id="doShow%{$prefix}%" /> 
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+<!-- выбор группы цен -->
+<div style="float:left; margin-right:10px;">
+
+
+
+<!--выбор группы I-->
+
+<input type="hidden" name="group_id%{$prefix}%" id="group_id%{$prefix}%" value="%{$group_id}%" />
+ %{section name=groupsec loop=$group}%
+ 	%{if $group[groupsec].has_access}%
+    <a href="#" id="link%{$prefix}%_%{$group[groupsec].id}%" onclick="location.href='%{$pagename}%?group_id%{$prefix}%=%{$group[groupsec].id}%&memory%{$prefix}%=1&lead_id%{$prefix}%=%{$lead_id}%'; return false;" class="pl_button%{if $group[groupsec].is_current}%_pressed%{/if}%">%{$group[groupsec].name|escape:"html"}%</a>
+   %{else}%
+   <a href="#" id="link%{$prefix}%_%{$group[groupsec].id}%"  onclick="alert('У Вас недостаточно прав для работы с данным разделом.'); return false;" class="pl_button%{if $group[groupsec].is_current}%_pressed%{/if}%">%{$group[groupsec].name|escape:"html"}%</a>
+   %{/if}%
+ 
+   
+ %{/section}%
+
+</div>
+
+
+
+
+ 
+
+%{include file="every_help_dialog.html" filename="pricelist.html;pl-supplier.html" prefix="" description="Раздел Прайс-лист" style="float:right;  margin-right:0px;" is_right=true}%
+
+
+
+
+<!-- Блок вызова печати -->
+
+%{if $group_id>0 and $price_kind_id>0}%
+	%{if !$can_print}% 
+    <div style="float:right; margin-right:10px;">
+    
+    <a href="#" id="print_link" onclick="alert('У Вас недостаточно прав для печати прайс-листа!'); return false;" data-comment="печать прайс-листа" class="reestr_print reestr_inactive reestr_right_button24"></a>
+     </div>
+    
+    <div style="float:right; margin-right:10px;">
+  <a href="#" id="pdf_link" onclick="alert('У Вас недостаточно прав для формирования pdf-версии прайс-листа!'); return false;" class="reestr_pdf reestr_inactive reestr_right_button24" data-comment="pdf-версия прайс-листа"></a>  
+   </div>
+    
+    %{else}%
+    <div style="float:right; margin-right:10px;">
+    <a href="#" id="print_link"  data-comment="печать прайс-листа" class="reestr_print reestr_right_button24"></a>
+     </div>
+    
+    <div style="float:right; margin-right:10px;">
+    <a href="#" id="pdf_link" class="reestr_pdf  reestr_right_button24" data-comment="pdf-версия прайс-листа"></a>
+     </div>
+    %{/if}%
+%{else}%
+
+<div style="float:right; margin-right:10px;">
+<a href="#" onclick="alert('Для печати прайс-листа выберите раздел и вид цен!'); return false;"  data-comment="печать прайс-листа" class="reestr_print reestr_inactive reestr_right_button24"></a>
+ </div>
+
+<div style="float:right; margin-right:10px;">
+<a href="#" onclick="alert('Для формирования pdf-версии прайс-листа выберите раздел и вид цен!'); return false;" class="reestr_pdf reestr_inactive reestr_right_button24" data-comment="pdf-версия прайс-листа"></a>
+ </div>    	
+ %{/if}%
+
+
+%{if $can_admin_records}%
+<div style="float:right; margin-right:10px;">
+<a href="#" id="admin_upper"  data-comment="управление доступом к текущему разделу" class=" reestr_key24 reestr_right_button24"></a>
+<script type="text/javascript">
+//
+$(function(){
+	$("#admin_upper").bind("click",function(){
+		%{if $group_id==0 or $group_id==false}%
+			alert("Выберите раздел прайс-листа!");
+		%{else}%	 
+			AdminRecordsOpenDialog("%{$group_id}%", 'catalog_group', 0,$("#link%{$prefix}%_%{$group_id}%").html(), 'Раздел прайс-листа'  );
+		%{/if}%
+		 
+		//
+		
+		return false;
+	});
+});
+</script>
+</div>
+%{/if}%
+ 
+ 
+
+<br clear="all" />
+
+<p />
+
+%{if $group_id==1}% %{*если группа - оборудование*}%
+ 
+%{include file="pl/list_obor.html"}%
+
+%{elseif $group_id==2}%
+
+%{include file="pl/list_instr.html"}%
+
+%{/if}% %{*of group_id==1 selection*}%
+
+
+</form>
+
+
+
+%{if $smarty.section.rowsec.total==0}%
+<!--<em>По выбранным Вами условиям позиций не найдено.</em><br />-->
+%{/if}%
+

@@ -1,0 +1,90 @@
+<div id="kp_re_dialog" title="Рентабельность КП" style="display:none;">
+	<img src="/img/gydex_tiny.png" width="40" height="46" style="float:left; margin-right:10px;" /> 
+	<div style="float:left; padding-top:0px; margin-bottom:10px;">
+	
+    <ul>
+	<li>Коммерческое предложение: <span id="kp_re_dialog_code"></span></li>
+    
+   
+
+	<li>
+    Клиент: <span id="kp_re_dialog_client_name"></span></li> 
+ 
+ 
+    <li>
+    Сумма закупки: <span id="kp_re_dialog_cost"></span></li>
+ 
+ 
+    
+    
+    <li>
+    Рентабельность:  <span id="kp_re_dialog_re"></span></li>
+    </ul>
+    <br>
+
+
+
+	%{if $can_view_re_extended}%
+    
+    <a href="#" id="kp_re_dialog_show_extended"><img align="absmiddle" src="/img/icons/flower.png" width="32" height="32" border="0" alt="Показать расширенные данные" title="Показать расширенные данные" /></a><br> <br>
+<br>
+
+
+
+    
+    <div id="kp_re_dialog_extended">
+    
+    </div>
+    %{/if}%
+    
+    </div>
+<br clear="all"> 
+
+</div>
+
+<script type="text/javascript">
+
+$("#kp_re_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 450,
+	 
+		height: 280,
+		buttons:{
+			"OK": function(){
+				$("#kp_re_dialog").dialog("close");
+			},
+		}
+});
+$(function(){
+	$("#kp_re_dialog_show_extended").bind("click", function(){
+		$("#kp_re_dialog").dialog("option","height", 560);
+		$("#kp_re_dialog").dialog("option","position", "center");
+		$.ajax({
+			  async: true,
+			  url: "/js/kp.php",
+			  type: "POST",
+			  data:{
+				  "action":"show_extended_re",
+				  "code": $("#kp_re_dialog_code").html()
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#kp_re_dialog_extended").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#kp_re_dialog_extended").html(data); 
+				 
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		
+		
+		
+		return false;
+	});
+});
+</script>

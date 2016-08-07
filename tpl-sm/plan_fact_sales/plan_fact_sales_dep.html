@@ -1,0 +1,546 @@
+<script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+<script src="js/accounting.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  $("#tabsd").tabs({
+		cookie: { expires: 14, name: 'plan_fact_sales' } ,
+		 show: function( event, ui ) {
+			// alert($(ui.tab).text());
+			description="открыл раздел План/факт продаж";
+			details="открыта вкладка "+$(ui.tab).text();
+			object_id=783;
+			$.post('/js/ajax_logs.php',
+			{
+					"action":"log",
+					"object_id":object_id,
+					"description":description,
+					"details":details
+				});
+		 } 
+  });
+  
+});
+</script>
+
+
+%{include file="plan_fact_sales/opo_dialog.html"}%
+
+
+%{include file="plan_fact_sales/cities.html"}%
+
+
+
+
+
+
+
+
+
+ 
+
+<form action="plan_fact_sales.php" method="get" id="year_form">
+
+<div style="float:left; margin-right:10px;">
+<label for="year">Выберите год:</label>
+<select name="year" id="year" style="width:100px;">
+%{html_options  values=$years  output=$years selected=$year}%
+</select>
+</div>
+
+<div style="float:left; margin-right:10px;" class="reestr_zoom reestr_button24" data-comment="Показать">
+<input type="image" src="/img/24.png" />
+</div>
+
+
+
+%{include file="every_help_dialog.html" filename="plan.html;plan_edit.html;dogpr.html;dogpr_edit.html" description="План/факт продаж"  prefix=$id_prefix style="float:left;"}%
+
+<br clear="all" />
+<br>
+
+
+ 
+ 
+<div id="tabsd">
+   <ul>
+  %{foreach from=$items item=tab}%
+ 
+    
+    <li><a href="#tabsd-%{$tab.dep.id}%">%{$tab.dep.name}%</a></li>
+    
+  
+  %{/foreach}%
+  </ul>
+  
+  %{foreach from=$items item=tab}% 
+  <div id="tabsd-%{$tab.dep.id}%">
+    <p>
+		
+        
+        <div style="float:left; margin-right:10px;">  
+        <label for="currency_%{$tab.dep.id}%">Валюта:</label>
+		<select name="currency_%{$tab.dep.id}%" id="currency_%{$tab.dep.id}%" style="width:50px;">
+        %{foreach from=$currencies item=currency}%
+        <option value="%{$currency.id}%" %{if $currency.id==$tab.dep.currency_id}% selected="selected"%{/if}%>%{$currency.signature}%</option>
+        %{/foreach}%
+        </select>    
+        
+        <input type="hidden" id="old_currency_id_%{$tab.dep.id}%" value="%{$tab.dep.currency_id}%" />
+        
+        <input type="hidden" id="initial_currency_id_%{$tab.dep.id}%" value="%{$tab.dep.currency_id}%" />
+        </div>
+        
+        
+        <div style="float:left; margin-right:10px;">  
+        <a href="#" id="recalc_currency_%{$tab.dep.id}%" class="reestr_calc reestr_button24" data-comment="Пересчитать план/факт продаж в выбранной валюте" ></a>
+        
+        <script type="text/javascript">
+		$(function(){
+			$("#recalc_currency_%{$tab.dep.id}%").bind("click", function(){
+				
+				 
+				$.ajax({
+				  async: true,
+				  url: "/js/plan_fact_sales.php",
+				  type: "POST",
+				  data:{
+					  "action":"get_mult",
+					  "from_id":$("#old_currency_id_%{$tab.dep.id}%").val(),
+					  "to_id":$("#currency_%{$tab.dep.id}%").val() 				  
+				  },
+				  beforeSend: function(){
+					 
+				  },
+				  success: function(data){
+					
+					 // location.reload();
+					 if(!isNaN(data)){
+						   //alert(data);
+						  var  mult=parseFloat(data);
+							
+					 
+							//снять флаги изменений, заблокировать поля
+							$("#tabsd-%{$tab.dep.id}% input[type=text]").removeClass("changed");
+							$("#tabsd-%{$tab.dep.id}% input[type=text]").prop("disabled",true);
+							
+							$("#tabsd-%{$tab.dep.id}% div[id^=opo_edit_]").hide();
+							
+							
+						 	
+							$("#is_blocked_%{$tab.dep.id}%").show();
+							 
+							//alert($("#currency_%{$tab.dep.id}% option:selected").html());
+							
+							$("#tabsd-%{$tab.dep.id}% .signature").html($("#currency_%{$tab.dep.id}% option:selected").html());
+							
+							function roundPlus(x, n) { //x - число, n - количество знаков
+							  if(isNaN(x) || isNaN(n)) return false;
+							  var m = Math.pow(10,n);
+							  return Math.round(x*m)/m;
+							}
+
+							
+							 
+							function ReCalc(mult,data){
+								old=data;
+								data=$.trim(data);
+								data=data.replace(/[\s]+/g,'');
+								data=data.replace(/\,/,'.');
+								if(!isNaN(data)){
+									data=parseFloat(data)*parseFloat(mult);
+									return data;	
+								}else return old;
+								
+							}
+							
+							$.each($("#tabsd-%{$tab.dep.id}% input[type=text]"), function(k,v){
+								if(($(v).val().length>0)&&!isNaN($(v).val()) )  $(v).val( roundPlus(ReCalc(mult,$(v).val()),2));
+							});
+							
+							//recalced
+							$.each($("#tabsd-%{$tab.dep.id}% .recalced"), function(k,v){
+								$(v).html( accounting.formatNumber(  ReCalc(mult,$(v).html()), 2, ' ') );
+							});
+							
+							$("#old_currency_id_%{$tab.dep.id}%").val($("#currency_%{$tab.dep.id}%").val());
+						 
+						 
+						if($("#currency_%{$tab.dep.id}%").val()==1) $("#tabsd-%{$tab.dep.id}% input[type=text]").css("width","60px");
+						else $("#tabsd-%{$tab.dep.id}% input[type=text]").css("width","45px");
+					 		
+					 }else{
+						  alert("Ошибка пересчета плана/факта продаж!");
+					 }
+					 
+					 
+				  },
+				  error: function(d,k,m){
+					  alert("Ошибка пересчета плана/факта продаж!");
+				  }
+				});
+				
+				
+				return false;
+			});
+		});
+		</script>
+        </div>
+        
+        <div id="is_blocked_%{$tab.dep.id}%" style="float:left; margin-right:10px; width:400px; display:none;"> 
+       
+        <em><img src="/img/icons/warning_24x24.png" width="24" height="24" alt="внимание!" align="left" vspace=0 hspace=5 />Вы просматриваете пересчитанный план/факт продаж. <br />
+Для получения возможности редактирования данных (при наличии у вас прав на это действие) вернитесь к исходной валюте.<br />
+ Для этого выберите исходную валюту %{$tab.dep.signature}% и нажмите кнопку <img src="/img/icons/old-zoom-original.png" /> над формой. </em>
+ 		 
+        </div>
+        
+        
+        
+        <p />
+        <br clear="all" />
+
+		 
+        <table width="*" class="blacktable plan_fact_table" cellpadding="2" cellspacing="0" >
+        <thead>
+        
+         <tr align="center" valign="top">
+	         <th scope="col" width="200" rowspan="2" style="min-width:200px;">
+             Выполнение плана за квартал: план, <span class="signature">%{$tab.dep.signature}%</span>/факт, <span class="signature">%{$tab.dep.signature}%</span>/%
+             </th>
+             
+             
+              %{foreach from=$tab.percents_by_quart item=data}%
+            <th scope="col" colspan="2" width="90" class="plan recalced" align="right" title="Выполнение плана за %{$data.name}%, план">
+              %{$data.plan_f}%
+            
+            </th>
+            
+             <th scope="col" colspan="2" width="90" class="fact recalced" align="right" title="Выполнение плана за %{$data.name}%, факт">
+              %{$data.fact_f}%
+             </th>
+              <th scope="col" colspan="2" class="equip" width="90" align="right" title="Выполнение плана за %{$data.name}%, %">
+            	  %{$data.value}%
+               
+            </th>
+            %{/foreach}%
+            <th scope="col" colspan="2" rowspan="2" width="90" align="right" title="">
+             
+            </th>
+         </tr>
+         
+         <tr align="center" valign="top">
+	         
+             
+             
+              %{foreach from=$tab.percents_by_quart item=data}%
+            <th scope="col" colspan="6" width="90" class="equip" align="center" title="Выполнение плана за %{$data.name}%">
+              
+            
+           
+            	  %{$data.name}%
+               
+            </th>
+            %{/foreach}%
+             
+         </tr>
+        
+         <tr align="center" valign="top">
+	         <th scope="col" width="200" style="min-width:200px;">
+             Выполнение плана, %
+             </th>
+             
+             
+              %{foreach from=$tab.percents_by_monthes item=data}%
+            <th scope="col" colspan="2" width="90" align="right" title="Выполнение плана за %{$data.name}%">
+            	%{$data.value}%
+            </th>
+            %{/foreach}%
+            <th scope="col" colspan="2" width="90" align="right" title="Выполнение плана по отделу">
+            %{$tab.percents_by_dep}%
+            </th>
+         </tr>
+         
+         
+         
+         
+         
+         
+        <tr align="center" valign="top">
+        	<th scope="col" rowspan="2" width="200" style="min-width:200px;">
+            Менеджер
+            </th>
+            %{foreach from=$monthes item=month}%
+            <th scope="col" colspan="2" width="90">
+            	%{$month.name}%
+            </th>
+            %{/foreach}%
+             <th scope="col" colspan="2" width="90">
+            	<strong>Итого</strong>
+            </th>
+        </tr>
+        <tr align="center" valign="top">
+        %{foreach from=$monthes item=month}%
+            <th scope="col"  width="45" class="plan">
+            	 План, <span class="signature">%{$tab.dep.signature}%</span>
+            </th>
+             <th scope="col"  width="45" class="fact">
+            	 Факт, <span class="signature">%{$tab.dep.signature}%</span>
+            </th>
+            %{/foreach}%
+             <th scope="col"  width="45" class="plan">
+            	 План, <span class="signature">%{$tab.dep.signature}%</span>
+            </th>
+             <th scope="col"  width="45" class="fact">
+            	 Факт, <span class="signature">%{$tab.dep.signature}%</span>
+            </th>
+        </tr>
+         
+        </thead>
+        <tbody >
+        %{foreach from=$tab.users item=user}%
+        <tr align="left" valign="top">
+        	<td width="200">
+            
+            <a href="info.html?name=%{$user.login}%" target="_blank" id="user_%{$user.id}%" %{if $user.is_active==0}% style="color:red;"%{/if}%>%{$user.name_s}%</a>
+            
+            </td>
+            %{foreach from=$user.user_monthes item=data}%
+            <td width="45" id="col_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact}%_%{$tab.dep.currency_id}%" title="%{$user.name_s}% , %{$data.name}% %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% " %{if $data.plan_or_fact==0}% class="plan" %{else}% class="fact"%{/if}%>
+            <!--col_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact}%_%{$tab.dep.currency_id}%-->
+            
+           
+         
+            
+            
+            %{if $data.plan_or_fact==1 and ($tab.dep.id==1 or $tab.dep.id==3 or $tab.dep.id==4)}%
+            
+             
+                    
+             
+            
+            <div style="float:left; "> 
+            <input type="text" disabled="disabled"  value="%{$data.data.value }%" id="field_%{$user.id}%_%{$year}%_%{$data.no }%_%{$data.plan_or_fact}%_%{$tab.dep.currency_id}%" size="5" maxlength="25" %{if $tab.dep.currency_id==1}% style="width:70px !important;" %{else}% style="width:55px !important;"%{/if}% />
+            </div>
+            
+            <div style="float:left;" id="opo_edit_%{$user.id}%_%{$year}%_%{$data.no }%_%{$data.plan_or_fact}%_%{$tab.dep.currency_id}%">
+            %{if $data.can_modify}%
+            <a href="#" onclick="OpoDialog('%{$user.id}%', '%{$year}%', '%{$data.no}%', '%{$tab.dep.currency_id}%', '%{$tab.dep.id}%'); return false;" class="reestr_button24" data-comment="введите данные..."><img src="/img/icons/plus-tra1.png" width="24" height="24"  border="0" /></a>
+            %{else}%
+            <a href="#" onclick="alert('У Вас недостаточно прав для данного действия.'); return false;" class="reestr_button24" data-comment="введите данные..."><img src="/img/icons/plus-tra-in.png" width="24" height="24" border="0" /></a>
+            %{/if}%
+            </div>
+            
+            <div style="float:left;">
+            
+            <a href="plan_fact_fact_opo.php?month=%{$data.no }%&year=%{$year}%&us_name=%{$user.name_s|escape:"url"}%" target="_blank" class="reestr_button24" data-comment="открыть реестр фактов продаж"><img src="/img/icons/old-zoom-original1.png" width="24" height="24"border="0" /></a> 
+            
+            </div>
+           
+            
+            
+            %{else}%
+             
+            
+            <input type="text" %{if !$data.can_modify }% disabled="disabled"%{/if}% value="%{$data.data.value}%" id="field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact}%_%{$tab.dep.currency_id}%" size="5" maxlength="25" %{if $tab.dep.currency_id==1}% style="width:70px;" %{else}% style="width:55px;"%{/if}% />
+            
+            %{if $data.restricted_by_period}%
+            <input type="hidden" id="check_field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%" value="%{$data.data.value}%" />
+            <script type="text/javascript">
+            $(function(){
+                $("#field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%").unbind("change");
+                $("#field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%").bind("change", function(e){
+                    
+                    $("#field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%").val($("#check_field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%").val());
+                    
+                    message="Превышен период корректировки факта продаж!\nПраво на корректировку факта продаж имеют следующие сотрудники: ";
+                    %{foreach from=$users_instead item=userin}%
+                    message=message+"%{$userin.name_s}% \n";
+                    %{/foreach}%
+                    message=message+"Для корректировки факта продаж обратитесь, пожалуйста, к этим сотрудникам.";
+                    alert(message);
+                    $("#field_%{$user.id}%_%{$year}%_%{$data.no}%_%{$data.plan_or_fact }%_%{$tab.dep.currency_id}%").removeClass("changed");
+                    e.stopPropagation();
+                    e.preventDefault();
+                    
+                });
+                
+            });
+            </script>
+            %{/if}%
+            
+            
+            %{/if}%
+            
+            </td>
+            %{/foreach}%
+             %{foreach from=$user.itogo_by_user item=data}%
+            <td width="45" title="Итого %{$user.name_s}% , %{$data.name}% %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% " %{if $data.plan_or_fact==0}% class="plan recalced" %{else}% class="fact recalced"%{/if}% style="font-weight:bold;">
+            %{$data.value_f}%
+            </td>
+             %{/foreach}%
+            
+        </tr>
+        %{/foreach}%
+        <tr align="left" valign="top">
+        	<td width="200">
+           	<strong> Итого</strong>
+            </td>
+            %{foreach from=$tab.itogo_by_monthes item=data}%
+            <td width="45"  title="Итого %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% " %{if $data.plan_or_fact==0}% class="plan recalced" %{else}% class="fact recalced"%{/if}% style="white-space:nowrap; font-weight:bold;">
+            
+           
+            %{$data.value_f}% 
+          
+            
+            </td>
+            %{/foreach}%
+            
+             %{foreach from=$tab.itogo_by_dep item=data}%
+              <td width="45"  title="Итого по отделу %{if $data.plan_or_fact==0}%, План%{else}%, Факт%{/if}% " %{if $data.plan_or_fact==0}% class="plan recalced" %{else}% class="fact recalced"%{/if}% style="white-space:nowrap; font-weight:bold;">
+            
+           
+             %{$data.value_f}% 
+          
+            
+            </td>
+            %{/foreach}%
+        </tr>
+        
+        
+        </tbody>
+        </table>
+        <br />
+        <p />
+        
+        %{if $tab.dep.fact_sales_notes!=""}%
+        Примечания:
+<br />
+        %{$tab.dep.fact_sales_notes}%
+        %{/if}%
+        
+        <br />
+
+        
+<strong>Итого:</strong><br />
+<strong>План: <span class="recalced">%{$tab.dep.plan_f}%</span> <span class="signature">%{$tab.dep.signature}%</span></strong><br />
+<strong>Факт: <span class="recalced">%{$tab.dep.fact_f}%</span> <span class="signature">%{$tab.dep.signature}%</span></strong><br />
+
+<strong>Норма выполнения (план.): <span class="recalced">%{$tab.dep.norma_f}%</span> <span class="signature">%{$tab.dep.signature}%</span></strong><br />
+<strong>Выполнение плана (факт.): %{$tab.dep.percents}%%.</strong><br />
+    
+    </p>
+  </div>
+  %{/foreach}%
+   
+
+</div>
+
+</form> 
+
+
+<br />
+<input type="button" id="saveChanges" value="Сохранить изменения" />
+
+<script type="text/javascript">
+$(function(){
+	$("input[id^=field_]").bind("change", function(){
+		$(this).removeClass("wrong");
+		$(this).addClass("changed");
+	});
+	
+	$("#saveChanges").bind("click", function(){
+				
+		var data=new Array(); var data_empty=new Array();
+		var can_go=true;
+		
+		$("input[id^=field][class=wrong]").removeClass("wrong");
+		
+		$.each($("input[id^=field][class=changed]"),function(k,v){
+			if($(v).val().length>0) {
+				local_can_go=true;
+				
+				val=$(v).val();
+				val=val.replace("\,","\.");
+				if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+					$(v).addClass("wrong");
+					alert("Некорректно введены данные!");
+					$(v).focus();
+					local_can_go=local_can_go&&false;	
+					can_go=can_go&&false;
+				}else{
+					$(v).removeClass("wrong");
+				}
+				
+				
+				if(local_can_go){				
+					id=$(v).attr("id");
+					id=id.replace(/^field_/,"");
+					
+					values=id.split('_');
+					
+					str=values.join(';'); str=str+';'+$(v).val();
+					data.push(str);
+				}
+			}else{
+				//задача на удаление данных
+				$(v).removeClass("wrong");
+				id=$(v).attr("id");
+				id=id.replace(/^field_/,"");
+				
+				values=id.split('_');
+				
+				str=values.join(';'); str=str+';'+$(v).val();
+				data_empty.push(str);	
+			}
+			
+		});
+		
+		if(can_go){
+			$("input[id^=field][class=changed]").removeClass("changed");
+		}
+		//alert(data);
+		if(can_go&&((data.length>0)||(data_empty.length>0))){
+			$.ajax({
+			  async: true,
+			  url: "/js/plan_fact_sales.php",
+			  type: "POST",
+			  data:{
+				  "action":"save_changes",
+				  "data[]":data
+			  },
+			  beforeSend: function(){
+				 
+			  },
+			  success: function(data){
+				 // alert("Изменения в план/факт продаж внесены.");	
+				  //location.reload();
+				  $.ajax({
+					  async: true,
+					  url: "/js/plan_fact_sales.php",
+					  type: "POST",
+					  data:{
+						  "action":"save_empty_changes",
+						  "data[]":data_empty
+					  },
+					  beforeSend: function(){
+						 
+					  },
+					  success: function(data){
+						  alert("Изменения в план/факт продаж внесены.");	
+						  location.reload();
+					  },
+					  error: function(d,k,m){
+						  //alert(d+' '+k+' '+m);
+					  }
+					});
+			  },
+			  error: function(d,k,m){
+				  //alert(d+' '+k+' '+m);
+			  }
+			});
+		}else if(can_go&&(data.length==0)&&(data_empty.length==0)){
+			alert("Изменения в план/факт продаж не были внесены, т.к. ничего не было изменено.");	
+		}
+	});
+});
+</script>

@@ -1,0 +1,30 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="city_row_%{$pos[possec].city_id}%" style="cursor:pointer;">
+    	<td>
+        <input type="radio" id="city_%{$pos[possec].city_id}%" name="city_radio"  value="%{$pos[possec].city_id}%" %{if $pos[possec].is_current}% checked="checked"%{/if}%  />
+        %{$pos[possec].name}%
+        
+        </td>
+        
+       
+        <td >%{$pos[possec].okrug_name}%</td>
+        <td>%{$pos[possec].region_name}%
+        
+        
+        <script type="text/javascript">
+		$(function(){
+			
+		  $("#city_row_%{$pos[possec].city_id}%").unbind("dblclick");
+		  $("#city_row_%{$pos[possec].city_id}%").bind("dblclick",function(){
+			  //alert($("#supplier_%{$pos[possec].id}%").attr("value"));
+			  
+			  $("#city_%{$pos[possec].city_id}%").prop("checked",true);
+			  cityrebuild();
+			  
+		  });
+     
+		});
+		</script>
+        </td>
+    </tr>
+%{/section}%    

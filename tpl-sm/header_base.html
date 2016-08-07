@@ -1,0 +1,90 @@
+
+
+
+<table width="*" cellpadding="0" cellspacing="0" border="0" align="center" style="min-width:1010px;">
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="20" alt="" /></td>
+<td width="*" align="center" valign="top">
+
+<table width="100%" border="0" cellpadding="0" cellspacing="2" align="center">
+<tr align="left" valign="top">
+	<td width="260">
+    <a href="/"><img src="/img/dis/logo.jpg" width="254" height="101" border="0" /></a>
+    </td>
+    <td width="*" valign="top" >
+     
+     <div style="background-color:#ee2e24; margin-top:7px; width:100%; height:80px; overflow:auto;" >
+     
+
+     
+      %{if $authed}%
+    <div style="padding-top:10px; padding-left:5px;">
+    <!-- панель быстрого доступа -->
+  
+    %{if $has_new_tovgr}%
+      
+      <input type="button" value="Нов. тов. группа" onclick="location.href='catalog.php?do_open_newgroup=1';" style="width:110px;" />
+      
+      
+      
+    %{/if}%
+    %{if $has_new_supplier}%
+    <input type="button" value="Нов. контрагент" onclick="location.href='supplier.php';"  style="width:110px;" />
+    %{/if}%
+    %{if $has_new_position}%
+    <!--  <input type="button" value="Новая позиция" onclick="location.href='position.php';" style="width:110px;" />-->
+    %{/if}%
+    
+    
+     %{if $has_new_task}%
+      <input type="button" value="Новая задача" onclick="location.href='task_create.php';" style="width:110px;" />
+    %{/if}%
+  
+    
+    %{if $has_new_mission}%
+      <input type="button" value="Новая команд-ка" onclick="location.href='mission_create.php';" style="width:110px;" />
+    %{/if}%
+    
+   
+  
+    
+      %{if $has_new_kp}%
+     <input type="button" value="Новое КП" onclick="/*location.href='ed_kp.php?action=0';*/ alert('Создание коммерческого предложения возможно только из прайс-листа!'); return false;" style="width:110px;" /><br />
+    %{/if}%
+    
+    
+      %{if $has_new_memo}%
+      <input type="button" value="Нов. служ. зап-ка" onclick="location.href='memo_create.php';" style="width:110px;" />
+    %{/if}%
+    
+      %{if $has_new_petition}%
+      <input type="button" value="Нов. заявление" onclick="location.href='petition_create.php';" style="width:110px;" />
+    %{/if}%
+    
+  <!--  <input type="button" value=" " onclick="location.href='petition_create.php';" style="width:110px;" />-->
+    
+    </div>
+    %{/if}%
+    &nbsp;
+     </div>
+     
+    </td>
+    
+    <td width="1"><img src="/img/01.gif" width="1" height="83" alt="" border="0" /></td>
+</tr>
+</table></td>
+
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="1" alt="" /></td>
+</tr>
+
+
+<tr align="left" valign="top">
+<td width="10"><img src="/img/01.gif" border="0" width="10" height="20" alt="" id="verstka_heighter" /></td>
+<td width="*" align="center" valign="top" id="content_container">
+
+
+
+
+
+
+<!-- content -->

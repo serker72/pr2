@@ -1,0 +1,66 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		%{if $from_begin==1}%
+		selected:0
+		%{else}%
+		 
+		cookie: { expires: 14, name: 'edkp_inTab' }
+		%{/if}%	
+  });
+});
+</script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">КП %{if $kind_id==0}%вх.%{elseif $kind_id==1}%исх.%{/if}%</a></li>
+    
+    %{if $has_kp_outs}%
+    <li><a href="#tabs-2">Исх. КП</a></li>
+    %{/if}%
+    
+     %{if $has_bdrs}%
+    <li><a href="#tabs-4">БДР/БДДС</a></li>
+    %{/if}%
+    
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    
+    </p>
+  </div>
+ 
+  %{if $has_kp_outs}%
+  <div id="tabs-2">
+            <p>
+            %{$kp_outs}%
+            
+            </p>
+          </div>
+    %{/if}%       
+    
+    %{if $has_bdrs}%
+   <div id="tabs-4">
+    <p>
+   %{$bdrs}%
+    </p>
+  </div>
+  %{/if}% 
+     
+    
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

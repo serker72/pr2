@@ -1,0 +1,16 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="zmanager_row_%{$pos[possec].id}%" >
+    	<td>
+        <input type="radio" id="zmanager_radio_%{$pos[possec].id}%" name="zmanager_radio" value="%{$pos[possec].id}%" %{if $pos[possec].id==$current_supplier}% checked="checked"%{/if}% />
+       
+        </td>
+        
+       
+        <td  ><label for="zmanager_radio_%{$pos[possec].id}%">%{$pos[possec].name_s}%</label></td>
+         <td >%{$pos[possec].position_name}%</td>
+       
+      
+    </tr>
+   
+%{/section}%    
+ 	

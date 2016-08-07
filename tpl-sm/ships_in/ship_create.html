@@ -1,0 +1,271 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker();
+	$("#pdate_shipping_plan").datepicker();
+	//$("#pdate_payment_contract").datepicker();
+	
+	
+	/*$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});*/
+	was_changed=true;
+	
+});
+</script>
+<h1 style="float:left;">Создание распоряжения на приемку</h1>
+
+%{include file="every_help_dialog.html" filename="ships_in_create.htm" prefix="" description="создание распоряжения на приемку"  style="float:right;  margin-right:5px;"}%
+
+<br clear="all" />
+
+<form action="ed_ship_in.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$bill_id}%" />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label>
+<input type="text" size="10" maxlength="10" value="%{$now}%" name="pdate" id="pdate" />
+
+</div>
+
+
+
+<div style="float:right; margin-right:00px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="0" hspace="5" />
+</a>
+
+<strong>Статус:</strong><br />
+
+не утверждено
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Плановая дата поставки:</label>
+<input type="text" size="10" maxlength="10" value="%{$pdate_shipping_plan}%" name="pdate_shipping_plan" id="pdate_shipping_plan" />
+
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label>
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label>
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" style="width:285px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+
+
+
+
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%" valign="bottom">
+<strong>Позиции распоряжения:</strong> 
+<!--<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+-->
+</td>
+<td width="50%" align="right">
+
+
+ <a href="#" onclick="alert('Распоряжение на приемку не утверждено. Пожалуйста, утвердите распоряжение на приемку!'); return false;"><img src="/img/icons/new-gr.png" width="24" height="24" alt="создать новое поступление" title="создать новое поступление" border="0" /></a> 
+     
+    %{if $can_edit_quantities}%
+    
+       
+        <a href="#" id="edit_quantities"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+         <script type="text/javascript">
+        $(function(){
+			
+				function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#ship_positions_table input[id^=to_acc_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#ship_positions_table input[id^=to_acc_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_acc_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text(), $('#new_quantity_span_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else if(res>parseFloat($("#new_max_quantity_span_"+id).text())){
+							alert('Введенное количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text()+' превышает максимально доступное количество по входящему счету ('+$("#new_max_quantity_span_"+id).text()+'). Уменьшите количество позиции.'); 
+							  
+						  }else usl=false; 
+				  
+				  
+					  
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#new_quantity_span_'+id).html(res);
+					 $('#new_quantity_'+id).val(res);
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+       
+    %{else}%
+    
+    	
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций: у Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+        
+    %{/if}%
+    
+    
+    
+     <a href="#" target="_blank" onclick="alert('В данном режиме печать распоряжения недоступна. Пожалуйста, нажмите кнопку Создать распоряжение и перейти к утверждению для получения возможности печати распоряжения.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения..." title="печать распоряжения..." border="0" /></a>
+
+	<a href="#" onclick="alert('В данном режиме выравнивание позиций недоступно! Пожалуйста, создайте распоряжение на приемку.'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>  
+    
+    
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="ships_in/position_actions.html"}%
+
+</td>
+</tr>
+</table> 
+ 
+<p />
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать распоряжение" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать распоряжение и перейти к утверждению" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='ed_bill_in.php?action=1&id=%{$bill_id}%';
+}else location.href='ed_bill_in.php?action=1&id=%{$bill_id}%';" />
+
+
+</form>
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	if($("#ship_positions_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить распоряжение на приемку без позиций! Пожалуйста, укажите позиции распоряжения на приемку!');
+		return false;
+	}
+	
+	
+	if(!PeriodChecker('pdate', '%{$pch_date}%')){
+		sfm_show_error_msg('Дата создания должна быть не ранее %{$pch_date}%!');
+		return false;	
+	}else if(!PeriodChecker('pdate_shipping_plan', '%{$pch_date}%')){
+		sfm_show_error_msg('Плановая дата поставки должна быть не ранее %{$pch_date}%!');
+		return false;	
+	
+	}else{
+		
+		//return true;	
+		//каскад проверок по закрытым периодам
+		if(!PeriodCheckerByPeriod('pdate', closed_date )){
+			sfm_show_error_msg('Дата создания не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		}else if(!PeriodCheckerByPeriod('pdate_shipping_plan', closed_date )){
+			sfm_show_error_msg('Плановая дата поставки не должна попадать в закрытый период '+interval_string+'!');
+			return false;	
+		
+		}else return true;	
+	}
+}
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+
+
+</script>
+

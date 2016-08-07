@@ -1,0 +1,210 @@
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+ <thead>
+  <tr align="center" valign="top">
+    
+    
+    <th scope="col" width="40" rowspan="2">
+    № 
+    
+    </th>
+    
+    
+      <th scope="col" width="60" rowspan="2">
+    Дата создания
+   
+    </th>
+    
+    
+  <th scope="col" width="60" rowspan="2">
+    Заданный номер
+   
+    </th>
+   
+  
+   
+   
+    <th scope="col" width="80" rowspan="2">
+    Участок
+    
+   
+    </th>
+   
+   
+    <th scope="col" width="80" rowspan="2">
+    Объект
+    
+   
+    </th>
+    
+   
+    
+  <th scope="col" width="60" rowspan="2">Дата исполнения (план.) 
+  
+    </th>
+ <!--   <th scope="col" width="60" rowspan="2">Дата исполнения (факт.) 
+  
+    </th>-->
+    
+      <th scope="col" width="60" rowspan="2">Текущий статус заявки
+    
+    </th>
+    
+    
+   <th scope="col" width="*" colspan="%{if $not_fulfiled}%9%{else}%8%{/if}%">%{if $not_fulfiled}%Незавезенные%{else}%Завезенные%{/if}% позиции 
+   
+    </th>
+    
+    <th scope="col" width="80" rowspan="2" >Создал 
+   
+    </th>
+    
+    
+    
+    
+    
+    
+   
+ 
+  </tr>
+  
+  <tr align="center" valign="top">
+  <th scope="col" width="20" class="small">
+    № п/п
+    </th>
+    <th scope="col" width="*"  class="small">Наименование</th>
+    <th scope="col" width="20" class="small" style="min-width:20px; width:20px; max-width:30px;">
+     ед. изм.
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+     Перв. по заявке
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+     Всего по заявке
+    </th>
+    
+     %{if $not_fulfiled}%
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+     Во вх. счетах
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+    В расп. на приемку
+    </th>
+    %{/if}%
+    
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+    Получе- но
+    </th>
+    %{if !$not_fulfiled}%
+    <th scope="col" width="40" class="small" style="min-width:30px; width:40px; max-width:60px;">
+    Дата исполнения (факт.)
+    </th>
+    %{/if}%
+    
+    
+     %{if !$not_fulfiled}%
+     <th scope="col" width="40" class="small" style="min-width:30px; width:40px;">
+    Поставщик
+    </th>
+    %{/if}%
+    
+    
+   %{if $not_fulfiled}%
+   
+   <th scope="col" width="30" %{if $not_fulfiled==false}% class="small"%{/if}% style="min-width:30px; width:30px; max-width:40px; %{if $not_fulfiled}%font-weight:bold;%{/if}%">
+    Доступ- но
+    </th>
+  	%{/if}%
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+    %{section name=possec loop=$items[rowsec].positions}%%{/section}%
+   <tr align="left" valign="top">
+    
+    <td width="40" rowspan="%{$smarty.section.possec.total}%"><a href="ed_komplekt.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank">%{$items[rowsec].id}%</a> </td>
+    
+     <td width="60"  rowspan="%{$smarty.section.possec.total}%">%{$items[rowsec].pdate}%&nbsp;</td>
+    
+    
+    <td width="60"  rowspan="%{$smarty.section.possec.total}%" >%{$items[rowsec].code}%&nbsp;</td>
+    
+    
+    
+   <td width="80" rowspan="%{$smarty.section.possec.total}%">%{$items[rowsec].sector_name}%&nbsp;</td>
+   
+   
+    <td width="80"  rowspan="%{$smarty.section.possec.total}%">%{$items[rowsec].storage_name}%&nbsp;</td>
+   
+    
+    
+   <td width="60" rowspan="%{$smarty.section.possec.total}%" >
+    с %{$items[rowsec].begin_pdate}%
+    по %{$items[rowsec].end_pdate}%
+    
+    </td>
+    
+   <!-- <td width="60" rowspan="%{$smarty.section.possec.total}%" >
+    %{$items[rowsec].plan_pdate}%
+    </td>
+    
+    <td width="60" rowspan="%{$smarty.section.possec.total}%" >
+    %{$items[rowsec].fakt_pdate}%
+    </td>-->
+    
+    
+    <td width="60" rowspan="%{$smarty.section.possec.total}%">
+    
+    %{if $items[rowsec].status_id==3}%
+    аннулирована
+   
+%{elseif $items[rowsec].status_id==1}%
+    не утверждена
+%{elseif $items[rowsec].status_id==2}%  
+   
+    утверждена
+%{elseif $items[rowsec].status_id==11}%
+
+новая
+%{elseif $items[rowsec].status_id==12}%
+не выполнена
+%{elseif $items[rowsec].status_id==13}%    
+выполнена     
+%{/if}%
+    
+    &nbsp;</td>
+   
+   
+ 
+ 	%{section name=possec loop=$items[rowsec].positions}%
+    %{if $smarty.section.possec.index==0}%
+	%{include file="an_kompnot/an_row_print.html"}%
+   %{/if}%
+	%{/section}%
+ 
+ 
+   
+     <td width="80" rowspan="%{$smarty.section.possec.total}%" >
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    </td>
+    
+   
+  
+    
+     
+   
+     
+   </tr>
+   
+    %{section name=possec loop=$items[rowsec].positions}%
+	 %{if $smarty.section.possec.index>0}%   
+    <tr align="left" valign="top" id="pos_block_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%" class="small">
+	%{include file="an_kompnot/an_row_print.html"}%
+    </tr>
+    %{/if}%
+	%{/section}%
+   %{/section}%
+  </tbody>
+</table>

@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+<script type="text/javascript" src="/js/jquery-1.6.3.min.js"></script>
+<title>Документ без названия</title>
+</head>
+
+<body>
+
+
+
+<input id="replace" type="button" value="..." />
+<script type="text/javascript">
+$(function(){
+	$("#replace").bind("click", function(){
+		$("#two").empty();
+		vals=$("#one").val();
+		ar=vals.split(',');
+		$.each(ar,function(k,v){
+			v=v.replace('\*','');
+			v=v.replace('\.','');
+			v=v.trim();
+			
+			$("#two").append("\n"+"провинция "+v+":"+v);
+			
+			
+		});
+	});
+});
+</script>
+<br />
+
+<textarea cols="50" rows="10" id="one">
+
+</textarea>
+
+<textarea cols="50" rows="10" id="two">
+
+</textarea>
+<br />
+
+
+
+</body>
+</html>

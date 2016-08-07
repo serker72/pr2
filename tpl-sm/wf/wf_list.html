@@ -1,0 +1,339 @@
+%{if $has_header}%
+
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker();
+	 $("#pdate2").datepicker();
+});
+</script>
+
+
+<script type="text/javascript">
+$(function(){
+	 $.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 7
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); 
+});
+</script>
+
+%{include file="every_help_dialog.html" filename="wf.htm" prefix="" description="реестр актов списания" style="float:right;  margin-right:10px;"}%
+
+
+
+%{$pages}%
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $can_create}%
+<input type="button" value="Создать распоряжение на списание..." onclick="location.href='ed_wf.php';" />
+%{/if}%
+
+<p />
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+
+
+
+
+
+&nbsp;&nbsp;
+
+
+<strong>Выполненные распоряжения</strong><input type="radio" name="status_id" id="status_id17" value="17" %{if $status_id==17}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+
+<strong>Утвержденные распоряжения</strong><input type="radio" name="status_id" id="status_id2" value="2" %{if $status_id==2}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong> Неутвержденные распоряжения</strong><input type="radio" name="status_id" id="status_id1" value="1" %{if $status_id==1}% checked="checked"%{/if}%  /> 
+
+
+
+
+
+&nbsp;
+<strong>Аннулированные распоряжения</strong><input type="radio" name="status_id" id="status_id3" value="3" %{if $status_id==3}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong>Все распоряжения</strong><input type="radio" name="status_id" id="status_id0" value="0" %{if $status_id==0}% checked="checked"%{/if}%  /> 
+
+
+
+<a href="#" id="save_sort_mode"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" align="absmiddle" title="Сохранить" border="0" /></a>
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		if($.cookie('wf_status_id')==null){
+			$.cookie('wf_status_id', 0, { expires: 14 });		
+		}
+		
+		
+		$("#save_sort_mode").bind("click",function(){
+			//alert($("input[name=sort_mode]:checked").val());
+			$.cookie('wf_status_id', $("input[name=status_id]:checked").val(), { expires: 14 });
+			
+			return false;	
+		});
+		
+	
+	});
+	</script>
+
+<p />
+
+
+
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+    
+    
+    	
+    <th scope="col" width="40">
+    Номер 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+     <th scope="col" width="60">
+    Дата 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   
+   
+  
+  	 <th scope="col" width="40">
+    Заданный номер 
+   
+    </th>
+  
+   
+      <th scope="col" width="80">
+    Статус
+    </th>
+    
+     <th scope="col" width="*">
+    Утверждение заполнения
+    </th>
+    
+    <th scope="col" width="*">
+    Утверждение списания
+    </th>
+    
+   
+    
+    <th scope="col" width="*">Примечания 
+   
+    </th>
+    
+    <th scope="col" width="*">Создал 
+   
+    </th>
+   
+    <th scope="col" width="24">&nbsp;</th>
+     <th scope="col" width="24">&nbsp;</th>
+   
+</tr>
+<tr align="center" valign="top">
+	
+     <td width="40">
+    
+    <input type="text" size="8" maxlength="255" value="%{$id}%" name="id" id="id" style="width:40px;"  />
+	 
+    </td>
+    
+    <td width="60">
+    
+    	&nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;"  /><br />
+	по:&nbsp;<input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;"  /><br />
+	 
+    
+    </td>
+   
+   <td width="40">
+    
+   <input type="text" size="8" maxlength="255" value="%{$given_no}%" name="given_no" id="given_no" style="width:60px;" />
+	 
+    </td>
+    
+	
+    
+    
+   
+    <td width="*">
+    <select id="inner_status_id" style="width:100px;">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все расп. на списание</option>
+    <option value="17"  %{if $status_id==17}% selected="selected"%{/if}%>выполнено</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>утвержден</option>
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>не утвержден</option>
+   
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>аннулирован</option>
+   </select>  
+   <script type="text/javascript">
+   $(function(){
+	  $("#inner_status_id").bind("change", function(){
+		 $("#status_id"+ $("#inner_status_id").val()).prop("checked",true);
+		 $("#status_id"+ $("#inner_status_id").val()).trigger("click");
+	  });
+   });
+   </script>
+   
+    
+   
+   </td>
+   <td width="*">&nbsp;
+   
+   </td>
+   
+   <td width="*" >&nbsp;
+   
+   </td>
+   
+   <td width="*" >&nbsp;
+   
+   </td>
+   
+   <td width="*">
+       
+       <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name" id="manager_name" style="width:60px;" />
+       
+
+    </td>
+   
+    <td width="24">
+    <input name="doFilter" type="submit" value="Найти" />
+    </td>
+    <td width="24">&nbsp;
+    
+    </td>
+    
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}% 
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+%{/if}%
+	
+    <td width="40" %{if $items[rowsec].is_confirmed_fill_wf==0}%class="item_inactive"%{/if}%>%{$items[rowsec].id}%&nbsp;</td>
+   
+   
+   <td width="60" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+   
+   <td width="40" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>%{$items[rowsec].given_no}%&nbsp;</td>
+   
+    
+   
+     <td width="80" %{if $items[rowsec].is_confirmed_fill_wf==0}%class="item_inactive"%{/if}% >
+    %{if $items[rowsec].status_id==1}%
+    не утверждено
+    %{elseif $items[rowsec].status_id==2}%
+    утверждено
+    %{elseif $items[rowsec].status_id==17}%
+    выполнено
+    %{elseif $items[rowsec].status_id==3}%
+    аннулировано
+    %{/if}%
+    </td>
+    
+   
+    
+    <td width="*" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% id="">
+    <div id="status_%{$items[rowsec].id}%">
+    %{include file="wf/toggle_confirm.html" filename="wf.php" item=$items[rowsec] shorter=0}%
+    
+    </div>
+    
+    
+    </td>
+     <td width="*" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_ws_%{$items[rowsec].id}%">%{include file="wf/toggle_confirm_wf.html" filename="wf.php" item=$items[rowsec] shorter=0}%</div>
+    
+    
+    </td>
+   
+    
+    <td width="*" align="left" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    
+    <div style="max-height:100px; overflow:auto;">  <small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+    %{$items[rowsec].notes[notesec].user_login}%:
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    
+    
+    </td>
+    
+      <td width="*" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+     %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    
+    </td>
+    
+    
+    <td width="24" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+   
+     <a href="ed_wf.php?action=1&id=%{$items[rowsec].id}%" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+    
+    %{/if}%&nbsp;
+    </td>
+    
+     <td width="24" %{if $items[rowsec].is_confirmed_fill_wf==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{include file="wf/toggle_annul.html"}%
+    </td>
+   
+%{if $has_header}% 
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям распоряжений на списание не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%

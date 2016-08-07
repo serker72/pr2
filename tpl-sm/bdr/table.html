@@ -1,0 +1,726 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+
+%{if $has_header}%
+ %{include file="bdr/pdf_actions.html"}% 
+
+%{include file="every_help_dialog.html" filename="bdr.html" prefix=$prefix description="БДР"  style="float:right;  margin-right:0px;" is_right=true}%
+
+<div style="float:right; margin-right:5px;">
+	%{include file="suppliers/mode_reestr.html" prefix=$prefix pagename="bdrs.php"  is_right=true}%
+	
+</div>
+
+
+%{include file="annul_dialog.html" prefix=$prefix}%
+
+ 
+
+<script type="text/javascript">
+ 
+$(function(){
+	 
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+	 $("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+		
+     
+	 
+	/* 
+	 
+  
+	 
+	  $.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 17
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); */
+	 
+});
+
+ 
+</script>
+
+
+
+ 
+
+%{$pages}%
+
+
+ 
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+
+
+
+<label for="%{$prefix}%statuses" class="statuses_label">Статусы:</label>
+<select id="%{$prefix}%statuses" name="%{$prefix}%statuses[]" multiple="multiple">
+<option value="1" %{if $status_id_1==1 or $all_statuses==1}% selected%{/if}% >Не утвержден</option>
+ 
+<option value="2" %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}% >Утвержден</option>
+
+<option value="40" %{if $status_id_40==1 or $all_statuses==1}% selected%{/if}% >Проверен</option> 
+ 
+<!--<option value="24" %{if $status_id_24==1 or $all_statuses==1}% selected%{/if}% >Выполняется</option> 
+
+<option value="38" %{if $status_id_38==1 or $all_statuses==1}% selected%{/if}% >Ожидание КП</option> 
+<option value="39" %{if $status_id_39==1 or $all_statuses==1}% selected%{/if}% >КП отправлено клиенту</option> 
+
+<option value="27" %{if $status_id_27==1 or $all_statuses==1}% selected%{/if}% >Не актуально</option>
+-->
+
+<option value="3"  %{if $status_id_3==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+</select>
+
+<a href="#" id="save_sort_mode%{$prefix}%"   class="statuses_save reestr_save reestr_button24" data-comment="Сохранить"></a>
+
+&nbsp;&nbsp;
+
+<div id="%{$prefix}%statuses_caption" class="statuses_caption">
+
+</div>
+
+<br clear="all"/>
+
+<script type="text/javascript">
+$(function(){
+   
+   VidgetMulti('%{$prefix}%statuses');
+});
+</script>
+
+
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+			
+		 
+		
+		//сохранение набора
+		$("#save_sort_mode%{$prefix}%").bind("click",function(){
+			 
+			 $('#%{$prefix}%statuses').multiselect("widget").find(":checkbox").each(function(){
+				 //alert(this.label);
+				 if(this.checked){
+					 $.cookie('%{$prefix}%bdr_%{$prefix}%status_id_'+this.value, 1, { expires: 14 });  
+				 }else{
+					$.removeCookie('%{$prefix}%bdr_%{$prefix}%status_id_'+this.value);
+				 }
+			  });
+						  
+			$("#doFilter%{$prefix}%").trigger("click");
+			
+			return false;	
+		});
+		 
+	
+	});
+
+	</script>
+
+ 
+
+
+
+
+<p />
+<input type="hidden" name="action" value="%{$action}%" />
+<input type="hidden" name="id" value="%{$id}%" />
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+<input type="hidden" name="pdate" value="%{$pdate}%" />
+
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+
+%{foreach from=$view item=col}%    
+
+   
+  
+%{if $col.colname=="code"}%   
+
+	<th scope="col" width="40">
+    Номер
+    
+      <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+ %{/if}%
+%{if $col.colname=="pdate"}%      
+     <th scope="col" width="100">
+    Дата 
+  
+   
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    
+ %{/if}%
+ 
+ 
+%{if $col.colname=="lead"}%     
+    
+    
+    
+    
+      <th scope="col" width="80">
+  Лид
+   
+   <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+
+   
+ %{/if}%
+ 
+ %{if $col.colname=="tz"}%     
+    
+ 
+      <th scope="col" width="80">
+  ТЗ
+   
+    </th>
+
+ %{/if}%
+ 
+  %{if $col.colname=="kp_in"}%     
+    
+ 
+      <th scope="col" width="80">
+  КП вх.
+   
+    </th>
+
+ %{/if}%
+ 
+  %{if $col.colname=="kp_out"}%     
+    
+ 
+      <th scope="col" width="80">
+  КП исх.
+   
+    </th>
+
+ %{/if}%
+ 
+ 
+%{if $col.colname=="supplier"}%     
+    
+     
+      <th scope="col" width="*">
+    Контрагент
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  
+   
+ %{/if}%
+ 
+ 
+  
+%{if $col.colname=="resp"}%   
+ 
+    
+      <th scope="col" width="*">
+    Ответственный
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   
+     
+ %{/if}%
+%{if $col.colname=="status"}%       
+      <th scope="col" width="100">
+    Статус
+        <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+        </th>
+   
+   
+ %{/if}%
+ 
+ %{if $col.colname=="version"}%     
+    
+        <th scope="col" width="100">
+    Версия
+   
+   
+    </th>
+    
+      
+ %{/if}%
+%{if $col.colname=="crea"}%     
+    
+        <th scope="col" width="100">
+    Создал
+   
+   
+    </th>
+    
+      
+ %{/if}%
+ %{if $col.colname=="descr"}%     
+    
+        <th scope="col" width="*">
+Описание   
+   
+    </th>
+    
+      
+ %{/if}%
+ 
+ 
+ %{/foreach}%
+   
+   
+        
+      <th scope="col" width="100">
+    Утв. заполнения
+        </th>
+        
+     
+      
+    
+    <th scope="col" width="24">&nbsp;</th>
+    
+       <th scope="col" width="24">&nbsp;</th>
+   
+</tr>
+
+
+<tr align="center" valign="top" class="filter">
+%{foreach from=$view item=col}%    
+   
+ 
+%{if $col.colname=="code"}%   	
+    <td width="40">
+    <input type="text" size="8" maxlength="255" value="%{$code}%" name="code%{$prefix}%" id="code%{$prefix}%" style="width:40px;" />
+    
+	 
+    </td>
+    
+     
+ %{/if}%
+%{if $col.colname=="pdate"}%     
+    
+    <td width="100" >
+    
+   		
+     	 <nobr><label style="width:20px; display:inline-block;">с:</label><input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /></nobr><br />
+	<nobr><label style="width:20px;  display:inline-block;">по:</label><input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /></nobr>
+   </td>
+   
+   
+ %{/if}%
+ 
+%{if $col.colname=="lead"}%      
+    
+     <td width="80">
+   
+    
+    </td>
+  %{/if}%
+  
+  %{if $col.colname=="tz"}%      
+    
+     <td width="80">
+   
+    
+    </td>
+  %{/if}%
+  %{if $col.colname=="kp_in"}%      
+    
+     <td width="80">
+   
+    
+    </td>
+  %{/if}%
+ %{if $col.colname=="kp_out"}%      
+    
+     <td width="80">
+   
+    
+    </td>
+  %{/if}%
+ 
+ 
+ 
+%{if $col.colname=="supplier"}%       
+    
+    
+    <td width="*">
+      <input type="text" name="supplier_name%{$prefix}%" id="supplier_name%{$prefix}%" size="10" maxlength="255" value="%{$supplier_name}%" style="width:80px;" /> 
+    
+    </td>
+
+   
+ %{/if}%
+ 
+ 
+  
+  
+%{if $col.colname=="resp"}%       
+    
+    <td width="*">
+     <input type="text" name="manager_name%{$prefix}%" id="manager_name%{$prefix}%" size="10" maxlength="255" value="%{$manager_name}%" style="width:80px;" /><br />
+    
+    
+    </td>
+    
+     
+ %{/if}%
+%{if $col.colname=="status"}%     
+   <td width="*" >&nbsp;
+   
+   </td>
+   
+ %{/if}%
+%{if $col.colname=="crea"}%      
+   
+    <td width="*" >
+    
+   
+   </td>
+     
+ %{/if}%
+ 
+ %{if $col.colname=="version"}%      
+   
+    <td width="*" >
+    
+   
+   </td>
+     
+ %{/if}%
+ %{if $col.colname=="descr"}%      
+   
+    <td width="*" >
+    
+   
+   </td>
+     
+ %{/if}%
+ 
+%{/foreach}%  
+   
+     <td width="100" >
+    
+   
+   </td>
+  
+
+   
+    <td width="48" colspan="2">
+    <input name="doFilter%{$prefix}%" id="doFilter%{$prefix}%" type="submit" value="Найти" style="width:48px;" />
+    
+    </td>
+    
+</tr>
+</thead>
+<tbody>
+ %{/if}%
+%{section name=rowsec loop=$items}%
+ %{if $has_header or $force_has_rows}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+ %{/if}%
+
+%{foreach from=$view item=col}%    
+
+   
+ 
+%{if $col.colname=="code"}%   	
+    <td width="40" align="left" class="%{if  $items[rowsec].is_confirmed==0  }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%" >
+    
+    
+    
+    	  %{if $can_edit}%
+    <a href="ed_bdr.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" title="Подробно...">
+    %{/if}%
+    %{$items[rowsec].code}%
+    
+    
+    %{if $can_edit}%
+    </a>
+    %{/if}%
+    	
+         %{foreach from=$items[rowsec].new_blocks item=new_block}%
+      <a href="%{$new_block.url}%" data-comment="%{$new_block.comment}%" class="reestr_cter %{$new_block.class}%" target="_blank">%{if $new_block.doc_counters>0}%%{$new_block.doc_counters}%%{/if}%</a>
+      %{/foreach}% 
+
+      
+      </td>
+      
+    
+ %{/if}%
+%{if $col.colname=="pdate"}%        
+         <td width="100" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%item_expired%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34 }%item_failed%{/if}%"><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+    
+    
+    %{$items[rowsec].pdate_d}% 
+ 
+  
+    
+    
+    </td>
+     
+   
+ %{/if}%
+ 
+%{if $col.colname=="lead"}%          
+        
+      <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    
+     <a href="ed_lead.php?action=1&id=%{$items[rowsec].lead_id}%" target="_blank">%{$items[rowsec].lead_code}%</a>
+
+     
+    </td>   
+        
+     
+ %{/if}%
+ 
+  
+%{if $col.colname=="tz"}%          
+        
+      <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    
+     <a href="ed_tz.php?action=1&id=%{$items[rowsec].tz_id}%" target="_blank">%{$items[rowsec].tz_code}%</a>
+
+     
+    </td>   
+        
+     
+ %{/if}%
+ 
+ %{if $col.colname=="kp_in"}%          
+        
+      <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    
+     <a href="ed_kp_in.php?action=1&id=%{$items[rowsec].kp_in_id}%" target="_blank">%{$items[rowsec].kp_in_code}%</a>
+
+     
+    </td>   
+        
+     
+ %{/if}%
+ 
+  %{if $col.colname=="kp_out"}%          
+        
+      <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    
+     <a href="ed_kp_in.php?action=1&id=%{$items[rowsec].kp_out_id}%" target="_blank">%{$items[rowsec].kp_out_code}%</a>
+
+     
+    </td>   
+        
+     
+ %{/if}%
+ 
+%{if $col.colname=="supplier"}%     
+    
+    
+    
+    
+      <td width="*"  class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%" >
+     <small>
+     %{foreach from=$items[rowsec].suppliers item=item}%
+     <a href="supplier.php?action=1&id=%{$item.supplier_id}%" target="_blank">
+    %{$item.opf_name}% %{$item.full_name}% 
+    </a>
+    <br>
+
+     %{/foreach}%
+     </small> 
+    </td>
+
+   
+ %{/if}%
+ 
+ 
+  
+%{if $col.colname=="resp"}%       
+     
+      <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    <small>
+     %{$items[rowsec].manager_name}%  
+    </small> 
+    </td>
+    
+     
+ %{/if}%
+%{if $col.colname=="status"}%     
+    
+    
+     <td width="100" class="%{if  $items[rowsec].is_confirmed==0 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34 }%item_failed%{/if}%" >
+  %{$items[rowsec].status_name}% 
+    </td>
+   
+      
+      
+ %{/if}%
+%{if $col.colname=="crea"}%    
+    
+        
+     <td width="100" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36  or $items[rowsec].status_id==34 }%item_failed%{/if}%">
+     <small>
+    %{$items[rowsec].cr_name}% 
+    
+     %{$items[rowsec].pdate}%
+     </small>
+    </td>
+    
+     
+      
+ %{/if}%
+ 
+ %{if $col.colname=="descr"}%    
+    
+    
+ 
+    
+    
+        
+     <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36  or $items[rowsec].status_id==34 }%item_failed%{/if}%">
+     <small>
+    %{$items[rowsec].description}% 
+    
+     
+     </small>
+    </td>
+    
+     
+      
+ %{/if}%
+  %{if $col.colname=="version"}%    
+    
+     
+     <td width="*" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36  or $items[rowsec].status_id==34 }%item_failed%{/if}%">
+    
+    %{$items[rowsec].version_no}% от  %{$items[rowsec].given_pdate}%
+    
+     
+      
+    </td>
+    
+     
+      
+ %{/if}%
+  
+ 
+ %{/foreach}%
+     
+    
+   
+ 
+    
+    <td width="*"  class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%" >
+    
+    <div id="status_price%{$prefix}%_%{$items[rowsec].id}%">%{include file="bdr/toggle_confirm_price.html" filename="bdrs.php" item=$items[rowsec] shorter=0}%</div>
+    
+    </td>
+    
+   
+  
+
+    
+    
+    <td width="24" class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    %{if $can_edit}%
+    <a href="ed_bdr.php?action=1&id=%{$items[rowsec].id}%&from_begin=1" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_right_button24"></a>
+    
+     %{if $items[rowsec].status_id==27}%
+      <a href="#" onClick="alert('Невозможно распечатать БДР в статусе Не актуально!'); return false;" data-comment="печать..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+    
+      <a href="#" onClick="alert('Невозможно отправить на электронную почту БДР в статусе Не актуально!');  return false;" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_inactive reestr_right_button24"></a>
+     %{elseif $items[rowsec].is_confirmed==1 and $items[rowsec].is_confirmed_version==1 and $items[rowsec].is_confirmed_version1==1}%
+    <a href="ed_bdr.php?action=1&id=%{$items[rowsec].id}%&force_print=1" target="_blank" data-comment="печать..." class="reestr_print reestr_right_button24"></a>
+    
+     <a href="#" onclick="bdr_email_documents_launch('%{$items[rowsec].id}%'); return false;"  data-comment="отправить pdf-документы на электронную почту..."  class="reestr_email reestr_right_button24"> </a>
+    %{else}%
+      <a href="#" onClick="alert('Для печати БДР необходимо утвердить его заполнение, утвердить проверку финансовой службой и генеральным директором!'); return false;" data-comment="печать..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+    
+      <a href="#" onClick="alert('Для отправки на электронную почту БДР необходимо утвердить его заполнение, утвердить проверку финансовой службой и генеральным директором!');  return false;" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_inactive reestr_right_button24"></a>
+    %{/if}%
+    
+    
+    %{else}% 
+    <a href="#" onClick="return false;" data-comment="Подробно..." class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    
+    <a href="#" onClick="return false;" data-comment="печать..." class="reestr_print reestr_inactive reestr_right_button24"></a>
+    
+      <a href="#" onClick="return false;" data-comment="отправить pdf-документы на электронную почту..." class="reestr_email reestr_inactive reestr_right_button24"></a>
+    %{/if}%
+   
+    
+    
+
+    
+    </td>
+    
+   
+     <td width="24"  class="%{if  $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3 }%item_inactive%{/if}% %{if $items[rowsec].expired}%%{/if}% %{if $items[rowsec].status_id==36 or $items[rowsec].status_id==34  }%item_failed%{/if}%">
+    %{include file="bdr/toggle_annul.html" prefix=$prefix}%
+   
+    
+    </td>
+    
+     
+%{if $has_header or $force_has_rows}%  
+</tr>
+
+ %{/if}%
+%{/section}%
+ %{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям БДР не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%
+ 

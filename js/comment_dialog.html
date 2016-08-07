@@ -1,0 +1,39 @@
+<div id="task_comment_dialog" title="Введите комментарий" style="display:none;">
+	 
+	<div id="task_comment_dialog_caption" style="font-weight:bold; display:inline-block;" >
+   Укажите причину отправки на доработку:  
+    
+    
+    </div>
+
+    
+
+    
+    <textarea cols="73" rows="5" id="task_comment" style="width:99%; height:100px;"></textarea>
+</div>
+
+ 
+
+<script>
+$(function(){
+	$("#task_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 500,
+	  height: 280,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	
+	
+});
+</script>

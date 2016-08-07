@@ -1,0 +1,681 @@
+
+
+
+
+<div style="float:right; text-align:right; padding-right:0px; padding-top:5px; %{if $bill.is_confirmed_price!=1 and !$can_view_prices}% display:none;  %{/if}%">
+<strong>Всего:&nbsp;</strong><span id="positions_cost">%{$total_cost}%</span> <span id="positions_signature">%{$signature}%</span>
+ 
+</div>
+
+
+<br clear="all" />
+
+
+<div id="positions_dialog" title="Выберите позиции">
+
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	var dialog_width=1200;
+	var dialog_position='center';
+	
+	function isTouchDevice1(){
+				try{
+					document.createEvent("TouchEvent");
+					return true;
+				}catch(e){
+					return false;
+				}
+	}
+	
+	$("#add_pos").bind("click",function(){
+		
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			was_changed=true;
+			
+			var main_id=0;
+			var currency_id=0;
+			var price_kind_id=0;
+			var producer_id=0;
+			var two_group_id=0;
+			var group_id=0;
+			
+			 
+			
+			 
+			var complex_positions=new Array();
+			//alert(complex_positions);
+			/*$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+				hash=$(value).val();
+				
+				hashed_string='';
+				
+				dl_value_1=new Array();
+				dl_rub_or_percent_1=new Array();
+				
+				
+				hashed_string=$("#new_pl_position_id_"+hash).val();  //0
+				
+				hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val(); //1
+				hashed_string=hashed_string+';'+$("#new_price_"+hash).val(); //2
+				
+				hashed_string=hashed_string+';'+$("#new_pl_discount_id_"+hash).val(); //3
+				hashed_string=hashed_string+';'+$("#new_pl_discount_value_"+hash).val(); //4
+				hashed_string=hashed_string+';'+$("#new_pl_discount_rub_or_percent_"+hash).val(); //5
+				
+				//получить данные по введенным макс. скидкам
+				if($("#new_parent_id_"+hash).val()==0){
+				  main_id=$("#new_pl_position_id_"+hash).val(); 
+				  currency_id=$("#new_currency_id_"+hash).val();
+					
+				  hashed_string=hashed_string+';'; 
+				  dl_value_1=new Array();
+				  %{foreach from=$discs1 item=discs}%
+					  dl_value_1.push($("#new_dl_value_%{$discs.id}%_"+hash).val().replace("\,","\.")); 
+				  %{/foreach}%
+				  hashed_string=hashed_string+dl_value_1.join(','); //6
+				  
+				  hashed_string=hashed_string+';';
+				  dl_value_2=new Array();
+				  %{foreach from=$discs1 item=discs}%
+					  dl_value_2.push($("#new_dl_rub_or_percent_%{$discs.id}%_"+hash).val().replace("\,","\."));  
+				  %{/foreach}%
+				  hashed_string=hashed_string+dl_value_2.join(','); //7
+				}else{
+					hashed_string=hashed_string+';0';//6
+					hashed_string=hashed_string+';0';//7		
+				}
+				
+				hashed_string=hashed_string+';0'; //8
+				hashed_string=hashed_string+';0'; //9
+				hashed_string=hashed_string+';0'; //10
+				hashed_string=hashed_string+';0';//11
+				
+				hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val(); //12
+				hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val(); //13
+				hashed_string=hashed_string+';0'; //14
+				
+				hashed_string=hashed_string+';0'; //15
+				
+				hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val(); //16
+				hashed_string=hashed_string+';'+$("#new_price_f_"+hash).val(); //17
+				
+				hashed_string=hashed_string+';'+$("#new_parent_id_"+hash).val(); //18
+				hashed_string=hashed_string+';'+$("#new_currency_id_"+hash).val(); //19
+				hashed_string=hashed_string+';'+$("#new_price_kind_id_"+hash).val(); //20
+				
+				//alert($("#new_position_id_"+hash).val());	
+				
+				if($("#new_parent_id_"+hash).val()==0){
+					price_kind_id=$("#new_price_kind_id_"+hash).val();
+					two_group_id=$("#new_two_group_id_"+hash).val();
+					group_id=$("#new_parent_group_id_"+hash).val();
+					producer_id=$("#new_producer_id_"+hash).val();
+				}
+				
+				//alert(hashed_string);
+				complex_positions.push(hashed_string);			  
+			  
+			});*/
+			
+			
+			//alert(complex_positions);
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/kp.php",
+			  type: "POST",
+			  data:{
+				  "action":"cookie_positions",
+				  "bill_id":"%{$bill.id}%",
+				  "main_id":main_id, //айди позиции (не опции)
+				  "currency_id":currency_id, //айди валюты позиции
+				  
+				  "complex_positions[]":complex_positions
+			  },
+			  beforeSend: function(){
+				 
+			  },
+			  success: function(data){
+				/*alert(data);
+				*/
+				
+				//если несколько главных позиций и нет опций - то работаем без опций:
+				//а именно, не адресуем главную позицию и скидку запоминаем одну
+				var count_of_options=0;
+				
+				$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+					hash=$(value).val();
+					if($("#new_parent_id_"+hash).val()!=0) count_of_options++;
+				});
+				
+				$.each($("#positions table tbody tr td input[type=hidden][id^='new_hash_']"), function(key, value){
+					hash=$(value).val();
+					
+					hashed_string='';
+					
+					dl_value_1=new Array();
+					dl_rub_or_percent_1=new Array();
+					
+					
+					hashed_string=$("#new_pl_position_id_"+hash).val();  //0
+					
+					hashed_string=hashed_string+';'+$("#new_quantity_"+hash).val(); //1
+					hashed_string=hashed_string+';'+$("#new_price_"+hash).val(); //2
+					
+					hashed_string=hashed_string+';'+$("#new_pl_discount_id_"+hash).val(); //3
+					hashed_string=hashed_string+';'+$("#new_pl_discount_value_"+hash).val(); //4
+					hashed_string=hashed_string+';'+$("#new_pl_discount_rub_or_percent_"+hash).val(); //5
+					
+					//получить данные по введенным макс. скидкам
+					if($("#new_parent_id_"+hash).val()==0){
+					  main_id=$("#new_pl_position_id_"+hash).val(); 
+					  currency_id=$("#new_currency_id_"+hash).val();
+						
+					  hashed_string=hashed_string+';'; 
+					  dl_value_1=new Array();
+					  %{foreach from=$discs1 item=discs}%
+						  dl_value_1.push($("#new_dl_value_%{$discs.id}%_"+hash).val().replace("\,","\.")); 
+					  %{/foreach}%
+					  hashed_string=hashed_string+dl_value_1.join(','); //6
+					  
+					  hashed_string=hashed_string+';';
+					  dl_value_2=new Array();
+					  %{foreach from=$discs1 item=discs}%
+						  dl_value_2.push($("#new_dl_rub_or_percent_%{$discs.id}%_"+hash).val().replace("\,","\."));  
+					  %{/foreach}%
+					  hashed_string=hashed_string+dl_value_2.join(','); //7
+					}else{
+						hashed_string=hashed_string+';0';//6
+						hashed_string=hashed_string+';0';//7		
+					}
+					
+					hashed_string=hashed_string+';0'; //8
+					hashed_string=hashed_string+';0'; //9
+					hashed_string=hashed_string+';0'; //10
+					hashed_string=hashed_string+';0';//11
+					
+					hashed_string=hashed_string+';'+$("#check_new_price_pm_"+hash).val(); //12
+					hashed_string=hashed_string+';'+$("#check_new_total_"+hash).val(); //13
+					hashed_string=hashed_string+';0'; //14
+					
+					hashed_string=hashed_string+';0'; //15
+					
+					hashed_string=hashed_string+';'+$("#new_position_id_"+hash).val(); //16
+					hashed_string=hashed_string+';'+$("#new_price_f_"+hash).val(); //17
+					
+					hashed_string=hashed_string+';'+$("#new_parent_id_"+hash).val(); //18
+					hashed_string=hashed_string+';'+$("#new_currency_id_"+hash).val(); //19
+					hashed_string=hashed_string+';'+$("#new_price_kind_id_"+hash).val(); //20
+					hashed_string=hashed_string+';'+$("#new_print_form_has_komplekt_"+hash).val(); //21
+					hashed_string=hashed_string+';'+$("#new_extra_charges_"+hash).val(); //22
+					
+					
+					//alert($("#new_position_id_"+hash).val());	
+					
+					if($("#new_parent_id_"+hash).val()==0){
+						price_kind_id=$("#new_price_kind_id_"+hash).val();
+						two_group_id=$("#new_two_group_id_"+hash).val();
+						group_id=$("#new_parent_group_id_"+hash).val();
+						producer_id=$("#new_producer_id_"+hash).val();
+						
+						
+						$.cookie('quantity'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_quantity_"+hash).val());
+						
+						
+						if(count_of_options==0) $.cookie('discount_'+$("#new_pl_discount_id_"+hash).val()+'_'+'_1', $("#new_pl_discount_value_"+hash).val());
+						else $.cookie('discount_'+$("#new_pl_discount_id_"+hash).val()+'_'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_pl_discount_value_"+hash).val());
+						
+						
+						$.cookie('print_form_has_komplekt'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_print_form_has_komplekt_"+hash).val());
+						
+						$.cookie('extra_charges'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_extra_charges_"+hash).val());
+					}else{
+						//опции:
+						$.cookie('q_a'+$("#new_pl_position_id_"+hash).val()+'_1', 1);
+						$.cookie('quantity'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_quantity_"+hash).val());
+						
+						
+						$.cookie('print_form_has_komplekt'+$("#new_pl_position_id_"+hash).val()+'_1', $("#new_print_form_has_komplekt_"+hash).val());
+						
+					}
+					
+					
+					
+					
+					
+					//alert(hashed_string);
+					//complex_positions.push(hashed_string);			  
+				  
+				});
+				
+				
+				
+				url='pricelist.php?from_1=0&memory_1=1&doShow_1=1&group_id_1='+group_id+'&price_kind_id_1='+price_kind_id+'&producer_id_1='+producer_id+'&two_group_id_1='+two_group_id+'&lang_rus_1='+$("#lang_rus").val()+'&lang_en_1='+$("#lang_en").val()+'&print_form_has_komplekt_1='+$("#print_form_has_komplekt").val()+'&lead_id_1='+$("#lead_id").val();
+				
+				if(count_of_options>0) url+='&id_1='+main_id;
+				
+				if($("#action").val()==1){
+					url=url+'&from_kp_1='+$("#id").val();	
+				}else url=url+'&from_kp_1=0';
+				
+				location.href=url;
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			
+			
+			/*
+			w=parseInt($(window).width());
+			if(w<1200){
+				 dialog_width=w-10;
+				 dialog_position=new Array();
+				 dialog_position.push('left'); dialog_position.push('top');
+				 
+			}else{
+				dialog_width=1200;
+				dialog_position='center';
+			}
+			
+			
+			$("#positions_dialog").dialog( "option", "position", dialog_position );
+			$("#positions_dialog").dialog( "option", "width", dialog_width );
+			
+			
+			//alert(complex_positions);
+			$.ajax({
+			  async: true,
+			  url: "/js/kp.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "bill_id":"%{$bill.id}%",
+				  "main_id":main_id, //айди позиции (не опции)
+				  "currency_id":currency_id, //айди валюты позиции
+				  
+				  "complex_positions[]":complex_positions
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data); 
+				
+				  if(isTouchDevice1()){
+			  
+					$("#positions_scroll_block").css("width", 900);
+					$("#positions_scroll_block").css("height", 580);
+					
+					$("#positions_scroll_block").css("overflow", "scroll");
+					touchScrollXY('positions_scroll_block'); 
+				  }
+			  
+				
+				
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#positions_dialog_komplekt_name").html($("#komplekt_ved_id_string").attr("value"));
+			$("#positions_dialog").dialog("open");
+			*/
+		
+		
+	});
+	
+	
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: dialog_width,
+		position: dialog_position,
+		height: 620,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				var complex_positions=new Array();
+				var main_id=0;
+				var currency_id=0;
+				
+				//первая позиция д.быть строго не ноль!
+				parent_hash='';
+				parent_hash=$("input[id^=parent_id_][value=0]").attr("id").replace(/^parent_id_/,'');
+				//alert(parent_hash);
+				
+				r=IsCorrectQuantity(parent_hash);
+				can_put=can_put&&r; 
+				
+				if($("#quantity_"+parent_hash).val()==0){
+					can_put=can_put&&false;
+					alert("Количество оборудования должно быть больше нуля!");
+				}
+				
+				
+				$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+					var hash1=$(value).val();
+					
+					function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+				
+				//	alert(hash1);
+					
+					 //все проверки
+					
+					
+					
+					if($("#parent_id_"+hash1).val()==0){
+					//если это оборудоввание - проверить скидку и кол-во
+						if(can_put) can_put=can_put&&IsCorrectQuantity(hash1);		
+						if(can_put) can_put=can_put&&IsCorrectSk(hash1);	
+						if(can_put) can_put=can_put&&IsCorrectBounds(hash1);		
+						
+					}else{
+					//если это опция - проверить, отмечена ли, и если отмечена - то кол-во	
+						if($("#q_a_"+hash1).prop("checked")){
+							if(can_put) can_put=can_put&&IsCorrectQuantity(hash1);		
+						}
+					}
+					 
+					  
+					
+					
+				});
+				
+				
+				
+				
+				if(can_put) {
+					
+					
+					//перенос данных в таблицу на странице
+					//alert('z');
+					var val=0; var rubor=0; var id=0;
+					$.each($("#positions_dialog_table table tbody tr td input[type=hidden][id^='hash_']"), function(key, value){
+						hash=$(value).val();
+						hashed_string='';
+						
+						if(($("#parent_id_"+hash).val()!=0)&&(!$("#q_a_"+hash).prop("checked"))) return;
+						
+						
+						dl_value_1=new Array();
+						dl_rub_or_percent_1=new Array();
+						
+						
+						hashed_string=$("#pl_position_id_"+hash).val();  //0
+						
+						hashed_string=hashed_string+';'+$("#quantity_"+hash).val().replace("\,","\."); //1
+						hashed_string=hashed_string+';'+$("#price_"+hash).val().replace("\,","\."); //2
+						
+						
+						
+						if($("#parent_id_"+hash).val()==0){
+							hash1=$("input[id^=new_parent_id_][value=0]").attr("id").replace(/^new_parent_id_/,"");
+							
+				  			main_id=$("#new_pl_position_id_"+hash1).val(); 
+				  			currency_id=$("#new_currency_id_"+hash1).val();
+							//alert(currency_id);
+							
+							
+							%{foreach from=$discs1 item=discs}%
+								
+								if(!isNaN($("#pl_discount_%{$discs.id}%_"+hash).val())&&(parseFloat($("#pl_discount_%{$discs.id}%_"+hash).val())>0)){ 
+									val=parseFloat($("#pl_discount_%{$discs.id}%_"+hash).val());
+									rubor=$("#pl_discount_rub_or_percent_%{$discs.id}%_"+hash).val();
+									id=$("#dl_discount_id_%{$discs.id}%_"+hash).val();
+									//alert(id+" "+val+" "+rubor);
+								}
+							%{/foreach}%
+							hashed_string=hashed_string+';'+id; //3
+							hashed_string=hashed_string+';'+val; //4
+							hashed_string=hashed_string+';'+rubor; //5
+							
+							//получить данные по введенным макс. скидкам
+							hashed_string=hashed_string+';'; 
+							dl_value_1=new Array();
+							%{foreach from=$discs1 item=discs}%
+								dl_value_1.push($("#dl_value_%{$discs.id}%_"+hash).val().replace("\,","\.")); 
+							%{/foreach}%
+							hashed_string=hashed_string+dl_value_1.join(','); //6
+							
+							hashed_string=hashed_string+';';
+							dl_value_2=new Array();
+							%{foreach from=$discs1 item=discs}%
+								dl_value_2.push($("#dl_rub_or_percent_%{$discs.id}%_"+hash).val().replace("\,","\."));  
+							%{/foreach}%
+							hashed_string=hashed_string+dl_value_2.join(','); //7
+						
+						}else{
+							/*hashed_string=hashed_string+';1'; //3
+							hashed_string=hashed_string+';0'; //4
+							hashed_string=hashed_string+';1'; //5*/
+							
+						
+							//если активна скидка рук-ля, опция=ПНР, то подтянуть ее собственное значение
+							if((id==2)&&($("#is_install"+hash).val()==1)){
+								val=parseFloat($("#pl_discount_"+id+"_"+hash).val());
+								hashed_string=hashed_string+';'+id; //3 
+								hashed_string=hashed_string+';'+val; //4
+								hashed_string=hashed_string+';'+rubor; //5
+							}else{
+								hashed_string=hashed_string+';'+id; //3 -- подтянем из родительского обор.
+								hashed_string=hashed_string+';'+val; //4
+								hashed_string=hashed_string+';'+rubor; //5
+								
+							}
+							
+							//alert(id+" "+val+" "+rubor);
+							
+							
+							hashed_string=hashed_string+';0';//6
+							hashed_string=hashed_string+';0';//7		
+						}
+						
+						hashed_string=hashed_string+';'+'0'; //8
+						
+						
+						hashed_string=hashed_string+';0'; //9
+						hashed_string=hashed_string+';0'; //10
+						hashed_string=hashed_string+';0'; //11
+						
+						hashed_string=hashed_string+';'+$("#price_pm_check_"+hash).val(); //12
+						hashed_string=hashed_string+';'+$("#total_check_"+hash).val(); //13
+						hashed_string=hashed_string+';0'; //14
+						
+						hashed_string=hashed_string+';0'; //15
+						
+						hashed_string=hashed_string+';'+$("#position_id_"+hash).val(); //16
+						hashed_string=hashed_string+';'+$("#price_f_"+hash).val().replace("\,","\."); //17
+						
+						hashed_string=hashed_string+';'+$("#parent_id_"+hash).val(); //18
+						hashed_string=hashed_string+';'+$("#currency_id_"+hash).val(); //19
+						hashed_string=hashed_string+';'+$("#price_kind_id_"+hash).val(); //20
+						
+						//alert(hashed_string);
+						complex_positions.push(hashed_string);			  
+					});
+					
+					
+					
+					//alert(complex_positions);
+					$.ajax({
+					  async: true,
+					  url: "/js/kp.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_positions",
+						  "id":$("#id").val(),
+						  "main_id":main_id, //айди позиции (не опции)
+				 		  "currency_id":currency_id, //айди валюты позиции
+						  "complex_positions[]":complex_positions
+					  },
+					  beforeSend: function(){
+						//alert("Загрузка реквизитов.");
+					  },
+					  success: function(data){
+						//alert(data);
+						$("#positions").html(data); 
+						temphash=$("input[id^=new_parent_id_]:first").attr("id").replace(/^new_parent_id_/, "");
+						$("#positions_cost").html($("#new_total_"+temphash).html());
+						
+						//подсчет нового Итого
+						/*$.ajax({
+						  async: true,
+						  url: "/js/kp.php",
+						  type: "POST",
+						  data:{
+							  "action":"calc_new_total",
+							  
+							 "complex_positions[]":complex_positions
+						  },
+						  beforeSend: function(){
+							$("#positions_cost").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+						  },
+						  success: function(data){
+							$("#positions_cost").html(data);
+							
+							temphash=$("input[id^=new_parent_id_]:first").attr("id").replace(/^new_parent_id_/, "");
+							//alert($("#new_signature_"+temphash).html());
+							$("#new_total_"+temphash).html(data); 
+						  },
+						  error: function(xhr, status){
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});*/
+						
+						
+						//переподгрузить установку, доставку
+						var positions=new Array();  var costs=new Array();
+						//new_pl_position_id_
+						$("input[id^=new_pl_position_id_]").each(function(index, v) {
+							positions.push($(v).val());
+							hash=$(v).attr("id").replace(/^new_pl_position_id_/, '');
+								costs.push($("#check_new_total_"+hash).val());
+						});
+						
+						//alert(positions);
+						$.ajax({
+							async: true,
+							url: "/js/kp.php",
+							type: "GET",
+							dataType:"json",
+							data:{
+								"action":"preload_install",
+								"price_kind_id":$("#price_kind_id").val(),
+								"positions[]":positions,
+								"costs[]":costs
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+								//alert(data);
+							 $("#install_value").val(data.value); 
+							 $("#install_notes").val(data.notes); 
+							 
+							 if(data.notes.length==0){
+								
+								$("#install_mode").val(0);
+								$("#install_mode_str").val(0);
+							 }else{
+								  $("#install_mode").val(1); 
+								  $("#install_mode_str").val(1);
+							 }
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+						
+						/*$.ajax({
+							async: true,
+							url: "/js/kp.php",
+							type: "GET",
+							dataType:"json",
+							data:{
+								"action":"preload_delivery",
+								"price_kind_id":$("#price_kind_id").val(),
+								"positions[]":positions,
+								"costs[]":costs
+							},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+								//alert(data);
+							 $("#delivery_value").val(data.value);
+							 $("#delivery_notes").val(data.notes);
+							 
+							 if(data.notes.length==0){
+								
+								$("#delivery_mode").val(0);
+							 }else $("#delivery_mode").val(1); 
+							  
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});*/
+						
+						//подсчет нового НДС
+						/*$.ajax({
+						  async: true,
+						  url: "/js/kp.php",
+						  type: "POST",
+						  data:{
+							  "action":"calc_new_nds",
+							  
+							  "complex_positions[]":complex_positions
+						  },
+						  beforeSend: function(){
+							$("#positions_nds").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />'); 
+						  },
+						  success: function(data){
+							$("#positions_nds").html(data); 
+						  },
+						  error: function(xhr, status){
+							// alert("Ошибка загрузки реквизитов.");	
+						  }	 
+						});*/
+						
+						 
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					//alert('zs');
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

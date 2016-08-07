@@ -1,0 +1,1164 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+ 	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	//$("#pdate_end").datepicker({changeYear:true, yearRange: '2012:+15'});
+	
+%{if $bill.total_is_working}%
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_total").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_total").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_total").html($days);
+	
+	$("#work_hours_total").html($hours);
+	
+	$("#work_mins_total").html($mins);
+	
+	$("#work_secs_total").html($secs);
+	$("#working_times_total").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+	
+%{if $bill.0_is_working }%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_0").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_0").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_0").html($days)	;
+	
+	$("#work_hours_0").html($hours)	;
+	
+	$("#work_mins_0").html($mins)	;
+	
+	$("#work_secs_0").html($secs);
+	$("#working_times_0").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+
+%{if $bill.1_is_working }%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_1").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_1").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_1").html($days)	;
+	
+	$("#work_hours_1").html($hours)	;
+	
+	$("#work_mins_1").html($mins)	;
+	
+	$("#work_secs_1").html($secs);
+	$("#working_times_1").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+
+%{if $bill.3_is_working }%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_3").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_3").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_3").html($days)	;
+	
+	$("#work_hours_3").html($hours)	;
+	
+	$("#work_mins_3").html($mins)	;
+	
+	$("#work_secs_3").html($secs);
+	$("#working_times_3").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+
+%{if $bill.4_is_working }%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf_4").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf_4").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days_4").html($days)	;
+	
+	$("#work_hours_4").html($hours)	;
+	
+	$("#work_mins_4").html($mins)	;
+	
+	$("#work_secs_4").html($secs);
+	$("#working_times_4").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%	
+
+
+%{if $field_rights.to_kp}%
+$("#to_kp").bind("click", function(){
+	window.open("ed_kp_in.php?lead_id=%{$bill.lead_id}%&tz_id=%{$bill.id}%&kind_id=1");
+});
+%{/if}%  
+
+%{if $field_rights.to_kp_in}%
+$("#to_kp_in_dialog").dialog({
+	autoOpen: false,
+	dialogClass: 'semi_auth',
+	modal: true,
+	width: 900,
+	height: 500,
+	dialogClass: 'semi_auth',
+	buttons: {
+		"Готово": function(){ 
+		},
+		"Отмена": function(){
+			 $(this).dialog("close"); 
+		}
+	}
+});
+
+
+$("#to_kp_in").bind("click", function(){
+	/*если НЕТ поставщиков - сообщать об этом и выходить
+	если ОДИН поставщик - автоматом создаем КПВ
+	если МНОГО поставщиков - просим выбрать определенного пост-ка
+	нужен асинхронный метод, он должен вернуть список сохраненных поставщиков
+	*/
+	
+	
+	$.ajax({
+		async: false,
+		url: "/js/tzs.php",
+		type: "GET",
+		dataType:"json", 
+		data:{
+			"action":"load_tz_suppliers",
+			id: "%{$bill.id}%"
+		},
+		beforeSend: function(){
+			  
+		},
+		success: function(data){
+		
+		  
+		  // alert(data.length);
+		  
+		  if(data.length==0){
+				alert("Укажите одного или нескольких поставщиков и сохраните ТЗ!");  
+				
+		  }else if(data.length==1){
+			  //построить запрос и перейти к созданию КПВ
+			  
+			  location.href="ed_kp_in.php?lead_id=%{$bill.lead_id}%&tz_id=%{$bill.id}%&kind_id=0&supplier_id="+data[0].id;
+		  }else if(data.length>1){
+				//выберите поставщика  
+			  //вывести ОКНО и в нем дать возможность выбора ОДНОГО поставщика
+			  //из ОКНА создавать запрос 
+			  
+			  $.ajax({
+				async: true,
+				url: "/js/tzs.php",
+				type: "POST",			 
+				data:{
+					"action":"load_tz_suppliers",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					$("#to_kp_in_dialog_data").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." border="0" />');  
+				},
+				success: function(data){
+					$("#to_kp_in_dialog_data").html(data);
+				}
+			  });
+			  
+			  $("#to_kp_in_dialog").dialog({
+	 
+					buttons: {
+						"Готово": function(){ 
+							if(($("input[name=dialog_suppliertz_id]:checked").val()==0)||
+								($("input[name=dialog_suppliertz_id]:checked").val()==null)||
+								($("input[name=dialog_suppliertz_id]:checked").val()==undefined)
+							){
+								alert("Выберите поставщика!");	
+								
+							}else{
+								 location.href="ed_kp_in.php?lead_id=%{$bill.lead_id}%&tz_id=%{$bill.id}%&kind_id=0&supplier_id="+$("input[name=dialog_suppliertz_id]:checked").val();
+							}
+						
+						},
+						"Отмена": function(){
+							 $(this).dialog("close"); 
+						}
+					}
+				});
+			  
+			  
+			  
+			  $("#to_kp_in_dialog").dialog("open");
+		  }
+		},
+		error: function(xhr, status){
+			
+			//alert("Ошибка при проверке состояния ТЗ. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+			//can_ret=can_ret&&false;	
+		}	 
+	});	
+	
+	//window.open("ed_kp_in.php?lead_id=%{$bill.lead_id}%&tz_id=%{$bill.id}%&kind_id=0");
+});
+%{/if}%  
+
+
+
+%{if $field_rights.to_pl}%
+$("#to_pl").bind("click", function(){
+	url="pricelist.php?group_id_1=1&memory_1=1&price_kind_id_1=1&lead_id_1=%{$bill.lead_id}%&tz_id_1=%{$bill.id}%";
+	%{if $lead.producer_id!=0}%
+	url+="&producer_id_1=%{$lead.producer_id}%";
+	%{/if}%
+	window.open(url);
+});
+%{/if}%	
+
+%{if $field_rights.to_kp_pl}%
+$("#to_kp_pl").bind("click", function(){
+	%{if $has_kp}%
+	alert("Невозможно создать КП из ПЛ. Причина: КП из ПЛ уже создано.");
+	%{else}%
+	url="pricelist.php?group_id_1=1&memory_1=1&price_kind_id_1=1&lead_id_1=%{$bill.lead_id}%&tz_id_1=%{$bill.id}%&id_1="+$("#pl_position_id").val()+"&doShow_1=1";
+	
+	
+	window.open(url);
+	%{/if}%
+});
+%{/if}%	
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="tzs.html" prefix="" description="Информация о редактировании ТЗ" style="float:right" is_right=true}%
+ 
+ 
+
+
+ 
+
+<h1>Редактирование ТЗ</h1>
+
+<form action="ed_tz.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="1">
+ 
+
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="status_change_comment" id="status_change_comment" value="" />
+<input type="hidden" name="status_change_comment_id" id="status_change_comment_id" value="%{$bill.fail_reason_id}%" />
+
+
+<input type="hidden" id="status_change_review_comment_1" name="status_change_review_comment_1" value="0" /> 
+       <input type="hidden" id="status_change_review_comment_2" name="status_change_review_comment_2" value="0" /> 
+        <input type="hidden" id="status_change_review_comment_3" name="status_change_review_comment_3" value="0" /> 
+
+<input type="hidden"  id="lead_id" value="%{$bill.lead_id}%"> 
+
+<input type="hidden"  id="new_defer_pdate" name="new_defer_pdate" value="%{$bill.pdate_finish}%">
+
+
+<div style="float:right; margin-right:0px; min-width:110px; height:50px;" id="toggle_annul">
+%{include file="tz/toggle_annul_card.html"}%
+
+</div>
+
+
+%{if $field_rights.to_kp}%
+<div style="float:left; margin-right:10px; margin-top:10px;">
+	<input type="button" name="to_kp" id="to_kp" value="Создать исх. КП" %{if   !$can_create_kp}% disabled%{/if}%   />
+</div>
+%{/if}%
+
+%{if $field_rights.to_kp_in}%
+<div style="float:left; margin-right:10px; margin-top:10px;">
+	<input type="button" name="to_kp_in" id="to_kp_in" value="Создать вх. КП" %{if   !$can_create_kp}% disabled%{/if}%   />
+</div>
+
+
+<div id="to_kp_in_dialog" title="Выберите поставщика" style="display:none;">
+	<div id="to_kp_in_dialog_data">
+    	
+    </div>
+</div>
+
+%{/if}%
+
+
+%{if $field_rights.to_pl}%
+<div style="float:left; margin-right:10px; margin-top:10px;">
+<input type="button" value="В прайслист" name="to_pl" id="to_pl"  />
+</div>
+%{/if}%
+
+ 
+
+<br clear="all" />
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. обр-ки  менеджером:</strong><br>
+   
+    <div id="working_times_0" class="working_times"> 
+    <span id="work_days_0">%{$bill.times_0.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_0">%{$bill.times_0.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_0">%{$bill.times_0.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_0">%{$bill.times_0.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_0" type="hidden" value="%{$bill.working_time_unf_0|default:"0"}%" />
+</div>
+
+
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. обр-ки отделом закупок:</strong><br>
+   
+    <div id="working_times_1" class="working_times"> 
+    <span id="work_days_1">%{$bill.times_1.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_1">%{$bill.times_1.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_1">%{$bill.times_1.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_1">%{$bill.times_1.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_1" type="hidden" value="%{$bill.working_time_unf_1|default:"0"}%" />
+</div>
+
+
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. обр-ки пост-ком:</strong><br>
+   
+    <div id="working_times_3" class="working_times"> 
+    <span id="work_days_3">%{$bill.times_3.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_3">%{$bill.times_3.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_3">%{$bill.times_3.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_3">%{$bill.times_3.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_3" type="hidden" value="%{$bill.working_time_unf_3|default:"0"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Вр. пров-ки коорд-рами ДПиМ:</strong><br>
+   
+    <div id="working_times_4" class="working_times"> 
+    <span id="work_days_4">%{$bill.times_4.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_4">%{$bill.times_4.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_4">%{$bill.times_4.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_4">%{$bill.times_4.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_4" type="hidden" value="%{$bill.working_time_unf_4|default:"0"}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-left:0px; ">
+    <strong>Общее вр. обр-ки:</strong><br>
+   
+    <div id="working_times_total" class="working_times"> 
+    <span id="work_days_total">%{$bill.times_total.days|default:"0"}%</span> д.
+    
+    <span id="work_hours_total">%{$bill.times_total.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins_total">%{$bill.times_total.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs_total">%{$bill.times_total.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf_total" type="hidden" value="%{$bill.working_time_unf_total|default:"0"}%" />
+</div>
+
+
+
+<p />
+<br clear="all">
+
+
+
+
+<div style="float:right;  margin-right:0px; height:50px;">
+  %{if $bill.status_id==27}%
+  <a href="#" onClick="alert('Невозможно распечатать ТЗ в статусе Не актуально!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+   %{elseif $bill.is_confirmed==1}%
+  <a href="ed_tz_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+  %{else}%
+  <a href="#" onClick="alert('Для печати ТЗ необходимо утвердить его заполнение!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+  %{/if}%
+</div>  
+
+
+
+
+
+
+
+<div style="float:right;  margin-right:10px;height:50px; ">
+ 	%{if $bill.status_id==27}%
+   <a href="#" onClick="alert('Невозможно отправить на электронную почту ТЗ в статусе Не актуально!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+   %{elseif $bill.is_confirmed==1}%
+    <a href="#" id="tz_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="tz/pdf_actions.html" mode=0}%
+    %{else}%
+    <a href="#" onClick="alert('Для отправки на электронную почту ТЗ необходимо утвердить его заполнение!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+    %{/if}%
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    
+</div>
+
+
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <label for="lead_str">Лид:</label> <br>
+
+  
+    <a href="ed_lead.php?action=1&id=%{$bill.lead_id}%&from_begin=1" target="_blank">%{$lead.code}%</a>
+     
+	 
+</div>
+
+
+
+
+
+
+
+
+      
+
+ 
+
+<br clear="all" />
+<p />
+
+ 
+<div style="float:left; margin-right: 0px; width:100%;">
+<label for="description">Описание ТЗ:</label><br>
+<textarea id="description" name="description" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:100%; height:75px;">%{$bill.description|escape:"html"}%</textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'50px'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+</div> 
+
+<br>
+<p />
+
+%{$files}%
+
+<br clear="all">
+<p />
+ 
+   
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="tz/supplier_many_actions.html" many=false can_modify=false}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Поставщики:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="tz/suppliertz_many_actions.html" many=true can_modify=$can_modify_suppliers suppliers=$supplierstz}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+
+ 
+ <div style="float:left; margin-right:20px;">
+	
+    <div style=" float:left; margin-right:10px;"> 
+	<label for="manager_select">Ответственный сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$bill.manager_id}%"  />
+   
+    <input type="text"  id="manager_string"  value="%{$bill.manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+    
+     <!-- удлаять ли из карты контрагента предыдущего куратора -->
+	<input type="hidden" name="manager_delete_previous" id="manager_delete_previous" value="0" />
+  	</div>
+
+	  
+    %{*include file="lead/manager_actions.html" can_modify=$can_modify_manager *}%
+    
+</div> 
+ 
+ 
+
+<br clear="all" />
+<br>
+
+
+
+<div style="float:left; margin-right:10px; margin-top:00px;">
+    
+    <label for="pl_position_select">Оборудование из прайс-листа:</label><br>
+    <input type="hidden"  id="pl_position_id" name="pl_position_id" value="%{$bill.pl_position_id}%"  />
+    
+    <input type="text"  id="pl_position_string"  value="%{$bill.pl_position_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+    
+   &nbsp;&nbsp;
+
+	<input type="button" id="pl_position_select" value="..."  %{if !$field_rights.to_select_eq}% disabled="disabled"%{/if}% />
+    
+    
+
+    <input type="button" id="pl_position_clear" value="x"  %{if !$field_rights.to_select_eq}% disabled="disabled"%{/if}% />
+    
+    
+    %{include file="tz/position_actions.html" can_modify=$field_rights.to_select_eq can_made_kp=$field_rights.to_kp_pl}%
+     
+     
+     %{if $field_rights.to_kp_pl}%
+      &nbsp;&nbsp;
+     <input type="button" id="to_kp_pl" name="to_kp_pl" value="Создать КП из ПЛ" />
+     %{/if}%
+
+</div>
+ 
+
+
+%{if $has_kp}%
+<div style="float:left; margin-right:10px; margin-top:00px; padding-top:5px;">
+	<strong>Коммерческие предложения:</strong><br>
+
+	%{$kp}%
+</div>
+%{/if}%
+
+
+
+<br clear="all" />
+
+
+<br>
+ 
+  
+ 
+
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:auto;">
+        %{include file="tz/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="tz/d_notes_dialog.html" word="notes" named="Примечания" user_id=$bill.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+ 
+ <br clear="all" />
+
+
+<br>
+
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	
+	 
+	
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0){
+			/* $("#fulful_kp_2").prop("disabled",true);
+			 $("#fulful_kp_1").prop("disabled",true);
+			 
+			 $("#fulful_kp1_2").prop("disabled",true);
+			 $("#fulful_kp1_1").prop("disabled",true);*/
+		}
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 /* $("#fulful_kp_2").prop("checked",false);
+			 $("#fulful_kp_2").trigger("change");
+			  $("#fulful_kp_2").prop("checked",false);
+			  
+			   
+			  
+			  $("#fulful_kp_1").prop("checked",false);
+			 $("#fulful_kp_1").trigger("change");
+			  $("#fulful_kp_1").prop("checked",false); 
+			  
+			  
+			    $("#fulful_kp1_2").prop("checked",false);
+			 $("#fulful_kp1_2").trigger("change");
+			  $("#fulful_kp1_2").prop("checked",false);
+			  
+			   
+			  
+			  $("#fulful_kp1_1").prop("checked",false);
+			 $("#fulful_kp1_1").trigger("change");
+			  $("#fulful_kp1_1").prop("checked",false); 
+		 */
+		 
+		  $("#is_not_eq").prop("checked",false);
+			 $("#is_not_eq").trigger("click");
+			  $("#is_not_eq").prop("checked",false);
+			  
+			  $("#force_eq_in").prop("checked",false);
+			 $("#force_eq_in").trigger("click");
+			  $("#force_eq_in").prop("checked",false);     
+
+		}
+	});
+});
+</script>
+
+<br>
+
+
+<input type="checkbox" id="is_not_eq" name="is_not_eq" value="1" onchange="" %{if $bill.is_not_eq==1 }% checked="checked"%{/if}% %{if $can_confirm_done==false  or $bill.force_eq_in==1}% disabled="disabled"%{/if}% /><label for="is_not_eq">По ТЗ нет оборудования в прайс-листе</label>
+ 
+
+<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_not_eq").bind("click",function(){
+		
+		if(	$("#is_not_eq").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_done_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_done_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			  
+			   $("#force_eq_in").prop("checked",false);
+			 $("#force_eq_in").trigger("click");
+			  $("#force_eq_in").prop("checked",false);  
+		} 
+		
+
+		
+	});
+});
+</script>
+
+
+
+<br>
+
+
+
+
+
+ 
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" id="force_eq_in" name="force_eq_in" value="1" onchange="" %{if $bill.force_eq_in==1}% checked="checked"%{/if}% %{if $can_confirm_force_eq_in==false  }% disabled="disabled"%{/if}% /><label for="force_eq_in">Оборудование из прайс-листа</label>
+ 
+
+<span id="is_confirmed_force_eq_in_confirmer">%{$is_confirmed_force_eq_in_confirmer}%</span>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#force_eq_in").bind("click",function(){
+		
+		if(	$("#force_eq_in").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tzs.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_force_eq_in_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_force_eq_in_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			  
+			/*  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); */
+			  
+			  $("#pl_position_select").prop("disabled",true);
+			$("#pl_position_clear").prop("disabled",true);	
+		}else{
+			$("#pl_position_select").prop("disabled",false);
+			$("#pl_position_clear").prop("disabled",false);	
+			
+			$("#pl_position_select").trigger("click");
+		}
+		
+
+		
+	});
+});
+</script>
+
+
+
+ 
+ 
+ 
+
+<br clear="all">
+
+<p />
+
+
+
+<!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку ТЗ" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='leads.php';
+}else location.href='leads.php';" />
+
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	
+	 
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+	 
+	 
+	 if($("input[id^=check_file_]").length==0){
+		alert("Прикрепите хотя бы один файл!");
+		 
+		return false;	
+	}
+	
+   
+	
+	
+	//попытка утвердить заполнение тендера
+	if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
+			
+			%{if !$can_unconfirm}%
+			 return window.confirm("Внимание! Вы утверждаете заполнение ТЗ. У Вас нет прав для обратного действия - снятия утверждения заполнения ТЗ.\nПросьба проверить корректность заполнения всех данных ТЗ.\nПродолжить?\nОК - Да, Отмена - Нет"); 
+			%{/if}%
+	}
+	 
+	return true; 
+}
+
+//frmvalidator.addValidation("given_pdate","req","Укажите дату ТЗ!");
+
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{else}%
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	var can_ret=true;
+	
+	
+	 
+		
+	
+	
+	
+	
+	//проверка доступности снятия утверждения цены
+		if(can_ret&&(%{$bill.is_confirmed}%==1)&&($("#is_confirmed").prop("checked")==false)){
+			
+			%{if !$can_unconfirm}%
+				can_ret=can_ret&&false;
+				alert("У Вас недостаточно прав для снятия утверждения заполнения ТЗ.\nПрава на это действие есть у следующих сотрудников: %{strip}%
+				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
+				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
+				%{/foreach}%
+															 %{/strip}%");
+				$("#is_confirmed").prop("checked", true).trigger("change");
+				
+				//в журнал
+				$.ajax({
+					async: true,
+					url: "/js/tzs.php",
+					type: "POST",
+					data:{
+						"action":"fail_unconfirm_price",
+						id: "%{$bill.id}%"
+					}
+				});
+			%{/if}%
+			
+			
+			
+			if(can_ret)  $.ajax({
+				async: false,
+				url: "/js/tzs.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заполнения ТЗ. Причина: "+data+"."); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния ТЗ. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+	
+ 	
+	 //проверка доступности утверждения отсутствия обор-ия
+		if(can_ret&&(%{$bill.is_not_eq}%==0)&&($("#is_not_eq").prop("checked")==true)){
+			
+		 
+			
+			
+			if(can_ret)  $.ajax({
+				async: false,
+				url: "/js/tzs.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_ship",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить отсутствие оборудования в прайс-листе. Причина: "+data+"."); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния ТЗ. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+		
+		//не давать сохранить документ с 3 галочкой без выбранного оборудования
+		if($("#force_eq_in").prop("checked")==true){
+			if(can_ret&&
+				(($("#pl_position_id").val()==0)||($("#pl_position_id").val()==null)||($("#pl_position_id").val()==undefined))
+				){
+				alert("Выберите оборудование из прайс-листа!");
+				can_ret=can_ret&&false;	
+			}
+		}
+		
+		//проверка доступности утверждения наличия обор-ия
+		if(can_ret&&(%{$bill.force_eq_in}%==0)&&($("#force_eq_in").prop("checked")==true)){
+			
+		 
+			
+			
+			if(can_ret)  $.ajax({
+				async: false,
+				url: "/js/tzs.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm_3",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить наличие оборудования в прайс-листе. Причина: "+data+"."); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния ТЗ. Пожалуйста, попытайтесь сохранить ТЗ снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+			
+			 
+		}
+	
+	/*alert($("#fulful_kp_2").prop("checked"));
+	can_ret=can_ret&&false;	
+		*/		
+	
+		
+	return can_ret; 
+}
+
+ 
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{/if}%

@@ -1,0 +1,140 @@
+
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="40">
+    Номер 
+    
+    %{if $print==0}%
+     <div class="sort_dir">
+     <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+   </div>
+   %{/if}%
+    </th>
+    
+     
+     
+    
+     <th scope="col" width="60">
+    Дата создания
+     %{if $print==0}%
+     <div class="sort_dir">
+      <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+	</div>
+    %{/if}%
+    </th>
+    
+    
+     <th scope="col" width="*" >Тема
+    
+    </th>
+    
+  <!--   <th scope="col" width="*" >Комментарий
+    
+    </th>
+     -->
+   
+     <th scope="col" width="*" >Ответственный в документе
+     %{if $print==0}%
+     <div class="sort_dir">
+      <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+	</div>
+    %{/if}%
+    </th>
+    
+     
+     
+     
+    
+    <th scope="col" width="150" >Статус 
+     %{if $print==0}%
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a> </div>
+    %{/if}%
+    </th>
+    
+ 
+    
+     %{if $print==0}%
+         
+    <th scope="col" width="62">
+   
+    </th>
+    %{/if}%
+    
+</tr>
+
+</thead>
+ 
+
+%{section name=rowsec loop=$items}%
+ 
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+ 
+	<td width="40"  style="%{if $items[rowsec].status_id==5}% color:red;%{else}%color:%{$items[rowsec].color}%;%{/if}% white-space:nowrap;">%{$items[rowsec].code}%
+    
+   
+    </td>
+	 
+    <td width="60" style="color:%{$items[rowsec].color}%;">
+    %{$items[rowsec].pdate}%
+    </td>
+   
+   
+   
+     <td width="*" style="color:%{$items[rowsec].color}%;">
+     %{$items[rowsec].topic}% 
+    </td>
+    
+   <!-- <td width="*" style="color:%{$items[rowsec].color}%;">
+     %{$items[rowsec].txt}% 
+    </td>-->
+    
+    <td width="*" style="color:%{$items[rowsec].color}%;">
+     %{$items[rowsec].name_s}% 
+    </td>
+    
+    
+    
+    
+     <td width="150" style="%{if $items[rowsec].status_id==5}% color:red;%{else}%color:%{$items[rowsec].color}%;%{/if}%">
+     %{$items[rowsec].status_name}%
+    </td>
+    
+    
+    
+    
+    
+   
+     %{if $print==0}%
+      <td width="62" style="color:%{$items[rowsec].color}%;">
+    %{if $can_edit}%
+    <a href="memo_my_history.php?id=%{$items[rowsec].id}%" target="_blank" data-comment="просмотр карты служебной записки" class="reestr_edit reestr_right_button24"></a>
+    %{else}%
+    
+   <a href="#" onclick="alert('У Вас недостаточно прав для просмотра служебной записки!'); return false;" data-comment="просмотр карты служебной записки" class="reestr_edit reestr_inactive reestr_right_button24"></a>
+    %{/if}%
+    
+     %{if $items[rowsec].field_rules.to_print_sz}%
+   
+      <a href="memo_my_history.php?id=%{$items[rowsec].id}%&force_print=1" target="_blank" data-comment="печать служебной записки" class="reestr_print reestr_right_button24"></a>
+       %{else}%
+     <a href="#" onclick=" return false;" data-comment="печать служебной записки" class="reestr_print reestr_inactive reestr_right_button24"></a>
+     %{/if}%
+    
+    
+    
+    </td>
+    
+%{/if}%
+ 
+</tr>
+ 
+%{/section}%
+
+ 
+</table>

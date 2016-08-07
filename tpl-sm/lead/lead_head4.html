@@ -1,0 +1,222 @@
+
+<div id="lead_remind_gialog4" title="Напоминания о лидах" style="display:none;">
+	
+    <h2>Внимание! У указанных лидов просрочена прогнозируемая дата заключения контракта. Переведите лиды в корректный статус:</h2>
+    <br>
+
+	<div id="lead_reminders_block4">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+
+<script type="text/javascript">
+
+function CalcNewLeads4(){
+	 
+	  if(_window_is_active) $.ajax({
+		  async: true,
+		  url: "/js/lead_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind4"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#lead_remind_gialog4").dialog("isOpen")) $("#lead_remind_gialog4").dialog("open");
+			 else if((data==0) && $("#lead_remind_gialog4").dialog("isOpen"))  $("#lead_remind_gialog4").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+	
+$(function(){
+	$("#lead_remind_gialog4").dialog({
+		autoOpen: false,
+	 
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		dialogClass: 'semi_auth_no',
+		close: function( event, ui ) {
+			
+			
+			 
+			
+		},
+		buttons:{
+			"Готово": function(){
+				 
+				 
+				var can_ret=true;
+			
+				function doBlink(v){
+			
+					var blr4=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr4);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//уточняем число отказов принять в работу
+				
+				
+				
+			 
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=lead_remind_id4_]"), function(k,v){
+					id=$(v).attr("id").replace(/lead_remind_id4_/,'');
+					
+					//выбор не сделан - поле некооректно!
+				 if(($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==null)||($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==undefined)){
+						can_ret=can_ret&&false; 
+							 
+					//	err_fields.push($("label[for^=lead_remind_status_id4_"+id+"]"));
+					}
+					 
+					//выбран статус 34 - потребовать причину
+					if(($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==34)&&(($("#lead_remind_reason4_"+id).val()==0)||($("#lead_remind_comment4_"+id).val().length<10))){
+						can_ret=can_ret&&false; 
+							 
+						err_fields.push($("#lead_remind_comment4_"+id));
+						err_fields.push($("#lead_remind_reason4_"+id));
+						
+						
+					}
+					
+					if(($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==25)){
+						//контроль даты
+						if($("#lead_remind_pdate4_"+id).val()==""){
+							can_ret=can_ret&&false; 
+							 
+							err_fields.push($("#lead_remind_pdate4_"+id));
+						}
+					}
+					 
+				});
+				
+			 
+				
+				if(can_ret){
+					
+					 
+						//все ОК, формируем аргументы
+						var data=new Array();
+						$.each($("input[id^=lead_remind_id4_]"), function(k,v){
+							 
+								id=$(v).attr("id").replace(/lead_remind_id4_/,'');
+								
+								hashed="";
+								
+								hashed+=id+"/"+$("input[name=lead_remind_status_id4_"+id+"]:checked").val();
+								hashed+="/"+$("#lead_remind_reason4_"+id).val();
+								hashed+="/"+$("#lead_remind_comment4_"+id).val();
+								
+								hashed+="/"+$("#lead_remind_pdate4_"+id).val();
+								 
+								
+								//alert(hashed);
+								data.push(hashed);	
+							 
+							 
+						});
+						
+						//отправляем аргументы
+						$.ajax({
+							  async: false,
+							  url: "/js/lead_checknew.php",
+							  type: "POST",
+							  data:{
+								  "action":"put_work_statuses4",
+								  "data[]":data
+								  
+							  }
+							 
+						  });
+						
+						  
+						 
+						
+						$("#lead_remind_gialog4").dialog("close");
+					 
+					
+				}else {
+					alert("Сделайте выбор для всех лидов и корректно заполните отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					 
+				} 
+					 
+				
+				
+			}
+		},
+		open: function( event, ui ) {
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/lead_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind4"
+			  },
+			  beforeSend: function(){
+				 $("#lead_reminders_block4").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#lead_reminders_block4").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=150;
+				 
+				   our_height=parseInt($("#lead_reminders_block4 table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#lead_reminders_block4").css('height', our_height);
+				   
+				   $("#lead_remind_gialog4").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewLeads4()', 60000);
+});
+</script>

@@ -1,0 +1,472 @@
+<style>
+.bdrtable, .bdrtable td{
+	border-collapse:collapse;
+	font-size:10px;
+}
+
+.br1{
+	border-right:1px solid black;
+}
+.bl1{
+	border-left:1px solid black;
+}
+.bt1{
+	border-top:1px solid black;
+}
+.bb1{
+	border-bottom:1px solid black;
+}
+
+.br3{
+	border-right:2px solid black;
+}
+.bl3{
+	border-left:2px solid black;
+}
+.bt3{
+	border-top:2px solid black;
+}
+.bb3{
+	border-bottom:2px solid black;
+}
+
+.bold{
+	font-weight:bold;	
+}
+
+</style>
+
+ 
+<table width="100%" border="0" class="bdrtable" cellpadding="1" cellspacing="0">
+
+ 
+
+<tr align="center" valign="middle">
+	<td colspan="7">
+    <strong><em>БЮДЖЕТ ДОХОДОВ И РАСХОДОВ ПРОЕКТА</em></strong><br><br>
+
+
+	</td>
+</tr> 
+ 
+<tr align="center" valign="top">
+	<td width="*" colspan="2" class="bl3 bt3 bb1 br1" > 
+ 	<strong>I. ВВОДНАЯ ИНФОРМАЦИЯ</strong>
+    </td>
+ 	<td width="80"   class="bl1 bt3 bb1 br1"> 
+    </td>
+    <td width="80"  class="bl1 bt3 bb1 br1"> 
+    </td>
+    <td width="80"   class="bl1 bt3 bb1 br1"> 
+    </td>
+    <td width="80"    class="bl1 bt3 bb1 br1" > </td>
+    <td width="80"    class="bl1 bt3 bb1 br3" > </td>
+</tr>
+ 
+<tr align="left" valign="top">
+	<td width="80"   class="bl3 bt1 bb1 br1"> 
+    <strong>Проект</strong>
+    
+    </td>
+    <td width="*"   class="bl1 bt1 bb1 br1" style="min-width:250px !important;"> 
+      
+    </td>
+    <td width="80"   class="bl1 bt1 bb1 br1"> 
+    </td>
+    <td width="80"  class="bl1 bt1 bb1 br1"> 
+    </td>
+    <td width="80"   class="bl1 bt1 bb1 br1"> 
+    </td>
+     <td width="80"    class="bl1 bt1 bb1 br1" > </td>
+    <td width="80"    class="bl1 bt1 bb1 br3" > </td>
+</tr> 
+ <tr align="center" valign="top">
+	<td width="80"   class="bl3 bt1 bb1 br1"> 
+    <strong>Код
+</strong>
+    
+    </td>
+    <td width="*"   class="bl1 bt1 bb1 br1" style="min-width:250px !important;"> 
+      <strong>Наименование
+</strong>
+    </td>
+    <td width="80"   class="bl1 bt1 bb1 br1">
+    <strong>Менеджер
+</strong> 
+    </td>
+    <td width="80"  class="bl1 bt1 bb1 br1"> 
+    <strong>Наименование станка
+</strong>
+    </td>
+    <td width="80"   class="bl1 bt1 bb1 br1"> 
+    <strong>Срок поставки
+</strong>
+    </td>
+     <td width="80"    class="bl1 bt1 bb1 br1" > </td>
+    <td width="80"    class="bl1 bt1 bb1 br3" > </td>
+</tr> 
+
+
+<tr align="center" valign="top">
+	<td width="80"   class="bl3 bt1 bb3 br1"> 
+     
+    </td>
+    <td width="*"   class="bl1 bt1 bb3 br1"> 
+      %{section name=supsec loop=$suppliers}%
+                  %{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%
+          
+                 
+            %{/section}%
+    </td>
+    <td width="80"   class="bl1 bt1 bb3 br1">
+    <strong> %{$manager_string}%
+</strong> 
+    </td>
+    <td width="80"  class="bl1 bt1 bb3 br1"> 
+    <strong>%{$eq_str}%
+</strong>
+    </td>
+    <td width="80"   class="bl1 bt1 bb3 br1"> 
+    <strong> %{$srok_str}%
+</strong>
+    </td>
+     <td width="80"    class="bl1 bt1 bb3 br1" > </td>
+    <td width="80"    class="bl1 bt1 bb3 br3" > </td>
+</tr> 
+ 
+   
+<tr align="center" valign="top">
+	<td width="*" colspan="3"><br>
+<br>
+
+    <strong>II. ФИН.ПАРАМЕТРЫ		</strong><br> 
+
+
+	</td>
+	<td colspan="4"></td>
+</tr>    
+<tr align="center" valign="top">
+	<td width="80"   class="bl3 bt3 bb3 br3"> 
+    <strong>Прогнозный курс $
+
+</strong>
+    
+    </td>
+    <td width="*"     class="bl3 bt3 bb3 br3"> 
+      <strong>Прогнозный курс Евро
+
+</strong>
+    </td>
+    <td width="80"     class="bl3 bt3 bb3 br3"> 
+    <strong>Валюта расчета
+
+</strong> 
+	</td>
+    <td colspan="4"></td>
+
+</tr>    
+    
+<tr align="center" valign="top">
+	<td width="80"   class="bl3 bt3 bb3 br3"> 
+    <strong> %{$bill.course_dol}%
+
+</strong>
+    
+    </td>
+    <td width="*"     class="bl3 bt3 bb3 br3"> 
+      <strong> %{$bill.course_euro}%
+
+</strong>
+    </td>
+    <td width="80"     class="bl3 bt3 bb3 br3"> 
+    <strong> %{section name=cursec loop=$currs}%
+         %{if $currs[cursec].id==$bill.currency_id}% %{$currs[cursec].signature}% %{/if}%
+        %{/section}%
+
+</strong> 
+	</td>
+    <td colspan="4"></td>
+
+</tr>     
+    
+    
+     
+<tr align="left" valign="top">
+	<td colspan="3"><br>
+</td>
+
+    <td colspan="4"></td>
+
+</tr>     
+      
+<tr align="center" valign="top">
+	<td colspan="7"  class="bl3 bt3 bb3 br3">
+    <strong>III. ВЫРУЧКА						
+</strong>
+    </td>
+
+</tr> 
+
+<tr align="center" valign="top">
+	<td width="80" class="bl3 bt3 bb3 br3">
+    <strong>№ п/п
+					
+</strong>
+    </td>
+    
+    <td width="*" class="bl3 bt3 bb3 br3">
+    <strong>Структура проекта:
+						
+</strong>
+    </td>
+    
+    <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Стоимость без НДС
+						
+</strong>
+    </td>
+    
+     <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Ставка НДС
+						
+</strong>
+    </td>
+
+
+	 <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Сумма НДС
+						
+</strong>
+    </td>
+
+	 <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Стоимость с НДС
+						
+</strong>
+    </td>
+    
+     <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Примечание
+
+						
+</strong>
+    </td>
+
+</tr>  
+%{include file="bdr/p_actions_print.html" items=$pdata }%
+  
+<tr align="left" valign="top">
+	<td colspan="3"><br>
+</td>
+
+    <td colspan="4"></td>
+
+</tr> 
+    
+<tr align="center" valign="top">
+	<td colspan="7"  class="bl3 bt3 bb3 br3">
+    <strong>IV. ЗАТРАТЫ											
+</strong>
+    </td>
+
+</tr>     
+ <tr align="center" valign="top">
+	<td width="80" class="bl3 bt3 bb3 br3">
+    <strong>№ п/п
+					
+</strong>
+    </td>
+    
+    <td width="*" class="bl3 bt3 bb3 br3">
+    <strong>Статьи затрат (БЕЗ НДС):
+
+
+						
+</strong>
+    </td>
+    
+    <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Стоимость, руб.
+
+
+						
+</strong>
+    </td>
+    
+     <td width="80" class="bl3 bt3 bb3 br3">
+    <strong>Норматив расходов, % 
+
+		
+</strong>
+    </td>
+
+
+	 <td width="300" colspan="3" class="bl3 bt3 bb3 br3">
+    <strong>Примечание		
+		
+
+						
+</strong>
+    </td>
+
+
+</tr>   
+    
+    
+%{include file="bdr/m_actions_print.html" items=$mdata }%
+
+
+      
+<tr align="left" valign="top">
+	<td colspan="3"><br>
+</td>
+
+    <td colspan="4"></td>
+
+</tr>     
+      
+<tr align="center" valign="top">
+	<td colspan="7"  class="bl3 bt3 bb3 br3">
+    <strong>V. ПРИБЫЛЬ ПРОЕКТА						
+					
+</strong>
+    </td>
+
+</tr>  
+
+<tr align="center" valign="top">    
+   <td width="80" class=" bl3 bt1 bb1 br1">
+    
+  
+        11.
+  </td>
+   <td width="*" class=" bl1 bt1 bb1 br1">
+    
+  
+         Прибыль:
+  </td>
+   <td width="80" class=" bl1 bt1 bb1 br1">
+    
+  
+        <strong> Сумма</strong>
+  </td>
+   <td width="80" class=" bl1 bt1 bb1 br1">
+    
+   
+  </td>
+   <td width="300" colspan="3" class=" bl1 bt1 bb1 br3">
+    
+   
+  </td>
+</tr>  
+<tr align="center" valign="top">    
+   <td width="80" class=" bl3 bt1 bb1 br1">
+    
+  
+        11.1.
+    
+  </td>
+   <td align="left" width="*" class=" bl1 bt1 bb1 br1">
+    
+   ВАЛОВАЯ ПРИБЫЛЬ проекта
+  </td>
+   <td align="right" width="80" class=" bl1 bt1 bb1 br1">
+    
+  
+          %{$bill.gain_val}%
+  </td>
+   <td width="80" class=" bl1 bt1 bb1 br1">
+    
+   
+  </td>
+   <td width="300" colspan="3" class=" bl1 bt1 bb1 br3">
+    <em> = выручка минус себестоимость</em>
+   
+  </td>
+</tr>  
+<tr align="center" valign="top">    
+   <td width="80" class=" bl3 bt1 bb1 br1">
+    
+  
+        11.2.
+    
+  </td>
+   <td align="left" width="*" class=" bl1 bt1 bb1 br1">
+    
+   ВАЛОВАЯ МАРЖА проекта
+  </td>
+   <td align="right" width="80" class=" bl1 bt1 bb1 br1">
+    
+  
+       <strong> %{$bill.gain_percent}%%</strong>
+  </td>
+   <td width="80" class=" bl1 bt1 bb1 br1">
+    
+   
+  </td>
+   <td width="300" colspan="3" class=" bl1 bt1 bb1 br3">
+   <em>  = валовая прибыль / выручка		</em>
+        
+   
+  </td>
+</tr> 
+
+<tr align="center" valign="top">    
+   <td width="80" class=" bl3 bt1 bb1 br1">
+    
+  11.3.
+    
+  </td>
+   <td align="left" width="*" class=" bl1 bt1 bb1 br1">
+    
+     EBITDA по проекту
+  </td>
+   <td  align="right" width="80" class=" bl1 bt1 bb1 br1">
+    
+  %{$bill.gain_ebitda}%
+  </td>
+   <td width="80" class=" bl1 bt1 bb1 br1">
+    
+   
+  </td>
+   <td width="300" colspan="3" class=" bl1 bt1 bb1 br3">
+  <em> = валовая прибыль минус КиАУР</em>		
+    
+   
+  </td>
+</tr>  
+
+<tr align="center" valign="top">    
+   <td width="80" class=" bl3 bt1 bb3 br1">
+    
+ 11.4.
+    
+    
+  </td>
+   <td  align="left" width="*" class=" bl1 bt1 bb3 br1">
+   ЧП по проекту
+    
+    
+  </td>
+   <td  align="right" width="80" class=" bl1 bt1 bb3 br1">
+    
+   %{$bill.gain_chp}%
+  </td>
+   <td width="80" class=" bl1 bt1 bb3 br1">
+    
+   
+  </td>
+   <td width="300" colspan="3" class=" bl1 bt1 bb3 br3">
+   <em> = EBITDA минус налоги		</em>
+    
+    
+   
+  </td>
+</tr> 
+      
+  
+</table> 
+<br>
+ 
+ 
+    

@@ -1,0 +1,57 @@
+<div id="task_comment_dialog" title="Введите комментарий" style="display:none;">
+	 
+	<div id="task_comment_dialog_caption" style="font-weight:bold; display:inline-block;" >
+   Укажите причину отправки на доработку:  
+    
+    
+    </div>
+
+     
+    <input type="hidden" value="" id="task_comment_id" />
+      <div id="task_comment_change_id_block">
+    
+    <select id="task_comment_change_id">
+	 %{html_options values=$fail_ids selected=0 output=$fail_vals}%    
+    </select>
+    
+    
+    	<input type="button" value="..." %{if !$can_edit_fail_reasons}% disabled%{/if}% id="expand_fails" />
+    
+   
+    
+    
+    <br>
+    
+     </div>
+    
+<br>
+
+    
+    <textarea cols="73" rows="5" id="task_comment" style="width:100%; height:100px;"></textarea>
+</div>
+
+%{include file="kp_in/fails_dialog.html"}%
+
+<script>
+$(function(){
+	$("#task_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 500,
+	  height: 280,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	
+	
+});
+</script>

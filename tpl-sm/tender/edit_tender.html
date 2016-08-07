@@ -1,0 +1,1849 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+
+
+
+
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	}); 
+	 
+	
+	$("#pdate_placing").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_claiming").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_finish").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	//$("#pdate_end").datepicker({changeYear:true, yearRange: '2012:+15'});
+	 
+
+%{if $can_join_lead}%
+$("#join_lead").bind("click", function(){
+	$("#join_lead_dialog").dialog("open");
+});
+%{/if}%	 
+	
+%{if $bill.status_id==28}%
+
+ 
+window.setInterval(function(){
+	$working_time=parseInt($("#working_time_unf").val());	
+	
+	$working_time+=1;
+	$("#working_time_unf").val($working_time);
+	
+	$days=Math.floor($working_time/(24*60*60));
+	
+	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
+	
+	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
+	
+	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
+	
+	$("#work_days").html($days)	;
+	
+	$("#work_hours").html($hours)	;
+	
+	$("#work_mins").html($mins)	;
+	
+	$("#work_secs").html($secs);
+	$("#working_times").toggleClass("working_times_blue");	
+	
+}, 1000);
+
+%{/if}%		
+	 
+%{if $field_rights.to_refuse}%
+var flag_stop1=false;
+$("#to_refuse").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop1){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			$("#task_comment_dialog_caption").html("Укажите причину отказа от тендера:");
+			
+			$("#task_comment_pdate_block").hide();
+			$("#task_files_block").hide();
+			$("#task_uploaded_files").empty();
+			$("#task_comment_change_id_block").show();
+			
+			$("#task_comment_dialog").dialog("option", "height", 270);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop1=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						
+						if($("#task_comment_change_id").val()==0){
+							alert("Выберите причину отказа!");
+							flag_stop1=flag_stop1&&false;
+						}
+						
+						if($.trim($("#task_comment").val()).length<10){
+							alert("Укажите комментарий к причине отказа (мин. 10 символов)!");
+							
+							flag_stop1=flag_stop1&&false;
+							 
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_refuse").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop1;
+	 
+});
+
+%{/if}% 
+ 
+%{if $field_rights.to_no_go_konk}%
+var flag_stop2=false;
+$("#to_no_go_konk").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop2){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			$("#task_comment_dialog_caption").html("Укажите причину отказа от тендера:");
+			
+			$("#task_comment_pdate_block").hide();
+			$("#task_files_block").hide();
+			$("#task_uploaded_files").empty();
+			$("#task_comment_change_id_block").show();
+			
+			$("#task_comment_dialog").dialog("option", "height", 270);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop2=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						
+						if($("#task_comment_change_id").val()==0){
+							alert("Выберите причину отказа!");
+							flag_stop2=flag_stop2&&false;
+						}
+						
+						if($.trim($("#task_comment").val()).length<10){
+							alert("Укажите комментарий к причине отказа (мин. 10 символов)!");
+							
+							flag_stop2=flag_stop2&&false;
+							 
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_no_go_konk").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop2;
+	 
+});
+
+%{/if}% 
+
+
+%{if $field_rights.to_cancel}%
+var flag_stop3=false;
+$("#to_cancel").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop3){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			//$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			
+			
+			$("#task_comment_dialog_caption").html("Укажите причину отмены конкурса по тендеру:");
+			$("#task_comment_pdate_block").hide();
+			$("#task_files_block").hide();
+			$("#task_uploaded_files").empty();
+			$("#task_comment_change_id_block").hide();
+			
+			
+			$("#task_comment_dialog").dialog("option", "height", 230);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop3=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						//$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						
+						
+						if(($.trim($("#task_comment").val()).length<10)){
+							alert("Укажите причину отмены (мин. 10 символов)!");
+							
+							flag_stop3=flag_stop3&&false;
+							 
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_cancel").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop3;
+	 
+});
+
+%{/if}% 
+
+
+
+
+%{if $field_rights.to_claim_konk}%
+var flag_stop4=false;
+$("#to_claim_konk").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop4){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			//$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			$("#task_comment_pdate").val($("#pdate_itog").val());
+			
+			$("#task_comment_dialog_caption").html("Укажите комментарий и прикрепите файл уведомления:");
+			$("#task_comment_pdate_block").show();
+			$("#task_files_block").show();
+			$("#task_comment_change_id_block").hide();
+			
+			$("#task_comment_dialog").dialog("option", "height", 350);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop4=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						//$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						$("#pdate_itog").val($("#task_comment_pdate").val());
+						
+						$("#tender_uploaded_files").html($("#task_uploaded_files").html());
+						
+						if(($.trim($("#task_comment").val()).length<10)){
+							alert("Укажите комментарий (мин. 10 символов)!");
+							
+							flag_stop4=flag_stop4&&false;
+						
+						}else if(($.trim($("#task_comment_pdate").val()).length<10)){
+						
+							alert("Укажите дату подведения итогов конкурса!");
+							
+							flag_stop4=flag_stop4&&false; 
+						}else if($("#task_uploaded_files input[name^=tender_upload_file_]").length==0){
+						
+							alert("Прикрепите файл уведомления!");
+							
+							flag_stop4=flag_stop4&&false; 	
+							
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_claim_konk").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop4;
+	 
+});
+
+%{/if}% 
+
+
+
+	 
+%{if $field_rights.to_rework}%
+var flag_stop11=false;
+$("#to_rework").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop11){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+			$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			$("#task_comment_dialog_caption").html("Укажите причину отправки на доработку:");
+			
+			$("#task_comment_pdate_block").hide();
+			$("#task_files_block").hide();
+			$("#task_uploaded_files").empty();
+			$("#task_comment_change_id_block").hide();
+			
+			$("#task_comment_dialog").dialog("option", "height", 270);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop11=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						//$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						
+					 
+						
+						if($.trim($("#task_comment").val()).length<10){
+							alert("Укажите причину отправки на доработку (мин. 10 символов)!");
+							
+							flag_stop11=flag_stop11&&false;
+							 
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_rework").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop11;
+	 
+});
+
+%{/if}% 
+
+
+
+%{if $field_rights.to_set_konk}%
+$("#to_set_konk").bind("click", function(){
+	can_ret=true;
+	if(can_ret) $.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_status2326",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно перевести конкурс в статус Ждет контроля. Причина: "+data+""); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния тендера. Пожалуйста, попытайтесь сохранить тендер снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+				
+	return can_ret;
+});
+%{/if}%
+
+
+%{if $field_rights.to_go_konk}%
+$("#to_go_konk").bind("click", function(){
+	can_ret=true;
+	if(can_ret) $.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_status2326",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно перевести конкурс в статус Ждет выполнения. Причина: "+data+""); 
+					 can_ret=can_ret&&false;
+				  } 
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния тендера. Пожалуйста, попытайтесь сохранить тендер снова.");
+					can_ret=can_ret&&false;	
+				}	 
+			});
+				
+	return can_ret;
+});
+%{/if}%
+
+
+
+%{if $field_rights.to_restore_work and $can_to_restore_work}%
+ var flag_stop=false;
+$("#to_restore_work").bind("click", function(){
+	 
+	 	 
+		
+		
+		 if(!flag_stop){
+			$("#task_comment_id").val($("#id").val());
+			$("#task_comment").val($("#status_change_comment").val());
+		//	$("#task_comment_change_id").val($("#status_change_comment_id").val());
+			$("#task_comment_dialog_caption").html("Укажите причину возвращения тендера в работу:");
+			$("#task_comment_change_id_block").hide();
+			
+				
+			$("#task_comment_pdate_block").hide();
+			$("#task_files_block").hide();
+			$("#task_uploaded_files").empty();
+			$("#task_comment_change_id_block").hide();
+			$("#task_comment_dialog").dialog("option", "height", 230);
+			
+			$("#task_comment_dialog").dialog({
+				buttons:{
+					"Продолжить":function(){
+						
+						
+						 
+						
+						flag_stop=true;
+						
+						$("#status_change_comment").val($("#task_comment").val());
+						
+						//$("#status_change_comment_id").val($("#task_comment_change_id").val());
+						$("#task_comment_dialog").dialog('close');
+						 
+						
+						if(($.trim($("#task_comment").val()).length<10)){
+							alert("Укажите причину возвращения тендера в работу (мин. 10 символов)!");
+							
+							flag_stop=flag_stop&&false;
+							 
+						}else{
+							
+							//flag_stop=true;
+							
+						}
+						$("#to_restore_work").trigger("click");
+					},
+					"Отмена":function(){
+						  $("#task_comment_dialog").dialog('close');
+					  }
+				}
+			});
+			
+			$("#task_comment_dialog").dialog("open");
+			$("#task_comment").focus();
+			
+		}
+		
+		//if(res) $("#status_change_comment").val(ntf);
+	 
+	return flag_stop;
+	 
+});
+
+%{/if}% 	
+ 
+ 
+	
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="tender.html" prefix="" description="Информация о редактировании тендера" style="float:right" is_right=true}%
+
+%{include file="tender/comment_dialog.html" }%
+
+%{include file="tender/join_lead_actions.html" }%
+
+%{include file="error_window.html"   prefix="" }%
+
+%{include file="error_window.html"   prefix="_unconfirm" }%
+
+<h1>Редактирование тендера</h1>
+
+<form action="ed_tender.php" method="post" id="crea_form">
+
+
+ <div id="tender_uploaded_files" style="display:none;"></div>
+
+<input type="hidden" name="action" value="1">
+ 
+
+<input type="hidden" name="id" id="id" value="%{$bill.id}%" />
+
+<input type="hidden" name="current_status_id" id="current_status_id" value="%{$bill.status_id}%" />
+
+<input type="hidden" name="status_change_comment" id="status_change_comment" value="" />
+<input type="hidden" name="status_change_comment_id" id="status_change_comment_id" value="%{$bill.fail_reason_id}%" />
+
+
+<input type="hidden" name="pdate_itog" id="pdate_itog" value="%{$bill.pdate_itog}%" />
+
+
+
+<div style="float:right;">
+
+    <div style="float:right; margin-right:0px; min-width:110px; height:50px;" id="toggle_annul">
+    %{include file="tender/toggle_annul_card.html"}%
+    
+    </div>
+    
+    <div style="float:right;  margin-right:10px; height:50px;">
+       %{if $bill.is_confirmed==1}%
+      <a href="ed_tender_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+      %{else}%
+      <a href="#" onClick="alert('Для печати тендера необходимо утвердить его заполнение!'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+      %{/if}%
+    </div>  
+    
+    
+    
+    <div style="float:right;  margin-right:10px;height:50px; ">
+            %{if $bill.is_confirmed==1}%
+        <a href="#" id="email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+             %{include file="tender/pdf_actions.html" mode=0}%
+        %{else}%
+        <a href="#" onClick="alert('Для отправки на электронную почту тендера необходимо утвердить его заполнение!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+        %{/if}%
+    </div>
+    
+    
+    
+    
+    
+
+</div>
+
+
+
+<div style="float:left; margin-bottom:10px;">
+
+
+	
+    
+     <div style="float:right; margin-right:10px;">
+    
+    <input type="button" value="Файлы..." onclick="location.href='tender_files2.php?bill_id=%{$bill.id}%';" />
+    
+    </div>
+    
+    
+    
+    %{if $can_create_lead}%
+    <div style="float:right; margin-right:10px; ">
+    <input type="button"  value="Создать лид" onClick="window.open('ed_lead.php?action=0&tender_id=%{$bill.id}%');" /><br>
+    </div>
+    %{/if}%
+    
+    
+    
+    <div style="float:right; margin-right:10px; margin-left:100px; ">
+    <input type="button" id="join_lead"  value="Прикрепить лид"  %{if !$can_join_lead}% disabled%{/if}%  /><br>
+    </div>
+
+	
+    %{if $field_rights.to_work}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_work" id="to_work" value="Принять в работу"  /><br>
+    
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_refuse}%
+    <div style="float:left; margin-right:10px;  ">
+        <input type="submit" name="to_refuse" id="to_refuse" value="Отказ" %{if !$can_to_refuse}% disabled %{/if}%  /><br>
+    
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_cancel}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_cancel" id="to_cancel" value="Отмена конкурса" %{if !$can_to_cancel}% disabled %{/if}%  /><br>
+    
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_set_konk}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_set_konk" id="to_set_konk" value="Утвердить подачу на конкурс"  /><br>
+    
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_go_konk}%
+    <div style="float:left; margin-right:10px;  ">
+        <input type="submit" name="to_go_konk" id="to_go_konk" value="Идем конкурс" %{if !$can_to_go_konk}% disabled %{/if}%  /><br>
+    
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_no_go_konk}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_no_go_konk" id="to_no_go_konk" value="Не идем конкурс"  %{if !$can_to_refuse}% disabled %{/if}% /><br>
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_claim_konk}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_claim_konk" id="to_claim_konk" value="Конкурс заявлен" %{if !$can_to_claim_konk}% disabled %{/if}%  /><br>
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_win}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_win" id="to_win" value="Выигран" %{if !$can_to_win}% disabled %{/if}% /><br>
+    </div>
+    %{/if}%
+    
+    %{if $field_rights.to_fail}%
+    <div style="float:left; margin-right:10px; ">
+        <input type="submit" name="to_fail" id="to_fail" value="Проигран" %{if !$can_to_fail}% disabled %{/if}%  /><br>
+    </div>
+    %{/if}%
+    
+    
+    %{if $field_rights.to_rework}%
+    <div style="float:left; margin-right:10px;  ">
+        <input type="submit" name="to_rework" id="to_rework" value="Отправить на доработку" %{if !$can_to_rework}% disabled %{/if}%  /><br>
+    </div>
+    %{/if}%
+    
+    
+    
+    %{if $field_rights.to_restore_work}%
+    <div style="float:left; margin-right:10px;">
+        <input type="submit" name="to_restore_work" id="to_restore_work" %{if !$can_to_restore_work or $tender_blocked}% disabled%{/if}% value="Вернуть в работу"  /><br>
+
+    </div>
+    %{/if}%
+
+</div>
+
+ 
+
+<br clear="all" />
+
+
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+
+
+
+    
+    <label for="kind_id"> 
+Вид тендера:</label> <br>
+
+  
+     <select name="kind_id" id="kind_id" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:150px">
+        %{html_options values=$tender_ids selected=$bill.kind_id output=$tender_vals}%
+    </select> 
+     
+  <input type="button" value="..." %{if !$can_expand_kinds or !$can_modify}% disabled%{/if}% id="expand_kind" />
+     
+	 %{include file="tender/kind_dialog.html"}%
+</div>
+
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+
+
+
+    
+    <label for="eq_type_id"> 
+Тип оборудования:</label> <br>
+
+  
+     <select name="eq_type_id" id="eq_type_id" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:150px">
+        %{html_options values=$eq_ids selected=$bill.eq_type_id output=$eq_vals}%
+    </select> 
+     
+	<input type="button" value="..." %{if !$can_expand_types or !$can_modify}% disabled%{/if}% id="expand_types" />
+    
+     %{include file="tender/d_types_dialog.html"}%
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   
+<label for="pdate_placing"> 
+
+    Дата  
+размещения:
+    </label> <br>
+
+    
+    <input type="text" value="%{$bill.pdate_placing}%" %{if !$can_modify}% disabled="disabled"%{/if}% id="pdate_placing" name="pdate_placing"  size="10"   maxlength="10" />
+
+</div>
+
+
+<div style="float:left; white-space:nowrap; margin-right:20px; height:50px;">
+
+<label for="pdate_claiming">
+    Срок подачи
+ заявок:
+    </label> <br>
+
+    
+    <input type="text" value="%{$bill.pdate_claiming}%" %{if !($can_modify  or $can_modify_claiming)}% disabled="disabled"%{/if}%  id="pdate_claiming" name="pdate_claiming"  size="10"   maxlength="10" />
+    
+    
+    <input type="hidden" value="%{$bill.pdate_claiming}%"   id="current_pdate_claiming"  />
+    
+ 		
+        <select name="ptime_claiming_h" id="ptime_claiming_h"  %{if !($can_modify  or $can_modify_claiming)}% disabled="disabled"%{/if}%  style="width:60px">
+            
+            %{html_options values=$ptime_claiming_hs selected=$ptime_claiming_h  output=$ptime_claiming_hs}%
+        </select>: 
+        <select name="ptime_claiming_m" id="ptime_claiming_m"  %{if !($can_modify  or $can_modify_claiming)}% disabled="disabled"%{/if}%  style="width:60px">
+            %{html_options values=$ptime_claiming_ms selected=$ptime_claiming_m  output=$ptime_claiming_ms}%
+        </select>
+    
+</div>
+
+<div style="float:left; white-space:nowrap; margin-right:20px; height:50px;">
+
+<label for="pdate_finish">
+    Дата окончания  
+рассмотрения:
+    </label> <br>
+
+    
+    <input type="text" value="%{$bill.pdate_finish}%"  %{if !$can_modify}% disabled="disabled"%{/if}% id="pdate_finish" name="pdate_finish"  size="10"   maxlength="10" />
+
+        <select name="ptime_finish_h" id="ptime_finish_h"  %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+            %{html_options values=$ptime_finish_hs selected=$ptime_finish_h   output=$ptime_finish_hs}%
+        </select>: 
+        <select name="ptime_finish_m" id="ptime_finish_m"  %{if !$can_modify}% disabled="disabled"%{/if}% style="width:60px">
+            %{html_options values=$ptime_finish_ms  selected=$ptime_finish_m output=$ptime_finish_ms}%
+        </select>
+    
+        
+</div>
+
+
+
+
+
+  
+%{if $bill.status_id==34}%
+<div style="float:left; margin-right:20px; height:50px;">
+	 
+	<strong> Причина отказа:
+    </strong> <br />
+    %{$bill.fail_name}% %{$bill.fail_reason}%
+</div>    
+%{/if}%
+
+
+  
+
+<div style="float:left; margin-right:0px; margin-left:0px; ">
+    <strong>Общее время обработки тендера:</strong><br>
+   
+    <div id="working_times"> 
+    <span id="work_days">%{$bill.times.days|default:"0"}%</span> д.
+    
+    <span id="work_hours">%{$bill.times.hours|default:"0"}%</span> ч.
+    
+    <span id="work_mins">%{$bill.times.mins|default:"0"}%</span> мин.
+    
+    <span id="work_secs">%{$bill.times.secs|default:"0"}%</span> сек.
+    </div>
+     
+    <input id="working_time_unf" type="hidden" value="%{$bill.working_time_unf|default:"0"}%" />
+</div>
+ 
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;width:100%;">
+
+
+ 
+    <label for="topic">
+   Название тендера:
+    </label><br />
+    
+    
+     <textarea cols="100" rows="2" id="topic" name="topic" style="width:100%;" %{if !$can_modify}% disabled="disabled"%{/if}% >%{$bill.topic|escape:"html"}%</textarea>
+    
+    
+    
+</div>   
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+   <label for="max_price">
+  Максимальная цена:
+    </label><br />
+    
+    <input type="text" value="%{$bill.max_price}%" id="max_price" name="max_price"   size="10"  %{if !$can_modify}% disabled="disabled"%{/if}%     maxlength="512" />
+
+    <select name="currency_id" id="currency_id" style="width:45px;"  %{if !$can_modify}% disabled="disabled"%{/if}%   >
+    %{section name=cursec loop=$currs}%
+    <option value="%{$currs[cursec].id}%" %{if $currs[cursec].is_current}% selected="selected"%{/if}%>%{$currs[cursec].signature}%</option>
+    %{/section}%
+    </select>
+
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+
+
+
+    <label for="link">
+   Ссылка на тендерную документацию:
+    </label><br />
+   
+
+    
+    <input type="text" value="%{$bill.link|escape:"html"}%" id="link" name="link"  %{if !$can_modify}% disabled="disabled"%{/if}%  size="50" style="width:335px;"   maxlength="512" />
+     
+     <input type="button" value="..." onClick="window.open($('#link').val());" />
+     <br>
+
+      <small><em>(скопируйте ссылку из адресной строки браузера и вставьте в это поле)</em></small> 
+
+</div> 
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+
+
+
+    
+    <label for="fz_id"> 
+ФЗ:</label> <br>
+
+  
+     <select name="fz_id" id="fz_id" style="width:85px"  %{if !$can_modify}% disabled="disabled"%{/if}%>
+        %{html_options values=$fz_ids selected=$bill.fz_id output=$fz_vals}%
+    </select> 
+    
+    
+    <input type="button" value="..." %{if !$can_expand_fz  or !$can_modify}% disabled%{/if}% id="expand_fz" />
+     
+	 %{include file="tender/fz_dialog.html"}%
+</div>
+
+
+
+ <br clear="all" />
+ 
+   
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="tender/supplier_many_actions.html" many=false can_modify=$can_modify}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+ 
+ <div style="float:left; margin-right:20px;">
+	
+    <div style=" float:left; margin-right:10px;"> 
+	<label for="manager_select">Ответственный сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$bill.manager_id}%"  />
+   
+    <input type="text"  id="manager_string"  value="%{$bill.manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  	
+    <!-- удлаять ли из карты контрагента предыдущего куратора -->
+	<input type="hidden" name="manager_delete_previous" id="manager_delete_previous" value="0" />
+	</div>
+    
+    <div style=" float:left; margin-right:10px;"> 
+    <br>
+
+	<input type="button" id="manager_select" value="Ответственные по карте..."  %{if !$can_select_manager or !$field_rights.to_resp_by_sup}% disabled="disabled"%{/if}% />
+    
+    <input type="button" id="manager_select_dep" value="Сотрудники по отделу..."  %{if !$can_select_manager or !$field_rights.to_resp_by_dep}% disabled="disabled"%{/if}% />
+    </div>
+    
+    <div style=" float:left; margin-right:10px;"> 
+    <br>
+
+    <input type="button" id="manager_clear" value="x"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    </div>
+    
+    <!--
+    <div style=" float:left; margin-right:10px;"> 
+    <br>
+&nbsp;
+    <input type="button" id="manager_iam" value="Я ответственный"  %{if !$can_modify_iam}% disabled="disabled"%{/if}% />
+    
+    &nbsp;
+    </div>
+    
+    
+    <div style=" float:left; margin-right:10px;"> 
+    <br>
+
+    
+     <div class=" reestr_button24" data-comment="Сменить ответственного сотрудника...">
+    <input id="change_otv" id="change_otv"  type="button" %{if !$can_change_manager}%disabled%{/if}% class="  %{if !$can_change_manager}%reestr_change_otv_g%{else}%reestr_change_otv%{/if}%" />
+    </div>
+     </div>-->
+	
+    %{include file="tender/manager_actions.html" }%
+    
+</div> 
+ 
+<br clear="all" />
+ 
+
+
+
+    
+%{$files}% 
+
+
+
+<br clear="all" />
+ 
+%{$lenta}%
+
+
+<input type="hidden" id="lenta_len" value="%{$lenta_len|default:"0"}%" />
+
+
+     
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+ 
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if  $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_done").prop("disabled",true);
+		
+		  
+		$.ajax({
+              async: true,
+              url: "/js/tender.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		if(state==0){
+			 $("#is_confirmed_done").prop("checked",false);
+			 $("#is_confirmed_done").trigger("click");
+			  $("#is_confirmed_done").prop("checked",false);
+			  
+			   
+			  
+			  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); 
+		 
+
+		}
+	});
+});
+</script>
+
+
+<br />
+
+
+<input type="checkbox" id="is_confirmed_done" name="is_confirmed_done" value="1" onchange="" %{if $bill.is_confirmed_done==1}% checked="checked"%{/if}% %{if $can_confirm_done==false or $bill.is_fulfiled==1}% disabled="disabled"%{/if}% /><label for="is_confirmed_done">Утверждаю выполнение</label>
+ 
+
+<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed_done").bind("click",function(){
+		
+		if(	$("#is_confirmed_done").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tender.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_confirmed_done_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_confirmed_done_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		  
+		 if(state==0){
+		 
+			  
+			  $("#is_fulfiled").prop("checked",false);
+			 $("#is_fulfiled").trigger("click");
+			  $("#is_fulfiled").prop("checked",false); 
+		} 
+		
+
+		
+	});
+});
+</script>
+
+<br>
+
+
+
+<input type="checkbox" id="is_fulfiled" name="is_fulfiled" value="1" onchange="" %{if $bill.is_fulfiled==1}% checked="checked"%{/if}% %{if $can_confirm_fulfil==false }% disabled="disabled"%{else}% %{/if}% /><label for="is_fulfiled">Работа принята</label>
+ 
+
+<span id="is_fulfiled_confirmer">%{$is_fulfiled_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_fulfiled").bind("click",function(){
+		
+		if(	$("#is_fulfiled").prop("checked")){
+			
+			 state=1;
+		}else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/tender.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                 $("#is_fulfiled_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
+              },
+              success: function(data){
+                $("#is_fulfiled_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		  
+		
+		
+	});
+});
+</script>
+
+
+
+
+<br clear="all">
+
+<p />
+
+
+
+
+
+
+ 
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку тендеров" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+ 
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='tenders.php';
+}else location.href='tenders.php';" />
+
+
+
+</form>
+%{if $can_modify}%
+
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		var error_fields=new Array();
+	
+	
+		if($("#topic").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"topic",
+				"name":"Название тендера",
+				"error":"Укажите название тендера!"
+			});			 
+		}
+		
+		if($("#pdate_placing").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"pdate_placing",
+				"name":"Дата размещения",
+				"error":"Выберите дату размещения!"
+			});			 
+		}
+		
+		if($("#pdate_claiming").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"pdate_claiming",
+				"name":"Срок подачи заявок",
+				"error":"Выберите Срок подачи заявок!"
+			});			 
+		}
+		
+		if($("#pdate_finish").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"pdate_finish",
+				"name":"Дата окончания рассмотрения",
+				"error":"Выберите дату окончания рассмотрения!"
+			});			 
+		}
+		
+		
+		if($("#max_price").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"max_price",
+				"name":"Максимальная цена",
+				"error":"Укажите максимальную цену!"
+			});			 
+		}
+		
+		if(($("#currency_id").val()==0)||($("#currency_id").val()==null)||($("#currency_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"currency_id",
+				"name":"Валюта",
+				"error":"Выберите валюту!"
+			});			 
+		}
+		
+		
+		if(($("#fz_id").val()==0)||($("#fz_id").val()==null)||($("#fz_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"fz_id",
+				"name":"ФЗ",
+				"error":"Выберите ФЗ!"
+			});			 
+		}
+		
+		
+		if(($("#kind_id").val()==0)||($("#kind_id").val()==null)||($("#kind_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"kind_id",
+				"name":"Вид тендера",
+				"error":"Выберите вид тендера!"
+			});			 
+		}
+		
+		if(($("#eq_type_id").val()==0)||($("#eq_type_id").val()==null)||($("#eq_type_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"eq_type_id",
+				"name":"Тип оборудования",
+				"error":"Выберите тип оборудования!"
+			});			 
+		}
+		
+		
+		//хотя бы 1 контрагент
+		if($("tr[id^=our_supplier_row_]").length==0){
+			 
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"supplier_str",
+				"name":"Контрагент",
+				"error":"Укажите контрагента тендера!"
+			});			
+			
+		}	
+		
+		
+		
+		sum=$("#max_price").val();   
+		sum=sum.replace("\,","\.");
+		if((sum.length>0)&&!isNaN(sum)) sum=parseFloat(sum);
+		else {
+			 
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"max_price",
+				"name":"Максимальная цена",
+				"error":"Укажите максимальную цену!"
+			});		
+			
+		}
+		 
+		 
+		
+	//попытка утвердить заполнение тендера
+		if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
+				
+				%{if !$can_unconfirm}%
+				 if(! window.confirm("Внимание! Вы утверждаете заполнение тендера. У Вас нет прав для обратного действия - снятия утверждения заполнения тендера.\nПросьба проверить корректность заполнения всех данных тендера.\nПродолжить?\nОК - Да, Отмена - Нет")) return false;
+				%{/if}%
+		}
+		
+			
+		
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+	
+});
+
+
+</script>
+%{else}%
+<script type="text/javascript">
+$(function(){
+	var global_sem1=true, global_sem2=true;
+	
+	
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		var error_fields=new Array();
+	
+	
+	//проверка доступности снятия приема работы
+		
+		if((%{$bill.is_fulfiled}%==1)&&($("#is_fulfiled").prop("checked")==false)){
+			local_can_ret=true;
+			
+			
+			if(global_sem2) $.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_docs_unconfirm_fulfil",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				 
+				  if(data!=0){
+					  local_can_ret=local_can_ret&&false;
+					   // alert(data);	 
+					  
+					   $("#error_window_text_unconfirm").html('<ul>'+data+'</ul>');					   
+					   $("#error_window_dialog_unconfirm").dialog("option", "title", "Найдены связанные документы");					   
+					   $("#error_window_dialog_caption_unconfirm").html('Обнаружены следующие связанные документы.<br>Изменения будут применены ко всем этим документам.<br><br>Вы уверены?');
+					   
+		  
+					   max_height=700; min_height=100;
+						   
+					   our_height=parseInt($("#error_window_text_unconfirm").height());
+						
+					   if(our_height>max_height) our_height=max_height;
+					   if(our_height<min_height) our_height=min_height;
+					   
+					   
+					   
+					   $("#error_window_dialog_unconfirm").dialog( "option", "height", our_height+140);
+					   
+					   $("#error_window_dialog_unconfirm").dialog({
+							 
+							buttons:{
+								"Да":function(){
+									//
+									
+									 $("#error_window_dialog_unconfirm").dialog("close");
+									 global_sem2=false;
+									 $("#doEditStay").trigger("click");
+									
+								},
+								"Нет":function(){
+									//
+									
+									 $("#error_window_dialog_unconfirm").dialog("close");
+									
+								}
+							}
+						});
+					  
+					   $("#error_window_dialog_unconfirm").dialog("open"); 
+					  
+					
+				  } 
+				},
+				error: function(xhr, status){
+					 
+				}	 
+			}); 
+			 
+			if(!local_can_ret) {
+				return false;
+			}
+		}
+			
+		
+	//проверка доступности снятия утверждения отгрузки
+		if((%{$bill.is_confirmed_done}%==1)&&($("#is_confirmed_done").prop("checked")==false)){
+			
+			local_can_ret=true;
+			
+			
+			if(global_sem1) $.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_docs_unconfirm_ship",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				  
+				  if(data!=0){
+					  local_can_ret=local_can_ret&&false;
+					  //	 alert(data);
+					  
+					   $("#error_window_text_unconfirm").html('<ul>'+data+'</ul>');					   
+					   $("#error_window_dialog_unconfirm").dialog("option", "title", "Найдены связанные документы");					   
+					   $("#error_window_dialog_caption_unconfirm").html('Обнаружены следующие связанные документы.<br>Изменения будут применены ко всем этим документам.<br><br>Вы уверены?');
+					   
+		  
+					   max_height=700; min_height=100;
+						   
+					   our_height=parseInt($("#error_window_text_unconfirm").height());
+						
+					   if(our_height>max_height) our_height=max_height;
+					   if(our_height<min_height) our_height=min_height;
+					   
+					   
+					   
+					   $("#error_window_dialog_unconfirm").dialog( "option", "height", our_height+140);
+					   
+					   $("#error_window_dialog_unconfirm").dialog({
+							 
+							buttons:{
+								"Да":function(){
+									//
+									
+									 $("#error_window_dialog_unconfirm").dialog("close");
+									 global_sem1=false;
+									 $("#doEditStay").trigger("click");
+									
+								},
+								"Нет":function(){
+									//
+									
+									 $("#error_window_dialog_unconfirm").dialog("close");
+									
+								}
+							}
+						});
+					  
+					   $("#error_window_dialog_unconfirm").dialog("open"); 
+					  
+					
+				  } 
+				},
+				error: function(xhr, status){
+					 
+				}	 
+			}); 
+			 
+			if(!local_can_ret) {
+				return false;
+			}
+			 
+			$.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 res=res&&false;
+			 
+					error_fields.push({
+						"id":"is_confirmed_done",
+						"name":"Утверждение выполнения",
+						"error":"Невозможно снять утверждение выполнения тендера. Причина: "+data+"\n"
+					});	
+					 
+					 
+				  } 
+				},
+				error: function(xhr, status){
+					
+					 
+					
+					res=res&&false;
+			 
+					error_fields.push({
+						"id":"is_confirmed_done",
+						"name":"Утверждение выполнения",
+						"error":"Ошибка при проверке состояния тендера. Пожалуйста, попытайтесь сохранить тендер снова."
+					});		
+				}	 
+			}); 
+		}
+		
+		
+		if((%{$bill.is_confirmed_done}%==0)&&($("#is_confirmed_done").prop("checked"))){
+			
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"is_confirmed_done",
+				"name":"Утверждение выполнения",
+				"error":"Утверждение выполнения тендера производится автоматически при выборе одного из следующих действий: Выиграть, Проиграть, Отказ, Отмена конкурса, Упущен.\nПроведите одно из этих действий."
+			});		
+	
+			 
+			$("#is_confirmed_done").prop("checked",false);
+		}
+	
+	
+		
+		//проверка доступности снятия утверждения цены
+		if((%{$bill.is_confirmed}%==1)&&($("#is_confirmed").prop("checked")==false)){
+			
+			var local_can_ret=true;
+			%{if !$can_unconfirm}%
+				local_can_ret=local_can_ret&&false;
+				
+				res=res&&false;
+			 
+				error_fields.push({
+					"id":"is_confirmed",
+					"name":"Утверждение заполнения",
+					"error":"У Вас недостаточно прав для снятия утверждения заполнения тендера.\nПрава на это действие есть у следующих сотрудников: %{strip}%
+				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
+				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
+				%{/foreach}%
+															 %{/strip}%"
+				});	
+				
+				 
+				$("#is_confirmed").prop("checked", true).trigger("change");
+				
+				//в журнал
+				$.ajax({
+					async: true,
+					url: "/js/tender.php",
+					type: "POST",
+					data:{
+						"action":"fail_unconfirm_price",
+						id: "%{$bill.id}%"
+					}
+				});
+			%{/if}%
+			
+			
+			
+			if(local_can_ret) $.ajax({
+				async: false,
+				url: "/js/tender.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_price",
+					id: "%{$bill.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					res=res&&false;
+			 
+					error_fields.push({
+						"id":"is_confirmed",
+						"name":"Утверждение заполнения",
+						"error":"Невозможно снять утверждение заполнения тендера. Причина: "+data+""
+					});	
+						
+					 
+				  } 
+				},
+				error: function(xhr, status){
+					
+					 
+					
+					res=res&&false;
+			 
+					error_fields.push({
+						"id":"is_confirmed",
+						"name":"Утверждение заполнения",
+						"error":"Ошибка при проверке состояния тендера. Пожалуйста, попытайтесь сохранить тендер снова."
+					});	
+				}	 
+			});
+		}
+		
+		
+		//смена даты в статусе упущен
+		if(($("#current_status_id").val()==36)&&($("#current_pdate_claiming").val()!=$("#pdate_claiming").val())){
+			//проверить даты
+			//контрольная дата - сегодня + 48 часов
+			//если выставленная дата больше ее, то пишем сообщение!
+			newd=new Date( $("#pdate_claiming").val().substr(6,4),  parseInt($("#pdate_claiming").val().substr(3,2))-1,  $("#pdate_claiming").val().substr(0,2));
+			
+			controld=new Date();
+			controld.setHours(controld.getHours()+48);
+			//alert(newd);
+			
+			if(newd>controld){
+				if(!window.confirm("Внимание!\nВы меняете срок подачи заявок с "+$("#current_pdate_claiming").val()+" на "+ 	$("#pdate_claiming").val()+".\nПри этом тендер будет переведен в статус В работе.\nВы уверены?")) return false;
+			}
+			
+			 
+			
+		}
+	
+
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+	
+});
+
+
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	var can_ret=true;
+	
+	
+	
+		
+		
+		  
+			 
+		
+		
+	
+	
+	
+	
+	
+		
+	
+ 	
+		
+	return can_ret; 
+}
+
+ 
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>
+%{/if}%

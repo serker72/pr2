@@ -1,0 +1,167 @@
+<script type="text/javascript">
+$(function(){	
+
+
+	$("#wo_instead").bind("change",function(){
+		if($(this).prop("checked")){
+			$("#manager_clear").trigger("click");	
+		}
+	});
+	
+
+
+ 
+	
+	function rebuild(){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=manager_radio]:checked").val()==0)||($("input[name=manager_radio]:checked").val()==null)||($("input[name=manager_radio]:checked").val()==undefined)  ){
+			alert($("input[name=manager_radio]:checked").val());
+			alert("Выберите сотрудника!");
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=manager_radio]:checked").val()
+		   
+	  
+	  
+	 
+	  
+	  if($("#manager_id").val()!=selected_supplier){
+		  $("#manager_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/petition.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_manager",
+				  "id":selected_supplier
+				  
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#instead_string").val(data.name_s);
+				$("#instead_id").val(data.id);
+				$("#wo_instead").prop("checked",false).trigger("change");
+			 
+				
+				 
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#manager_dialog").dialog("close"); 
+	}
+ 
+	
+	 
+	
+	
+	$("#manager_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 720,
+		height: 490,
+		 
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	 
+	
+	$("#manager_select").bind("click",function(){
+		
+		
+		
+	 
+		$.ajax({
+		  async: true,
+		  url: "/js/petition.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_users",
+			 
+			  "manager_id":$("#manager_id").val()
+			  
+		  },
+		  beforeSend: function(){
+			$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			
+			//alert(data.contract_no);
+			$("#managers_found").html(data); 
+		 
+			$("#manager_radio_"+$("#manager_id").val()).prop("checked",true);
+			 
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		
+	//	$("#doFind").trigger("click");
+		$("#manager_dialog").dialog("open");
+	});
+	
+	$("#manager_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+		
+		
+		$("#instead_string").val("");
+	 
+		
+		$("#instead_id").val("");
+		 
+		
+	});
+	
+	
+	
+	
+	   
+	
+	 
+});
+</script>
+
+<div id="manager_dialog" title="Выберите сотрудника" style="display:none;">
+
+
+   <div id="managers_found">
+   
+   </div>
+
+
+  
+ 
+</div>
+ 
+ 

@@ -1,0 +1,341 @@
+ 
+
+
+
+<script type="text/javascript">
+$(function(){	
+	 $("#given_pdate%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	function rebuild(mode){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=supplier_radio]:checked").val()==0)||($("input[name=supplier_radio]:checked").val()==null)||($("input[name=supplier_radio]:checked").val()==undefined) 
+	   
+	   
+	   
+	   ){
+	    
+			
+				alert("Выберите контрагента!"); 
+		   return false;  
+		}
+	   
+	   
+	   if(($("#given_pdate%{$prefix}%").val()=='')){
+					 
+						alert("Укажите дату!");
+						$("#given_pdate%{$prefix}%").focus();
+						 return false;
+					}
+	   
+	   
+	 selected_supplier=$("input[name=supplier_radio]:checked").val()
+		   
+	  
+	  
+	 
+	  
+	   var new_ret=true;
+		 
+	  
+	    
+		  
+		  
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			  //alert('load');
+			  
+			  $.ajax({
+							  async: false,
+							  url: "/js/tender_monitor.php",
+							  type: "POST",
+							  data:{
+								  "action":"add_kind_2",
+								  "data":selected_supplier,
+								  "given_pdate":$("#given_pdate%{$prefix}%").val()
+							  },
+							  beforeSend: function(){
+									
+							  },
+							  success: function(data){
+								// alert(data);
+								 
+								 location.reload();
+								
+							  },
+							  error: function(xhr, status){
+								  //alert("Ошибка добавления вопроса.");	
+							  }	 
+						  });
+			  
+			  
+			
+			  
+		
+		  }
+	  
+	   
+	  if(mode==0) $("#supplier_dialog").dialog("close"); 
+	}
+ 
+	
+	
+	
+	
+	$("#supplier_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 600,
+		 
+		buttons: {
+			 
+			 
+			"Готово": function(){
+				rebuild(0);
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#add%{$prefix}%").bind("click",function(){
+		//$("#supplier_radio_"+$("#supplier_id").val()+"").prop("checked",true);
+		
+		 
+		
+		//$("#doFind").trigger("click");
+		$("#supplier_dialog").dialog("open");
+	});
+	
+	 
+	 
+	$("#find_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	
+	$("#find_opf").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_inn").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_kpp").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+
+	
+	$("#find_full_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	 $("#find_contact").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#find_city").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#doFind").bind("click",function(){
+		ret=true;
+
+		already_loaded=new Array();
+	
+	
+	  
+		
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/tender_monitor.php",
+			  type: "POST",
+			  data:{
+				  "action":"find_suppliers",
+				  
+				  "code":$("#find_code").val(),
+				
+				  "full_name":$("#find_full_name").val(),
+				  
+				  "contact":$("#find_contact").val(), 
+				  
+				  "city":$("#find_city").val(),
+				      
+				  "opf":$("#find_opf").val(),
+				  "inn":$("#find_inn").val(),
+				  "kpp":$("#find_kpp").val(),
+
+				  
+				  "already_loaded[]":already_loaded
+				  
+			  },
+			  beforeSend: function(){
+				$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				//  alert(data);
+				$("#suppliers_found").html(data);
+				
+				 
+				  
+				 
+			  },
+			  error: function(xhr, status){
+				  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+			  }	 
+		  });
+		  
+		  
+		
+		return ret;
+	});
+	 
+	
+	
+	
+	 
+	
+	 
+});
+</script>
+
+<div id="supplier_dialog" title="Выберите контрагента" style="display:none;">
+
+
+
+  
+
+
+
+<div id="suppliers"   > 
+	
+  
+    
+    
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+       
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Город</th>
+        <th scope="col">Контакт</th>
+         
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+       
+        <td>
+        <input id="find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>
+         
+          <input id="find_opf" type="text" size="5" maxlength="128" value="" />
+
+       
+        </td>
+         <td>
+         
+           <input id="find_inn" type="text" size="7" maxlength="128" value="" />
+       
+        </td>
+         <td>
+         
+            <input id="find_kpp" type="text" size="7" maxlength="128" value="" />
+       
+        </td>
+        
+
+        <td>
+        <input id="find_city" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_contact" type="text" size="15" maxlength="128" value="" />
+        </td>
+         
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        
+        </td>
+    </tr>
+    <tbody id="suppliers_found">
+   	%{*include file="plan/suppliers_15_list.html" pos=$suppliers*}%
+    </tbody>
+    </table>
+ 
+	 <em>
+    <ul>
+    <li>Поиск контрагентов возможен по нескольким критериям в каждом поле.</li>
+    <li>Для этого укажите требуемые значения через точку с запятой.</li>
+    
+    <li>Например, поиск по критерию:&nbsp;
+
+<strong>гласс;первый</strong>
+ &nbsp;
+в поле "Полное наименование" позволит найти всех контрагентов, у которых в названии встречаются сочетания букв "гласс", либо "первый".</li>
+
+	</ul>
+</em>
+	
+       
+<br>
+ 
+
+   
+	<input type="button" value="Создать контрагента" onClick="window.open('supplier.php');" %{if !$can_expand}% disabled%{/if}% />
+ 	<br>
+<br>
+ <label for="pdate%{$prefix}%">
+    Дата:
+    </label><br>
+
+    <input type="text" id="given_pdate%{$prefix}%" value="%{$now}%" size="10" maxlength="10" /><br>
+ 
+
+  
+    </div>
+  
+</div>
+ 

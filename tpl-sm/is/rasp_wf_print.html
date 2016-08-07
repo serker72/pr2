@@ -1,0 +1,33 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+    
+    
+    
+    <em>Номер:</em><strong>%{$user_id}%/%{$items[rowsec].id}%</strong>
+    <em>Дата:</em><strong>%{$items[rowsec].pdate}%</strong>
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    <br />
+
+    
+    <em>Позиции:</em><br />
+  	%{section name=rowsec1 loop=$items[rowsec].positions}%
+    %{$items[rowsec].positions[rowsec1].id|string_format:"%05d"}%
+     %{$items[rowsec].positions[rowsec1].position_name}%
+     %{$items[rowsec].positions[rowsec1].dim_name}%
+     %{$items[rowsec].positions[rowsec1].quantity}%
+    
+    <br />
+
+    
+	%{/section}% 
+  	<br />
+
+
+   
+    </div>
+   
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

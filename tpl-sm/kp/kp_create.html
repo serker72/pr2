@@ -1,0 +1,828 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript" src="/js/md5.js"></script>
+
+<script type="text/javascript" src="/js/period_checker.js"></script>
+
+<!-- Add fancyBox main JS and CSS files -->
+<script type="text/javascript" src="/js/fanb/jquery.fancybox.js?v=2.0.6"></script>
+<link rel="stylesheet" type="text/css" href="/js/fanb/jquery.fancybox.css?v=2.0.6" media="screen" />
+
+
+%{include file="unavailable_dates.html}%
+
+
+<script type="text/javascript">
+
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	//$("#pdate").datepicker();
+	//$("#supplier_bill_pdate").datepicker();
+	$("#valid_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#supply_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	 
+	
+	was_changed=true;
+	
+	//touchScroll('supplier_dialog');
+	
+});
+</script>
+<h1 style="float:left;">Создание коммерческого предложения</h1>
+
+
+%{include file="every_help_dialog.html" filename="kp_create.html" prefix="" description="Cоздание коммерческого предложения"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+<br clear="all" />
+
+
+
+
+
+<form action="ed_kp.php" method="post" id="crea_form">
+<input type="hidden" name="action" id="action" value="0" />
+
+<input type="hidden" name="lang_rus" id="lang_rus" value="%{$lang_rus}%" />
+<input type="hidden" name="lang_en" id="lang_en" value="%{$lang_en}%" />
+<input type="hidden" name="print_form_has_komplekt" id="print_form_has_komplekt" value="%{$print_form_has_komplekt}%" />
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="code">Номер:</label><br />
+
+<input type="text" size="7" maxlength="10" value="%{$code}%" id="code" disabled="disabled" />
+<input type="hidden" name="code" value="%{$code}%" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<label for="price_kind_id">Вид КП:</label><br />
+
+<input type="text" size="7" maxlength="10" value="%{$price_kind_name}%" id="price_kind_name"  disabled="disabled" />
+<input type="hidden" name="price_kind_id" id="price_kind_id" value="%{$price_kind_id}%" />
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Дата создания:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$now}%" disabled="disabled" id="pdate" style="width:60px;" />
+
+<input type="hidden" value="%{$now}%" name="pdate" />
+
+</div>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label><br />
+
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" style="width:270px;" />
+<input type="hidden" value="%{$org_id}%" id="org_id" />
+</div>
+
+
+<input type="hidden" id="lead_id" name="lead_id" value="%{$lead_id}%">
+<input type="hidden" id="tz_id" name="tz_id" value="%{$tz_id}%">
+%{if $lead_id>0}%
+<div style="float:left; margin-right:20px;  height:50px;">
+  
+    <label for="lead_str">Лид:</label> <br>
+
+  
+    <a href="ed_lead.php?action=1&id=%{$lead_id}%&from_begin=1" target="_blank">%{$lead.code}%</a>
+     
+	 
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+  
+    <label for="lead_str">ТЗ:</label> <br>
+
+  
+    <a href="ed_tz.php?action=1&id=%{$tz_id}%&from_begin=1" target="_blank">%{$tz.code}%</a>
+     
+	 
+</div>
+%{/if}%
+
+
+
+
+
+<div style="float:right; margin-right:0px; min-width:120px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" class="reestr_delete  reestr_right_button24" data-comment="Аннулировать/Восстановить..." style="float:right;">
+ 
+</a>
+
+<strong>Статус:</strong><br />
+
+не утвержден 
+
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+ 
+
+
+
+<div style="float:left; margin-right:20px;">	
+    
+    <label for="supplier_string">Контрагент:</label><br>
+    <input type="text" id="supplier_string" value="%{$supplier_string}%" disabled size="40" maxlength="255" style="width:300px;" />
+
+
+</div>
+<div style="float:left; margin-right:20px;">	
+    
+    <label for="supplier_string">Имя, должность:</label><br>
+
+    <input type="text" id="contact_string" value="%{$contact_string}%" disabled size="40" maxlength="255" style="width:300px;"  /><br>
+    
+
+</div>    
+ 
+ 
+ 
+<div style="float:left; margin-right:20px;"> 
+<br>
+
+	<input type="button" id="supplier_select" value="..." />
+    <input type="button" id="supplier_clear" value="x" />
+    
+    
+    
+
+	<input type="hidden"  id="supplier_id" name="supplier_id" value="%{$supplier_id}%" />
+    <input type="hidden"  id="contact_id" name="contact_id" value="%{$contact_id}%" />
+    
+</div>    
+ 
+    
+ 
+ 
+%{include file="kp/supplier_actions.html"}%
+
+
+<br clear="all" />
+<p />
+
+
+<label for="manager_txt">Обращение менеджера:</label><br />
+<textarea id="manager_txt" name="manager_txt" cols="100" rows="20" style="width:550px;"></textarea>
+<p />
+	<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+ <script type="text/javascript">
+	CKEDITOR.replace( 'manager_txt',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-inkp.js'
+    				  }
+					 );
+	</script>
+
+
+<br clear="all" />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="valid_pdate">Срок действия:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$valid_pdate}%" id="valid_pdate"  name="valid_pdate" style="width:60px;" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+ 
+ 
+<label for="supply_pdate_id">Срок поставки:</label><br />
+<select id="supply_pdate_id" %{if $can_change_supply_pdate}% name="supply_pdate_id" %{else}% disabled%{/if}% style="width:60px;">
+%{html_options values=$supply_pdate_id_ids selected=$supply_pdate_id output=$supply_pdate_vals}%
+</select>
+%{if !$can_change_supply_pdate}% 
+<input type="hidden" name="supply_pdate_id" value="%{$supply_pdate_id}%" >
+%{/if}%
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="supply_id_name">Базис поставки:</label><br />
+<select id="supply_id_name"  style="width:200px;" disabled="disabled" >
+%{html_options values=$supply_id_ids selected=$supply_id output=$supply_id_vals}%
+</select>
+<input type="hidden" value="%{$supply_id}%" name="supply_id" id="supply_id" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="install_mode_str">ПНР:</label><br />
+<select id="install_mode_str" name="install_mode_str" disabled="disabled">
+<option value="0" %{if $install_mode==0}% selected="selected"%{/if}%>не включены</option>
+<option value="1" %{if $install_mode==1}% selected="selected"%{/if}%>включены</option>
+</select>
+
+<input type="hidden" id="install_mode" name="install_mode" value="%{$install_mode}%" >
+</div>
+
+
+<!-- блок скидок -->
+%{foreach from=$dis_in_card item=discs}%
+<div style="float:left; margin-right:10px; %{if $bill.is_confirmed_price!=1 and !$can_view_prices}% display:none;  %{/if}%">
+<label for="card_discount_%{$discs.id}%">%{$discs.name}%, %</label>
+<br />
+<input type="text" size="4" maxlength="5" id="card_discount_%{$discs.id}%" value="%{if $discs.id==$pl_discount_id}%%{$pl_discount_value}%%{else}%0.00%{/if}%" 
+
+  
+ %{if ($discs.id==2 and !$can_ruk_discount) or ($discs.id==1 and  $can_ruk_discount)}%
+disabled="disabled"
+%{/if}%
+ />
+
+
+
+<input type="hidden" value="%{$discs.dl_value}%"  id="card_dl_value_%{$discs.id}%" />
+
+<input type="hidden" value="1"  id="card_dl_rub_or_percent_%{$discs.id}%" />
+
+<input type="hidden" value="%{$discs.id}%"  id="card_dl_discount_id_%{$discs.id}%" />
+</div>
+%{/foreach}%
+
+
+<div style="float:left; margin-right:10px; %{if $bill.is_confirmed_price!=1 and !$can_view_prices}% display:none;  %{/if}%"><br />
+
+<input id="put_cost" type="button" value="Подбор скидки по итоговой сумме КП" />
+</div>
+
+
+
+
+
+ <div style="float:left; margin-right:10px; display:none;">
+    <label for="install_value">Стоимость установки:</label><br />
+    
+    <input type="text" size="10" maxlength="255" value="%{$install_value}%" id="install_value"  name="install_value" />
+    
+    
+    <select id="install_currency_id" name="install_currency_id" style="width:50px;">
+    %{html_options values=$delivery_currency_id_ids selected=2 output=$delivery_currency_id_vals}%
+    </select>
+    </div>
+
+
+<div style="float:left; margin-right:10px; display:none;">
+<label for="install_notes">Комментарий к установке:</label><br />
+<input type="text" size="40" maxlength="255" value="%{$install_notes}%" id="install_notes"  name="install_notes" />
+</div>
+
+<script type="text/javascript">
+$(function(){
+	$("#install_mode").bind("change", function(){
+		if($("#install_mode").val()==0){
+			$("#install_notes").val('');
+		}else{
+			//если установка включена - подтянуть позицию установки (ПНР) из выбранных
+			var positions=new Array();  var costs=new Array();
+			//new_pl_position_id_
+			$("input[id^=new_pl_position_id_]").each(function(index, v) {
+                positions.push($(v).val());
+				hash=$(v).attr("id").replace(/^new_pl_position_id_/, '');
+					costs.push($("#check_new_total_"+hash).val());
+            });
+			
+			//alert(positions);
+			$.ajax({
+				async: true,
+				url: "/js/kp.php",
+				type: "GET",
+				dataType:"json",
+				data:{
+					"action":"preload_install",
+					"price_kind_id":$("#price_kind_id").val(),
+					"positions[]":positions,
+					"costs[]":costs
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				 $("#install_value").val(data.value); 
+				 $("#install_notes").val(data.notes); 
+				 if(data.notes.length==0){
+					alert('Опция ПНР не найдена в опциях коммерческого предложения! Для выбора режима "ПНР включена" добавьте опцию ПНР в коммерческое предложение с помощью кнопки "Редактировать позиции".'); 
+					$("#install_mode").val(0);
+					$("#install_mode_str").val(0);
+				 }
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления вопроса.");	
+				}	 
+			});
+		}
+	});
+});
+</script>
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<!-- Рентабельность -->
+<input type="hidden" id="profit_percent" name="profit_percent" value="%{$profit_percent}%" />
+<input type="hidden" id="profit_value" name="profit_value" value="%{$profit_value}%" />
+<input type="hidden" id="profit_currency" name="profit_currency" value="2" />
+
+
+
+
+
+<strong>Позиции коммерческого предложения</strong> 
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%">
+
+<input type="button" id="add_pos" value="В прайс-лист..." %{if !$can_add_positions}% disabled="disabled"%{/if}% />
+</td>
+<td width="50%" align="right">
+
+  	 
+        
+     
+   
+     <div style="float:right; margin-right:0px;">  
+     <a href="#"  onclick="alert('В данном режиме печать коммерческого предложения  недоступна. Пожалуйста, нажмите кнопку Создать коммерческое предложение и перейти к утверждению для получения возможности печати предложения.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать коммерческого предложения..."></a>
+     
+     </div>
+     
+      <div style="float:right; margin-right:0px;">
+      <a href="#"  onclick="alert('В данном режиме отправка на электронную почту коммерческого предложения  недоступна. Пожалуйста, нажмите кнопку Создать коммерческое предложение и перейти к утверждению для получения возможности отправки предложения.'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить коммерческое предложение на email..."></a>
+      
+      </div>
+      
+      <div style="float:right; margin-right:0px;">
+      <a href="#"  onclick="alert('В данном режиме просмотр рентабельности коммерческого предложения  недоступен. Пожалуйста, нажмите кнопку Создать коммерческое предложение и перейти к утверждению для получения возможности просмотра рентабельности предложения.'); return false;" class="reestr_re reestr_inactive reestr_right_button24" data-comment="показать рентабельность"></a>
+      
+      </div>
+      
+      
+      <div style="float:right; margin-right:0px;">
+      <a href="#"  onclick="alert('В данном режиме невозможно копировать коммерческое предложение. Пожалуйста, нажмите кнопку Создать коммерческое предложение и перейти к утверждению для получения возможности копирования предложения.'); return false;" class="reestr_copykp reestr_inactive reestr_right_button24" data-comment="копировать коммерческое предложение"></a>
+      
+      </div>
+    
+    
+</td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2">
+
+<div id="positions" style=" width: 100%;">
+%{if $has_positions}%
+%{include file="kp/positions_on_page_set.html" pospos=$positions}%
+%{/if}%
+</div>
+
+
+%{include file="kp/position_actions.html"}%
+</td>
+</tr>
+</table> 
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+ <label for="warranty_id">Гарантия:</label><br />
+    <select id="warranty_id" name="warranty_id" style="width:250px;">
+    %{html_options values=$warranty_id_ids selected=1 output=$warranty_id_vals}%
+    </select>
+    
+    <br />
+	<label for="warranty_text">Описание гарантии:</label><br />
+	<textarea cols="35" rows="4" id="warranty_text" name="warranty_text" disabled="disabled"></textarea>
+    <script type="text/javascript">
+	$(function(){
+		$("#warranty_id").bind("change", function(){
+			if($("#warranty_id").val()==1){
+				$("#warranty_text").val('');
+				$("#warranty_text").prop("disabled", true);
+			}else $("#warranty_text").prop("disabled", false);
+		});
+	});
+	</script>
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="paymode_id">Условия оплаты:</label><br />
+    <select id="paymode_id" name="paymode_id" style="width:250px;">
+    %{html_options values=$paymode_id_ids selected=1 output=$paymode_id_vals}%
+    </select>
+    <br />
+    
+    <div id="standart_paymode_options">
+        <label for="paymode_pred">Предоплата:</label><br />
+        
+        <input type="text" size="10" maxlength="255" value="%{$paymode_pred}%" id="paymode_pred_string" disabled="disabled"   />
+         <input type="hidden"  value="%{$paymode_pred}%" id="paymode_pred"  name="paymode_pred" />
+        <br />
+        
+        <label for="paymode_pered_otgr">Перед отгрузкой с завода:</label><br />
+        
+        <input type="text" size="10" maxlength="255" value="%{$paymode_pered_otgr}%" id="paymode_pered_otgr_string" disabled="disabled"  />
+        <input type="hidden"   value="%{$paymode_pered_otgr}%" id="paymode_pered_otgr"  name="paymode_pered_otgr" />
+        <br />
+        
+        
+        <label for="paymode_pnr">После подписания акта приемки-передачи:</label><br />
+        
+        <input type="text" size="10" maxlength="255" value="%{$paymode_pnr}%" id="paymode_pnr_string"  disabled="disabled"  />
+        
+        <input type="hidden"   value="%{$paymode_pnr}%" id="paymode_pnr"  name="paymode_pnr" />
+        <br />
+   	</div>
+    <div id="custom_paymode_options" style="display:none;">
+    	<label for="paymode_txt">Описание условий:</label><br />
+
+    	 <textarea cols="35" rows="4" id="paymode_txt" name="paymode_txt" style="width:250px;" ></textarea>
+         <br />
+		 
+         <input type="checkbox" name="paymode_has_delay" id="paymode_has_delay" value="1" /><label for="paymode_has_delay">Отсрочка платежа</label>
+         
+         <input type="text" size="3" maxlength="4" name="paymode_delay" id="paymode_delay" value="" />
+         
+         <select name="paymode_delay_mode" id="paymode_delay_mode" style="width:100px;">
+         	<option value="0" selected="selected">банковских</option>
+            <option value="1">календ.</option>
+         </select>
+         дней.
+        
+    </div>
+    
+    </div>
+	<script type="text/javascript">
+	$(function(){
+		$("#paymode_id").bind("change", function(){
+			
+			
+			$.ajax({
+				async: true,
+				url: "/js/kp.php",
+				type: "GET",
+				dataType: "json",
+				data:{
+					"action":"retrieve_paymode",
+					"paymode_id":$("#paymode_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  //$("#dims_dic").html(data);
+				  if(data.is_standart==1){
+					 $("#paymode_pred_string").prop("disabled", true);
+					 $("#paymode_pered_otgr_string").prop("disabled", true);
+					 $("#paymode_pnr_string").prop("disabled", true); 
+					 $("#standart_paymode_options").show();
+					 $("#custom_paymode_options").hide();
+				  }else{
+					 $("#paymode_pred_string").prop("disabled", false);
+					 $("#paymode_pered_otgr_string").prop("disabled", false);
+					 $("#paymode_pnr_string").prop("disabled", false); 
+					 $("#standart_paymode_options").hide();
+					 $("#custom_paymode_options").show();
+					 
+				  }
+				  
+				 $("#paymode_pred_string").val(data.pred);
+				 $("#paymode_pered_otgr_string").val(data.pered_otgr);
+				 $("#paymode_pnr_string").val(data.pnr);
+				 
+				 $("#paymode_pred").val(data.pred);
+				 $("#paymode_pered_otgr").val(data.pered_otgr);
+				 $("#paymode_pnr").val(data.pnr);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка добавления вопроса.");	
+				}	 
+			});
+			
+		});
+		
+		$("#paymode_pred_string").bind("change", function(){
+			$("#paymode_pred").val($("#paymode_pred_string").val());
+		});
+		
+		$("#paymode_pered_otgr_string").bind("change", function(){
+			$("#paymode_pered_otgr").val($("#paymode_pered_otgr_string").val());
+		});
+		
+		$("#paymode_pnr_string").bind("change", function(){
+			$("#paymode_pnr").val($("#paymode_pnr_string").val());
+		});
+	});
+	</script>
+
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+<!--
+
+
+<div style="float:left; margin-right:10px;">
+ <label for="user_dir_pr_id">Директор по продажам:</label><br />
+ <select id="user_dir_pr_id" name="user_dir_pr_id" style="width:600px;">
+    %{html_options values=$user_dir_pr_id_ids selected=0 output=$user_dir_pr_id_vals}%
+    </select>
+</div>
+<br clear="all" />
+<p />-->
+
+<div style="float:left; margin-right:10px;">
+ <label for="user_manager_id">Менеджер по продаже оборудования:</label><br />
+ <select id="user_manager_id" name="user_manager_id" style="width:600px;">
+    %{html_options values=$user_manager_id_ids selected=$user_manager_id output=$user_manager_id_vals}%
+    </select>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<!-- Блок команды для отправки КП на email -->
+<input type="hidden" name="send_email" id="send_email" value="0" />
+<input type="hidden" name="email" id="email" value="0" />
+<input type="hidden" id="email_was_asked" value="0" />
+
+
+
+<!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+<input type="hidden"  id="discount_more_than_max" value="0" />
+
+ 
+
+%{if $can_create}%
+<input type="submit" name="doNew" id="doNew" value="Создать коммерческое предложение и перейти к списку коммерческих предложений" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" id="doNewEdit" value="Создать коммерческое предложение и остаться в карте" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='kps.php';
+}else location.href='kps.php';" />
+
+
+</form>
+<script type="text/javascript">
+
+var frmvalidator  = new Validator("crea_form");
+var res=''; var resold='';
+
+function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+%{include file="kp/skidka_actions.js"}%
+
+
+
+
+function DoCustomValidation()
+{
+	
+	var ret_code=true;
+	
+	var restricted_names=new Array();
+	restricted_names.push("Индивидуальный предприниматель");
+	restricted_names.push("В компанию");
+	restricted_names.push("Частное лицо");
+	
+	
+	
+	//проверить дату действия
+	now=new Date();
+	check=new Date(now.valueOf()+3*30*24*60*60*1000);
+	valid_pdate=new Date($("#valid_pdate").val().substr(6,4), parseInt($("#valid_pdate").val().substr(3,2))-1, $("#valid_pdate").val().substr(0,2)); 
+	
+	
+	%{if !$can_exclude_valid_pdate}%
+	if(valid_pdate>check){
+		//alert(check); alert(valid_pdate);
+		sfm_show_error_msg('Срок действия коммерческого предложения должен быть не позже 3 месяцев с даты создания коммерческого предложения!');
+		return false;	
+	}
+	%{/if}%
+	
+	if(valid_pdate<new Date(now.valueOf() + 14*24*60*60*1000)){
+		sfm_show_error_msg('Срок действия коммерческого предложения должен быть 2 недели с даты создания коммерческого предложения или позже!');
+		return false;	
+	}
+	
+	
+	 
+	 
+	
+	
+	
+	 
+	
+	
+	if($("#bill_positions_table tbody tr").length==0){
+		sfm_show_error_msg('Невозможно сохранить коммерческое предложение без позиций! Пожалуйста, укажите позиции!');
+		return false;
+	}
+		
+	 
+	
+	
+	
+	if(($("#paymode_id").val()==2)&&($("#paymode_txt").val().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '').length<3)){
+		sfm_show_error_msg('Заполните поле Описание условий оплаты !');
+		$("#paymode_txt").focus();
+		return false;
+	};
+	
+	if(($("#paymode_id").val()==2)&&($("#paymode_has_delay").prop("checked"))){
+		//alert('zzzzzzzzzzzz');
+		if(($("#paymode_delay").val().length==0)
+		||
+		isNaN($("#paymode_delay").val())
+		||
+		(parseInt($("#paymode_delay").val())<=0)
+		){
+		sfm_show_error_msg('Укажите отсрочку платежа!');
+		$("#paymode_delay").focus();
+		return false;
+		}
+	}
+	 
+	
+	
+	//проверка корректности скидок
+	%{foreach from=$dis_in_card item=discs}%
+		//return UpdateSk("%{$discs.id}%");
+		if(!card_discount_check("%{$discs.id}%")){
+			return false;
+		}
+	%{/foreach}%
+	
+	
+	
+	
+	
+	%{if $can_confirm}% 
+	
+	%{if !$can_unconfirm}%
+	if(!window.confirm("Внимание!\nПри сохранении коммерческое предложение будет автоматически утверждено.\nУ Вас отсутствуют права на снятие утверждения, поэтому дальнейшее редактирование коммерческого предложения будет недоступно.\nВы уверены в правильном заполнении всех полей коммерческого предложения?")){
+		ret_code=false;
+	}
+	%{/if}%
+	
+	//запретить утверждение кп, если заполнена скидка рук-ля и нет прав на нее
+		%{if !$can_ruk_discount}%
+		
+			
+			/*
+			контроль корректности скидки руководителя.
+			если к скидке руководителя нет доступа,
+			но она в рамках макс. скидки менеджера - то давать утвердить
+			если выходит за рамки - то нет.
+			*/
+			var do_stop=false;
+			
+			 
+			
+				 	
+			if(($("#card_discount_2").val()>0)&&($("#card_discount_2").val()  >$("#card_dl_value_1").val())){
+			//если это скидка руководителя, и она превышает макс. скидку менеджера - стоп.
+				//alert ($("#card_discount_2").val()  + ' '+$("#card_dl_value_1").val() );
+				do_stop=do_stop||true;
+			}
+			 
+			
+			if(do_stop){
+				$("#discount_more_than_max").val(1)	;
+				 
+				 
+				alert("У Вас недостаточно прав для утверждения коммерческого предложения со скидкой, превышающей максимальную.\nКоммерческое предложение необходимо согласовать с руководителем.\nСотрудники, имеющие право утвердить коммерческое предложение: %{strip}%
+		%{foreach name=us from=$users_can_override_ruk_discount item=user}%
+		%{$user.name_s}% %{if !$smarty.foreach.us.last}%, %{/if}%
+		
+		%{/foreach}%
+		%{/strip}%.");
+				 
+				
+				
+			} 
+		%{/if}%
+	
+	if($("#discount_more_than_max").val()==0){
+		$("#do_confirm").val(1);
+		
+		%{if $can_send_email}%
+		//вызвать диалог выбора адресатов
+		//полученных адресатов подставить в $("#send_email").val(1); $("#email").val(res);	
+		//вызвать повторный submit формы
+		
+		
+		if($("#email_was_asked").val()==0){
+			$("#email_was_asked").val(1);
+			
+			if(window.confirm("Вы утверждате коммерческое предложение. Желаете ли Вы отправить pdf-форму коммерческого предложения на электронную почту?")){
+				email_documents_on_create($("#supplier_id").val());
+				
+				return false;
+			}
+		}
+		
+		
+		
+		
+		%{/if}%
+		
+	}else{
+		$("#do_confirm").val(0);
+	}
+	%{else}%
+		$("#do_confirm").val(0);
+	%{/if}%
+	
+	%{if $is_copied==1}%
+	alert("Цены позиций были пересчитаны согласно действующему прайс-листу.");
+	%{/if}%
+	
+	//return false;
+	return ret_code;
+}
+
+ 
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+
+frmvalidator.addValidation("valid_pdate","req","Укажите Срок действия коммерческого предложения!");
+
+ 
+
+
+frmvalidator.addValidation("supplier_id","req","Выберите контрагента и контакт!");
+frmvalidator.addValidation("contact_id","req","Выберите контрагента и контакт!");
+
+frmvalidator.addValidation("supplier_id","gt=0","Выберите контрагента и контакт!");
+frmvalidator.addValidation("contact_id","gt=0","Выберите контрагента и контакт!");
+
+
+frmvalidator.addValidation("user_manager_id","gt=0","Выберите менеджера по продаже оборудования!");
+
+frmvalidator.addValidation("supply_id","req","Невозможно сохранить коммерческое предложение, т.к. не найден базис поставки по производителю. Пожалуйста, обратитесь к администраторам программы для ввода базиса поставки!");
+frmvalidator.addValidation("supply_id","gt=0","Невозможно сохранить коммерческое предложение, т.к. не найден базис поставки по производителю. Пожалуйста, обратитесь к администраторам программы для ввода базиса поставки!");
+
+%{if !$can_lower_supply_pdate}%
+//frmvalidator.addValidation("supply_pdate_id","gt=2","У Вас недостаточно прав для того, чтобы указать срок поставки менее 3 мес.!");
+%{/if}%
+
+
+%{foreach from=$dis_in_card item=discs}%
+$("#card_discount_%{$discs.id}%").bind("change", function(){	
+	return UpdateSk("%{$discs.id}%");
+});
+%{/foreach}%
+
+
+</script>
+
+
+%{include file="kp/pdf_actions.html"}%

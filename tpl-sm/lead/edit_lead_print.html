@@ -1,0 +1,250 @@
+<html>
+<head>
+<link href="/tpl-sm/plan_pdf/print.css?i=1" rel="stylesheet" type="text/css" />
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;"> 
+
+<h1>Лид</h1>
+
+ 
+
+  
+
+ 
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+ 
+
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em; ">
+   <strong>  Дата создания: </strong>
+     <br />
+    
+    %{$bill.pdate}%
+    
+</div>
+
+
+ <div style="float:left; margin-right:20px; height:50px;">
+	 
+  	<strong> Состояние:
+    </strong> <br />
+    
+     %{if $bill.probability>=0 and  $bill.probability<=29.99}% 
+    <span style="color:#aaaaaa;"> холодный</span>
+    %{elseif $bill.probability>=30 and  $bill.probability<=69.99}%
+    <span style="color:#3a87ad;  ">теплый</span>
+    %{elseif $bill.probability>=70}%
+    <span style="color:#e9510f;  ">горячий</span>
+    %{/if}%
+
+</div>
+
+ 
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+ 
+
+
+<strong>Вид лида: </strong><br>
+
+    
+        %{$bill.kind_name}%
+    
+
+</div>
+
+
+%{if $bill.tender_id!=0}% 
+<div style="float:left; margin-right:20px;  margin-bottom:1.5em; ">
+<strong>Тендер:</strong><br>
+ %{$tender.code}% 
+</div>
+%{/if}% 
+
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+ 
+
+    <strong>
+    
+Тип оборудования: </strong> <br>
+
+  %{$bill.eq_name}%
+     
+
+</div>
+
+  
+
+
+
+
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+   
+  <strong>Максимальная цена контракта:</strong>
+     <br />
+    
+    %{$bill.max_price|default:"-"}% 
+
+    
+    %{section name=cursec loop=$currs}%
+    %{if $currs[cursec].is_current}% %{$currs[cursec].signature}%%{/if}%
+    %{/section}%
+    
+
+
+</div>
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+	
+   <strong> 
+   Производитель:
+    </strong> <br />
+
+%{if $bill.wo_producer==1}% Производитель не в линейке
+
+%{else}%
+%{$bill.prod_name}%
+%{/if}%
+ 
+
+</div>
+
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+	 <strong>
+  	 Вероятность заключ-ия контракта, %:
+    </strong><br />
+    
+     %{$bill.probability}% 
+
+</div>
+
+
+<div style="float:left; margin-right:20px; margin-bottom:1.5em;">
+
+<strong> 
+    Прогнозируемая дата заключения контракта:</strong>
+     <br>
+
+    
+     %{$bill.pdate_finish}%  %{$bill.ptime_finish}%
+
+    
+</div>
+  
+
+
+<div style="float:left; margin-right:20px;  margin-bottom:1.5em;  " id="toggle_annul">
+<strong>Статус:</strong><br>
+
+ %{$bill.status_name}% 
+
+</div>
+ 
+%{if $bill.status_id==34}%
+<div style="float:left; margin-right:20px; height:50px;">
+	 
+	<strong> Причина отказа:
+    </strong> <br />
+    %{$bill.fail_name}% %{$bill.fail_reason}%
+</div>    
+%{/if}%
+
+
+<br clear="all" />
+ 
+
+ 
+
+
+ 
+<div style="float:left; margin-right:20px;">
+
+ <strong>
+    
+   Название лида:</strong>
+    <br />
+    
+    %{$bill.topic}%
+
+</div>   
+
+ 
+<div style="float:left; margin-right:20px;">
+
+ <strong>
+    
+   Описание лида:</strong>
+    <br />
+    
+    %{$bill.description}%
+
+</div>  
+
+
+ <br clear="all" />   
+ 
+
+   %{$files}%  
+
+ <br clear="all" />
+<p />
+  
+
+
+
+
+<div style="float:left; margin-right:20px;"> 
+<h3 style="display:inline;">Контрагент:</h3>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+%{include file="lead/supplier_many_actions_print.html" many=true can_modify=$can_modify}%
+
+<br>
+ <div style="float:left; margin-right:20px;">
+
+	<strong> Ответственный сотрудник: </strong> 
+
+	 %{$bill.manager_string}% 
+    
+</div> 
+ 
+ 
+ 
+ 
+
+<br clear="all" />
+ 
+
+
+
+ 
+%{$lenta}%
+
+
+
+
+ 
+ 
+
+ 
+ 
+</body>
+</html>

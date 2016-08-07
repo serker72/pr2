@@ -1,0 +1,120 @@
+<div id="opf_dialog" title="Типы оборудования" style="display:none;">
+      <div id="opf_dic">
+      %{include file="lead/d_types.html"}%
+      </div>
+      
+      Новый тип оборудования:<br>
+      <input type="text" id="new_opf" size="30" maxlength="255" />
+      <input type="button" value="Добавить тип" id="add_new_opf"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+        $("#opf_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                      $("#eq_type_id").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+            $(this).dialog("close"); }
+          }
+        
+        });
+        $("#expand_types").bind("click",function(){
+            $("#opf_dialog").dialog("open");
+        });
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_types_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#opf_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_opf").bind("click", function(){
+              if($("#new_opf").val().length<3){
+                  $("#new_opf").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_type",
+                      "opf":$("#new_opf").val()
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("Тип оборудования добавлен!"); 
+                     $("#new_opf").val('');
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления Типа оборудования.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>

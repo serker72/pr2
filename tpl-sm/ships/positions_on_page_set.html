@@ -1,0 +1,348 @@
+<!-- таблица на странице -->
+
+<div id="info_positions_dialog" title="О позиции">
+<div id="position_info"></div>
+
+</div>
+ <script type="text/javascript">
+  $(function(){
+     $("#info_positions_dialog").dialog({
+	  autoOpen: false,
+	  modal: true,
+	  width: 550,
+	  height: 250,
+	  buttons: {
+		  "Закрыть": function(){
+		   $(this).dialog("close");	
+		  }
+		}
+	 });
+	 
+	
+	
+  });
+	</script>
+
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable" id="ship_positions_table">
+    <thead>
+    <tr align="center" valign="top">
+    <th scope="col" width="20">№ п/п</th>
+    	<th scope="col" width="80">Код</th>
+        <th scope="col" width="60%">Наименование</th>
+        <th scope="col" width="80">Ед. изм.</th>
+        <th scope="col" width="80">Кол-во</th>
+        <th scope="col" width="80">Доступно</th>
+        <th scope="col" width="80">Всего по счету</th>
+        <th scope="col" width="80">Получено</th>
+        <th scope="col" width="80" style="display:none;">Цена с НДС</th>
+        
+         %{foreach from=$discs1 item=discs}%
+        
+        
+        <th scope="col" width="80" style="display:none;" >%{$discs.name}%</th>
+        
+        %{/foreach}%
+        
+        
+        <th scope="col" width="80" style="display:none;">Цена с НДС с учетом скидки 	</th>
+        
+        <th scope="col" style="display:none;">+/-</th>
+        <th scope="col" width="80" style="display:none;">Итоговая цена</th>
+        <th scope="col" width="80" style="display:none;">Сумма с учетом скидки</th>
+         <th scope="col" width="80" style="display:none;">% НДС</th>
+        <th scope="col" width="80" style="display:none;">Сумма НДС</th>
+        <th scope="col" width="80" style="display:none;">Всего, руб.</th>
+       <th scope="col" width="100" >Комм. предл-ие</th>
+       
+       
+        <th scope="col" width="24">
+        
+         <input type="checkbox" title="выделить все позиции" 
+    id="table_select_all" 
+   %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+    <script type="text/javascript">
+	$(function(){
+		$("#table_select_all").bind("click",function(){
+			
+				$.each( $("#ship_positions_table input[id^=to_acc_]"),function(k,v){
+					$(v).prop("checked",$("#table_select_all").prop("checked"));
+				});
+			
+		});
+	});
+	</script>
+        
+        </th>
+        
+        <th scope="col" width="24">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].hash}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="20">
+        %{$pospos[pospossec].pl_position_id|string_format:"%05d"}%
+        </td>
+        <td width="60%">
+        <span id="new_position_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].hash}%" name="new_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        <input type="hidden" id="new_pl_position_id_%{$pospos[pospossec].hash}%" name="new_pl_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_position_id}%" />
+        
+       <input type="hidden" id="new_hash_%{$pospos[pospossec].hash}%" name="new_hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        </td>
+        <td width="80">
+        <span id="new_dim_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].hash}%" name="new_dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="80">
+        <span id="new_quantity_span_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].quantity}%</span>
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].hash}%" name="new_quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+        
+        <td width="80">
+        <span id="new_max_quantity_span_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].not_in_bill}%</span>
+        
+    	</td>
+        
+        <td width="80">
+        %{$pospos[pospossec].in_bill}% 
+        
+    	</td>
+        
+        
+        <td width="80">
+        <a href="#" id="link_in_acc_%{$pospos[pospossec].hash}%" title="подробно...">%{$pospos[pospossec].in_acc}%</a>
+        
+    	</td>
+        
+        
+        
+        <td width="80" style="display:none;">
+        %{$pospos[pospossec].price}%
+        <input type="hidden" id="new_price_%{$pospos[pospossec].hash}%" name="new_price_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price}%" />
+        
+        <input type="hidden" id="new_pl_discount_id_%{$pospos[pospossec].hash}%" name="new_pl_discount_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_id}%" />
+          
+         <input type="hidden" id="new_pl_discount_value_%{$pospos[pospossec].hash}%" name="new_pl_discount_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_value}%" />
+         
+         <input type="hidden" id="new_pl_discount_rub_or_percent_%{$pospos[pospossec].hash}%" name="new_pl_discount_rub_or_percent_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_discount_rub_or_percent}%" />
+         
+        
+        </td>
+        
+        
+        %{foreach from=$pospos[pospossec].discs1 item=discs}%
+         <!-- виды скидок -->
+         <td width="80" style="display:none;" >
+        
+        
+         %{if $pospos[pospossec].pl_discount_id==$discs.id}%
+         
+         
+         %{$pospos[pospossec].pl_discount_value}%
+         
+         
+         %{if $pospos[pospossec].pl_discount_rub_or_percent==0}%
+         руб.
+         %{elseif $pospos[pospossec].pl_discount_rub_or_percent==1}%
+         %
+        <!-- <br />
+
+         <small>(%{$pospos[pospossec].pl_discount_value_from_percent}%)</small>
+        -->
+        
+         %{/if}%
+         
+         %{else}%
+         0.00
+         %{/if}%
+         
+         <input type="hidden" value="%{$discs.dl_value}%" name="new_dl_value_%{$discs.id}%_%{$pospos[pospossec].hash}%" id="new_dl_value_%{$discs.id}%_%{$pospos[pospossec].hash}%" />
+    
+    <input type="hidden" value="%{$discs.dl_rub_or_percent}%" name="new_dl_rub_or_percent_%{$discs.id}%_%{$pospos[pospossec].hash}%" id="new_dl_rub_or_percent_%{$discs.id}%_%{$pospos[pospossec].hash}%" />
+         </td>
+         %{/foreach}%
+        
+        <td width="80" style="display:none;">
+        %{$pospos[pospossec].price_f}%
+        <input type="hidden" id="new_price_f_%{$pospos[pospossec].hash}%" name="new_price_f_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_f}%" />
+        </td>
+        
+        
+        <td style="display:none;">
+        
+        %{if $pospos[pospossec].has_pm}%
+        
+        %{if $pospos[pospossec].plus_or_minus==0}%
+        +
+         %{elseif $pospos[pospossec].plus_or_minus==1}%
+        -
+        %{/if}%
+        
+        %{$pospos[pospossec].value}%
+        
+        %{if $pospos[pospossec].rub_or_percent==0}%
+        руб.
+         %{elseif $pospos[pospossec].rub_or_percent==1}%
+        %
+        %{/if}%
+        
+        
+        %{/if}%
+        
+        <input type="hidden" name="new_has_pm_%{$pospos[pospossec].hash}%" id="new_has_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].has_pm}%" />
+        
+        <input type="hidden" name="new_plus_or_minus_%{$pospos[pospossec].hash}%" id="new_plus_or_minus_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].plus_or_minus}%" />
+        
+        <input type="hidden" name="new_rub_or_percent_%{$pospos[pospossec].hash}%" id="new_rub_or_percent_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].rub_or_percent}%" />
+        
+        <input type="hidden" name="new_value_%{$pospos[pospossec].hash}%" id="new_value_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].value}%" />
+        
+        
+        
+        </td>
+        <td width="80" style="display:none;">
+        <span id="new_price_pm_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price_pm}%</span>
+        <input type="hidden" id="check_new_price_pm_%{$pospos[pospossec].hash}%" name="new_price_pm_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_pm}%" />
+        </td>
+        
+        
+        <td width="80" style="display:none;">
+        <span id="new_cost_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].cost}%</span>
+        </td>
+        
+        
+         <td width="80" style="display:none;">
+        <span id="new_nds_proc_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_proc}%</span>
+        </td>
+        
+         <td width="80" style="display:none;">
+        <span id="new_nds_summ_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].nds_summ}%</span>
+        </td>
+        
+        
+        <td width="80" style="display:none;">
+        <span id="new_total_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].total}%</span>
+         <input type="hidden" id="check_new_total_%{$pospos[pospossec].hash}%" name="new_total_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].total}%" />
+        </td>
+        
+        
+         <td width="100">
+         %{if $pospos[pospossec].kp_id!=0}%
+         <a href="ed_kp.php?action=1&id=%{$pospos[pospossec].kp_id}%" target="_blank">%{$pospos[pospossec].kp_code}%</a>
+         %{else}%
+         -
+         %{/if}%
+         
+         <input type="hidden" id="new_kp_id_%{$pospos[pospossec].hash}%" name="new_kp_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].kp_id}%" />
+        </td>
+       
+         <td width="24">
+         %{*$pospos[pospossec].quantity-$pospos[pospossec].in_acc*}%
+         <input type="checkbox" value="%{if  $pospos[pospossec].quantity-$pospos[pospossec].in_acc<0}%0%{else}%%{$pospos[pospossec].quantity-$pospos[pospossec].in_acc}%%{/if}%" 
+    id="to_acc_%{$pospos[pospossec].hash}%" 
+   %{if $cannot_select_positions}%
+    disabled="disabled"
+    %{/if}%
+    />
+         </td>
+        
+        <td width="24">
+       
+        %{if $can_modify}%
+        %{if $can_del_positions}%
+        <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+		
+        %{else}%
+       <a href="#" id="new_del_%{$pospos[pospossec].hash}%"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="удалить позицию..." title="удалить позицию..." border="0" /></a>
+        %{/if}%
+			
+		
+    	</td>
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+
+<script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			
+			var complex_positions=new Array();
+			
+			
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].hash}%").bind("click",function(){
+				
+				%{if $can_modify}%
+				%{if $can_del_positions}%
+				if(window.confirm('Вы действительно хотите удалить позицию распоряжения на отгрузку?')){ 
+					$('#new_row_%{$pospos[pospossec].hash}%').remove();
+					
+							var temp_cter=0;
+					$.each($("#ship_positions_table tbody tr"),function(kk,vv){
+						temp_cter++;
+						
+						$("#"+$(vv).attr("id")+" td:first").html(temp_cter);
+					});
+				}
+				%{else}%
+				alert("У Вас недостаточно прав, чтобы удалить позицию распоряжения.");
+				%{/if}%
+				%{else}%
+				alert("Невозможно удалить позицию утвержденного распоряжения.");
+				%{/if}%
+				
+				return false;
+			});
+			
+			 $("#link_in_acc_%{$pospos[pospossec].hash}%").bind("click", function(){
+				$.ajax({
+					async: true,
+					url: "/js/ship.php",
+					type: "POST",
+					data:{
+						"action":"find_acc_pos",
+						"id":"%{$pospos[pospossec].position_id}%",
+						"bill_id":$("#bill_id").attr("value"),
+						"sh_i_id":$("#id").attr("value"),
+						
+						"pl_position_id":"%{$pospos[pospossec].pl_position_id}%",
+						"pl_discount_id":"%{$pospos[pospossec].pl_discount_id}%",
+						"pl_discount_value":"%{$pospos[pospossec].pl_discount_value}%",
+						"pl_discount_rub_or_percent":"%{$pospos[pospossec].pl_discount_rub_or_percent}%",
+						"kp_id":"%{$pospos[pospossec].kp_id}%",
+						
+
+					},
+					beforeSend: function(){
+					  $("#position_info").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста"  />');
+					},
+					success: function(data){
+					  $("#position_info").html(data);
+					  
+					},
+					error: function(xhr, status){
+					   // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					}	 
+				  });
+				
+				$("#info_positions_dialog").dialog("open");
+				return false;
+			});
+    	%{/section}%
+	
+	});
+      </script>

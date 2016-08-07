@@ -1,0 +1,221 @@
+ 
+ 
+ 
+%{if $item.status_id==3}%
+<nobr><strong>не утв.</strong></nobr>
+%{elseif $item.is_fulfiled 	==0}%
+    <nobr><strong>работа не утв.</strong></nobr>
+     
+    <input type="button" value="Утвердить" id="confirm_fulfil%{$prefix}%_%{$item.id}%" %{if !$item.can_confirm_fulfil}% disabled="disabled"%{/if}% />
+   
+    %{else}%
+    <nobr><strong>работа утв.</strong></nobr>
+    
+    
+    
+    <input type="button" value="Не утвердить" id="confirm_fulfil%{$prefix}%_%{$item.id}%" %{if !$item.can_unconfirm_fulfil}% disabled="disabled"%{/if}% />
+    
+   
+%{/if}%
+    <br />
+
+    %{$item.confirmed_fulfil_name}%  %{$item.fulfiled_pdate}%
+    
+    %{if $can_confirm_shipping }%
+    <script type="text/javascript">
+	$(function(){
+		var global_sem1=true;
+		
+		$("#confirm_fulfil%{$prefix}%_%{$item.id}%").bind("click",function(){
+			usl=true;
+			do_it=true;
+			 
+			%{if $item.is_fulfiled 	==1}%
+			//сделать проверку по аджакс
+			 
+			
+			var can_ret=true;
+			local_can_ret=true;
+			
+			if(global_sem1) $.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_docs_unconfirm_fulfil",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 
+				 
+				  if(data!=0){
+					  local_can_ret=local_can_ret&&false;
+					   // alert(data);	 
+					  
+					   $("#error_window_text%{$prefix}%").html('<ul>'+data+'</ul>');					   
+					   $("#error_window_dialog%{$prefix}%").dialog("option", "title", "Найдены связанные документы");					   
+					   $("#error_window_dialog_caption%{$prefix}%").html('Обнаружены следующие связанные документы.<br>Изменения будут применены ко всем этим документам.<br><br>Вы уверены?');
+					   
+		  
+					   max_height=700; min_height=100;
+						   
+					   our_height=parseInt($("#error_window_text%{$prefix}%").height());
+						
+					   if(our_height>max_height) our_height=max_height;
+					   if(our_height<min_height) our_height=min_height;
+					   
+					  //  alert(data);
+					   
+					   $("#error_window_dialog%{$prefix}%").dialog( "option", "height", our_height+140);
+					   
+					   $("#error_window_dialog%{$prefix}%").dialog({
+							 
+							buttons:{
+								"Да":function(){
+									//
+									
+									 $("#error_window_dialog%{$prefix}%").dialog("close");
+									 global_sem1=false;
+									 $("#confirm_fulfil%{$prefix}%_%{$item.id}%").trigger("click");
+									
+								},
+								"Нет":function(){
+									//
+									
+									 $("#error_window_dialog%{$prefix}%").dialog("close");
+									
+								}
+							}
+						});
+					  
+					   $("#error_window_dialog%{$prefix}%").dialog("open"); 
+					  
+					
+				  } 
+				},
+				error: function(xhr, status){
+					 
+				}	 
+			}); 
+			 
+			if(!local_can_ret) {
+				return false;
+			}
+			
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm_fulfil",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение работы лида %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния записи планировщика. Пожалуйста, попытайтесь сохранить запись планировщика снова.");
+					can_ret=false;	
+				}	 
+			});
+			//если все в порядке - то делать... иначе
+			if(can_ret){
+			if(window.confirm("Вы уверены, что хотите снять утверждение работы лида %{$item.code}%?")){
+			%{elseif $item.is_fulfiled 	==0}%
+			
+			var can_ret=true;
+			
+			
+			
+			
+			
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm_fulfil",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить работу лида %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			 
+			//если все в порядке - то делать... иначе
+			if(can_ret){
+				
+			 
+				
+					
+			%{/if}%
+				
+				
+				
+				
+				$.ajax({
+				  async: true,
+				  url: "/js/%{$filename}%",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_confirm_fulfil",
+					  "id":"%{$item.id}%",
+					  "shorter":"%{$shorter}%" 
+				  },
+				  beforeSend: function(){
+						$("#item_row%{$prefix}%_%{$items[rowsec].id}%").html('<td colspan="17"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+				  },
+				  success: function(data){
+					 $("#item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					
+					
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			  
+			  
+			 	%{if $item.is_fulfiled==1 }%
+			}
+			}else{
+					
+			}
+			%{elseif $item.is_fulfiled==0 }%
+			}
+			%{/if}%
+		  	
+			
+			
+		  
+		});
+	});
+	</script>
+    %{/if}%
+ 

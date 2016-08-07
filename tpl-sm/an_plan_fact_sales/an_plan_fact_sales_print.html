@@ -1,0 +1,163 @@
+<h1>Отчет План/факт продаж</h1> 
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+
+
+<h2>Вы выбрали:</h2>
+
+<div style="float:left; margin-right:20px;">
+	<h3>Общие поля:</h3>
+    
+    <div style="float:left; margin-right:10px;">
+    	
+        
+        
+        <b>Отдел:</b>
+        %{if $department_id==0}% все отделы %{/if}%
+          %{foreach from=$departments item=pk}%
+             %{if $pk.is_selected}%%{$pk.name}%,%{/if}%
+          %{/foreach}%
+        
+      
+        <p />
+        
+        <div style="float:left; margin-right:10px;">
+         
+        <b>Валюта:</b> 
+         
+        %{foreach from=$currencies item=pk}%
+             %{if $pk.id==$currency_id}% %{$pk.signature}%%{/if}%
+          %{/foreach}%
+       
+        </div>
+        
+        <div style="float:left; margin-right:10px;">
+        <b>Год:</b> 
+        
+   		 %{foreach from=$years item=pk}%
+             %{if $pk==$year}% %{$pk}%%{/if}%
+          %{/foreach}%
+        
+		</div>   
+        
+        <br clear="all" />
+        <p />
+
+         <div style="float:left; max-width:300px; margin-right:10px;">
+     <b>Месяц:</b>
+	 
+	 
+         %{section name=ms loop=$monthes}%
+           %{if $monthes[ms].is_selected}%%{$monthes[ms].name}%%{if !$smarty.section.ms.last}%, %{/if}%%{/if}%
+          %{/section}%
+   
+    </div>
+    	
+    
+    </div>
+    
+   
+
+ 	<br clear="all" />
+    <p />
+    
+    
+    %{if $user_name!=""}%
+  
+  	<b>Сотрудник:</b><br />
+
+	%{$user_name}%
+	%{/if}%
+    
+</div>
+
+
+
+<div style="float:left; margin-right:20px;">
+ <!-- <h3>Факт продаж ОПО:</h3> 
+  
+  %{if $eq_name!=""}%
+   
+  
+  <b>Станок:</b><br />
+  %{$eq_name}%
+  <br />
+ <p />
+  %{/if}%
+  
+  
+  <strong>Оборудование: </strong>
+
+ %{if $eq_is_new==2}% все оборудование %{/if}% 
+ %{if $eq_is_new==1}% только новое оборудование %{/if}% 
+ %{if $eq_is_new==0}% только б/у оборудование %{/if}% 
+ 
+  
+ 
+  
+  <br clear="all" />
+  <p />
+   
+   <b>Вид цен:</b> 
+      %{if $price_kind_id==0}% все виды цен %{/if}%
+  %{foreach from=$price_kinds item=pk}%
+  	  %{if $pk.id==$price_kind_id}% %{$pk.name}%%{/if}%
+  %{/foreach}%
+    
+  	<p />
+  
+  %{if $supplier_name!=""}%
+  <b>Клиент:</b><br />
+  %{$supplier_name}%
+  
+  %{/if}%
+  
+  %{if $supplier_is_new==1}% 
+  <strong>только новые клиенты</strong>
+  
+ 
+  %{/if}% 
+  <p />
+  
+  
+ 
+  %{include file="an_plan_fact_sales/cities_table_print.html"}%
+  -->
+  
+
+</div>
+
+
+
+
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+ 
+
+
+
+
+
+ 
+
+
+%{if $do_it}%
+%{include file="an_plan_fact_sales/an_plan_fact_sales_table.html"}%
+%{/if}%
+
+
+
+
+

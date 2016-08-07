@@ -1,0 +1,28 @@
+%{foreach from=$options item=option}%
+
+%{if $option.kind=="group"}%
+<!-- группа опций -->
+<tr align="center" valign="top" class="equip_optgr">
+	<td colspan="6"><strong>%{$option.name}%</strong></td>
+</tr>
+%{else}%
+<tr align="left" valign="top">
+
+<td widtd="24" >
+            <input type="checkbox" value="%{$option.pl_id}%" id="option_filter_sel_%{$option.pl_id}%_%{$prefix}%" %{if $option.is_checked}% checked="checked"%{/if}%  />
+        </td>
+        
+        <td widtd="30" > %{$option.pl_id}%  </td>
+        <td widtd="80" > %{$option.code}% </td>
+         <td widtd="*" > %{$option.name}% </td>
+        <td widtd="24" >
+       %{$option.dim_name}%
+         </td>
+          <td widtd="24" style="white-space:nowrap;">
+          %{if $can_view_prices}% 
+           %{$option.price}% %{$option.signature}%
+           %{/if}%
+           </td>
+</tr>
+%{/if}%
+%{/foreach}%         

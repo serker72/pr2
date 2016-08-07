@@ -1,0 +1,200 @@
+<div id="course_input_dialog" title="Введите Ваш курс" style="display:none;">
+
+    <div style="float:left; margin-right:20px;">
+        <label for="course_course_dol">Курс $:</label><br>
+        
+        
+        <input type="text" size="10" maxlength="15"  id="course_course_dol" value="%{$course_dol}%" />
+    </div>
+    
+    <div style="float:left; margin-right:20px;">
+        <label for="course_course_euro">Курс &euro;:</label><br>
+      
+        
+         <input type="text" size="10" maxlength="15"   id="course_course_euro"  value="%{$course_euro}%" />
+    </div>
+
+
+</div>
+
+<script>
+$(function(){
+	
+	  $("#course_input_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 250,
+		height: 150,
+		buttons: {
+			"Готово": function() { 
+				
+				can_ret=true;
+				
+				dol=$.trim($("#course_course_dol").val().replace(/\,/,'.'));
+				euro=$.trim($("#course_course_euro").val().replace(/\,/,'.'));
+				var cdol=0; var ceuro=0;
+				
+				if(can_ret&&((dol.length==0)||isNaN(dol)||(parseFloat(dol)<=0))){
+					alert("Введите корректный курс доллара!");
+					can_ret=can_ret&&false;
+					$("#course_course_dol").focus();
+				}
+				if(can_ret&&((euro.length==0)||isNaN(euro)||(parseFloat(euro)<=0))){
+					alert("Введите корректный курс евро!");
+					can_ret=can_ret&&false;
+					$("#course_course_euro").focus();
+				}
+				
+				//проверить курсы по базе
+				//если хотя бы 1 из курсов введенных меньше, чем курсы по базе - то вывести предупреждение!
+				if(can_ret) {
+					$.ajax({
+					  async: false,
+					  url: "/js/bdrs.php",
+					  type: "GET",
+					  dataType:"json",
+					  data:{
+						  "action":"load_courses_by_date",
+						  "pdate":$("#pdate_course").val()
+					  },
+					  beforeSend: function(){
+							
+					  },
+					  success: function(data){
+							//  $("#%{$word}%").html(data);
+							 cdol=data.dol;
+							 ceuro=data.eur;
+						
+					  },
+					  error: function(xhr, status){
+						  
+					  }	 
+				  });
+				  
+				  if((cdol>dol)||(ceuro>euro)){
+					 can_ret=can_ret&&window.confirm("Внимание!\n Введенные Вами курсы валют меньше, чем курс валют на выбранную дату.\n Вы уверены?");  
+				  }
+				   
+				}
+					
+				
+				if(can_ret){
+					$("#course_dol").val(dol);
+					 $("#course_euro").val(euro);
+					 
+					 $("#course_dol_span").html(dol);
+					 $("#course_euro_span").html(euro);
+					
+					$(this).dialog("close"); 
+				}
+			},
+		   
+		  "Отмена": function() {
+			   
+			$("#is_my_course").prop("checked",false);
+			$("#is_my_course").trigger("change");	
+			$(this).dialog("close"); }
+		  }
+		
+		});
+		
+	$("#is_my_course").bind("change", function(){
+		if($(this).prop("checked")){
+			//$("#pdate_course").prop("disabled", true);
+			 
+			 $("#course_course_dol").val($("#course_dol").val());
+			 $("#course_course_euro").val($("#course_euro").val());
+			 
+			 $("#course_input_dialog").dialog("open");
+		}else{
+			//pdate	
+			//  подтянуть курс на дату и подставить его в поле
+			//$("#pdate_course").prop("disabled", false);
+			//$("#pdate_course").val($("#pdate").val());
+			$.ajax({
+			  async: false,
+			  url: "/js/bdrs.php",
+			  type: "GET",
+			  dataType:"json",
+			  data:{
+				  "action":"load_courses_by_date",
+				  "pdate":$("#pdate_course").val()
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+					//  $("#%{$word}%").html(data);
+					 $("#course_dol").val(data.dol);
+					 $("#course_euro").val(data.eur);
+					 
+					 $("#course_dol_span").html(data.dol);
+					 $("#course_euro_span").html(data.eur);
+				
+			  },
+			  error: function(xhr, status){
+				  
+			  }	 
+		  });
+			
+		}
+	});
+	
+	$("#pdate_course").bind("change", function(){
+		//проверка корректности даты. сравниваем с датой $("#pdate").val()
+		//продублировать этот блок в проверке корректности формы!
+		//новая дата не должна быть позднее, чем дата создания - 30 дней
+		
+		can_ret=true;
+		newd=new Date( $("#pdate_course").val().substr(6,4),  parseInt($("#pdate_course").val().substr(3,2))-1,  $("#pdate_course").val().substr(0,2));
+			
+		controld=new Date( $("#pdate").val().substr(6,4),  parseInt($("#pdate").val().substr(3,2))-1,  $("#pdate").val().substr(0,2));
+		
+		controld.setHours(controld.getHours()-30*24);
+		
+		//alert(newd+ ' vs ' + controld);
+		today=new Date();
+		if((newd>today)||(newd<controld)){
+			alert("Дата курса не может быть позднее, чем дата БДР, и не может быть ранее даты БДР более, чем на 30 дней.");	
+			can_ret=can_ret&&false;
+		}
+		
+		if(can_ret){
+			//подтянуть курсы из базы на заданную дату
+			$.ajax({
+			  async: false,
+			  url: "/js/bdrs.php",
+			  type: "GET",
+			  dataType:"json",
+			  data:{
+				  "action":"load_courses_by_date",
+				  "pdate":$("#pdate_course").val()
+			  },
+			  beforeSend: function(){
+					
+			  },
+			  success: function(data){
+					//  $("#%{$word}%").html(data);
+					 $("#course_dol").val(data.dol);
+					 $("#course_euro").val(data.eur);
+					 
+					 $("#course_dol_span").html(data.dol);
+					 $("#course_euro_span").html(data.eur);
+				
+			  },
+			  error: function(xhr, status){
+				  
+			  }	 
+		  });	
+		  
+		  $("#is_my_course").prop("checked",false);
+		}
+	});
+	
+});
+</script>
+
+
+
+

@@ -1,0 +1,179 @@
+
+<table width="100%" border="1" cellspacing="0" cellpadding="2" class="blacktable">
+ <thead>
+  <tr align="center" valign="top">
+    
+    
+    <th scope="col" width="40" rowspan="2">
+    № 
+    
+    </th>
+    
+    
+      <th scope="col" width="60" rowspan="2">
+    Дата создания
+   
+    </th>
+    
+    
+  <th scope="col" width="60" rowspan="2">
+    Заданный номер
+   
+    </th>
+   
+  
+   
+   
+    <th scope="col" width="80" rowspan="2">
+    Участок списания
+   
+   
+    </th>
+   
+   
+    <th scope="col" width="80" rowspan="2">
+    Объект списания
+    
+   
+    </th>
+    
+   
+    
+   
+    
+      <th scope="col" width="60" rowspan="2">Текущий статус акта
+    
+    </th>
+    
+    
+   <th scope="col" width="*" colspan="4">
+    Позиции 
+   
+   
+    </th>
+    
+    <th scope="col" width="80" rowspan="2" >Создал 
+    
+    </th>
+    
+    
+    
+    
+    
+    
+   
+ 
+  </tr>
+  
+  <tr align="center" valign="top">
+  <th scope="col" width="20" class="small">
+    № п/п
+    </th>
+    <th scope="col" width="*"  class="small">Наименование</th>
+    <th scope="col" width="20" class="small" style="min-width:20px; width:20px; max-width:30px;">
+     ед. изм.
+    </th>
+    <th scope="col" width="30" class="small" style="min-width:30px; width:30px; max-width:40px;">
+    Кол-во
+    </th>
+   
+  </tr>
+  
+  
+ </thead>
+ <tbody>
+   %{section name=rowsec loop=$items}%
+    %{section name=possec loop=$items[rowsec].positions}%%{/section}%
+   <tr align="left" valign="top">
+    
+    <td width="40" %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}%>%{$items[rowsec].id}% </td>
+    
+     <td width="60"  %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}%>%{$items[rowsec].pdate}%&nbsp;</td>
+    
+    
+    <td width="60"  %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}% >%{$items[rowsec].given_no}%&nbsp;</td>
+    
+    
+    
+   <td width="80" %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}%>
+   
+  %{$items[rowsec].sender_sector_name}%
+   
+   </td>
+   
+   
+    <td width="80" %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}%>
+    
+    %{$items[rowsec].sender_storage_name}%
+    
+    </td>
+   
+    
+    
+ 
+  
+    
+    <td width="60" %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}%>
+    
+     %{if $items[rowsec].status_id==1}%
+    не утверждено
+    %{elseif $items[rowsec].status_id==2}%
+    утверждено
+    %{elseif $items[rowsec].status_id==17}%
+    выполнено
+    %{elseif $items[rowsec].status_id==3}%
+    аннулировано
+    %{/if}%
+    
+   
+    &nbsp;</td>
+   
+   
+ 
+ 	%{section name=possec loop=$items[rowsec].positions}%
+    %{if $smarty.section.possec.index==0}%
+	%{include file="an_j/an_row.html"}%
+   %{/if}%
+	%{/section}%
+ 	%{if $smarty.section.possec.total==0}%
+     <td width="20" class="small">
+    -
+    </td>
+    <td width="*" class="small">
+   
+	-
+    
+    </td>
+    <td width="20" class="small"  style="min-width:20px; width:20px; max-width:30px;">
+   -
+    </td>
+	<td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+   -
+    </td>
+    %{/if}%
+ 
+   
+     <td width="80" %{if $smarty.section.possec.total>0}%rowspan="%{$smarty.section.possec.total}%"%{/if}% >
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    </td>
+    
+   
+  
+    
+     
+   
+     
+   </tr>
+   
+    %{section name=possec loop=$items[rowsec].positions}%
+	 %{if $smarty.section.possec.index>0}%   
+    
+    <tr align="left" valign="top"  class="small">
+	%{include file="an_j/an_row.html"}%
+    </tr>
+    %{/if}%
+	%{/section}%
+   %{/section}%
+  </tbody>
+</table>
+ 

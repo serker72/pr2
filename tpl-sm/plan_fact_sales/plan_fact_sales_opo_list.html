@@ -1,0 +1,655 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+
+%{include file="every_help_dialog.html" filename="dogpr.html;dogpr_edit.html;plan.html;plan_edit.html" prefix="" description="Факт продаж ОПО"  style="float:right;  margin-right:0px;" is_right=true}%
+
+<div style="float:right; margin-right:10px;">
+	%{include file="suppliers/mode_reestr.html" prefix="" pagename="plan_fact_fact_opo.php" is_right=true}%
+	
+</div>
+	
+
+
+
+%{include file="plan_fact_sales/opo_dialog.html"}%
+%{include file="plan_fact_sales/cities.html"}%
+
+
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	 $("#pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	$("#supplier_bill_pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#supplier_bill_pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+});
+</script>
+
+
+
+
+%{$pages}%
+
+
+%{include file="annul_dialog.html" prefix="_opo"}%
+
+
+<form action="%{$pagename}%" method="get" id="filter_form">
+
+ 
+<div style="float:left; margin-right:20px;">
+
+
+<label for="statuses" class="statuses_label">Статусы:</label>
+<select id="statuses" name="statuses[]" multiple="multiple">
+<option value="1" %{if $status_id_1==1 or $all_statuses==1}% selected%{/if}% >Не утверждено</option>
+<option value="2"  %{if $status_id_2==1 or $all_statuses==1}% selected%{/if}%>Утверждено</option>
+ 
+<option value="3"  %{if $status_id_3==1 or $all_statuses==1}% selected%{/if}%>Аннулирован</option>
+</select>
+
+<a href="#" id="save_sort_mode"  class="statuses_save" class="statuses_save reestr_save reestr_button24" data-comment="Сохранить">
+</a>
+
+&nbsp;&nbsp;
+
+<div id="statuses_caption" class="statuses_caption">
+
+</div>
+
+
+</div>
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		VidgetMulti('statuses');	
+		
+		//сохранение набора
+		$("#save_sort_mode").bind("click",function(){
+			 
+			
+			 $('#statuses').multiselect("widget").find(":checkbox").each(function(){
+				 //alert(this.label);
+				 if(this.checked){
+					 $.cookie('fact_opo_status_id_'+this.value, 1, { expires: 14 });  
+				 }else{
+					$.removeCookie('fact_opo_status_id_'+this.value);
+				 }
+			  });
+						  
+			
+			$("#doFilter").trigger("click");
+			
+			return false;	
+		});
+		 
+	
+	});
+
+	</script>
+
+ 
+<div style="float:right; margin-right:10px;">
+%{if $can_print}%
+<a href="#" id="print_button" class="reestr_print reestr_right_button24" data-comment="Печать реестра"></a>
+<script type="text/javascript">
+$(function(){
+	$("#print_button").bind("click", function(){
+		
+		//alert($("#filter_form").serialize());
+		zc=window.open('%{$pagename}%?print='+'1&'+$("#filter_form").serialize());
+		
+		return false;
+	});
+});
+
+</script>
+ %{else}%
+<a href="#" onclick="alert('Извините, у Вас недостаточно прав для печати реестра фактов продаж.'); return false;" class="reestr_print reestr_inactive reestr_button24" data-comment="Печать реестра"></a>
+%{/if}%
+</div>
+
+<br clear="all" />
+
+<p />
+
+
+
+<input type="hidden" name="from" value="0" />
+<input type="hidden" name="to_page" value="%{$to_page}%" />
+<input type="hidden" name="sortmode" value="%{$sortmode}%" />
+
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+   %{foreach from=$view item=col}% 
+    
+   
+%{if $col.colname=="code"}%    	
+    <th scope="col" width="20">
+    Номер 
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+   %{/if}%
+%{if $col.colname=="month"}%    
+     <th scope="col" width="20">
+   Месяц
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="year"}%     
+     <th scope="col" width="20">
+   Год
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+    %{/if}%
+%{if $col.colname=="resp"}%   
+    
+     <th scope="col" width="40">
+  Сотрудник
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+     </th>
+    
+   %{/if}%
+%{if $col.colname=="price_kind"}%   
+     
+      <th scope="col" width="40">
+    Вид цен
+   
+    </th>
+  %{/if}%
+%{if $col.colname=="eq"}%     
+    <th scope="col" width="40">
+    Оборудование
+    
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=9"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=8"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+  %{/if}%
+%{if $col.colname=="producer"}%     
+    <th scope="col" width="40">
+    Производитель
+    
+     <div class="sort_dir">
+    <a href="%{$link}%&sortmode=15"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=14"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="summ"}%     
+    
+    <th scope="col" width="40">
+    Сумма договора
+   
+    </th>
+    
+  %{/if}%
+%{if $col.colname=="contract_no"}%     
+    <th scope="col" width="40">
+    № договора
+   
+    </th>
+   
+   %{/if}%
+%{if $col.colname=="client"}%   
+    <th scope="col" width="70">
+    Клиент
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=11"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=10"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+    
+  %{/if}%
+%{if $col.colname=="is_new"}%     
+    <th scope="col" width="30">
+    Новый клиент
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=17"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=16"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="city"}%     
+    
+     <th scope="col" width="100">
+    Город
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode=13"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode=12"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    </th>
+  %{/if}%
+%{if $col.colname=="status"}%     
+    
+      <th scope="col" width="60">
+    Статус
+        </th>
+    
+ %{/if}%
+%{if $col.colname=="notes"}%   
+   
+    
+   
+    
+   <th scope="col" width="*">
+  Примечания
+    </th>
+  %{/if}%
+%{if $col.colname=="crea"}%     
+     <th scope="col" width="40">
+    Создал
+   
+   
+    </th>
+ %{/if}%
+    
+%{/foreach}%  
+    
+    <th scope="col" width="*">
+    Утверждение 
+   
+   
+    </th>
+    
+    <th scope="col" width="48">&nbsp; </th>
+   
+</tr>
+<tr align="center" valign="top" class="filter">
+%{foreach from=$view item=col}%	
+
+
+%{if $col.colname=="code"}%   
+
+    <td width="20">
+    
+    <input type="text" size="8" maxlength="255" value="%{$id}%" name="id" id="id" style="width:20px;" />
+	 
+    </td>
+
+%{/if}%
+%{if $col.colname=="month"}%   
+    
+    <td width="20">
+    <select name="month" id="month" style="width:40px;">
+     <option value="">-все-</option>
+	 %{foreach from=$monthes item=mont}%
+     <option value="%{$mont.no}%" %{if $mont.no==$month}% selected="selected"%{/if}%>%{$mont.name}%</option>
+     %{/foreach}%
+    </select>
+    </td>
+ %{/if}%
+%{if $col.colname=="year"}%      
+    
+     <td width="24">
+    
+    	 <input type="text" size="8" maxlength="255" value="%{$year}%" name="year" id="year" style="width:20px;" />
+    
+    </td>
+    
+  %{/if}%
+%{if $col.colname=="resp"}%     
+    
+    <td width="40" > 
+    
+  	<input type="text" size="8" maxlength="255" value="%{$us_name}%" name="us_name" id="us_name" style="width:40px;" />
+  
+    </td>
+  %{/if}%
+%{if $col.colname=="price_kind"}%     
+    
+     <td width="40" >
+   <select id="price_kind_id" name="price_kind_id" style="width:40px;">
+    %{html_options values=$price_kind_ids selected=$price_kind_id output=$price_kind_id_vals}%
+   </select>  
+  
+   </td>
+ %{/if}%
+%{if $col.colname=="eq"}%     
+   <td width="40">
+   <input type="text" size="8" maxlength="255" value="%{$eq_name}%" name="eq_name" id="eq_name" style="width:40px;" />
+   
+   
+      
+    </td>
+  %{/if}%
+%{if $col.colname=="producer"}%     
+     <td width="40">
+   <input type="text" size="8" maxlength="255" value="%{$prod_name}%" name="prod_name" id="prod_name" style="width:40px;" />
+   
+   
+      
+    </td>
+%{/if}%
+%{if $col.colname=="summ"}%       
+	<td width="40" >&nbsp;
+  
+    </td>
+ %{/if}%
+%{if $col.colname=="contract_no"}%      
+    <td width="40">
+   <input type="text" size="8" maxlength="255" value="%{$contract_no}%" name="contract_no" id="contract_no" style="width:40px;" />
+   
+   
+      
+    </td>
+%{/if}%
+%{if $col.colname=="client"}%       
+    <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name" id="supplier_name" style="width:60px;" />
+   
+   
+      
+    </td>
+%{/if}%
+%{if $col.colname=="is_new"}%       
+     <td width="30">
+    <select name="supplier_is_new" id="supplier_is_new" style="width:40px;">
+     
+	 
+     <option value="" %{if $supplier_is_new==""}% selected="selected"%{/if}%>все</option>
+     <option value="1" %{if $supplier_is_new=="1"}% selected="selected"%{/if}%>только новые</option>
+     <option value="0" %{if $supplier_is_new=="0"}% selected="selected"%{/if}%>только не новые</option>
+    
+    </select>
+    </td>
+    
+ %{/if}%
+%{if $col.colname=="city"}%      
+   <td width="70">
+   <input type="text" size="8" maxlength="255" value="%{$city}%" name="city" id="city" style="width:70px;" />
+   
+   
+      
+    </td>
+    
+   
+ %{/if}%
+%{if $col.colname=="status"}%     
+   
+   <td width="60" >
+  
+   </td>
+   
+ 
+  %{/if}%
+%{if $col.colname=="notes"}%   
+    <td width="*" >&nbsp;
+   
+   </td>
+  %{/if}%
+%{if $col.colname=="crea"}%    
+    <td width="40" >
+   <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name" id="manager_name" style="width:40px;" />
+   
+   </td>
+  %{/if}%
+  
+%{/foreach}%  
+   
+     <td width="*" >&nbsp;
+   
+   </td>
+   
+ <td width="48"> 
+    
+    
+    <input name="doFilter" id="doFilter"  type="submit" value="Найти" style="width:48px;" />
+    </td>
+   
+    
+</tr>
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+%{if $has_header}%
+<tr align="center" valign="top" id="item_row_%{$items[rowsec].id}%">
+%{/if}%
+%{foreach from=$view item=col}%	
+
+%{if $col.colname=="code"}%   
+
+    <td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>
+    <a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].id}%
+    
+    
+    </td>
+ 
+ %{/if}%
+%{if $col.colname=="month"}%   
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].month_name}%
+    <input type="hidden" id="month_%{$items[rowsec].id}%" value="%{$items[rowsec].month}%" />
+    <input type="hidden" id="month_name_%{$items[rowsec].id}%" value="%{$items[rowsec].month_name}%" />
+    
+    </td>
+ 
+ %{/if}%
+%{if $col.colname=="year"}%   
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].year}%
+    <input type="hidden" id="year_%{$items[rowsec].id}%" value="%{$items[rowsec].year}%" />
+    </td>
+  %{/if}%
+%{if $col.colname=="resp"}%      
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].us_name}%  
+    
+    <input type="hidden" id="user_id_%{$items[rowsec].id}%" value="%{$items[rowsec].user_id}%" />
+    <input type="hidden" id="us_name_%{$items[rowsec].id}%" value="%{$items[rowsec].us_name}%" />
+    <input type="hidden" id="us_login_%{$items[rowsec].id}%" value="%{$items[rowsec].us_login}%" />
+    
+    
+    </td>
+ %{/if}%
+%{if $col.colname=="price_kind"}%    
+   <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].price_kind_name}%
+     <input type="hidden" id="price_kind_id_%{$items[rowsec].id}%" value="%{$items[rowsec].price_kind_id}%" /> 
+     <input type="hidden" id="price_kind_name_%{$items[rowsec].id}%" value="%{$items[rowsec].price_kind_name}%" /> 
+    </td>
+ %{/if}%
+%{if $col.colname=="eq"}%    
+  	
+     <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].eq_name}%
+     %{if $items[rowsec].eq_is_new==1}%
+   <br />
+	<strong>новое оборудование</strong>
+    %{else}%
+    <br />
+	<strong>б/у</strong>
+   %{/if}%
+    <input type="hidden" id="eq_is_new_%{$items[rowsec].id}%" value="%{$items[rowsec].eq_is_new}%" /> 
+    <input type="hidden" id="eq_name_%{$items[rowsec].id}%" value="%{$items[rowsec].eq_name}%" />
+    </td>
+    
+%{/if}%
+%{if $col.colname=="producer"}%       
+     <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].prod_name}%
+    <input type="hidden" id="producer_id_%{$items[rowsec].id}%" value="%{$items[rowsec].producer_id}%" /> 
+  
+    </td>
+%{/if}%
+%{if $col.colname=="summ"}%       
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].contract_sum}%&nbsp;%{$items[rowsec].currency_signature}%
+    <input type="hidden" id="contract_currency_id_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_currency_id}%" /> 
+    <input type="hidden" id="currency_signature_%{$items[rowsec].id}%" value="%{$items[rowsec].currency_signature}%" /> 
+    <input type="hidden" id="contract_sum_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_sum}%" /> 
+    </td>
+  %{/if}%
+%{if $col.colname=="contract_no"}%    
+    
+     <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].contract_no}%
+     <input type="hidden" id="contract_no_%{$items[rowsec].id}%" value="%{$items[rowsec].contract_no}%" />
+    </td>
+    
+ %{/if}%
+%{if $col.colname=="client"}%      
+    <td width="70" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">
+   %{$items[rowsec].opf_name}%
+   
+   %{$items[rowsec].supplier_name}%
+   </a>
+   
+   
+    <input type="hidden" id="supplier_name_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_name|escape:"html"}%" />
+    <input type="hidden" id="supplier_id_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_id}%" />
+    
+     <input type="hidden" id="supplier_is_new_%{$items[rowsec].id}%" value="%{$items[rowsec].supplier_is_new}%" />
+   
+    </td>
+  %{/if}%
+%{if $col.colname=="is_new"}%     
+     <td width="30" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+      %{if $items[rowsec].supplier_is_new==1}%
+  
+	<strong>новый клиент</strong>
+   %{/if}%
+     </td>
+ %{/if}%
+%{if $col.colname=="city"}%     
+      <td width="100" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+   %{$items[rowsec].city}%
+   <input type="hidden" id="city_id_%{$items[rowsec].id}%" value="%{$items[rowsec].city_id}%" />
+   <input type="hidden" id="city_%{$items[rowsec].id}%" value="%{$items[rowsec].city}%" />
+    </td>
+%{/if}%
+%{if $col.colname=="status"}%      
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}% >
+     %{$items[rowsec].status_name}%
+     
+    </td>
+   
+  %{/if}%
+%{if $col.colname=="notes"}%     
+  
+  
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+  <a href="#" class="reestr_short">
+   <small> %{section  name=notesec loop=$items[rowsec].notes}%
+    %{if $smarty.section.notesec.first}%
+    
+    %{$items[rowsec].notes[notesec].pdate}%
+     %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note|strip_tags|trim|truncate:20:"":false}%
+    %{/if}%
+     %{/section}%</small>
+     %{if $smarty.section.notesec.total>0}%
+     <span class='reestr_short_cut4'>...</span>
+     %{/if}%
+    </a> 
+   
+   <div class="reestr_full reestr_hide">
+   <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+   :
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </div>
+    
+    </td>
+    
+  
+    %{/if}%
+%{if $col.colname=="crea"}%   
+    
+     <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}%  
+    </td>
+ %{/if}%
+ 
+ %{/foreach}%  
+
+   <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+    
+    <div id="status_price_%{$items[rowsec].id}%">%{include file="plan_fact_sales/toggle_confirm_price.html" filename="plan_fact_fact_opo.php" item=$items[rowsec] shorter=0}%</div>
+    
+    </td>
+    
+ 
+ 
+ 	 <td width="48" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+        %{if $items[rowsec].status_id==2}%
+  <a href="#" onclick='alert("Для редактирования данных снимите утверждение факта продаж!"); return false;' data-comment="редактировать данные" class="reestr_edit reestr_inactive reestr_right_button24"></a> 
+   %{elseif $items[rowsec].status_id==3}%
+  <a href="#" onclick='alert("Для редактирования данных восстановите факт продаж!"); return false;' data-comment="редактировать данные" class="reestr_edit reestr_inactive reestr_right_button24"></a> 
+   
+   %{elseif $items[rowsec].can_edit and !$items[rowsec].restricted_by_period}%
+   <a href="#" onclick=" OpoSaveDialog('%{$items[rowsec].id}%'); return false;" data-comment="редактировать данные"  class="reestr_edit reestr_right_button24"> </a>
+   %{elseif $items[rowsec].restricted_by_period}%
+   <a href="#" onclick='%{strip}%message="Превышен период корректировки факта продаж!\nПраво на корректировку факта продаж имеют следующие сотрудники: ";
+		%{foreach from=$users_instead item=userin}%
+		message=message+"%{$userin.name_s}%\n";
+		%{/foreach}%
+		message=message+"Для корректировки факта продаж обратитесь, пожалуйста, к этим сотрудникам.";
+		alert(message); return false;%{/strip}%' title="редактировать данные" class="reestr_edit reestr_inactive reestr_right_button24"></a>
+
+   
+   %{else}%
+   <a href="#" onclick='  return false;' data-comment="редактировать данные" class="reestr_edit reestr_inactive reestr_right_button24"></a> 
+   
+    %{/if}%
+     
+    %{include file="plan_fact_sales/toggle_annul.html" prefix="_opo"}%
+   
+    
+    </td>
+    
+    
+%{if $has_header}%   
+</tr>
+%{/if}%
+%{/section}%
+%{if $has_header}%
+</tbody>
+</table>
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>По выбранным Вами условиям коммерческих предложений не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+%{/if}%

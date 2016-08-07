@@ -1,0 +1,165 @@
+<script type="text/javascript">
+$(function(){
+  //$("#tabs").tabs();
+  $("#tabs").tabs({
+	selected:%{$tab_page}%  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">События командировки</a></li>
+   
+      %{if $has_syslog}%
+    <li><a href="#tabs-6">Журнал событий</a></li>
+    %{/if}%
+    
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <div style="float:right;">
+    
+    <!--
+    <div style="float:left;">
+    <a href="#" id="print_s"><img src="/img/icons/print.png" width="24" height="24" alt="печать..." title="печать..." hspace="3" border="0" align="absmiddle" /></a>
+    </div>
+    -->
+    
+    %{include file="every_help_dialog.html" filename="missionhistory.html" prefix="" description="Информация о карточке командировки" style="float:left"}%
+    
+    <br clear="all" />
+   
+    </div>
+    
+    
+  
+    
+    
+    
+   
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		$("#print_s").bind("click", function(){
+			
+			zc=window.open('taskhistory.php?id=%{$claim.id}%&print=1', '_blank','width=1000,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати заявки.');
+			
+			
+			return false;
+		});
+	});
+	</script>
+    
+    
+     <h1>Командировка № %{$claim.id}%</h1>
+   
+   
+     
+    <strong>Статус:</strong> %{$claim.status}%
+    <p />
+  
+   
+   <strong>Командированный сотрудник:</strong> <br />
+   %{$claim.sent_user}%
+    <p />
+    
+   
+   <strong>Период командировки:</strong><br />
+	<strong>с:</strong> %{$claim.pdate_begin}% &nbsp;&nbsp;
+	<strong>по:</strong> %{$claim.pdate_end}%
+   <p />
+   
+   
+   <div style="float:left; margin-right:20px;">
+   <strong>Контрагент:</strong><br />
+	%{$claim.supplier}%
+   </div>
+   
+   <div style="float:left; margin-right:10px;">
+   <strong>Город командировки:</strong><br />
+	%{$claim.city}%
+   </div> 
+    
+    <br clear="all" />
+    <p />
+   
+   
+  
+    
+    
+    
+    <strong>Расходы на командировку:</strong> <br />
+
+    <table width="600" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="400">Наименование</th>
+        
+        <th scope="col" width="100">План., руб.</th>
+        <th scope="col" width="100">Факт., руб.</th>
+      
+    </tr>
+   <tbody> 
+   %{section name=rasec loop=$ras}% 
+   <tr align="left" valign="top">
+   		<td width="400"><strong>%{$ras[rasec].name}%</strong></td>
+        
+        <td width="100">
+        %{$ras[rasec].plan}%
+        </td>
+        <td width="100"> 
+        %{$ras[rasec].fact}%
+        </td>
+   </tr>
+   %{/section}%
+   <tr align="left" valign="top">
+   		<td width="400"><strong>Итого, руб.</strong></td>
+        
+        <td width="100" align="center" id="exp_cost_plan" style="font-weight:bold;">
+        %{$claim.plan}%
+        </td>
+        <td width="100" align="center" id="exp_cost_fact" style="font-weight:bold;">
+        %{$claim.fact}%
+        </td>
+   </tr>
+   </tbody>
+    </table> 
+    
+    <p />
+    
+ 
+    
+    
+    <strong>Описание командировки:</strong>
+    <div class="message">%{$claim.txt}%</div>
+    <p />
+    
+    
+   <strong>Создал:</strong><br />
+
+    %{$claim.pdate}%  %{$claim.org}%
+    <p />
+    
+  
+    %{$log}%
+    
+    </p>
+  </div>
+ 
+  
+   %{if $has_syslog}%
+  <div id="tabs-6">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+
+</div>

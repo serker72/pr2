@@ -1,0 +1,133 @@
+ 
+
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top" id="lead_row_%{$items[rowsec].id}%" >
+    	 
+        
+       
+        <td style="white-space:nowrap;" >
+        
+        <input type="radio" id="lead_radio_%{$items[rowsec].id}%" name="lead_radio" value="%{$items[rowsec].id}%" %{if $items[rowsec].id==$current_supplier}% checked="checked"%{/if}%  />
+        <label for="lead_radio_%{$items[rowsec].id}%">
+        
+        %{$items[rowsec].code}%
+        
+        </label> 
+        
+        </td>
+        
+        <td width="100"  ><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    
+   
+    
+    %{$items[rowsec].pdate_finish}% 
+
+    %{$items[rowsec].ptime_finish}% 
+
+     
+    
+    </td>
+      <td width="40"   >
+       %{$items[rowsec].probability}% 
+      </td>
+      
+        <td width="40">
+       %{if $items[rowsec].probability>=0 and  $items[rowsec].probability<=29.99}% 
+    <span style="color:#aaaaaa;"> холодный</span>
+    %{elseif $items[rowsec].probability>=30 and  $items[rowsec].probability<=69.99}%
+    <span style="color:#3a87ad;  ">теплый</span>
+    %{elseif $items[rowsec].probability>=70}%
+    <span style="color:#e9510f;  ">горячий</span>
+    %{/if}%
+
+     
+     </td>
+     
+        <td width="*"  >
+     %{$items[rowsec].kind_name}% 
+     
+     %{if $items[rowsec].kind_id==3}%
+     <a href="ed_tender.php?action=1&id=%{$items[rowsec].tender_id}%" target="_blank">%{$items[rowsec].tender_code}%</a>
+     %{/if}%
+     
+    </td>   
+    
+     <td width="*" >
+     %{$items[rowsec].eq_name}% 
+    </td>
+
+ <td width="*" align="left"  style="text-align:left;">
+        
+    %{$items[rowsec].topic}%
+    
+   
+    </td>
+    
+    
+    
+      <td width="*"   >
+      <div style="font-size:10px;">
+     %{foreach from=$items[rowsec].suppliers item=item}%
+     <a href="supplier.php?action=1&id=%{$item.supplier_id}%" target="_blank">
+    %{$item.opf_name}% %{$item.full_name}% 
+    </a>
+    <br>
+
+     %{/foreach}%
+     </div> 
+    </td>
+    
+    
+     <td width="80"  >
+      <div style="font-size:10px;">
+    %{$items[rowsec].producer_name}%
+     </div> 
+    </td>
+    
+    <td width="90" align="right"    style="text-align:right;  ">
+     %{if $items[rowsec].max_price!=""}%
+      <div style="font-size:9px;"><nobr>
+     %{$items[rowsec].max_price_formatted}%  %{$items[rowsec].currency_signature}%  
+     </nobr></div>
+     %{else}%
+     -
+     %{/if}%
+    </td>
+    
+    
+       <td width="*" >
+   <div style="font-size:10px;">
+     %{$items[rowsec].manager_name}%  
+    </div> 
+    </td>
+
+   
+     <td width="100"   >
+  %{$items[rowsec].status_name}% 
+    </td>
+    
+    
+      <td width="100" >
+     <div style="font-size:10px;">
+    %{$items[rowsec].cr_name}% 
+    
+     %{$items[rowsec].pdate}%
+     </small>
+    </td>
+    
+     
+      
+        
+        
+   <td>
+    <a href="ed_lead.php?action=1&id=%{$items[rowsec].id}%" target="_blank" data-comment="Подробно..." class="reestr_edit reestr_button16">
+    </a>
+    
+   
+       
+        </td>
+    </tr>
+     
+   
+%{/section}%    
+ 	

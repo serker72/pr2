@@ -1,0 +1,74 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Тендер</th>
+   <th>Статус</th>
+   <th>Название</th>
+   <th>Срок подачи заявок</th>
+   <th width="80"></th>
+   <th width="80"></th>
+  
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="tender_remind_id%{$data_kind}%_%{$item.id}%" value="%{$item.id}%" />
+        
+         <input type="hidden" id="tender_remind_code%{$data_kind}%_%{$item.id}%" value="%{$item.code}%" />
+        
+        <input type="hidden" id="tender_refuse_counts%{$data_kind}%_%{$item.id}%" value="%{$item.refuse_counts}%" />
+        
+        
+        
+          <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td>
+%{$item.status_name}%
+</td>
+
+<td>
+%{$item.topic}%
+</td>
+
+<td width="80"> 
+%{$item.pdate_claiming}% %{$item.ptime_claiming}%
+</td>
+
+<td >         
+         <label for="tender_remind_mode%{$data_kind}%_%{$item.id}%_0">Да</label>
+         
+         
+         <input type="radio" name="tender_remind_mode%{$data_kind}%_%{$item.id}%" id="tender_remind_mode%{$data_kind}%_%{$item.id}%_0" value="0">
+
+         
+         
+       
+</td>
+<td >
+        <label for="tender_remind_mode%{$data_kind}%_%{$item.id}%_1">Нет</label>
+         
+         
+         <input type="radio" name="tender_remind_mode%{$data_kind}%_%{$item.id}%" id="tender_remind_mode%{$data_kind}%_%{$item.id}%_1" value="1">
+
+         
+          
+         
+             
+</td> 
+
+ 
+    
+    
+<td width="24">
+ <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 
+ 

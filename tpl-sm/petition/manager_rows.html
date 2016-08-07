@@ -1,0 +1,25 @@
+%{section name=pospossec loop=$pospos}%
+ 
+ 
+    
+    
+    <tr align="left" valign="top">
+    	<td width="24" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+        <input type="radio" value="%{$pospos[pospossec].id}%" id="manager_radio_%{$pospos[pospossec].id}%" name="manager_radio" %{if $pospos[pospossec].is_in==1}% checked%{/if}% />
+        </td>
+    	<td width="*" %{if $pospos[pospossec].is_active==0}% class="item_inactive"%{/if}%>
+          
+      <!--  <input type="hidden" id="user3_hash_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].hash}%" />
+        
+        <input type="hidden" id="user3_id_%{$pospos[pospossec].hash}%"   value="%{$pospos[pospossec].id}%" />-->
+        
+        <label for="manager_radio_%{$pospos[pospossec].id}%">%{$pospos[pospossec].name_s}%</label>
+        </td>
+       
+       
+       
+       
+    </tr>    
+    
+ 
+%{/section}%        

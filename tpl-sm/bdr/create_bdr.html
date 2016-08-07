@@ -1,0 +1,527 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.js"></script> 
+<script type="text/javascript" src="/js/inputmask/jquery.inputmask.numeric.extensions.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+ 
+	 
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	$("#pdate_course").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});  
+	 
+	 
+	
+	 
+	
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	 
+	 
+	 
+	
+	 
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="bdrs.html" prefix="" description="Информация о создании БДР" style="float:right" is_right=true}%
+
+
+
+<h1>Создать БДР</h1>
+
+<form action="ed_bdr.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+
+<input type="hidden" name="lead_id" id="lead_id" value="%{$lead.id}%">
+<input type="hidden" name="tz_id" id="tz_id" value="%{$tz.id}%">
+<input type="hidden" name="kp_in_id" id="kp_in_id" value="%{$kp_in.id}%">
+<input type="hidden" name="kp_out_id" id="kp_out_id" value="%{$kp_out.id}%">
+ 
+
+
+<div style="float:right; margin-right:0px; min-width:120px; height:50px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" style="float:right;" class="reestr_right_button24 reestr_delete" data-comment="Аннулировать/Восстановить...">
+ 
+</a>
+
+<strong>Статус:</strong><br />
+
+создан
+
+
+</div>
+
+<div style="float:right;  margin-right:10px; height:50px; ">
+  <a href="#"   onclick="alert('В данном режиме печать БДР недоступна. Пожалуйста, нажмите кнопку Создать БДР и остаться в карте для получения возможности печати БДР.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать БДР..."></a>
+</div>  
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+    
+    
+        <label for="pdate">
+        Дата создания: 
+        </label><br />
+        
+        %{$now_time}%
+        <input type="hidden" value="%{$now_date}%" name="pdate"  id="pdate" />
+    
+</div>
+
+
+
+<div style="float:left; margin-right:10px; height:50px;">
+	<strong>Период проекта:</strong>
+    
+    <strong>с:</strong>
+<br>
+
+	<select name="beg_month" id="beg_month" style="width:80px">
+    %{html_options values=$months selected=$beg_month output=$month_names}%
+    </select>
+    
+    <select name="beg_year" id="beg_year" style="width:60px">
+    %{html_options values=$years selected=$beg_year output=$year_names}%
+    </select>
+    
+    
+</div>
+
+<div style="float:left; margin-right:20px; height:50px;">
+	 
+    
+    <strong>по:</strong>
+<br>
+
+	<select name="end_month" id="end_month" style="width:80px">
+     %{html_options values=$months selected=$end_month output=$month_names}%
+    </select>
+    
+    <select name="end_year" id="end_year" style="width:60px">
+    
+     %{html_options values=$years selected=$end_year output=$year_names}%
+    </select>
+    
+    
+</div>
+
+
+ 
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">Лид:</label> <br>
+    <a href="ed_lead.php?action=1&id=%{$lead.id}%&from_begin=1" target="_blank">%{$lead.code}%</a>
+    
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">ТЗ:</label> <br>
+    <a href="ed_tz.php?action=1&id=%{$tz.id}%&from_begin=1" target="_blank">%{$tz.code}%</a>
+    
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">КП вх.:</label> <br>
+    <a href="ed_kp_in.php?action=1&id=%{$kp_in.id}%&from_begin=1" target="_blank">%{$kp_in.code}%</a>
+    
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="lead_str">КП исх.:</label> <br>
+    <a href="ed_kp_in.php?action=1&id=%{$kp_out.id}%&from_begin=1" target="_blank">%{$kp_out.code}%</a>
+    
+</div>
+
+ 
+
+<br clear="all">
+<p />
+
+
+
+<h2>1. Вводная информация</h2>
+
+ 
+
+<div style="float:left; margin-right:20px;">
+		 
+        <strong>Наименование:</strong>
+         <br />
+        
+        
+     
+         %{section name=supsec loop=$suppliers}%
+        	 	<a href="supplier.php?action=1&id=%{$suppliers[supsec].id}%" target="_blank" >%{$suppliers[supsec].opf_name}% %{$suppliers[supsec].full_name}%,
+      
+      	      %{foreach from=$suppliers[supsec].contacts item=contact}%	 
+                
+                
+                %{$contact.name}%, %{$contact.position}% 
+                
+                %{/foreach}%
+                </a>
+     
+		%{/section}%
+     
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+	<label for="eq_str">Наименование станка:</label><br>
+    <input type="text"  id="eq_str"  value="%{$eq_str|escape}%"  disabled size="40" maxlength="255" style="width:200px;" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="srok_str">Срок поставки:</label><br>
+    <input type="text"  id="srok_str"  value="%{$srok_str|escape}%"  disabled size="40" maxlength="255" style="width:100px;" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="manager_select">Ответственный сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:200px;" />
+</div>
+
+
+<br clear="all">
+<p />
+
+
+<h2>2. Фин. параметры</h2>
+
+<div style="float:left; margin-right:20px;">
+	<strong>Курс $:</strong><br>
+	<span id="course_dol_span">%{$course_dol}%</span>
+    
+    <input type="hidden"  id="course_dol" name="course_dol" value="%{$course_dol}%" />
+</div>
+
+<div style="float:left; margin-right:20px;">
+	<strong>Курс &euro;:</strong><br>
+    <span id="course_euro_span">%{$course_euro}%</span>
+    
+     <input type="hidden"  id="course_euro" name="course_euro" value="%{$course_euro}%" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="pdate_course">Дата курса:</label><br>
+	<input type="text" id="pdate_course" name="pdate_course" value="%{$now_date}%" size="10" maxlength="10" />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<strong></strong><br>
+	<input type="checkbox" value="1" id="is_my_course" name="is_my_course" /><label for="is_my_course">Ввести свой курс</label>
+
+</div>
+
+%{include file="bdr/course_actions.html"}%
+
+
+<div style="float:left; margin-right:20px;">
+	<label for="currency_id">Валюта расчета:</label><br>
+    <!--<input type="text"  id="curr_str"  value="%{$curr_str|escape}%"  disabled size="40" maxlength="255" style="width:50px;" />
+    -->
+    
+    <select name="currency_id" id="currency_id" style="width:45px;"     >
+    %{section name=cursec loop=$currs}%
+    <option value="%{$currs[cursec].id}%" %{if $currs[cursec].id==$kp_in.currency_id}% selected="selected"%{/if}%>%{$currs[cursec].signature}%</option>
+    %{/section}%
+    </select>
+</div>
+
+
+<br clear="all">
+<p />
+
+<h2>3. Выручка	</h2>
+
+%{include file="bdr/p_actions.html" items=$pdata can_modify=true}%
+
+<br clear="all">
+<p />
+
+
+<h2>4. Затраты</h2>
+
+%{include file="bdr/m_actions.html" items=$mdata can_modify=true}%
+
+<br clear="all">
+<p />
+
+
+
+
+<h2>5. Прибыль проекта</h2>
+
+<div style="float:left; margin-right:20px;">
+	<label for="gain_val">ВП проекта <br>
+ = выручка - себест-ть</label>	<br>
+	
+    <input type="text" disabled id="gain_val" size="20" maxlength="20" value="%{$bill.gain_val}%" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">	
+    <label for="gain_percent">ВМ проекта<br>
+= ВП / выручка	</label><br>
+	
+    <input type="text" disabled id="gain_percent" size="20" maxlength="20" value="%{$bill.gain_percent}%" />
+
+</div>	
+
+<div style="float:left; margin-right:20px;">
+	
+   <label for="gain_ebitda">EBITDA по проекту<br>
+ = ВП - КиАУР	</label><br>
+	
+    <input type="text" disabled id="gain_ebitda" size="20" maxlength="20" value="%{$bill.gain_ebitda}%" />	
+
+</div>	
+    
+<div style="float:left; margin-right:00px;">    
+    <label for="gain_chp">ЧП по проекту<br>
+ = EBITDA - налоги	</label><br>
+	
+    <input type="text" disabled id="gain_chp" size="20" maxlength="20" value="%{$bill.gain_chp}%" />	
+
+ 
+</div>
+
+<div style="float:left; margin-right:20px; padding-top:36px;">
+	 
+     <a href="#" onClick="return false;" class="reestr_calc reestr_inactive reestr_right_button24" data-comment="Расчет прибыли"></a>
+   
+
+</div>
+
+
+<br clear="all">
+<p />
+
+
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right: 0px; width:100%;">
+<label for="description">Комментарий:</label><br>
+<textarea id="description" name="description" style="width:100%; height:75px;"></textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'50px'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+</div> 
+
+<br clear="all">
+<p />
+
+ 
+
+  
+
+
+
+
+<br>
+
+ 
+ <!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+ 
+
+
+
+<input type="submit" value="Создать БДР" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать БДР и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='leads.php';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	  
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+ 
+   
+ 	
+	can_go=true;
+	
+	function CheckFields(){
+		can_ret=true;
+		
+		$("input[id^=m_cost_]").each(function(index, element) {
+			//$(element).inputmask('remove');
+			
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			//$(element).inputmask("currency", {removeMaskOnSubmit:true});
+        });	
+		
+		
+		$("input[id^=p_cost_]").each(function(index, element) {
+			
+			//$(element).inputmask('remove');
+			
+			val=$(element).val().replace(/,/,'.');
+            if((val.length==0)||isNaN(val)||(parseFloat(val)<0)){
+				can_ret=can_ret&&false;
+				$(element).addClass("wrong");	
+			}else{
+				$(element).removeClass("wrong");	
+			}
+			
+			//$(element).inputmask("currency", {removeMaskOnSubmit:true});
+        });	
+		
+		return can_ret;
+	}
+	
+	
+	if(!CheckFields()){
+		alert("Введите корректные данные в блок прибыли и затрат!");
+		 
+		//return false;	
+		can_go=can_go&&false;
+	}
+	
+	if(can_go){
+		newd=new Date( $("#pdate_course").val().substr(6,4),  parseInt($("#pdate_course").val().substr(3,2))-1,  $("#pdate_course").val().substr(0,2));
+			
+		controld=new Date( $("#pdate").val().substr(6,4),  parseInt($("#pdate").val().substr(3,2))-1,  $("#pdate").val().substr(0,2));
+		
+		controld.setHours(controld.getHours()-30*24);
+		
+		//alert(newd+ ' vs ' + controld);
+		today=new Date();
+		if((newd>today)||(newd<controld)){
+			alert("Дата курса не может быть позднее, чем дата БДР, и не может быть ранее даты БДР более, чем на 30 дней.");	
+			can_go=can_go&&false;
+			$("#pdate_course").focus();
+		}	
+		
+	}
+	
+	
+	//проверка корректности периода: дб выбраны все значения, начало < конца
+	if(can_go){
+		if(
+		 ($("#beg_month").val()==0)||($("#beg_month").val()==null)||($("#beg_month").val()==undefined)||
+		 ($("#end_month").val()==0)||($("#end_month").val()==null)||($("#end_month").val()==undefined)||
+		 ($("#beg_year").val()==0)||($("#beg_year").val()==null)||($("#beg_year").val()==undefined)||
+		 ($("#end_year").val()==0)||($("#end_year").val()==null)||($("#end_year").val()==undefined)
+		 ){
+			alert("Укажите начало и конец периода проекта!");	
+			can_go=can_go&&false;	 
+		 }
+		
+	}
+	if(can_go){
+		
+		if(	parseInt($("#end_year").val())< parseInt($("#beg_year").val())){
+			alert("Укажите корректный период проекта!");	
+			can_go=can_go&&false;	 
+		}else if(	
+				( parseInt($("#end_year").val())== parseInt($("#beg_year").val()) )  &&
+				( parseInt($("#end_month").val())< parseInt($("#beg_month").val()) )
+		 ){
+			alert("Укажите корректный период проекта!");	
+			can_go=can_go&&false;
+		}
+	}
+	
+	
+	if(can_go){
+		
+		%{if $can_confirm}% 
+		if(window.confirm("Желаете ли вы утвердить заполнение БДР?")){
+			$("#do_confirm").val(1);	
+		}else $("#do_confirm").val(0);	
+		%{/if}%
+	
+	}
+	else{
+		//вернуть все маски
+		$("input[id^=m_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_nds_cost_]").inputmask("currency", {removeMaskOnSubmit:true});
+		$("input[id^=p_costwo_nds_]").inputmask("currency", {removeMaskOnSubmit:true});
+	
+			
+	}
+	
+	return can_go; 
+}
+
+//frmvalidator.addValidation("given_pdate","req","Укажите дату ТЗ!");
+ 
+
+ 
+
+
+ 
+ 
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

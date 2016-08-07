@@ -1,0 +1,74 @@
+<!-- таблица на странице -->
+
+
+<table width="100%" ellpadding="1" cellspacing="0" border="1" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+     <th scope="col" width="20">№ п/п</th>
+    	<th scope="col" width="24">Код</th>
+        <th scope="col" width="*">Номенклатура</th>
+        <th scope="col" width="60">Ед. изм.</th>
+        <th scope="col" width="60">Кол-во к перемещению</th>
+        <th scope="col" width="60">Фактически перемещаемое количество</th>
+        <th scope="col" width="60">Фактически получено</th>
+        <th scope="col" width="60">Недостача</th>
+       
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="20">
+        %{$smarty.section.pospossec.index+1}%
+        </td>
+        <td width="24">
+         %{$pospos[pospossec].id|string_format:"%05d"}%
+        </td>
+        <td width="*">
+        %{$pospos[pospossec].position_name}%
+       
+        
+       
+        </td>
+        <td width="60">
+        %{$pospos[pospossec].dim_name}%
+        
+        </td>
+        
+        <td width="60">
+        
+         %{if $bill.is_confirmed_wf==1}%
+        %{$pospos[pospossec].quantity_initial}%
+        %{else}%  
+        %{$pospos[pospossec].quantity}%
+      	%{/if}%
+    	</td>
+        
+        <td width="60">
+        %{$pospos[pospossec].fact_quantity}%
+      
+    	</td>
+        
+         <td width="60">
+        %{if $pospos[pospossec].fact_received>0}%
+        %{$pospos[pospossec].fact_received}%
+        %{else}%
+        0
+        %{/if}%
+        </td>
+        
+        <td width="60">
+         %{if $pospos[pospossec].fact_writeoff>0}%
+        %{$pospos[pospossec].fact_writeoff}%
+        %{else}%
+        0
+        %{/if}%
+        </td>
+        
+       
+      
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+   

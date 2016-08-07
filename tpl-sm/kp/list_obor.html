@@ -1,0 +1,1150 @@
+
+
+
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="center" valign="top" class="equip">
+	<th scope="col" width="20">
+   Код по пр-ме
+   
+  
+    </th>
+    
+    
+    
+    <th scope="col" width="20">
+    Код 
+  
+    </th>
+    
+  	  <th scope="col" width="50">Фото</th>
+  
+    <th scope="col" width="*" style="min-width:150px;">
+    Наименование
+  
+    </th>
+      <th scope="col" width="30%">Описание</th>
+        
+    
+    
+      <th width="30" scope="col">
+    ед. изм.
+   
+    </th>
+     <th width="50" scope="col">
+    Кол-во
+    </th>
+   
+   	 <th width="50" scope="col">
+    Цена 
+   
+    </th>
+    
+    <th scope="col" width="80" >Валюта</th>
+        
+    
+        
+        %{foreach from=$discs_for_js item=discs1}%
+        
+        
+        <th scope="col" width="80" %{if $discs1.id==2 and !$can_ruk_discount and $bill.is_confirmed_price==0}% style="display:none;"  %{/if}% >%{$discs1.name}%</th>
+        
+        %{/foreach}%
+    
+    
+  
+    
+    <th width="50" scope="col">
+    Итоговая цена 
+   
+    </th>
+    
+   
+  
+     <th width="50" scope="col">
+    Всего
+   
+    </th>
+    
+    
+   
+   
+</tr>
+
+</thead>
+<tbody>
+%{section name=pospossec loop=$pospos}%
+<tr align="left" valign="top" class="equip">
+	
+   
+   <td width="20">
+   
+   %{$pospos[pospossec].pl_id}%
+    
+   </td>
+   
+ 
+   
+    <td width="20"> %{$pospos[pospossec].code}%</td>
+   
+    <td width="50">
+       	<a href="%{$pospos[pospossec].photo_for_kp}%" target="_blank" class="fancybox"><img src="/js/getthumb.php?path=%{$pospos[pospossec].photo_for_kp}%" border="0" /></a>
+        <script type="text/javascript">
+		
+		$(function(){
+			$('.fancybox').fancybox();
+			
+		});
+		</script>
+        </td>
+    <td width="30%" align="left"  style="min-width:150px;">
+    
+    <span id="span_position_name_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="pl_position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].pl_position_id}%" />
+        
+        <input type="hidden" id="position_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].position_id}%" />
+        
+         <input type="hidden" id="parent_id_%{$pospos[pospossec].hash}%"  value="%{$pospos[pospossec].parent_id}%" />
+         
+         <input type="hidden"  value="%{$pospos[pospossec].is_install}%" id="is_install%{$pospos[pospossec].hash}%"   />
+         
+         <input type="hidden"  value="%{$pospos[pospossec].delivery_ddpm}%" id="delivery_ddpm%{$pospos[pospossec].hash}%"   />
+        
+        <input type="hidden" id="hash_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].hash}%" />
+        
+    
+    </td>
+    <td width="30%">
+        <div id="txt_for_kp_small_%{$pospos[pospossec].hash}%">
+        %{$pospos[pospossec].txt_for_kp|strip_tags|truncate:30}%
+        
+        <br />
+		<a href="#" onclick="$('#txt_for_kp_big_%{$pospos[pospossec].hash}%').css('display','block'); $('#txt_for_kp_small_%{$pospos[pospossec].hash}%').css('display','none'); return false;"><em>подробнее...</em></a>
+        </div>
+        
+         
+        <div id="txt_for_kp_big_%{$pospos[pospossec].hash}%" style="display:none;">
+        %{$pospos[pospossec].txt_for_kp}%
+        <br />
+
+        <a href="#" onclick="$('#txt_for_kp_big_%{$pospos[pospossec].hash}%').css('display','none'); $('#txt_for_kp_small_%{$pospos[pospossec].hash}%').css('display','block'); return false;"><em>скрыть...</em></a>
+        </div>
+        
+        
+        
+        </td>
+    
+    
+    <td width="30">
+     %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="dimension_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].dimension_id}%" />
+    
+    </td>
+    
+    
+    <td width="50">
+   <input type="text" id="quantity_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].quantity}%" size="4" maxlength="20" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+        
+        <input type="hidden" id="is_usl_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].is_usl}%" size="4" maxlength="20" />
+        
+    </td>
+    
+   
+    <td width="50" style="white-space:nowrap;">
+   
+   
+      <span id="span_price_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price}%</span>
+        <input type="hidden" id="price_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price}%" size="8" maxlength="255" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+        
+   <input type="hidden" id="price_kind_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_kind_id}%" size="8" maxlength="255"  />
+        
+    </td>
+    
+    
+      
+        <td width="80" >
+        <span id="signature_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].signature}%</span>
+         <input type="hidden" id="currency_id_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].currency_id}%" />
+        
+        </td>
+        
+    
+    %{foreach from=$pospos[pospossec].discs1 item=discs1}%
+	<td width="50" style="white-space:nowrap; %{if $discs1.id==2 and !$can_ruk_discount and $bill.is_confirmed_price==0}%  display:none;  %{/if}%" align="left">
+    
+    %{if $pospos[pospossec].pl_discount_id==$discs1.id}%
+    <input type="text" size="4" maxlength="255" value="%{$pospos[pospossec].pl_discount_value}%"  id="pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% %{if $discs1.id==2}% title="Внимание!|Введенная скидка руководителя не распространяется на опцию ПНР. Для ввода скидки руководителя на опцию ПНР воспользуйтесь, пожалуйста, полем для скидки в строке опции." %{/if}% />
+   
+    %{else}%
+    <input type="text" size="4" maxlength="255" value="0.00" id="pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% %{if $discs1.id==2}% title="Внимание!|Введенная скидка руководителя не распространяется на опцию ПНР. Для ввода скидки руководителя на опцию ПНР воспользуйтесь, пожалуйста, полем для скидки в строке опции." %{/if}% />
+ 
+    %{/if}%
+    
+    % 
+    
+    
+    %{if $discs1.id==2}%
+    <script type="text/javascript">
+	$(function(){
+		/*alert("#pl_discount_2_%{$pospos[pospossec].hash}%");*/
+		$("#pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%").cluetip({
+		splitTitle: "|",
+		activation: "focus",
+		cluezIndex:       2000
+	  });
+	});
+	</script>
+    %{/if}%
+    
+    
+    
+   <input type="hidden" id="pl_discount_rub_or_percent_%{$discs1.id}%_%{$pospos[pospossec].hash}%" value="1" />
+    
+    <input type="hidden" value="%{$discs1.dl_value}%"  id="dl_value_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+    
+    <input type="hidden" value="%{$discs1.dl_rub_or_percent}%"  id="dl_rub_or_percent_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+    
+    
+    <input type="hidden" value="%{$discs1.id}%"  id="dl_discount_id_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+     
+    </td>
+    %{/foreach}%
+    
+    
+   
+   
+    <td width="80">
+      
+        <span id="span_price_f_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].price_f}%</span>
+        <input type="hidden" id="price_f_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_f}%" size="8" maxlength="255" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}%  />
+      
+         <input type="hidden" id="price_pm_check_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].price_pm}%" size="7" maxlength="20" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+        </td>
+        <td width="80" style="display:none;" >
+        <span id="cost_f_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].cost}%</span>
+       
+       
+     
+        </td>
+        
+        
+        <td width="80">
+        <span id="span_total_check_%{$pospos[pospossec].hash}%">%{$pospos[pospossec].total}%</span>
+           <input type="hidden" id="total_check_%{$pospos[pospossec].hash}%" value="%{$pospos[pospossec].total}%" size="7" maxlength="20" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+          
+        </td>
+   
+  
+  
+</tr>
+
+%{if $pospos[pospossec].price_kind_id==1 and $pospos[pospossec].delivery_ddpm>0}%
+<!-- предупреждение о доставке ddpm 
+<tr align="left" valign="top" >
+	<td colspan="13">
+    <em>Стоимость таможенных услуг и доставки согласно базиса поставки в размере %{$pospos[pospossec].delivery_ddpm}% &euro; будет пропорционально распределена по оборудованию и выбранным опциям к нему.</em>
+    </td>
+</tr>-->
+%{/if}%
+
+
+<!-- опции -->
+%{foreach from=$pospos[pospossec].options item=option}%
+<!-- ряды опций -->
+%{if $option.kind=="group"}%
+<!-- группа опций -->
+<tr align="center" valign="top" class="equip_optgr">
+	<td colspan="13"><strong>%{$option.name}%</strong></td>
+</tr>
+%{else}%
+<!-- опция -->
+<tr align="left" valign="top">
+	<td width="20">
+    
+    %{$option.pl_id}%
+    
+    
+    </td>
+   
+    
+    <td width="20"> %{$option.code}%</td>
+   
+   
+  
+   <td width="50">
+       	<a href="%{$option.photo_for_kp}%" target="_blank" class="fancybox"><img src="/js/getthumb.php?path=%{$option.photo_for_kp}%" border="0" /></a>
+        <script type="text/javascript">
+		
+		$(function(){
+			$('.fancybox').fancybox();
+			
+		});
+		</script>
+        </td>
+    <td width="30%"  align="left" style="min-width:150px;">
+    
+    <span id="span_position_name_%{$option.hash}%">
+    
+    %{$option.position_name}%
+    
+    
+    </span>
+        <input type="hidden" id="pl_position_id_%{$option.hash}%" value="%{$option.pl_position_id}%" />
+        
+        <input type="hidden" id="position_id_%{$option.hash}%" value="%{$option.position_id}%" />
+        
+         <input type="hidden" id="parent_id_%{$option.hash}%"  value="%{$option.parent_id}%" />
+         
+          <input type="hidden"  value="%{$option.is_install}%" id="is_install%{$option.hash}%"   />
+         
+        
+         <input type="hidden"  value="%{$option.delivery_ddpm}%" id="delivery_ddpm%{$option.hash}%"   />
+        
+        
+        <input type="hidden" id="hash_%{$option.hash}%" value="%{$option.hash}%" />
+        
+    
+    </td>
+    <td width="30%">
+        <div id="txt_for_kp_small_%{$option.hash}%">
+        %{$option.txt_for_kp|strip_tags|truncate:30}%
+        
+        <br />
+		<a href="#" onclick="$('#txt_for_kp_big_%{$option.hash}%').css('display','block'); $('#txt_for_kp_small_%{$option.hash}%').css('display','none'); return false;"><em>подробнее...</em></a>
+        </div>
+        
+         
+        <div id="txt_for_kp_big_%{$option.hash}%" style="display:none;">
+        %{$option.txt_for_kp}%
+        <br />
+
+        <a href="#" onclick="$('#txt_for_kp_big_%{$option.hash}%').css('display','none'); $('#txt_for_kp_small_%{$option.hash}%').css('display','block'); return false;"><em>скрыть...</em></a>
+        </div>
+        
+        
+        
+        </td>
+  
+  
+  
+  
+   
+   
+     <td width="30">
+     %{$option.dim_name}%
+        <input type="hidden" id="dimension_id_%{$option.hash}%" value="%{$option.dimension_id}%" />
+      </td>  
+     
+     
+    <td width="50" style="white-space:nowrap;" align="left">
+ 
+    <input type="checkbox" value="1" id="q_a_%{$option.hash}%" style="margin-right:0px;"
+     %{if $option.quantity>0 or $option.is_mandatory==1 or ($option.is_install==1 and !$can_unselect_pnr)}%  checked="checked" %{/if}%  
+     %{if $option.is_mandatory==1 or ($option.is_install==1 and !$can_unselect_pnr)}% disabled="disabled"%{/if}% 
+     />
+    
+    <input type="text" size="7" maxlength="255" id="quantity_%{$option.hash}%" style="width:30px;  margin-left:0px; %{if $option.quantity==0}% display:none;%{/if}%" value="%{$option.quantity}%" 
+    %{if $option.is_mandatory==1 or ($option.is_install==1 and !$can_unselect_pnr)}% disabled="disabled"%{/if}%  />
+   
+    </td>
+    
+   
+     <td width="50" style="white-space:nowrap;">
+   
+   
+      <span id="span_price_%{$option.hash}%">%{$option.price}%</span>
+        <input type="hidden" id="price_%{$option.hash}%" value="%{$option.price}%" size="8" maxlength="255" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+        
+    <input type="hidden" id="price_kind_id_%{$option.hash}%" value="%{$option.price_kind_id}%" size="8" maxlength="255"  />
+    </td>
+    
+    
+      
+        <td width="80" >
+        <span id="signature_%{$option.hash}%">%{$option.signature}%</span>
+         <input type="hidden" id="currency_id_%{$option.hash}%" value="%{$option.currency_id}%" />
+        
+        </td>
+        
+    
+    
+    
+    
+    %{foreach from=$option.discs1 item=discs1}%
+	<td width="40" style="white-space:nowrap; %{if $discs1.id==2 and !$can_ruk_discount and $bill.is_confirmed_price==0}%  display:none;  %{/if}%" align="left">
+     %{if $pospos[pospossec].pl_discount_id==$discs1.id}%
+    
+    	%{if $option.is_install==1 and  $discs1.id==2}%
+    	  <input type="text" size="4" maxlength="255" value="%{$option.pl_discount_value|default:"0.00"}%"  id="pl_discount_%{$discs1.id}%_%{$option.hash}%" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />%
+ 
+    	%{else }%
+        <span id="span_pl_discount_%{$discs1.id}%_%{$option.hash}%" style="display:none;">%{$pospos[pospossec].pl_discount_value}%</span>
+        
+        <input type="hidden" id="pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%" value="0" />
+ 		%{/if}%
+    %{else}%
+    	%{if $option.is_install==1 and  $discs1.id==2}%
+    	 <input type="text" size="4" maxlength="255" value="0.00"  id="pl_discount_%{$discs1.id}%_%{$option.hash}%" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />%
+            
+        %{else}%   
+         <span id="span_pl_discount_%{$discs1.id}%_%{$option.hash}%" style="display:none;">0.00</span>
+           <input type="hidden" id="pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%" value="0" />
+        %{/if}%
+           
+   
+    %{/if}%
+    
+  	<!--% -->
+    <input type="hidden" id="pl_discount_rub_or_percent_%{$discs1.id}%_%{$pospos[pospossec].hash}%" value="1" />
+   
+    
+    <input type="hidden" value="%{$discs1.dl_value}%"  id="dl_value_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+    
+    <input type="hidden" value="%{$discs1.dl_rub_or_percent}%"  id="dl_rub_or_percent_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+    
+    
+    <input type="hidden" value="%{$discs1.id}%"  id="dl_discount_id_%{$discs1.id}%_%{$pospos[pospossec].hash}%" />
+   
+    </td>
+    %{/foreach}%
+    
+    
+   
+   
+    
+    <td width="80">
+      
+       <span id="span_price_f_%{$option.hash}%" >%{$option.price_f}%</span>
+        <input type="hidden" id="price_f_%{$option.hash}%" value="%{$option.price_f}%" size="8" maxlength="255" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}%  />
+      
+         <input type="hidden" id="price_pm_check_%{$option.hash}%" value="%{$option.price_pm}%" size="7" maxlength="20" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+        </td>
+        <td width="80" style="display:none;" >
+        <span id="cost_f_%{$option.hash}%">%{$option.cost}%</span>
+       
+       
+     
+        </td>
+        
+        
+        <td width="80">
+        
+        <span id="span_total_check_%{$option.hash}%" >%{$option.total}%</span>
+           <input type="hidden" id="total_check_%{$option.hash}%" value="%{$option.total}%" size="7" maxlength="20" %{if $can_mod_object_only or $can_mod_pm_only}% disabled="disabled"%{/if}% />
+          
+        </td>
+   
+  
+  
+  
+</tr>
+%{/if}%
+<!-- конец обработчика для опций -->
+%{/foreach}%
+%{/section}%
+</tbody>
+</table>
+
+
+
+
+ <script type="text/javascript">
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+var overal_summ=0; //общая сумма КП До доставки - ищем ее до скидок в теле функции  ApplyDeliveryDDPM
+var new_overal_summ=0; //общая сумма КП после доставки
+var delivery_ddpm=0; //сумма доставки
+var selected_items=new Object(); //объект со стоимостями отобранного оборудования ДО применения скидок
+var selected_sk_items=new Object(); //объект со скидками в % на каждую позицию
+var eq_id=0; //код оборудования для КП 
+
+
+//наложение доставки DDPM
+function ApplyDeliveryDDPM(price_kind_id){
+	// alert(	selected_items); //alert(overal_summ); 	//alert(eq_id);
+	
+	
+	//найдем общую сумму КП
+	overal_summ=0;
+	$.each(selected_items, function(k,v){
+		overal_summ+=v;
+	});
+	
+	new_overal_summ=0; test_sum_of_delta=0;
+	//var deltas=new Object();
+	
+	//применяем доставку
+	/*if (price_kind_id==1){
+	  $.each(selected_items, function(k,v){
+		  //alert(k+" = "+v);
+		  x=0;
+		  try{
+			  x=delivery_ddpm*v/overal_summ;
+		  }catch(e){}
+		  
+		 // alert('Позиция '+k+" сумма="+v+' добавим '+x+' получим '+(v+x));
+		   
+		  selected_items[k]=v+x;
+		  //deltas[k]=x;
+		  
+		  new_overal_summ+=v+x;
+		  
+		  
+		  test_sum_of_delta+=x;
+	  });
+	}*/
+	
+	//отключить штатный механизм применения скидок, задействовать внутренний
+	//только в случае Prince_kind_id==1 применять также дельты.
+	new_overal_summ=0; 
+	
+	
+	
+	$.each(selected_items, function(k,v){
+		
+		//применим скидки
+		skidka=selected_sk_items[k];
+		if(skidka!=undefined){
+			selected_items[k]=selected_items[k]*(100-skidka)/100;
+		}
+		//alert('Скидка для позиции '+k+' равна '+v+'%, новая сумма по позиции='+selected_items[k]);
+		//$("#price_f"+k+"%{$prefix}%").html(roundPlus(selected_items[k], 2));
+		
+		$("#span_total_check_"+k).html(roundPlus(selected_items[k], 2));
+		$("#total_check_"+k).val(roundPlus(selected_items[k], 2));
+		
+		try{
+			price_f=selected_items[k]/parseFloat($("#quantity_"+k).val());
+		}catch(e){
+			price_f=0;
+		}
+		$("#span_price_f_"+k).html(roundPlus(price_f, 2));
+		$("#price_f_"+k).val(roundPlus(price_f, 2));
+		$("#price_pm_check_"+k).val(roundPlus(price_f, 2));
+		
+		new_overal_summ+=selected_items[k];
+	});
+	
+	//alert('Новое итого по КП c применением скидок: '+new_overal_summ);
+	//$("#price_f"+eq_id+"%{$prefix}%").html(roundPlus(new_overal_summ, 2));
+	$("#span_total_check_"+eq_id).html(roundPlus(new_overal_summ, 2));
+	$("#total_check_"+eq_id).val(roundPlus(new_overal_summ, 2));
+	 
+}
+
+//перерасчет цены (без проверки корр-ти)
+function RecalcPrice(id, recursive){
+	
+	//alert(id);	 
+	var recursive=recursive||2; //по умолчанию  вызывать себя снова
+	
+	res=true;
+	var sum_export=0;
+	
+	var sum=0;
+	sum=$("#price_"+id+"").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length>0)&&!isNaN(sum)) sum=parseFloat(sum);
+	else sum=0;
+	
+
+	price_f=sum;
+	
+	skidka=0; skidka_own=0; sk_own=0;
+	
+	var quantity='0';
+	quantity=$("#quantity_"+id+"").val();
+		
+   	quantity=quantity.replace("\,","\.");
+	if((quantity.length>0)&&!isNaN(quantity)) quantity=parseFloat(quantity);
+	else quantity=0;
+	
+	sum=sum*quantity;
+	//alert(quantity);
+	
+	mode='';
+	
+	sk='0';
+	if($("#parent_id_"+id+"").val()==0){
+	    //не опция
+	  	id_key=id;
+	}else{
+		//опция
+		parent_hash='';
+		parent_hash=$("input[id^=pl_position_id_][value='"+$("#parent_id_"+id+"").val()+"']").attr("id").replace(/^pl_position_id_/, '');
+	 	id_key=parent_hash; //$("#parent_id_"+id+"").val();	
+	}
+	
+	if($("#parent_id_"+id+"").val()==0){
+		
+		selected_items=new Object(); //обнулим список выбранных опций
+		selected_items[id]=sum; //запишем стоимость оборудования
+		eq_id=id; //запишем код оборудования для его обновления
+		
+		selected_sk_items=new Object();
+		
+	}
+	
+	
+	
+	
+	//найти любую скидку не нулевую
+	%{section name=discssec loop=$discs_for_js}%
+	sk=$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id_key+"").val();	
+	sk=sk.replace("\,","\.");
+	
+	 //найдем собственную скидку (для скидки рук-ля на ПНР)
+	sk_own=0;
+	sk_own=$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val();	
+	if(sk_own==undefined) sk_own='0';
+	sk_own=sk_own.replace("\,","\.");
+	
+	if((sk!="")&&!isNaN(sk)&&(parseFloat(sk)>0)){
+		 skidka=parseFloat(sk);
+		  skidka_own=parseFloat(sk_own);
+		 mode="%{$discs_for_js[discssec].id}%";
+		
+	}
+	%{/section}%
+	
+	
+	
+	
+	if($("#is_install"+id+"").val()==1){
+		//ПНР 
+		//скидку мен-ра НЕ применяем
+		//скидку рук-ля применяем из ее собственной клетки
+		if(mode=="2"){
+			//sum=(parseFloat(sum)-parseFloat(sum)*parseFloat(skidka_own)/100);	
+			//price_f=(parseFloat(price_f)-parseFloat(price_f)*parseFloat(skidka_own)/100);
+			
+			selected_sk_items[id]= skidka_own; //запомним скидку, применим ее позже
+			//alert('zz');
+		}
+	}else{
+		//не ПНР
+		if((mode!="")){
+			//sum=(parseFloat(sum)-parseFloat(sum)*parseFloat(skidka)/100);
+			//price_f=(parseFloat(price_f)-parseFloat(price_f)*parseFloat(skidka)/100);		
+			selected_sk_items[id]= skidka;
+		}
+	}
+	
+	 
+	var currency_id=$("#currency_id_"+id+"").val();
+	
+	
+	/*если это не опция - то суммировать все включенные опции*/
+	if($("#parent_id_"+id+"").val()==0){
+		
+		 
+		
+		var id=id;
+		
+		//alert($("input[id^=parent_id_][value='"+$("#pl_position_id_"+id).val()+"']").length);
+		 
+		$.each($("input[id^=parent_id_][value='"+$("#pl_position_id_"+id).val()+"']"), function(k,v){
+			//alert($(v).attr("id"));
+			
+		 
+			//нужен ключ
+			opt_id=$(v).attr("id").replace(/^parent_id_/,'').replace(/$/,'');
+			 
+			if($("#q_a_"+opt_id+"").prop("checked")){
+			  
+			 // alert($("#q_a_"+opt_id+"").length);
+			  
+			  option_quantity=$("#quantity_"+opt_id+"").val();
+			  option_quantity=option_quantity.replace("\,","\.");
+			  if((option_quantity.length>0)&&!isNaN(option_quantity)) option_quantity=parseFloat(option_quantity);
+			  else option_quantity=0;
+			  
+			  
+			  skidka_own=0; sk_own=0;
+			  //найдем собственную скидку (для скидки рук-ля на ПНР)
+			  sk_own=$("#pl_discount_"+"2"+"_"+opt_id+"").val();	
+			  if(sk_own==undefined) sk_own='0';
+			  sk_own=sk_own.replace("\,","\.");
+			  skidka_own=parseFloat(sk_own);
+				  
+			  
+			  
+			  
+			  option_sum=option_quantity*parseFloat($("#price_"+opt_id+"").val().replace("\,","\."));
+			  option_price_f=parseFloat($("#price_"+opt_id+"").val().replace("\,","\."));
+			  
+			  selected_items[opt_id]=option_sum; //запишем стоимость опции
+			  
+			  if($("#is_install"+opt_id+"").val()==1){
+						//ПНР
+				if(mode=="2"){
+					//option_sum=(parseFloat(option_sum)-parseFloat(option_sum)*parseFloat(skidka_own)/100);	
+					//option_price_f=(parseFloat(option_price_f)-parseFloat(option_price_f)*parseFloat(skidka_own)/100);
+					//alert('option pnr ruk');
+					selected_sk_items[opt_id]= skidka_own;
+				}	  
+			  }else{
+				  //не ПНР
+				  if(mode!=""){
+					  //option_sum=(parseFloat(option_sum)-parseFloat(option_sum)*parseFloat(skidka)/100);
+					  //option_price_f=(parseFloat(option_price_f)-parseFloat(option_price_f)*parseFloat(skidka)/100);
+					  selected_sk_items[opt_id]= skidka; //запомним скидку, применим ее позже
+				  }
+			  }
+			  
+			
+			  
+			  
+			  sum+=option_sum;
+			  //alert(opt_id+' the sum='+sum);
+			   
+			
+			  
+			  option_price_f=roundPlus(option_price_f,2);
+  			
+  
+			  $("#total_check_"+opt_id+"").val(option_sum);
+			  $("#span_total_check_"+opt_id+"").text(option_sum);
+			  
+			  $("#span_price_f_"+opt_id+"").text(option_price_f);
+			  $("#price_f_"+opt_id+"").val(option_price_f);
+			  $("#price_pm_check_"+opt_id).val(option_price_f);
+			  
+			  
+			}
+			 
+		});
+		
+		//overal_summ=sum; //общая сумма КП (с опциями, скидками) До доставки
+		delivery_ddpm=parseFloat($("#delivery_ddpm"+id+"").val()); //получим сумму доставки DDPM для выбранного оборудования
+	}
+	
+	
+	sum=roundPlus(sum,2);
+	price_f=roundPlus(price_f,2);
+	
+	
+	$("#total_check_"+id+"").val(sum);
+	$("#span_total_check_"+id+"").text(sum);
+	
+	$("#span_price_f_"+id+"").text(price_f);
+	$("#price_f_"+id+"").val(price_f);
+	$("#price_pm_check_"+id).val(price_f);
+	
+	/*если это опция - то вызвать перерасчет суммы обор-ия */
+	if($("#parent_id_"+id+"").val()!=0){
+		 
+		parent_hash='';
+		parent_hash=$("input[id^=pl_position_id_][value='"+$("#parent_id_"+id+"").val()+"']").attr("id").replace(/^pl_position_id_/, '');
+		//alert(parent_hash);
+		RecalcPrice(parent_hash);
+	}else{
+			//отсюда запустить функцию наложения доставки DDPM и скидок
+	 
+			ApplyDeliveryDDPM($("#price_kind_id_"+id).val());
+		 
+	}
+	
+	
+	return res;
+}
+
+//проверка корр-ти скидки рук-ля для ПНР
+function IsCorrectSkOwn(id){
+	res=true;
+	
+	local_res=true;
+	sk=$("#pl_discount_"+"2"+"_"+id+"").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#pl_discount_"+"2"+"_"+id+"").focus();
+		alert("Некорректно заполнена скидка руководителя для опции ПНР!");
+		
+		$("#pl_discount_"+"2"+"_"+id+"").addClass("wrong");
+		
+	}else $("#pl_discount_"+"2"+"_"+id+"").removeClass("wrong");
+	
+	if(local_res){
+	  if(!isNaN(sk)&&($("#pl_discount_rub_or_percent_"+"2"+"_"+id+"").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#pl_discount_"+"2"+"_"+id+"").focus();
+			alert("Некорректно заполнена скидка руководителя для опции ПНР!");
+			
+			$("#pl_discount_"+"2"+"_"+id+"").addClass("wrong");
+			
+	  }else $("#pl_discount_"+"2"+"_"+id+"").removeClass("wrong");
+	
+	}
+	
+	return res;
+}
+
+
+
+//проверка корр-ти скидки (любой)
+function IsCorrectSk(id){
+	res=true;
+
+	
+	%{section name=discssec loop=$discs_for_js}%
+	
+	local_res=true;
+	sk=$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").focus();
+		alert("Некорректно заполнено значение поля %{$discs_for_js[discssec].name}%!");
+		
+		$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").addClass("wrong");
+		
+	}else $("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").removeClass("wrong");
+	
+	
+	//если выбраны ПРОЦЕНТЫ: то не более 99.99 процентов
+	if(local_res){
+	  if(!isNaN(sk)&&($("#pl_discount_rub_or_percent_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").focus();
+			alert("Некорректно заполнено максимальное значение поля %{$discs_for_js[discssec].name}%!");
+			
+			$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").addClass("wrong");
+			
+	  }else $("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").removeClass("wrong");
+	
+	}
+	
+	if(local_res){
+		
+		
+		sum=$("#price_"+id+"").val();	
+		sum=sum.replace("\,","\.");
+		sum=parseFloat(sum);
+		
+		if(!isNaN(sk)&&($("#pl_discount_rub_or_percent_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val()==0)&&(parseFloat(sk)>sum)){	
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").focus();
+			alert("Введенная %{$discs_for_js[discssec].name}% в рублях превышает цену позиции!");
+			
+			$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").addClass("wrong");
+		}else{
+			$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").removeClass("wrong");
+		}
+	}
+	
+	
+	%{/section}%
+	
+	return res;
+}
+
+
+
+//проверка корр-ти кол-ва
+function IsCorrectQuantity(id){
+	res=true;
+	
+	//проверим цену
+	 
+	sum=$("#quantity_"+id+"").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<=0)){
+		$("#quantity_"+id+"").addClass("wrong");
+		alert("Некорректно заполнено поле Количество!");
+		$("#quantity_"+id+"").focus();
+		res=res&&false;	
+	}else{
+		$("#quantity_"+id+"").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка на взаимокорректность скидок (скидка не м.б. больше максимальной)
+function IsCorrectBounds(id){
+	res=true;
+	
+	//alert(id);
+	
+	%{section name=discssec loop=$discs_for_js}%
+	%{if ($discs_for_js[discssec].id==1 and !$can_override_manager_discount) or ($discs_for_js[discssec].id==2 and !$can_override_ruk_discount)}%
+	local_res=true;
+	sum=$("#price_"+id+"").val();	
+	sum=sum.replace("\,","\.");
+	
+	
+	//alert( "#pl_discount_"+"%{$discs_for_js[discssec].name}%"+"_"+id+"");
+	sk=$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val();	
+	sk=sk.replace("\,","\.");
+	
+	
+	
+	max_sk=$("#dl_value_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val();	
+	max_sk=max_sk.replace("\,","\.");
+	
+	
+	sk_in_rub=0;
+	max_sk_in_rub=0;
+	
+	if($("#pl_discount_rub_or_percent_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val()==1){
+		sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(sk)/100,2);	
+	}else{
+		sk_in_rub=roundPlus(sk,2);
+	}
+	
+	
+	max_sk_descr='';
+	if(max_sk!=""){
+		if($("#dl_rub_or_percent_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").val()==1){
+			max_sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(max_sk)/100,2);	
+			max_sk_descr=max_sk+'% ';
+		}else{
+			max_sk_in_rub=roundPlus(max_sk,2);
+			max_sk_descr=max_sk+' руб. ';
+		}
+	}else max_sk_in_rub=sum;
+	 
+	
+	if(parseFloat(sk)>parseFloat(max_sk)){
+		res=res&&false;
+		alert("Введенная скидка превышает максимальную скидку "+max_sk_descr+"!");
+		$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").addClass("wrong");
+		$("#dl_value_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").addClass("wrong");	
+	}else{
+		$("#pl_discount_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").removeClass("wrong");
+		$("#dl_value_"+"%{$discs_for_js[discssec].id}%"+"_"+id+"").removeClass("wrong");	
+	}
+	
+	%{/if}%
+	%{/section}%
+	
+	return res;	
+}
+
+
+
+
+$(function(){
+			
+			
+%{section name=pospossec loop=$pospos}%	
+		
+	 
+	$("#quantity_%{$pospos[pospossec].hash}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#quantity_%{$pospos[pospossec].hash}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+			 
+		}
+		
+						
+	});
+	 
+	
+	
+	
+	$("#quantity_%{$pospos[pospossec].hash}%").bind("change", function(){
+		//alert("vyzyv");
+		res=true;
+		
+		if(res) res=res&&IsCorrectQuantity("%{$pospos[pospossec].hash}%");
+		if(res) res=res&&IsCorrectBounds("%{$pospos[pospossec].hash}%");
+		
+		
+	
+		
+		if($("#parent_id_%{$pospos[pospossec].hash}%").val()==0){
+			if(res) $("input[id^=parent_id_]").each(function(index, element) {
+				//нужен ключ
+				//alert(opt_id);
+				opt_id=$(element).attr("id").replace(/^parent_id_/,'');
+				if(($(element).val()=="%{$pospos[pospossec].pl_id}%")&&($("#q_a_"+opt_id+"").prop("checked"))) {
+					// alert('zz');
+					 $("#quantity_"+opt_id+"").val($("#quantity_%{$pospos[pospossec].hash}%").val());
+				}
+			});
+			
+			
+		}
+		 
+		if(res) res=res&&RecalcPrice("%{$pospos[pospossec].hash}%");
+		
+		  
+		// alert('zz');
+		 
+		return res;
+		 
+	});
+	
+	
+  
+	
+	 %{foreach from=$pospos[pospossec].discs1 item=discs1}%
+	 
+	
+	 //обработчик изменения скидки (любой)
+	 $("#pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%").trigger("change");
+			
+			e.stopPropagation();	
+			e.preventDefault();
+		}
+						
+	});
+	 
+	 $("#pl_discount_%{$discs1.id}%_%{$pospos[pospossec].hash}%").bind("change", function(){
+		 
+		 // alert('1');
+		  //сброс прочих скидок
+		  if(parseFloat($(this).val())!==0){
+				%{foreach from=$pospos[pospossec].discs1 item=discs2}%
+				 %{if $discs2!=$discs1}%
+				 $("#pl_discount_%{$discs2.id}%_%{$pospos[pospossec].hash}%").val('0');
+				 
+				  //обнулить скидку рук-ля у опции, сделать ее неактивной
+				 //если выбрана скидка мен-ра
+				 $("input[id^=pl_discount_%{$discs2.id}%_]").val('0');
+				 
+				 %{/if}%
+				 %{/foreach}% 
+		  }
+		  
+		  res=true;
+		  res=res&&IsCorrectSk("%{$pospos[pospossec].hash}%");
+		 // alert('zz');
+		  if(res) res=res&&IsCorrectBounds("%{$pospos[pospossec].hash}%");
+		  if(res) res=res&&IsCorrectQuantity("%{$pospos[pospossec].hash}%");
+		  if(res) res=res&&RecalcPrice("%{$pospos[pospossec].hash}%");
+		  
+		  //перерисовать скидки дочерних опций
+		  if(res) if($("#parent_id_%{$pospos[pospossec].hash}%").val()==0) $("input[id^=parent_id_][value='%{$pospos[pospossec].pl_id}%']").each(function(index, element) {
+			child_hash=$(element).attr("id").replace(/^parent_id_/,'');
+			//alert(child_hash);
+			%{foreach from=$pospos[pospossec].discs1 item=discs2}%
+		  $("#span_pl_discount_%{$discs2.id}%_"+child_hash).text($("#pl_discount_%{$discs2.id}%_%{$pospos[pospossec].hash}%").val());
+		   
+		   %{/foreach}%   
+		  });
+		  
+		  return res;
+		  
+	 });
+	 
+	 $("#pl_discount_rub_or_percent_%{$discs1.id}%_%{$pospos[pospossec].hash}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectSk("%{$pospos[pospossec].hash}%");
+		 if(res) res=res&&IsCorrectBounds("%{$pospos[pospossec].hash}%");
+		 if(res) res=res&&IsCorrectQuantity("%{$pospos[pospossec].hash}%");
+		 if(res) res=res&&RecalcPrice("%{$pospos[pospossec].hash}%");
+		 
+		 return res;
+	 });
+	 
+	 %{/foreach}%
+	
+	//****************************************************************************************
+	//блок опций
+	
+	%{foreach from=$pospos[pospossec].options item=option}%	
+	
+	$("#q_a_%{$option.hash}%").bind("change", function(e){
+				
+		//откроем поле кол-во
+		if($("#q_a_%{$option.hash}%").prop("checked")){
+			//хэш родительского эл-та
+			parent_hash='';
+			parent_hash=$("input[id^=pl_position_id_][value='%{$option.parent_id}%']").attr("id").replace(/^pl_position_id_/, '');
+			//alert(parent_hash);
+			
+			$("#quantity_%{$option.hash}%").val($("#quantity_"+parent_hash).val());
+			$("#quantity_%{$option.hash}%").css("display", "inline");
+		}else{
+			$("#quantity_%{$option.hash}%").hide();
+		}
+		
+		RecalcPrice("%{$option.hash}%");
+		return res;
+		 
+	});
+	
+	$("#pl_discount_2_%{$option.hash}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#pl_discount_2_%{$option.hash}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#quantity_%{$option.hash}%").bind("keypress", function(e){
+		if(e.keyCode==13){
+			//alert('zz');
+			$("#quantity_%{$option.hash}%").trigger("change");
+			e.stopPropagation();
+			e.preventDefault();
+		}				
+	});
+	
+	 
+	
+	
+	
+	 
+	$("#quantity_%{$option.hash}%").bind("change", function(){
+		//alert('zz');
+		res=true;
+		 //alert('z');
+		parent_hash='';
+		parent_hash=$("input[id^=pl_position_id_][value='%{$option.parent_id}%']").attr("id").replace(/^pl_position_id_/, '');
+		
+		if(res) res=res&&IsCorrectBounds(parent_hash);
+		
+		if(res) res=res&&IsCorrectQuantity(parent_hash);
+		if(res) res=res&&IsCorrectQuantity("%{$option.hash}%");
+		if(res) res=res&&RecalcPrice("%{$option.hash}%");
+		
+		
+		 
+		return res; 
+	});
+	
+	
+	//обработчик скидки рук-ля у опции ПНР
+	$("#pl_discount_2_%{$option.hash}%").bind("change", function(){
+		
+		res=true;
+		 
+		if(res) res=res&&IsCorrectBounds("%{$option.hash}%");
+		if(res) res=res&&IsCorrectQuantity("%{$option.hash}%");
+		if(res) res=res&&IsCorrectSkOwn("%{$option.hash}%");
+		if(res) res=res&&RecalcPrice("%{$option.hash}%");
+		
+		$("input[id^=pl_discount_1_]").val('0');
+		if(res) $("input[id^=pl_discount_2_]").each(function(index, element) {
+           if($(element).val()==0) $(element).val($("#pl_discount_2_%{$option.hash}%").val()); 
+        });
+		
+		
+	});
+	
+	
+	%{/foreach}%	
+			
+%{/section}%
+});
+</script> 

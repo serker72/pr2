@@ -1,0 +1,69 @@
+<html>
+<head>
+
+<link href="/tpl-sm/kp_pdf/common/template.css?i=1.1" rel="stylesheet" type="text/css" />
+
+</head>
+<body>
+
+
+ООО «Аэротэк», <br>
+г. Санкт-Петербург, <br>
+ул. Возрождения, дом 31, литер А,  <br>
+тел. +7(812) 986-8633<br>
+Филиал в г. Москве,<br>
+ул. Часовая, 24, стр.2 <br>
+тел: +7(495) 411-8382<br>
+<br>
+<br>
+<br>
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+<tr>
+<td width="50%" align="left" valign="top">
+<strong><p>В компанию: %{$bill.supplier_string}%</p>
+
+<p>Вниманию: %{$bill.contact_string}%</p></strong>
+</td>
+
+<td width="50%" align="center" valign="middle">
+№  %{$bill.code}% от %{$bill.pdate}%
+</td>
+
+
+</tr>
+</table>
+%{if $bill.manager_txt!=""}%
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+<tr>
+<td width="100%" align="left" valign="top">
+%{$bill.manager_txt}%
+</td>
+</tr>
+</table>
+%{else}%
+<br />
+<br />
+<br />
+<br />
+%{/if}%
+
+<h1 style="margin-bottom:0px;">КОММЕРЧЕСКОЕ ПРЕДЛОЖЕНИЕ</h1>
+
+
+
+ 
+<div class="pdf_txt_for_kp">%{$primary_position.txt_for_kp}%</div>
+
+
+
+
+
+%{include file="kp_pdf/common/last_page.html"}%
+
+
+
+
+</body>
+</html>

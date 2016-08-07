@@ -1,0 +1,114 @@
+
+<h1 style="">Распоряжение на отгрузку № %{$ship.id}%</h1>
+<h3>Счет № %{$bill.code}%, № исходящего
+счета контрагента %{$bill.supplier_bill_no}%</h3>
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+Номер:<br />
+
+<strong>%{$ship.id}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Дата создания:<br />
+
+<strong>%{$ship.pdate}%</strong><br />
+<small>создано: %{$created_by}%</small>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+Плановая дата поставки:<br />
+
+<strong>%{$ship.pdate_shipping_plan}%</strong>
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<div style="float:left; margin-right:5px;">Фактическая <br />
+дата поставки:
+	</div>
+	<div style="float:left; margin-right:5px;">%{$fact_days}%</div>
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+Организация:<br />
+
+<strong>%{$org}%</strong>
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+Контрагент:<br />
+
+<strong>%{$supplier_id_string}%</strong>
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+Сделка:<br />
+
+<strong>%{$sdelka_string}%</strong>
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+
+
+
+
+<strong>Позиции счета:</strong> 
+<br />
+
+
+
+
+
+%{include file="ships/position_actions_print.html"}%
+ 
+ 
+ 
+
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="">
+        %{include file="ships/d_notes_print.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+  
+<p />    
+
+
+
+<div style="float:left; margin-right:20px;">
+Утверждаю
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+</div>
+<br clear="all" />
+<p />
+
+

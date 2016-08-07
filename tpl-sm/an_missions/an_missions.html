@@ -1,0 +1,370 @@
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#pdate2").datepicker({changeYear:true, yearRange: '2012:+00'});
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#supplier_name" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_supplier.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+		
+		
+		$( "#manager_name" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_mission_manager.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+			
+			$( "#city_name" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_mission_city.php", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+			
+			
+	$("#only_excess").bind("change", function(){
+		if($(this).prop("checked")) $("#only_no_excess").prop("checked", false);
+	});
+	
+	$("#only_no_excess").bind("change", function(){
+		if($(this).prop("checked")) $("#only_excess").prop("checked", false);
+	});
+	
+	$("#current_month").bind("change", function(){
+		if($(this).prop("checked")){
+			$("#pdate1").prop("disabled", true);
+			$("#pdate2").prop("disabled", true);
+		}else{
+			$("#pdate1").prop("disabled", false);
+			$("#pdate2").prop("disabled", false);
+		}
+	});
+	
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#cccccc;
+}
+.blacktable th.main{
+	background-color:#e5edf0;
+}
+.blacktable th.contract{
+	background-color:#eee;
+	font-weight:normal;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get">
+<input type="hidden" name="print" value="0" id="print" />
+
+
+%{include file="every_help_dialog.html" filename="an_missions.htm" description="отчет о командировках"  prefix="" style="float:right;  margin-right:10px;"}%
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+<br />
+
+<label for="supplier_name">Контрагент:</label><br />
+<input type="text" value="%{$supplier_name}%" id="supplier_name" name="supplier_name" size="40" maxlength="512" />
+
+</div>
+
+
+<div style="float:left; margin-right:20px; max-width:220px;">
+
+
+<br />
+
+<label for="city_name">Город:</label><br />
+<input type="text" value="%{$city_name}%" id="city_name" name="city_name" size="40" maxlength="512" />
+
+</div>
+
+
+
+<div style="float:left; margin-right:10px;">
+
+  <div style="float:left; margin-right:10px;">
+  <strong>Период</strong><br />
+  <label for="pdate1">с:</label><br />
+  <input type="text" name="pdate1" id="pdate1" size="10" maxlength="10" value="%{$pdate1}%" %{if $current_month==1}% disabled="disabled"%{/if}%  /></div>
+  
+  <div style="float:left; margin-right:10px;">
+  <br />
+      <label for="pdate2">по:</label><br />
+      <input type="text" name="pdate2" id="pdate2" size="10" maxlength="10" value="%{$pdate2}%"  %{if $current_month==1}% disabled="disabled"%{/if}% />
+  </div>
+ 
+  <br clear="all" />
+  
+ <input type="checkbox" name="current_month" id="current_month" value="1"  %{if $current_month==1}%checked="checked"%{/if}% style="margin-left:0px;" />
+  <label for="current_month">За текущий месяц</label>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<br />
+<br />
+
+<input type="image" src="/img/icons/old-zoom-original.png" value="Вывести" alt="Вывести" title="Вывести" name="doSub"  />
+
+<a href="an_missions.php?doSub=1"><img src="../../img/icons/old-zoom-deselect.png" border="0" width="24" height="24" alt="Сбросить все фильтры" title="Сбросить все фильтры" /></a>
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table"><img src="/img/icons/print.png" width="24" height="24" alt="Печать..." title="Печать..." border="0"  /></a>
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	
+	  
+	   
+	  
+	  
+	  $("#print_table").bind("click",function(){
+		
+		if($("#current_month").prop("checked")) current_month=1;
+		else current_month=0;
+		
+		if($("#only_excess").prop("checked")) only_excess=1;
+		else only_excess=0;
+		
+		if($("#only_no_excess").prop("checked")) only_no_excess=1;
+		else only_no_excess=0;
+		
+		
+		if($("#status_all_5").prop("checked")) status_all_5=1;
+		else status_all_5=0;
+		
+		
+		zc=window.open('an_missions.php?tab_page=1&print='+'1'+'&supplier_name='+encodeURI($("#supplier_name").val())+'&pdate1='+$("#pdate1").val()+'&pdate2='+$("#pdate2").val()+'&city_name='+encodeURI($("#city_name").val())+'&manager_name='+encodeURI($("#manager_name").val())+'&current_month='+current_month+'&only_excess='+only_excess+'&only_no_excess='+only_no_excess+'&status_all_5='+status_all_5+'&status_id='+$("#status_id").val()+'&doSub=1', 'an_missions','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать..." title="печать..." border="0" /></a>
+ %{/if}%
+
+
+</div>
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:10px;">
+<label for="manager_name">Менеджер:</label><br />
+<input type="text" value="%{$manager_name}%" id="manager_name" name="manager_name" size="88" maxlength="512" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+
+
+<input type="checkbox" name="only_excess" id="only_excess" value="1" %{if $only_excess==1}%checked="checked"%{/if}% style="margin-left:0px;" />
+<label for="only_excess">Только с перерасходом</label>
+<br />
+
+
+<input type="checkbox" name="only_no_excess" id="only_no_excess" value="1" %{if $only_no_excess==1}%checked="checked"%{/if}%  style="margin-left:0px;" />
+<label for="only_no_excess">Только без перерасхода</label>
+<br />
+
+</div>
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:10px;">
+<label for="status_id">Статус:</label><br />
+
+<select id="status_id" name="status_id" style="width:150px;">
+<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все командировки</option>
+   
+    <option value="1"  %{if $status_id==1}% selected="selected"%{/if}%>создана</option>
+    <option value="2"  %{if $status_id==2}% selected="selected"%{/if}%>утверждена</option>
+    <option value="3"  %{if $status_id==3}% selected="selected"%{/if}%>в работе</option>
+    <option value="4"  %{if $status_id==4}% selected="selected"%{/if}%>выполнена</option>
+    <option value="5"  %{if $status_id==5}% selected="selected"%{/if}%>аннулирована</option>
+</select>
+
+ <input type="checkbox" value="1" name="status_all_5%{$prefix}%" id="status_all_5%{$prefix}%" onchange="if(this.checked){ document.getElementById('status_id%{$prefix}%').selectedIndex=0; $('#status_id%{$prefix}%').trigger('change'); }" %{if $status_all_5}% checked="checked"%{/if}% /><label for="status_all_5%{$prefix}%">все, кроме "Аннулирована"</label>
+
+<script type="text/javascript">
+   $(function(){
+	  $("#status_id%{$prefix}%").bind("change", function(){
+		
+		
+		 if(this.selectedIndex>0){ document.getElementById('status_all_5%{$prefix}%').checked=false;}
+		 
+	  });
+	  
+	  
+   });
+   </script>
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+</form>
+
+<br />
+
+
+%{if $do_it}%
+%{include file="an_missions/an_missions_table.html"}%
+%{/if}%
+
+
+
+
+

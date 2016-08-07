@@ -1,0 +1,1814 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+ <script src="/js/meiomask.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(function(){
+  //$("#tabs").tabs();
+  $("#tabs").tabs({
+	selected:%{$tab_page}%  
+  });
+  
+  var was_changed=false;
+  	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+   $.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#begin_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#end_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+
+	$("#print_s").bind("click", function(){
+			 $("#is_print_dialog").dialog("open");
+			
+		 
+			return false;
+		});
+		
+		
+	$("#is_print_dialog").dialog({
+			autoOpen: false,
+			dialogClass: 'semi_auth',
+			modal: true,
+			width: 250,
+			height: 180,
+			stack: true,
+			buttons:{
+				"Печать":function(){
+					
+					
+					
+					if($("#print_mode_0").prop("checked")) {
+						zc=window.open('petition_my_history.php?action=1&id=%{$claim.id}%&print=1&printmode=0','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					if($("#print_mode_1").prop("checked")) {
+						zc=window.open('petition_my_history.php?action=1&id=%{$claim.id}%&print=1&printmode=1','_blank','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');
+						if(zc==null) alert('Окно печати не было открыто, т.к. Ваш браузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати реализации.');
+						
+					}
+					
+					 
+					
+					
+					$("#is_print_dialog").dialog("close");
+				},
+				"Отмена":function(){
+					$("#is_print_dialog").dialog("close");
+				}
+				
+			}
+		});	
+			
+	
+   %{if $force_print}%
+   $("#print_s").trigger("click");
+    
+   %{/if}%
+});
+</script>
+
+
+ <div id="is_print_dialog" title="Выберите форму для печати" style="display:none;">
+    <strong>Выберите форму для печати:</strong><br /><br>
+
+
+    <input type="checkbox" id="print_mode_0" value="0" %{if  $field_rights.to_print_sz==false}% disabled="disabled"%{/if}%  /><label for="print_mode_0">Заявление без подписей</label><br />
+    
+    <input type="checkbox" id="print_mode_1" value="1" %{if  $field_rights.to_print_sz==false  }% disabled="disabled"%{/if}%  /><label for="print_mode_1">Заявление с подписями</label><br />
+    
+    
+</div>
+
+
+%{include file="error_window.html"   prefix="" }% 
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">События заявления</a></li>
+   
+      %{if $has_syslog}%
+    <li><a href="#tabs-6">Журнал событий</a></li>
+    %{/if}%
+    
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <form action="petition_my_history.php" method="post" id="crea_form">
+    <input type="hidden" name="action" value="1" />
+    <input type="hidden" name="id" id="id" value="%{$claim.id}%" />
+    
+    <input type="hidden" id="user_id" value="%{$claim.user_id}%" />
+     
+    
+    <input type="hidden" name="current_status_id" value="%{$claim.status_id}%" />
+    
+     <div style="float:left; margin-right:20px;">
+     <h1>Заявление № %{$claim.code}%</h1></div>
+    
+      <div style="float:right;">
+    
+    
+    <div style="float:left;  margin-right:10px;height:50px; ">
+ 	 %{if $can_print and $field_rights.to_email}%
+  
+    <a href="#" id="petition_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
+         %{include file="petition/pdf_actions.html" mode=0}%
+      %{else}%
+     <a href="#" onclick=" return false;" data-comment="отправить pdf-документы на электронную почту..."  class="reestr_email reestr_inactive reestr_right_button24"></a>
+      %{/if}%
+      
+ 
+</div>
+
+    
+    
+    <div style="float:left; margin-right:10px;">
+   
+   %{if $can_print and $field_rights.to_print_sz}%
+  
+    <a href="#" id="print_s" data-comment="печать..." class="reestr_print reestr_right_button24"></a>
+    
+      %{else}%
+     <a href="#" onclick="  return false;" data-comment="печать..."  class="reestr_print reestr_inactive reestr_right_button24"></a>
+      %{/if}%
+      
+      
+ 
+    
+    
+  
+    </div>
+    
+     <div style="float:left; margin-right:10px;">
+<input type="button" value="Файлы..." onclick="location.href='petition_files.php?user_d_id=%{$claim.id}%';" />
+
+</div>
+
+    
+    
+    %{include file="every_help_dialog.html" filename="petitionhistory.html" prefix="" description="Информация о карточке заявления" style="float:left" is_right=true}%
+    
+   
+   
+    </div>
+     <br clear="all" />
+  
+    
+    <div style="float:right; margin-right:00px; min-width:120px; min-height:50px; " id="toggle_annul">
+%{include file="petition/toggle_annul_card.html" bill=$claim}%
+</div>
+   
+      
+     
+     %{if $field_rights.send_ruk_sz}%
+<div style="float:left; margin-right:10px;  ">
+	<input type="submit" name="send_ruk_sz" id="send_ruk_sz" value="Отправить на согласование"  />
+</div>
+%{/if}%
+
+%{if $field_rights.send_dir_sz}%
+<div style="float:left; margin-right:10px; ">
+	<input type="submit" name="send_dir_sz" id="send_dir_sz" value="Отправить на утверждение"  />
+</div>
+%{/if}%
+     
+
+
+   
+   
+   <div style="float:left; margin-right:20px; min-height:50px;  ">
+     <strong>Вид:</strong><br />
+
+    %{$claim.kind_name}%
+
+    
+    </div>
+    
+    
+    
+    
+    <div style="float:left; margin-right:20px;  min-height:50px; ">
+    <strong>Дата создания:</strong><br />
+    
+    %{$claim.pdate}% 
+
+    <small>создано: %{$created_by}%</small>
+    </div>
+
+    
+     
+ %{if $claim.kind_id==3}%
+<div style="float:left; margin-right:10px;  min-height:50px; ">
+<label for="vyh_reason_id">Причина работы в выходные:</label><br />
+<select name="vyh_reason_id" id="vyh_reason_id" style="width:150px" %{if !$can_modify}% disabled="disabled"%{/if}% >
+%{foreach from=$vyh_reasons item=r}%
+<option value="%{$r.id}%" %{if $claim.vyh_reason_id==$r.id}% selected="selected"%{/if}%>%{$r.name|escape}%</option>
+%{/foreach}%
+</select>
+<script type="text/javascript">
+$(function(){
+	$("#vyh_reason_id").bind("change", function(){
+		if($(this).val()==3) { $("#reason_descr").show(); $("#vyh_reason").focus(); }
+		else $("#reason_descr").hide();
+		
+		
+		if(($(this).val()==2)||($(this).val()==4)||($(this).val()==1)){
+			$("#3_missions").show();	
+		}else{
+			$("#3_missions").hide();
+			$("#sched_clear").trigger("click");
+		}
+		
+		$("#sched_clear").trigger("click");
+	});
+});
+</script>
+</div>
+
+
+<div style="float:left; margin-right:10px;  min-height:50px;  %{if $claim.vyh_reason_id!=3}% display:none;%{/if}%" id="reason_descr">
+<label for="vyh_reason">Описание причины:</label><br />
+<input type="text" size="30" max="255" value="%{$claim.vyh_reason|escape:"html"}%" name="vyh_reason" id="vyh_reason" %{if !$can_modify}% disabled="disabled"%{/if}%  />
+ 
+
+</div>
+
+ 
+ 
+ 
+    
+%{/if}%    
+
+
+%{if $claim.kind_id==4 or $claim.kind_id==5}%
+<div style="float:left; margin-right:20px;  min-height:50px; ">
+ 
+
+<label for="vyh_reason_id">Причина %{if $claim.kind_id==4}%раннего ухода%{elseif $claim.kind_id==5}%позднего прихода%{/if}%:</label><br />
+<select name="vyh_reason_id" id="vyh_reason_id" style="width:180px"  %{if !$can_modify}% disabled="disabled"%{/if}% >
+%{foreach from=$vyh_early item=r}%
+<option value="%{$r.id}%"  %{if $claim.vyh_reason_id==$r.id}% selected="selected"%{/if}%>%{$r.name|escape}%</option>
+%{/foreach}%
+</select>
+ 
+</div>
+
+
+ 
+%{/if}%
+
+    
+    
+    
+    %{if $claim.kind_id==4 or $claim.kind_id==5  }% 
+     <div style="float:left; margin-right:10px;  min-height:50px; ">
+     <label for="given_pdate">Дата:</label><br />
+
+   
+    <input type="text" id="given_pdate" name="given_pdate" value="%{$claim.given_pdate}%" size="10" maxlength="10"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    </div>
+    
+    %{if $claim.kind_id==4 or $claim.kind_id==5}%
+     <div style="float:left; margin-right:10px;  min-height:50px; ">
+     <label for="time_h">Время %{if $claim.kind_id==4}%ухода%{elseif $claim.kind_id==5}%прихода%{/if}%:</label><br />
+	  
+    <select name="time_h" id="time_h" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}% >
+        %{html_options values=$from_hrs selected=$claim.time_h output=$from_hrs}%
+    </select>: 
+    <select name="time_m" id="time_m" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}% >
+        %{html_options values=$from_ms selected=$claim.time_m output=$from_ms}%
+    </select>
+  
+    </div>
+    %{elseif $claim.kind_id==6 or $claim.kind_id==7}%
+   
+    %{/if}%
+
+    
+    
+    
+    %{elseif  $claim.kind_id==1 or $claim.kind_id==2  }%
+     <div style="float:left; margin-right:20px;  min-height:50px; ">
+      <strong>Период отсутствия на работе:</strong> <br>
+
+      <div style="float:left; margin-right:10px;">
+      <label for="begin_pdate">с:</label><br />
+    
+       <input type="text" id="begin_pdate" name="begin_pdate" value="%{$claim.begin_pdate}%" size="10" maxlength="10"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+      
+      </div>
+      <div style="float:left; margin-right:10px;">
+        
+      <label for="end_pdate">по:</label><br />
+    
+       <input type="text" id="end_pdate" name="end_pdate" value="%{$claim.end_pdate}%" size="10" maxlength="10"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+      
+      </div>
+     </div>
+  
+  
+  %{if $claim.kind_id==1}%
+    <div style="float:left; margin-right:20px;  min-height:50px; ">
+        <label for="by_graf_or_not">Отпуск по графику:</label>
+        <br>
+        <input type="radio" value="1" name="by_graf_or_not" id="by_graf_or_not_1"  %{if !$can_modify}% disabled="disabled"%{/if}%  %{if $claim.by_graf_or_not==1}% checked%{/if}% /><label for="by_graf_or_not_1">Да</label>
+        <br>
+        <input type="radio" value="2" name="by_graf_or_not" id="by_graf_or_not_2"  %{if !$can_modify}% disabled="disabled"%{/if}% %{if $claim.by_graf_or_not==2}% checked%{/if}%   /><label for="by_graf_or_not_2">Нет</label>
+        <br>
+        
+        
+    </div>
+    %{/if}%
+
+
+  
+  %{elseif $claim.kind_id==3}%
+  
+
+    
+%{/if}%    
+
+%{if $claim.kind_id==1 or $claim.kind_id==2 or $claim.kind_id==3}%
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;  min-height:50px; ">
+ 
+	<label for="manager_select">Обязанности за период выполняет:</label><br>
+
+	<input type="hidden"  id="instead_id" name="instead_id" value="%{$claim.instead_id}%" />
+   
+    <input type="text"  id="instead_string"  value="%{$claim.instead_string|escape}%"  disabled size="40" maxlength="255" style="width:180px;" />
+  
+ 
+	
+	<input type="button" id="manager_select" %{if !$can_modify}% disabled="disabled"%{/if}%   value="..." />
+    <input type="button" id="manager_clear" %{if !$can_modify}% disabled="disabled"%{/if}%   value="x" />
+	
+    %{include file="petition/manager_actions.html" can_modify=$can_modify}%
+    
+    
+   
+    <input type="checkbox" name="wo_instead" id="wo_instead" value="1" %{if !$can_modify}% disabled="disabled"%{/if}%  %{if $claim.wo_instead==1}% checked%{/if}% />
+     <label for="wo_instead">Без исполнения обязанностей</label>
+    
+
+</div>
+
+
+%{/if}%
+
+
+
+    <div style="float:left; margin-right:20px;  min-height:50px; ">
+ 
+        <label for="manager_select">Сотрудник:</label><br>
+    
+        <input type="hidden"  id="manager_id" name="manager_id" value="%{$claim.manager_id}%" />
+       
+        <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:220px;" />
+      
+     
+        
+        <input type="button" id="zmanager_select"   value="..." %{if !$can_modify or !$can_modify_manager}% disabled%{/if}% />
+        <input type="button" id="zmanager_clear"   value="x"  %{if !$can_modify or !$can_modify_manager}% disabled%{/if}% />
+        
+        %{include file="petition/zmanager_actions.html" can_modify= $can_modify_manager }%
+        
+    </div>
+
+
+
+%{if $claim.kind_id==3}%    
+<br clear="all" />
+ 
+
+<div id="3_missions" style="%{if $claim.vyh_reason_id!=1 and $claim.vyh_reason_id!=2 and $claim.vyh_reason_id!=4}% display:none;%{/if}%">
+    <br clear="all" />
+  <!--  <p />
+    -->
+    
+    <div style="float:left; margin-right:10px;">
+    
+        <label for="sched_str">Командировка/встреча:</label>
+        <br>
+        <input type="text" value="%{$sched.code|escape:"html"}%" id="sched_str"  size="20" maxlength="512" style="width:100px;" disabled="disabled" /> 
+    <input type="hidden" value="%{$claim.sched_id}%" id="sched_id" name="sched_id" /> 
+        <input type="button" id="sched_select" value="..." " %{if !$can_modify}% disabled="disabled"%{/if}% />
+        <input type="button" id="sched_clear" value="x" " %{if !$can_modify}% disabled="disabled"%{/if}% />
+        
+        <input type="button" id="sched_open" value="В карту ком-ки/встречи..." />
+        
+        %{include file="petition/zmission_actions.html" can_modify=true}%
+    
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+        <label for="sched_pdate">Дата начала:</label>
+        <br>
+        <input type="text" value="%{$sched.pdate_beg|escape:"html"}%" id="pdate_beg"  size="10" maxlength="10"  disabled="disabled" />
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+        <label for="sched_ptime_beg_h">Время начала:</label>
+        <br>
+        <input type="text" value="%{$sched.ptime_beg_h|escape:"html"}%" id="ptime_beg_h"  size="4" maxlength="2"  disabled="disabled" />:
+        <input type="text" value="%{$sched.ptime_beg_m|escape:"html"}%" id="ptime_beg_m"  size="4" maxlength="2"  disabled="disabled" />
+    
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+        <label for="sched_pdate">Дата окон-ия:</label>
+        <br>
+        <input type="text" value="%{$sched.pdate_end|escape:"html"}%" id="pdate_beg"  size="10" maxlength="10"  disabled="disabled" />
+    </div>
+    
+    <div style="float:left; margin-right:10px;">
+        <label for="sched_ptime_end_h">Время окон-ия:</label>
+        <br>
+        <input type="text" value="%{$sched.ptime_end_h|escape:"html"}%" id="ptime_end_h"  size="4" maxlength="2"  disabled="disabled" />:
+        <input type="text" value="%{$sched.ptime_end_m|escape:"html"}%" id="ptime_end_m"  size="4" maxlength="2"  disabled="disabled" />
+    
+    </div>
+    
+     
+    
+    <br clear="all" />
+    <p />
+    
+    
+    <div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">  
+       
+    
+        <div style="float:left; margin-right:20px;"> 
+        <h3 style="display:inline;">Город(а) командировки/встречи:</h3>
+        </div>
+         
+        <br clear="all" />
+        <p />
+        
+        
+         
+         
+        <div id="supplier_cities" style="border:1px solid silver;  min-width:480px; width:100%; height:50px; overflow:auto;">
+       
+        %{include file="petition/cities_table.html" has_header=true can_modify=false}%
+        
+        </div>	
+    
+    
+     
+    </div>
+    
+     <br clear="all" />
+    <p />
+    
+    
+    <div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+     
+           
+        
+        <div style="float:left; margin-right:20px;"> 
+        <h3 style="display:inline;">Контрагенты комадировки/встречи:</h3>
+        </div>
+         
+        <br clear="all" />
+        <p />
+        
+        
+        <div id="suppliers" style="border:1px solid silver; min-width:480px; width:100%;  height:125px;  overflow:auto;">
+    %{include file="petition/suppliers_table.html" has_header=true can_modify=false}%
+    
+    
+        </div>
+    
+    </div>
+    
+    <br clear="all" />
+    
+   
+    
+    
+
+</div>
+
+
+  <br clear="all" />
+  <p />
+   
+ <div style="float:left; margin-right:20px;">
+
+
+    
+    <strong>Даты работы в выходные:</strong>   
+    <br>
+
+    
+    <div style="float:left; margin-right:10px;">
+    %{include file="petition/vyh_actions.html"}%
+    </div>
+     <input type="button" id="add_vyh" value="Редактировать даты"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    
+    </div>
+  
+  
+  <div style="float:left; margin-right:20px;">
+    <strong>Период отсутствия на работе: </strong><br>
+     
+    
+    
+    
+    <div style="float:left; margin-right:10px;"> 
+    %{include file="petition/vyh_otp_actions.html"}%
+    </div>
+    
+    <input type="button" id="add_vyh_otp" value="Редактировать даты" %{if !$can_modify}% disabled="disabled"%{/if}%  />
+    
+    
+    </div>  
+     <br clear="all" />
+  <p />
+     
+  
+    %{/if}%    
+    
+   
+ 
+   <!-- 
+   
+    -->
+     
+    
+    
+%{if $claim.kind_id==6 or $claim.kind_id==7}%    
+
+<div style="float:left; margin-right:10px; display:none;">
+<label for="selectCity">Город:</label><br />
+<input type="text" value="%{$claim.city|escape}%" id="city_id_string"  size="40" maxlength="512" style="width:530px;" disabled="disabled" /> 
+<input type="hidden" value="%{$claim.city_id}%" id="city_id" name="city_id" /> 
+<input type="button" value="..." id="selectCity" style="width:30px;"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+<input type="button" value="x" id="clearCity" style="width:30px;" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+%{include file="petition/city_actions.html"}%
+
+<!--<br clear="all">-->
+<!--<p />-->
+
+<div style="float:left; margin-right:20px; min-height:50px; ">
+	 
+ <br>
+
+
+	<input type="checkbox" value="1" name="wo_sched" id="wo_sched" %{if !$can_modify}% disabled="disabled"%{/if}%  %{if $claim.wo_sched==1}% checked%{/if}%  />
+    <label for="wo_sched">Без встречи</label> 
+
+</div>
+
+<div style="float:left; margin-right:10px; min-height:50px;  %{if $claim.wo_sched==0}%  display:none;%{/if}% " id="wo_sched_block"  >
+	
+   
+    
+    <div style="float:left; margin-right:10px;">
+     <label for="given_pdate">Дата:</label><br />
+
+   
+    <input type="text" id="given_pdate" name="given_pdate" value="%{$claim.given_pdate}%" size="10" maxlength="10"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+    </div>
+    
+      <div style="float:left; margin-right:10px;">
+     <strong>Время </strong><label for="time_from_h">с:</label><br />
+	
+     
+     
+    <select name="time_from_h" id="time_from_h" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+        %{html_options values=$from_hrs selected=$claim.time_from_h output=$from_hrs}%
+    </select>: 
+    <select name="time_from_m" id="time_from_m" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+        %{html_options values=$from_ms selected=$claim.time_from_m output=$from_ms}%
+    </select>
+     
+    
+   
+   
+    </div>   
+    
+    <div style="float:left; margin-right:10px;">
+     <label for="time_to_h">по:</label><br />
+	
+     
+     
+    <select name="time_to_h" id="time_to_h" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+        %{html_options values=$from_hrs selected=$claim.time_to_h output=$from_hrs}%
+    </select>: 
+    <select name="time_to_m" id="time_to_m" style="width:60px" %{if !$can_modify}% disabled="disabled"%{/if}%>
+        %{html_options values=$from_ms selected=$claim.time_to_m output=$from_ms}%
+    </select>
+     
+    
+   
+   
+    </div> 
+    
+</div>
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<div style="float:left; margin-right:10px;">
+
+    <label for="sched_str">Встреча:</label>
+    <br>
+    <input type="text" value="%{$sched.code|escape:"html"}%" id="sched_str"  size="20" maxlength="512" style="width:100px;" disabled="disabled" /> 
+    <input type="hidden" value="%{$claim.sched_id}%" id="sched_id" name="sched_id" /> 
+    <input type="button" id="sched_select" %{if !$can_modify}% disabled="disabled"%{/if}%  value="..." />
+    <input type="button" id="sched_clear" %{if !$can_modify}% disabled="disabled"%{/if}%  value="x" />
+    
+    <input type="button" id="sched_open" value="В карту встречи..." />
+    
+    %{include file="petition/mission_actions.html" can_modify=$can_modify}%
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+	<label for="sched_pdate">Дата начала:</label>
+    <br>
+	<input type="text" value="%{$sched.pdate_beg|escape:"html"}%" id="pdate_beg"  size="10" maxlength="10"  disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="sched_ptime_beg_h">Время начала:</label>
+    <br>
+	<input type="text" value="%{$sched.ptime_beg_h|escape:"html"}%" id="ptime_beg_h"  size="4" maxlength="2"  disabled="disabled" />:
+    <input type="text" value="%{$sched.ptime_beg_m|escape:"html"}%" id="ptime_beg_m"  size="4" maxlength="2"  disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+	<label for="sched_ptime_end_h">Время окон-ия:</label>
+    <br>
+	<input type="text" value="%{$sched.ptime_end_h|escape:"html"}%" id="ptime_end_h"  size="4" maxlength="2"  disabled="disabled" />:
+    <input type="text" value="%{$sched.ptime_end_m|escape:"html"}%" id="ptime_end_m"  size="4" maxlength="2"  disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+
+	<label for="sched_place">Место встречи:</label>
+    <br>
+	<input type="text" value="%{$sched.meet_name|escape:"html"}%" id="sched_place"  size="25" maxlength="512"  disabled="disabled" />
+</div>
+
+<div style="float:left; margin-right:00px;">
+	<label for="sched_dop">Дополнительная информация: </label>
+    <br>
+	<input type="text" value="%{$sched.meet_value|escape:"html"}%" id="sched_dop"  size="30" maxlength="512"  disabled="disabled" />
+
+</div>
+ 
+<br clear="all" />
+<p />
+ 
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px;   ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент встречи:</h3>
+    </div>
+     
+    <br clear="all" />
+    <p />
+    
+    
+    <div id="suppliers" style="border:1px solid silver; min-width:480px; width:100%;  height:125px;  overflow:auto;">
+%{include file="petition/suppliers_table.html" has_header=true can_modify=false}%
+
+
+	</div>
+
+</div>
+
+<!--<br clear="all" />
+<p />
+-->
+<div style="float:left; width:100%; min-width:520px;  margin-right:00px; display:none; ">
+
+<label for="sched_report">Результат встречи:</label><br>
+<textarea id="sched_report" name="sched_report" cols="60" rows="5"   disabled style="width:940px;">%{$sched.report|escape:"html"}%</textarea>
+
+<script type="text/javascript">
+	try{
+			$("#sched_report").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+							 width:'100%',
+							 height:'100px'
+            });
+		
+	}catch(e){}
+	
+	 
+	</script>
+
+</div>
+ 
+<br clear="all" />
+<p />
+
+ 
+%{/if}%
+    
+    
+
+
+%{if $claim.kind_id==8}%
+
+
+<div style="float:left; margin-right:20px;">
+    <strong>Период отсутствия на работе: </strong> 
+    
+    <br>
+
+    
+    
+    <div style="float:left; margin-right:10px;" >
+    
+    
+     
+    %{include file="petition/vyh_bol_actions.html"}%
+
+	</div>
+    
+    <input type="button" id="add_vyh_otp" value="Редактировать даты"  %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div> 
+
+<br clear="all" />
+<p />
+
+%{/if}%
+    
+    
+    
+%{if $claim.kind_id==1 or $claim.kind_id==2  or $claim.kind_id==3  or $claim.kind_id==4  or $claim.kind_id==5}% 
+    
+
+<br clear="all" />
+<p />
+
+%{/if}%
+
+
+<label for="txt">Комментарий:</label><br />
+<textarea cols="80" rows="15" name="txt" %{if !$can_modify}% disabled="disabled"%{/if}%>%{$claim.txt|escape}%</textarea>
+<p />
+
+  <script type="text/javascript">
+	CKEDITOR.replace( 'txt',
+					 
+					 {
+						  
+						  customConfig : '/ckeditor4/config-kp.js',
+						 'width':'99%',
+						 'height':'50px'
+						 
+    				  }
+					 );
+	</script>
+ 
+   
+    
+    
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:scroll;">
+        %{include file="petition/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$claim.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="petition/d_notes_dialog.html" word="notes" named="Примечания" user_id=$claim.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+    
+  
+<div style="float:left; margin-right:10px;">
+<input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1"  %{if $claim.is_confirmed==1}% checked="checked"%{/if}% %{if !$can_confirm_price or !$field_rights.to_confirm}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
+ 
+
+<span id="is_confirmed_price_confirmer">%{$is_confirmed_price_confirmer}%</span>
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		if(state==0) $("#is_confirmed_chief").prop("disabled",true);
+		
+			$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_price_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_price_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+		
+		 
+		if(state==0){
+			 $("#is_ruk").prop("checked",false);
+			 $("#is_ruk").trigger("change");
+			  $("#is_ruk").prop("checked",false);
+			  
+			  
+			  $("#is_dir").prop("checked",false);
+			 $("#is_dir").trigger("change");
+			  $("#is_dir").prop("checked",false); 
+		}
+	});
+});
+</script>
+
+<p />
+ 
+
+ 
+ 
+ 	 <strong>Руководитель отдела: </strong>
+
+    
+  
+        <input type="checkbox" id="is_ruk_1" name="is_ruk" value="1"  %{if $claim.is_ruk==1}% checked="checked"%{/if}% %{if !$can_ruk_sz or !$field_rights.to_ruk_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_ruk_1">Утверждаю</label>
+        
+        
+         
+        <span id="is_confirmed_ruk_confirmer_1">%{$is_confirmed_ruk_confirmer_1}%</span>
+     
+    &nbsp;&nbsp;&nbsp;
+     
+        <input type="checkbox" id="is_ruk_2" name="is_ruk" value="2"  %{if $claim.is_ruk==2}% checked="checked"%{/if}% %{if !$can_ruk_sz or !$field_rights.to_ruk_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_ruk_2">Не утверждаю</label>
+         
+        <span id="is_confirmed_ruk_confirmer_2">%{$is_confirmed_ruk_confirmer_2}%</span>
+        
+        <br>
+		<label for="ruk_not">Комментарий руководителя отдела:</label><br>
+        
+        <textarea id="ruk_not" name="ruk_not" style="min-width:200px; width:100%; height:30px;"  %{if !$field_rights.ruk_not}% disabled="disabled"%{/if}%>%{$claim.ruk_not|escape:"html"}%</textarea>
+     
+    
+    
+    <script type="text/javascript">
+    $(function(){
+        $("#is_ruk_1").bind("click",function(){
+            
+            if(	$("#is_ruk_1").prop("checked")){
+                
+                 state=1;
+				 $("#is_ruk_2").prop("checked", false).trigger("change");
+            }else state=0;
+            
+            
+            $.ajax({
+                  async: true,
+                  url: "/js/kp.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_is_confirmed_price_confirmer",
+                      state: state
+                  },
+                  beforeSend: function(){
+                   $("#is_confirmed_ruk_confirmer_1").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                  },
+                  success: function(data){
+                   
+                    $("#is_confirmed_ruk_confirmer_1").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+             
+              
+            
+            
+        });
+		
+		$("#is_ruk_2").bind("click",function(){
+            
+            if(	$("#is_ruk_2").prop("checked")){
+                
+                 state=1;
+				  $("#is_ruk_1").prop("checked", false).trigger("change");
+            }else state=0;
+            
+            
+            $.ajax({
+                  async: true,
+                  url: "/js/kp.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_is_confirmed_price_confirmer",
+                      state: state
+                  },
+                  beforeSend: function(){
+                   $("#is_confirmed_ruk_confirmer_2").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+                  },
+                  success: function(data){
+                   
+                    $("#is_confirmed_ruk_confirmer_2").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+             
+              
+            
+            
+        });
+    });
+    </script>
+ 
+<p />
+
+  
+
+ 	 <strong>Генеральный директор:</strong>
+
+
+     
+      <input type="checkbox" id="is_dir_1" name="is_dir" value="1"  %{if $claim.is_dir==1}% checked="checked"%{/if}% %{if !$can_dir_sz or !$field_rights.to_dir_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_dir_1">Утверждаю</label>
+       
+      <span id="is_confirmed_dir_confirmer_1">%{$is_confirmed_dir_confirmer_1}%</span>
+	 
+	
+    &nbsp;&nbsp;&nbsp;
+    
+        <input type="checkbox" id="is_dir_2" name="is_dir" value="2"  %{if $claim.is_dir==2}% checked="checked"%{/if}% %{if !$can_dir_sz or !$field_rights.to_dir_sz}% disabled="disabled"%{else}% %{/if}% /><label for="is_dir_2">Не утверждаю</label>
+       
+      <span id="is_confirmed_dir_confirmer_2">%{$is_confirmed_dir_confirmer_2}%</span>
+        <br>
+
+        <label for="dir_not">Комментарий генерального директора:</label><br>
+        
+        <textarea id="dir_not" name="dir_not" style="min-width:200px; width:100%; height:30px;" %{if !$can_dir_sz or !$field_rights.dir_not}% disabled="disabled"%{/if}%>%{$claim.dir_not|escape:"html"}%</textarea>
+     
+    
+    
+<script type="text/javascript">
+$(function(){
+	$("#is_dir_1").bind("click",function(){
+		
+		if(	$("#is_dir_1").prop("checked")){
+			 $("#is_dir_2").prop("checked", false).trigger("change");
+			 state=1;
+		}else state=0;
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_dir_confirmer_1").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_dir_confirmer_1").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+	});
+	
+	$("#is_dir_2").bind("click",function(){
+		
+		if(	$("#is_dir_2").prop("checked")){
+			$("#is_dir_1").prop("checked", false).trigger("change");
+			 state=1;
+		}else state=0;
+		
+		
+		$.ajax({
+              async: true,
+              url: "/js/kp.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_price_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+               $("#is_confirmed_dir_confirmer_2").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');     
+              },
+              success: function(data){
+               
+				$("#is_confirmed_dir_confirmer_2").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+		  
+	});
+});
+</script>
+ 
+
+
+
+ </div>
+<br clear="all"/>
+<p />
+		
+%{if $can_edit}%
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку заявлений" />
+<input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
+
+
+
+
+
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='petitions.php';
+}else location.href='petitions.php';" />
+	</form>
+
+%{if $can_edit and $can_modify}%
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	  var res=true;
+		var error_fields=new Array();
+		
+		
+		 if(($("#manager_id").val()==0)||($("#manager_id").val()=="")){
+		  
+		  res=res&&false;
+			 
+			error_fields.push({
+				"id":"manager_string",
+				"name":"Сотрудник",
+				"error":"Выберите сотрудника!"
+			});	
+		  
+	  	  
+	  }
+		 	
+		
+		%{if  $claim.kind_id==1 or  $claim.kind_id==2 or  $claim.kind_id==3}%
+	   //либо указать сотрудника, либо отметить галочку
+	   if( ( ($("#instead_id").val()=="")||($("#instead_id").val()==0))&&($("#wo_instead").prop("checked")==false)){
+		    res=res&&false;
+			 
+			error_fields.push({
+				"id":"instead_string",
+				"name":"Обязанности за период выполняет",
+				"error":"Укажите сотрудника, выполняющего обязанности в период заявления, либо отметьте 	галочку Без исполнения обязанностей!"
+			});	
+	   }
+	   
+	   
+	   %{/if}%
+	 
+	  
+	   %{if $claim.kind_id==3}%
+	  if(($("#vyh_reason_id").val()==0)||($("#vyh_reason_id").val()==undefined)){
+		   
+		   res=res&&false;
+			 
+			error_fields.push({
+				"id":"vyh_reason_id",
+				"name":"Причина работы в выходные",
+				"error":"Выберите причину работы в выходные!"
+			});	
+		  
+	  }
+	  
+	  if($("#vyh_reason_id").val()==3){
+		   if ( ($("#vyh_reason").val().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20 ){
+			 
+			  
+		   res=res&&false;
+			 
+			error_fields.push({
+				"id":"vyh_reason",
+				"name":"Причина работы в выходные",
+				"error":"Укажите причину работы в выходные (мин. длина 20 символов)!"
+			});	
+		  }
+	  }
+	  
+	  
+	  if($("input[id^=new_vyh_date_pdate_]").length==0){
+		     
+		   res=res&&false;
+			  
+			error_fields.push({
+				"id":"vyh_reason",
+				"name":"Дата работы в выходные",
+				"error":"Выберите хотя бы одну дату работы в выходные!"
+			});	
+	  }
+	  
+	   if($("input[id^=new_vyh_otp_date_pdate_]").length==0){
+		  
+		   res=res&&false;
+			  
+			error_fields.push({
+				"id":"vyh_reason",
+				"name":"Дата отпуска за работу в выходные",
+				"error":"Выберите хотя бы одну дату отпуска за работу в выходные!"
+			});	
+	  }
+	  
+	   
+	  //взаимоконтроль списка дат
+	  var rab_days=new Array(); var otp_days=new Array();
+	  $("input[id^=new_vyh_date_pdate_]").each(function(index, element) {
+			if($.inArray($(element).val(), rab_days)==-1) rab_days.push($(element).val());			
+		});
+	   $("input[id^=new_vyh_otp_date_pdate_]").each(function(index, element) {
+			if($.inArray($(element).val(), otp_days)==-1) otp_days.push($(element).val());			
+		});
+		
+		
+	  //alert(rab_days); alert(otp_days);				
+	  if(rab_days.length!=otp_days.length){
+		   
+		   res=res&&false;
+			  
+			error_fields.push({
+				"id":"vyh_reason",
+				"name":"Дата отпуска за работу в выходные",
+				"error":"Не совпадает количество отработанных дней и количество дней отпуска!"
+			});	
+	  }
+	  
+	  %{/if}%
+	  
+	  
+	  
+	  %{if $claim.kind_id==6 or $claim.kind_id==7}%
+	  if(($("#city_id").val()==0)||($("#city_id").val()==undefined)){
+		   
+		   res=res&&false;
+			  
+			error_fields.push({
+				"id":"city_id",
+				"name":"Город",
+				"error":"Выберите город!"
+			});	
+	  }
+	  
+	  
+	  
+	  %{/if}%
+	  
+	  
+	 
+	 
+	  
+	  %{if $claim.kind_id==4 or $claim.kind_id==5 or $claim.kind_id==6 or $claim.kind_id==7}%
+	   if($("#given_pdate").length==0){
+		  
+	  	   
+		   res=res&&false;
+			  
+			error_fields.push({
+				"id":"given_pdate",
+				"name":"Дата действия",
+				"error":"Укажите дату действия заявления!"
+			});	
+	  }
+	  
+		  %{if $claim.kind_id==4 or $claim.kind_id==5}%
+			 if(($("#time_h").val().length==0)||isNaN($("#time_h").val())||(parseInt($("#time_h").val())>23)||(parseInt($("#time_h").val())<0)){
+				   
+				 
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_h",
+						"name":"Время, час",
+						"error":"Укажите корректное время!"
+					});	
+				   
+			  }
+			  
+			   if(($("#time_m").val().length==0)||isNaN($("#time_m").val())||(parseInt($("#time_m").val())>59)||(parseInt($("#time_m").val())<0)){
+				  
+				   
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_m",
+						"name":"Время, мин",
+						"error":"Укажите корректное время!"
+					});	
+				   
+			  } 
+		   %{elseif $claim.kind_id==6 or $claim.kind_id==7}%
+			 if(($("#time_from_h").val().length==0)||isNaN($("#time_from_h").val())||(parseInt($("#time_from_h").val())>23)||(parseInt($("#time_from_h").val())<0)){
+				   
+				   
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_from_h",
+						"name":"Время с, час",
+						"error":"Укажите корректное время!"
+					});	
+				   
+			  }
+			  
+			   if(($("#time_from_m").val().length==0)||isNaN($("#time_from_m").val())||(parseInt($("#time_from_m").val())>59)||(parseInt($("#time_from_m").val())<0)){
+				  
+				   
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_from_m",
+						"name":"Время с, мин",
+						"error":"Укажите корректное время!"
+					});
+				   
+			  } 	  
+			 
+			 if(($("#time_to_h").val().length==0)||isNaN($("#time_to_h").val())||(parseInt($("#time_to_h").val())>23)||(parseInt($("#time_to_h").val())<0)){
+				   
+					res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_to_h",
+						"name":"Время по, час",
+						"error":"Укажите корректное время!"
+					});
+				   
+			  }
+			  
+			   if(($("#time_to_m").val().length==0)||isNaN($("#time_to_m").val())||(parseInt($("#time_to_m").val())>59)||(parseInt($("#time_to_m").val())<0)){
+				  
+				 
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_to_m",
+						"name":"Время по, мин",
+						"error":"Укажите корректное время!"
+					});
+				   
+			  }
+			  
+			  if(parseInt($("#time_from_h").val())>parseInt($("#time_to_h").val())){
+				    
+				   res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_from_h",
+						"name":"Время",
+						"error":"Время начала должно быть раньше времени окончания!"
+					});
+			  }
+			  if(parseInt($("#time_from_h").val())==parseInt($("#time_to_h").val())){
+				   if(parseInt($("#time_from_m").val())>parseInt($("#time_to_m").val())){
+					 
+				   	res=res&&false;
+			  
+					error_fields.push({
+						"id":"time_from_h",
+						"name":"Время",
+						"error":"Время начала должно быть раньше времени окончания!"
+					});
+				  }
+			  }
+			   	  
+		  %{/if}%
+		  
+	  
+	  %{elseif $claim.kind_id==1 or $claim.kind_id==2 }%
+
+	  if($("#begin_pdate").length==0){
+		   
+		  res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"begin_pdate",
+			  "name":"Дата начала действия",
+			  "error":"Укажите дату начала действия заявления!"
+		  });
+	  }
+	  if($("#end_pdate").length==0){
+		  
+	  	  
+		   res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"end_pdate",
+			  "name":"Дата окончания действия",
+			  "error":"Укажите дату окончания действия заявления!"
+		  });
+	  }
+	  
+	  //дата начала д.б. <= дате конца
+	  date1=new Date();
+	  date1.setFullYear($("#begin_pdate").val().substring(6,10));
+	  date1.setMonth(parseInt($("#begin_pdate").val().substring(3,5))-1);
+	  date1.setDate($("#begin_pdate").val().substring(0,2));
+	  date1.setHours(0);
+	  date1.setMinutes(0);
+	  date1.setSeconds(0);
+	  
+	  date2=new Date();
+	  date2.setFullYear($("#end_pdate").val().substring(6,10));
+	  date2.setMonth(parseInt($("#end_pdate").val().substring(3,5))-1);
+	  date2.setDate($("#end_pdate").val().substring(0,2));
+	  date2.setHours(0);
+	  date2.setMinutes(0);
+	  date2.setSeconds(0);
+	  
+	  if(date1>date2){
+	 
+		  
+		   res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"begin_pdate",
+			  "name":"Дата действия",
+			  "error":"Дата окончания действия заявления должна быть позже даты начала действия заявления!"
+		  });
+	  }
+	  
+	  
+	  %{/if}%
+	  
+	  
+	  %{if $claim.kind_id==4 or $claim.kind_id==5}%
+	  
+	  if(($("#vyh_reason_id").val()==0)||($("#vyh_reason_id").val()==undefined)){
+		   
+		   res=res&&false;
+			 
+			error_fields.push({
+				"id":"vyh_reason_id",
+				"name":"Причина раннего ухода/позднего прихода",
+				"error":"Выберите причину раннего ухода/позднего прихода!"
+			});	
+		  
+	  }
+	   
+	  if($("#vyh_reason_id").val()==5){
+		   if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20 ){
+		   
+			   res=res&&false;
+				  
+			  error_fields.push({
+				  "id":"txt",
+				  "name":"Причина раннего ухода/позднего прихода",
+					"error":"Укажите причину раннего ухода/позднего прихода (мин. длина 20 символов)!"
+			  });
+		  }
+	  }
+	  
+	  %{/if}%
+	  
+	  
+	  
+	   %{if $claim.kind_id==3}%
+	  //client_name_%{$tempid}%
+	  if(( ($("#vyh_reason_id").val()==1) || ($("#vyh_reason_id").val()==2) || ($("#vyh_reason_id").val()==4))&&  (($("#sched_id").val()==0)||($("#sched_id").val()=="")||($("#sched_id").val()==null)||($("#sched_id").val()==undefined))){
+		  
+		  
+		  res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"sched_str",
+			  "name":"Командировка",
+			  "error":"Выберите командировку по заявлению!"
+		  });
+	  }
+	  //контроль дат...
+	  dates=new Array();
+	  $.each($("input[id^=new_vyh_date_pdate_]"),function(k,v){
+		  dates.push($(v).val());
+	  });
+	  
+	  $.ajax({
+		async: false,
+		url: "/js/petition.php",
+		type: "POST",
+		data:{
+			"action":"check_vyh_date",
+			"dates[]":dates,
+			"sched_id":$("#sched_id").val(),
+			"id":$("#id").val(),
+					  "user_id":$("#manager_id").val()
+		},
+		beforeSend: function(){
+		  //$("#vyh_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+		},
+		success: function(data){
+		  if(data!=0){
+			  res=res&&false;
+			  //alert("Невозможно выбрать указанные даты:\n"+data);
+			  
+			  error_fields.push({
+				  "id":"vyh_dates_tb",
+				  "name":"Даты работы в выходные",
+				  "error":data
+			  });
+		  }
+		  
+			 
+		},
+		error: function(xhr, status){
+		  // alert("Ошибка загрузки реквизитов.");	
+		}	 
+	  });
+	  
+	  
+	  
+	  dates=new Array();
+	  $.each($("input[id^=new_vyh_otp_date_pdate_]"),function(k,v){
+		  dates.push($(v).val());
+	  });
+	  
+	  $.ajax({
+		async: false,
+		url: "/js/petition.php",
+		type: "POST",
+		data:{
+			"action":"check_vyh_otp_date",
+			"dates[]":dates,
+			"sched_id":$("#sched_id").val(),
+			"id":$("#id").val(),
+					  "user_id":$("#manager_id").val()
+		},
+		beforeSend: function(){
+		  //$("#vyh_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+		},
+		success: function(data){
+		  if(data!=0){
+			  res=res&&false;
+			  error_fields.push({
+				  "id":"vyh_otp_dates_tb",
+				  "name":"Период отсутствия на работе",
+				  "error":data
+			  });
+		  }
+		  
+			 
+		},
+		error: function(xhr, status){
+		  // alert("Ошибка загрузки реквизитов.");	
+		}	 
+	  });
+	  %{/if}%
+	  
+	  
+	  
+	  %{if $claim.kind_id==6 or $claim.kind_id==7}%
+	  //client_name_%{$tempid}%
+	  if((($("#sched_id").val()==0)||($("#sched_id").val()=="")||($("#sched_id").val()==null)||($("#sched_id").val()==undefined))&&($("#wo_sched").prop("checked")==false)){
+		  
+		  
+		  res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"sched_str",
+			  "name":"Встреча",
+			  "error":"Выберите встречу по заявлению, либо отметьте галочку Без встречи!"
+		  });
+	  }
+	  
+	  if($("#wo_sched").prop("checked")==false){
+		    //контроль даты заявления на совпадения с датой встречи
+		   $.ajax({
+			async: false,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"check_mission_date",
+				"pdate":$("#given_pdate").val(),
+				"sched_id":$("#sched_id").val(),
+				"id":$("#id").val(),
+						  "user_id":$("#manager_id").val()
+			},
+			beforeSend: function(){
+			  //$("#vyh_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			},
+			success: function(data){
+			  if(data!=0){
+				  res=res&&false;
+				  error_fields.push({
+					  "id":"vyh_otp_dates_tb",
+					  "name":"Период отсутствия на работе",
+					  "error":data
+				  });
+			  }
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+		  
+		  
+	  }else{
+			
+			 if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 20 ){
+		   
+			   res=res&&false;
+				  
+			  error_fields.push({
+				  "id":"txt",
+				  "name":"Комментарий",
+					"error":"Укажите причину командировки (мин. 20 символов)!"
+			  });
+			
+			
+			 
+		  
+	  }
+		  
+		  
+		  
+	  %{/if}%
+	  
+	  
+	  %{if $claim.kind_id==1}%
+	  //обязательный выбор: по графику отпуск или нет
+	  if(($("input[name=by_graf_or_not]:checked").val()==null)||($("input[name=by_graf_or_not]:checked").val()==undefined)||($("input[name=by_graf_or_not]:checked").val()==0)){
+		  
+		  res=res&&false;
+			  
+		  error_fields.push({
+			  "id":"by_graf_or_not_1",
+			  "name":"Отпуск по графику",
+			  "error":"Укажите, по графику отпуск или нет!"
+		  });
+	  }
+	  %{/if}%
+	  
+	  
+	  
+	  %{if $claim.kind_id==8}%
+	  		 
+		  
+		  //контроль дат
+		  
+		   dates=new Array();
+		  $.each($("input[id^=new_vyh_otp_date_pdate_]"),function(k,v){
+			  dates.push($(v).val());
+		  });
+		  
+		  
+		  
+		  if(dates.length==0){
+			   res=res&&false;
+			  error_fields.push({
+				  "id":"vyh_otp_dates_tb",
+				  "name":"Период отсутствия на работе",
+				  "error":"Укажите хотя бы одну дату!"
+			  });
+		  }
+		  
+		  $.ajax({
+			async: false,
+			url: "/js/petition.php",
+			type: "POST",
+			data:{
+				"action":"check_vyh_bol_date",
+				"dates[]":dates,
+				 
+				"id":$("#id").val(),
+						  "user_id":$("#manager_id").val()
+			},
+			beforeSend: function(){
+			  //$("#vyh_dates_tb").html('<img src="/img/images/wait.gif" width="32" height="32" border="0" alt="подождите, пожалуйста..." />'); 
+			},
+			success: function(data){
+			  if(data!=0){
+				  res=res&&false;
+				  error_fields.push({
+					  "id":"vyh_otp_dates_tb",
+					  "name":"Период отсутствия на работе",
+					  "error":data
+				  });
+			  }
+			  
+				 
+			},
+			error: function(xhr, status){
+			  // alert("Ошибка загрузки реквизитов.");	
+			}	 
+		  });
+		  
+		   
+	  %{/if}%
+	  
+	  
+	  $(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+		
+		
+		return res;
+	 
+	});
+});
+</script>
+
+%{else}%
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	 	var res=true;
+		var error_fields=new Array();
+		
+		
+		
+		%{if $field_rights.to_ruk_sz}%
+		
+		//проверка доступности утверждения рук-лем
+		if((%{$claim.is_ruk}%==0)&&($("#is_ruk_2").prop("checked")==true)&&($("#ruk_not").val().length<5)){
+			
+				
+			 
+			
+			 
+				res=res&&false;
+				error_fields.push({
+					"id":"ruk_not",
+					"name":"Комментарий руководителя отдела:",
+					"error":"Укажите комментарий руководителя отдела!"
+				});	
+		 
+			 
+			 
+		}
+		%{/if}% 
+		
+		%{if $field_rights.to_dir_sz}%
+		
+		//проверка доступности утверждения рук-лем
+		if((%{$claim.is_dir}%==0)&&($("#is_dir_2").prop("checked")==true)&&($("#dir_not").val().length<5)){
+			
+				
+			 
+			
+			 
+				res=res&&false;
+				error_fields.push({
+					"id":"dir_not",
+					"name":"Комментарий генерального директора:",
+					"error":"Укажите комментарий генерального директора!"
+				});	
+			 
+		}
+		%{/if}% 
+		
+		
+		 $(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+		
+		
+		return res;
+	});
+});
+</script>
+%{/if}%
+
+<br clear="all" />
+<p />
+    
+     
+    
+    
+    
+    
+    
+    </p>
+  </div>
+ 
+  
+   %{if $has_syslog}%
+  <div id="tabs-6">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+
+</div>

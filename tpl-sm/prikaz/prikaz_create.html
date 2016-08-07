@@ -1,0 +1,56 @@
+<script type="text/javascript">
+
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+
+});
+</script>
+
+<h1>Создание приказа</h1>
+
+
+<form action="edit_prikaz.php" method="post" id="crea_form">
+
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Дата создания:</label><br />
+<input type="text" size="10" maxlength="10" name="pdate" id="pdate" value="%{$pdate}%" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Входящий №:</label><br />
+<input type="text" size="15" maxlength="255" name="vhod_no" id="vhod_no" value="" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+
+<label for="pdate">Название:</label><br />
+<input type="text" size="50" maxlength="512" name="name" id="name" value="" />
+
+</div>
+
+<br clear="all" />
+<p />
+
+%{if $can_add}%
+<small>
+<em>Для прикрепления файлов к приказу необходимо заполнить поля формы и нажать <strong>"Создать приказ и остаться".</strong></em>
+</small>
+<p />
+
+<input type="submit" value="Создать приказ и перейти к списку приказов" name="makePrikaz" />
+
+<input type="submit" value="Создать приказ и остаться" name="makePrikazStay" />
+<p />
+%{/if}%
+
+<input type="button" value="Закрыть форму" name="cancelOrder" onclick="location.href='prikaz.php';" />
+
+</form>

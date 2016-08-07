@@ -1,0 +1,358 @@
+%{section name=rowsec loop=$items}%%{/section}%
+
+%{if $has_header}%
+
+<script type="text/javascript">
+$(function(){
+	$(".reptable").columnHover();
+	$(".reptable tr:even").addClass("even");
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 
+	 $("#pdate1%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#pdate2%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	
+	$("#given_pdate1%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+	$("#given_pdate2%{$prefix}%").datepicker({changeYear:true, yearRange: '2012:+00'});
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+	 $.ajax({
+		async: true,
+		url: "/js/annul.php",
+		type: "GET",
+		data:{
+			action: "try_annul",
+			kind: 3	
+		},
+		beforeSend: function() {
+		 
+		},
+		success: function(data) {
+			//alert(data);
+		},
+		error: function() {
+		 // alert("");
+		}
+	}); 
+});
+</script>
+
+%{include file="annul_dialog.html"}%
+
+%{include file="every_help_dialog.html" filename="accs.htm" prefix=$prefix description="реестр всех поступлений"  style="float:right;  margin-right:10px;"}%
+
+
+
+%{$pages}%
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="filter_form%{$prefix}%">
+
+
+&nbsp;&nbsp;
+
+<strong>Выполненные поступления</strong><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_5" value="5" %{if $status_id==5}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong> Невыполненные поступления</strong><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_4" value="4" %{if $status_id==4}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong>Аннулированные поступления</strong><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_6" value="6" %{if $status_id==6}% checked="checked"%{/if}%  /> 
+
+&nbsp;
+<strong>Все поступления</strong><input type="radio" name="status_id%{$prefix}%" id="status_id%{$prefix}%_0" value="0" %{if $status_id==0}% checked="checked"%{/if}%  /> 
+
+<a href="#" id="save_sort_mode%{$prefix}%"><img src="/img/icons/save.png" width="24" height="24" alt="Сохранить" align="absmiddle" title="Сохранить" border="0" /></a>
+
+ <script src="js/jquery.cookie.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		if($.cookie('acc_status_id%{$prefix}%')==null){
+			$.cookie('acc_status_id%{$prefix}%', 0, { expires: 14 });		
+		}
+		
+		
+		
+		$("#save_sort_mode%{$prefix}%").bind("click",function(){
+			//alert($("input[name=sort_mode]:checked").val());
+			$.cookie('acc_status_id%{$prefix}%', $("input[name=status_id%{$prefix}%]:checked").val(), { expires: 14 });
+			
+			return false;	
+		});
+		
+	
+	});
+	</script>
+
+<p />
+
+
+<input type="hidden" name="from%{$prefix}%" value="0" />
+<input type="hidden" name="to_page%{$prefix}%" value="%{$to_page}%" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" />
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 <th scope="col" width="40">
+    Номер 
+   
+    </th>
+    
+     <th scope="col" width="60">
+    Дата 
+   
+    </th>
+    
+    
+    	    <th scope="col" width="80">
+    Заданная дата с/ф 
+   
+    </th>
+    
+    
+     <th scope="col" width="40">
+    Заданный номер с/ф 
+   
+    </th>
+    
+     <th scope="col" width="40">
+    Сумма
+   
+    </th>
+   
+   
+    <th scope="col" width="70">
+    Контрагент
+    
+    </th>
+    
+   
+    <th scope="col" width="100" >Статус 
+   
+    </th>
+    
+     <th scope="col" width="100" >Утверждение 
+   
+    </th>
+    
+    <th scope="col" width="100" >Входящий счет 
+   
+    </th>
+    
+     <th scope="col" width="*" >Примечания
+   
+    </th>
+    
+     <th scope="col" width="100" >Создал 
+   
+    </th>
+    
+     <th scope="col" width="50">
+    Файлы
+   
+   
+    </th>
+    
+   <th scope="col"  width="24">&nbsp;
+   
+   </th>
+   
+  <th scope="col"  width="24">&nbsp;
+   
+   </th> 
+   
+</tr>
+
+<tr align="center" valign="top">
+	<td width="40">
+	 <input type="text" size="8" maxlength="255" value="%{$id}%" name="id%{$prefix}%" id="id%{$prefix}%" style="width:40px;" />
+    
+    </td>
+    
+    
+      <td width="60">
+	&nbsp;&nbsp;с:&nbsp;<input type="text" name="pdate1%{$prefix}%" id="pdate1%{$prefix}%" size="10" maxlength="10" value="%{$pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="pdate2%{$prefix}%" id="pdate2%{$prefix}%" size="10" maxlength="10" value="%{$pdate2}%" style="width:60px;" /><br />
+    
+    </td>
+    
+     <td width="80">
+     
+  &nbsp;&nbsp;с:&nbsp;<input type="text" name="given_pdate1%{$prefix}%" id="given_pdate1%{$prefix}%" size="10" maxlength="10" value="%{$given_pdate1}%" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" name="given_pdate2%{$prefix}%" id="given_pdate2%{$prefix}%" size="10" maxlength="10" value="%{$given_pdate2}%" style="width:60px;" />
+	      
+ 
+ </td>
+    
+    <td width="40">
+    
+     <input type="text" size="8" maxlength="255" value="%{$given_no}%" name="given_no%{$prefix}%" id="given_no%{$prefix}%" style="width:60px;" />
+    
+    </td>
+    
+      <td width="40">&nbsp;
+      
+      </td>
+    
+    <td width="70">
+	<input type="text" size="8" maxlength="255" value="%{$supplier_name}%" name="supplier_name%{$prefix}%" id="supplier_name%{$prefix}%" style="width:60px;" />
+    
+    
+   
+  
+    </td>
+   
+   
+ 
+  <td width="100">
+  
+   <select id="inner_status_id%{$prefix}%" style="width:100px;">
+  	<option value="0"  %{if $status_id==0}% selected="selected"%{/if}%>все пост.</option>
+   
+    <option value="4"  %{if $status_id==4}% selected="selected"%{/if}%>не выполнено</option>
+    <option value="5"  %{if $status_id==5}% selected="selected"%{/if}%>выполнено</option>
+    <option value="6"  %{if $status_id==6}% selected="selected"%{/if}%>аннулировано</option>
+   </select>  
+   <script type="text/javascript">
+   $(function(){
+	  $("#inner_status_id%{$prefix}%").bind("change", function(){
+		 $("#status_id%{$prefix}%_"+ $("#inner_status_id%{$prefix}%").val()).prop("checked",true);
+		 $("#status_id%{$prefix}%_"+ $("#inner_status_id%{$prefix}%").val()).trigger("click");
+	  });
+   });
+   </script>
+ 
+ </td>
+    
+
+    
+   
+    <td width="100">&nbsp;
+ 
+ </td>
+ 
+ 
+  <td width="100">&nbsp;
+ 
+ </td>
+ 
+ 
+  <td width="*">&nbsp;
+ 
+ </td>
+ 
+  
+ 
+   <td width="100">&nbsp;
+  <input type="text" size="8" maxlength="255" value="%{$manager_name}%" name="manager_name%{$prefix}%" id="manager_name%{$prefix}%" style="width:60px;" />
+ </td>
+   <td width="50">
+   
+   </td>
+    <td width="24">
+    <input name="doFilter%{$prefix}%" type="submit" value="Найти" style="width:48px;" />
+    </td>
+    
+    <td width="24">&nbsp;</td>
+    
+</tr>
+
+</thead>
+<tbody>
+%{/if}%
+%{section name=rowsec loop=$items}%
+
+%{if $has_header}%
+<tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%">
+%{/if}%
+
+	<td width="40" %{if $items[rowsec].is_confirmed==0}%class="item_inactive"%{/if}%>%{$items[rowsec].id}%&nbsp;</td>
+    
+    
+     <td width="60" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%><a name="#user_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].pdate}%
+    
+    </td>
+    
+    
+     <td width="80" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].given_pdate}%
+    </td>
+    
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>%{$items[rowsec].given_no}%&nbsp;</td>
+    
+    <td width="40" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].total_cost}%&nbsp;руб.
+    </td>
+    
+   
+    <td width="70" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%&nbsp;
+    </td>
+    
+    
+    
+    %{include file="acc_in/toggle_confirm.html" filename="acc_in.php" item=$items[rowsec] shorter=0}%
+    
+    
+     <td width="100" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    Входящий счет № %{$items[rowsec].code}% от %{$items[rowsec].o_pdate}%&nbsp;
+    </td>
+    
+    
+      <td align="left" width="*" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>	
+   <div style="max-height:100px; overflow:auto;"><small> %{section name=notesec loop=$items[rowsec].notes}%
+    %{$items[rowsec].notes[notesec].pdate}%
+    %{$items[rowsec].notes[notesec].user_name_s}%
+    %{$items[rowsec].notes[notesec].user_login}%:
+    %{$items[rowsec].notes[notesec].note}%<br />
+    %{/section}%</small></div>
+    </td>
+    
+    <td width="100" %{if $items[rowsec].is_confirmed==0  and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    </td>
+    
+    <td width="50" %{if $items[rowsec].is_confirmed_price==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}%>
+    
+    <a href="acc_in_files.php?acc_id=%{$items[rowsec].id}%" target="_blank"><img src="/img/files.png" border="0" width="47" height="25" alt="файлы" title="файлы" /></a>
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{if $can_edit}%
+    <a href="ed_acc_in.php?action=1&id=%{$items[rowsec].id}%" target="_blank"><img src="/img/icons/edit.png" width="24" height="24" alt="Подробно..." title="Подробно..." border="0" /></a>
+   
+    %{/if}%&nbsp;
+    </td>
+    
+    <td width="24" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=6}%class="item_inactive"%{/if}%>
+    %{include file="acc_in/toggle_annul.html"}%
+    
+    </td>
+%{if $has_header}%
+</tr>
+%{/if}%
+%{/section}%
+
+%{if $has_header}%
+</tbody>
+</table>
+
+</form>
+
+%{if $smarty.section.rowsec.total==0}%
+<em>Поступлений не найдено.</em><br />
+%{/if}%
+
+%{$pages}%
+
+%{/if}%

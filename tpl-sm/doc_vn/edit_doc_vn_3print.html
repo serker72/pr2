@@ -1,0 +1,199 @@
+<html>
+<head>
+ <style>
+div{
+	font-family:"Times New Roman", Times, serif;
+	font-size:12pt;
+	 
+}
+p{font-size:12pt; font-family:"Times New Roman", Times, serif;}
+h1{
+	text-align:center;
+	font-family:"Times New Roman", Times, serif;
+}
+</style>
+
+</head>
+<body >
+ 
+  <p style="text-align:center;">
+<strong>Авансовый отчет № %{$bill.code}%  к командировке № %{$bill.sched_str}%  </strong>
+</p>
+
+<table border="1" class="blacktable" cellspacing="0" cellpadding="1">
+<thead  >
+<tr align="left" valign="bottom"  >
+	<th width="40" style="border:none !important;" colspan="2">Отчет по подотчетным суммам </th>
+    <th width="100"  style="border:none;" colspan="2" >
+    %{$bill.manager_string}%,  
+%{$manager.position_name}% 
+    </th>
+    
+      
+   
+    </th>
+     <th width="60"  style="border:none;" >
+     %{$bill.lead_string}% 
+    </th>
+    
+    <th width="300" align="right" style="border:none;"  colspan="3">
+    %{$bill.sched_str}% 
+    </th>
+</tr>
+<tr align="left" valign="top">
+	<th width="40" rowspan="2">№п/п</th>
+    <th width="400" rowspan="2">Наименование расхода
+
+</th>
+    <th width="100" rowspan="2">Наличные или личная карта
+
+ </th>
+ <th width="100" rowspan="2">
+Корпоративная карта
+
+
+ </th>
+  <th width="60" rowspan="2">
+Валюта расхода
+
+
+ </th>
+ <th width="300"  colspan="3">
+   Подтверждающий документ		
+
+    </th>
+</tr>
+<tr align="left" valign="top">
+<th width="100">
+ наименование
+
+
+ </th>
+<th width="100">
+ номер
+
+
+ </th>
+<th width="100">
+ дата
+
+
+ </th>  
+</tr>
+</thead>
+<tbody>
+%{section name=supsec loop=$exps}%
+%{if $exps[supsec].fact!=0}%
+<tr align="left" valign="top">
+	<td width="40">
+    %{$exps[supsec].no}%
+    </td>
+    <td>
+    %{$exps[supsec].name}%
+    </td>
+    <td>%{if $exps[supsec].fact_l_or_korp==0}% %{$exps[supsec].fact|string_format:"%.2f"}% %{else}% 0%{/if}% </td>
+    <td>%{if $exps[supsec].fact_l_or_korp==1}% %{$exps[supsec].fact|string_format:"%.2f"}% %{else}% 0%{/if}% </td>
+    
+    
+    <td>  %{$exps[supsec].f_currency}%  </td>
+    
+    <td>  %{$exps[supsec].doc_name}%  </td>
+    <td>  %{$exps[supsec].doc_no}%  </td>
+    <td>  %{$exps[supsec].doc_pdate}%  </td>
+</tr>
+%{/if}% 
+
+%{/section}%
+</tbody>
+<tfoot>
+%{foreach from=$itogof item=item}%
+ 
+<tr align="left" valign="bottom">
+	<th width="40">
+
+	
+    </th>
+    <th width="*"><strong> ИТОГО: </strong></th>
+    <th width="*"><strong> %{$item[0].fact|string_format:"%.2f"}%  </strong> </th>
+    <th width="*"><strong> %{$item[1].fact|string_format:"%.2f"}%  </strong> </th>
+    
+    <th ><strong> %{$item[0].fact_currency}% </strong> </th>
+    
+    
+      <th >  </th>
+     <th >  </th>   <th >  </th>
+
+</tr>
+ 
+%{/foreach}%
+</tfoot>
+</table>
+
+
+
+<p style="text-align:right;">   
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:120px;   text-align:right;  /*border: 1px solid red;*/ overflow:visible;">
+
+  <u>%{$dir_ot_pdate}%</u><br />
+
+    <small>(дата)</small><br />
+ 
+%{if $has_sign and $manager.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:100px; left:450px; top:-40px;   text-align:right; /*border: 1px solid green; */ overflow:visible;">
+<img src="/img/print/%{$manager.sign}%" />
+</div>
+%{/if}%
+
+                  __________________________________<br />
+
+                                          <small>(подпись)</small>
+                                         
+ %{if $has_sign}%<br>
+ %{$manager.name_s}%, %{$manager.position_name}%, %{$manager.department_name}%
+%{/if}%
+</div> 
+</p>
+ 
+ 
+
+
+
+
+<div style="position:relative; z-index:1; width:auto; page-break-inside:avoid !important; height:200px;   /*border: 1px solid red;*/ ">
+          СОГЛАСОВАНО:<br /><br />
+ 
+%{if $has_sign and $is_ruk_ot_confirmer.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:140px; left:20px; top:-30px;  /* border: 1px solid green;  */">
+<img src="/img/print/%{$is_ruk_ot_confirmer.sign}%" />
+</div>
+%{/if}%
+__________________________________<br />
+
+	 <small>(подпись непосредственного руководителя)</small>
+ %{if $has_sign}%
+      <br>
+
+ %{$is_ruk_ot_confirmer.name_s}%, %{$is_ruk_ot_confirmer.position_name}%, %{$is_ruk_ot_confirmer.department_name}%
+%{/if}% 
+<br />
+ 
+
+
+%{if $has_sign and $is_dir_ot_confirmer.sign!=""}%
+<div style="position:absolute;z-index:-2; width:200px; height:140px; left:60px; top:30px;  /* border: 1px solid green;  */">
+<img src="/img/print/%{$is_dir_ot_confirmer.sign}%" />
+</div>
+%{/if}%
+
+__________________________________<br />
+
+		 <small>(подпись ген. директора)</small>
+  %{if $has_sign}%        <br>
+ %{$is_dir_ot_confirmer.name_s}%, %{$is_dir_ot_confirmer.position_name}%, %{$is_dir_ot_confirmer.department_name}%
+%{/if}%
+</div>
+
+
+ 
+</body>
+</html>

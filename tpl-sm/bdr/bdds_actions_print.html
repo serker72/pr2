@@ -1,0 +1,83 @@
+ 
+<table width="100%" border="1" cellpadding="1" cellspacing="0" class="blacktable">
+<thead>
+<tr align="left" valign="top">
+	<th scope="col" width="*" style="min-width:200px;" class="kompl3">
+    
+    </th>
+	%{foreach name=msec from=$items[10].data_short item=month}%
+   
+    <th scope="col" width="80" style="min-width: 80px !important; width:80px; " class="kompl3">
+    <strong> %{$month}%</strong>
+    </th>
+    
+    %{/foreach}%
+   
+</tr>
+</thead>
+<tbody >
+ 
+%{foreach name=supsec from=$items item=recgr}%
+%{if $recgr.account_group!=10}% 
+   <tr align="left" valign="top" id="our_bdds_row_%{$recgr.account_group}%">
+  
+  	<td width="*" style="min-width:200px;" class="kompl2">
+   <strong> %{$recgr.name}%  </strong>
+   
+   
+   
+    </td>
+  
+   <!-- итерация по месяцам -->
+   %{foreach name=fr from=$recgr.data_short item=val}%
+   <td width="80"  style="min-width: 80px !important; width:80px; "  class="kompl2">
+   <strong>%{$recgr.data_short_formatted[$smarty.foreach.fr.index]}% </strong>
+   </td>
+   %{/foreach}%
+   
+   
+   
+    
+   </tr>
+   <!-- итерация по статьям -->
+   %{foreach from=$recgr.subs item=account}% 
+   <tr align="left" valign="top" id="account_row_%{$account.account_id}%">
+   	<td width="*" style="min-width:200px;" class="kompl1">
+    <span id="bdds_account_%{$account.account_id}%">%{$account.name}%</span>
+    
+  
+    </td>
+    
+    <!-- итерация по месяцам -->
+   %{foreach name=fm from=$account.data_short item=val}%
+   <td width="120"  style="min-width: 120px !important; width:120px; "  class="kompl1">
+   <span id="bdds_values_%{$recgr.account_group}%_%{$account.account_id}%_%{$account.monthes[$smarty.foreach.fm.index]}%_%{$account.years[$smarty.foreach.fm.index]}%">  %{$account.data_short_formatted[$smarty.foreach.fm.index]}%</span>
+   
+   <!--bdds_value_%{$recgr.account_group}%_%{$account.account_id}%_%{$account.monthes[$smarty.foreach.fm.index]}%_%{$account.years[$smarty.foreach.fm.index]}%-->
+   
+    
+   
+   </td>
+   %{/foreach}%
+   
+     
+   </tr>
+   %{/foreach}% 
+%{/if}%  
+%{/foreach}%
+ 
+</tbody>
+</table>
+<br>
+
+<div align="right">
+<strong><em>Проверка 
+= ЧП по проекту - кон. остаток ДС по проекту: 
+ %{$check_formatted}%&nbsp;руб.</em></strong>
+</div>
+ 
+
+
+ 
+ 
+

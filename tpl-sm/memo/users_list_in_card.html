@@ -1,0 +1,82 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="users_in_card_row_%{$pos[possec].id}%" >
+    	<td width="10" id="row_number_%{$pos[possec].id}%">
+        %{$smarty.section.possec.index+1}%.
+        </td>
+        <td width="32" style="white-space:nowrap;">
+        <a href="#" id="to_up_%{$pos[possec].id}%"><img src="/img/uup.gif"  border="0"  width="16" height="16" alt="к началу списка" /></a>
+        <a href="#" id="to_down_%{$pos[possec].id}%"><img src="/img/ddown.gif" border="0" width="16" height="16" alt="к концу списка" /></a>
+        
+        </td>
+  <td width="60">
+        <input type="hidden" id="user_id_%{$pos[possec].id}%" name="user_id_%{$pos[possec].id}%" value="%{$pos[possec].id}%" />
+        %{$pos[possec].login}%
+        
+       
+        </td>
+        
+       
+        
+        <td width="*" >%{$pos[possec].name_s}%</td>
+        <td width="200">%{$pos[possec].position_name}%</td>
+       
+        <td width="50">
+       
+      
+       <a href="info.html?name=%{$pos[possec].login}%" target="_blank"> арта</a>
+       
+        </td>
+        <td width="24">
+        <a href="#" id="del_user_%{$pos[possec].id}%"><img src="/img/del.gif" width="15" height="15" alt="удалить сотрудника из задачи" title="удалить сотрудника из задачи" border="0" /></a>
+        <script type="text/javascript">
+		$(function(){
+			function renum_rows(){
+				//переименуем р€ды
+				var cter=1;
+				$("#users_in_card td[id^=row_number_]").each(function(k,v){
+					$(v).html(cter+".");
+					cter++;
+				});	
+			}
+			
+			
+			$("#to_down_%{$pos[possec].id}%").bind("click", function(){
+				
+				a=$("#users_in_card_row_%{$pos[possec].id}%").next();
+				id= $(a).attr("id");
+				if(id!=undefined){
+					b=$("#users_in_card_row_%{$pos[possec].id}%");
+					$("#users_in_card_row_%{$pos[possec].id}%").detach();
+					a.after(b);
+				}
+				
+				renum_rows();
+				return false;
+			});
+			
+			$("#to_up_%{$pos[possec].id}%").bind("click", function(){
+				
+				a=$("#users_in_card_row_%{$pos[possec].id}%").prev();
+				id= $(a).attr("id");
+				if(id!=undefined){
+					b=$("#users_in_card_row_%{$pos[possec].id}%");
+					$("#users_in_card_row_%{$pos[possec].id}%").detach();
+					a.before(b);
+				}
+				
+				renum_rows();
+				return false;
+			});
+			
+			$("#del_user_%{$pos[possec].id}%").bind("click", function(){
+				$("#users_in_card_row_%{$pos[possec].id}%").remove();
+				
+				//переименуем р€ды
+				renum_rows();
+				return false;
+			});
+		});
+		</script>
+        </td>
+    </tr>
+%{/section}%    

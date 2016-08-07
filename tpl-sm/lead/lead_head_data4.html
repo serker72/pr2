@@ -1,0 +1,149 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Лид</th>
+   <th>Статус</th>
+   <th>Название</th>
+    <th width="100">Прогноз. дата закл-ия конт-та</th>
+   <th></th>
+   <th></th>
+    <th></th>
+   <th></th>
+   
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="lead_remind_id4_%{$item.id}%" value="%{$item.id}%" />
+        <input type="hidden" id="lead_remind_code4_%{$item.id}%" value="%{$item.code}%" />
+        
+        <input type="hidden" id="lead_refuse_counts4_%{$item.id}%" value="%{$item.refuse_counts}%" />
+        
+        
+         <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td width="*">
+%{$item.status_name}%
+</td>
+
+<td>
+%{$item.topic}%
+</td>
+<td>
+%{$item.pdate_finish}%
+</td>
+<td width="100">         
+         <label for="lead_remind_status_id4_%{$item.id}%_30">Выигран</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id4_%{$item.id}%" id="lead_remind_status_id4_%{$item.id}%_30" value="30">
+
+         
+       
+</td>
+<td width="100">
+        <label for="lead_remind_status_id4_%{$item.id}%_31">Проигран</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id4_%{$item.id}%" id="lead_remind_status_id4_%{$item.id}%_31" value="31">
+
+         
+          
+         
+             
+</td> 
+
+<td width="100">
+        <label for="lead_remind_status_id4_%{$item.id}%_34">Отказ</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id4_%{$item.id}%" id="lead_remind_status_id4_%{$item.id}%_34" value="34">
+
+          <div id="lead_remind_results4_%{$item.id}%" style="display:none;">
+	         
+             <br>
+    
+             <label for="lead_remind_comment4_%{$item.id}%"><strong>Причина:</strong></label><br>
+    		 
+             <select id="lead_remind_reason4_%{$item.id}%" style="width:100px;">
+              %{html_options values=$fail_ids selected=0 output=$fail_vals}%    
+             </select><br>
+
+             <textarea cols="73" rows="5" id="lead_remind_comment4_%{$item.id}%" style="width:100%; height:70px;"></textarea><br> 
+
+             
+            
+            
+         
+         </div>
+          
+         
+             
+</td> 
+
+<td width="100">
+        <label for="lead_remind_status_id4_%{$item.id}%_25">Отложен</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id4_%{$item.id}%" id="lead_remind_status_id4_%{$item.id}%_25" value="25">
+
+         
+          <div id="lead_remind_pdate_block4_%{$item.id}%" style="display:none;">
+	         <br>
+
+         	<label for="lead_remind_pdate4_%{$item.id}%"><strong>Прогнозируемая дата заключения контракта:</strong></label>
+        	<input type="text" size="10" maxlength="10" value="%{$item.pdate_finish}%" id="lead_remind_pdate4_%{$item.id}%" />
+            
+            <input type="hidden" size="10" maxlength="10" value="%{$item.pdate_finish}%" id="lead_remind_pdate_old4_%{$item.id}%" />
+        
+             <br>
+             
+          </div>    
+         
+             
+</td> 
+
+ 
+    
+    
+<td width="24">
+ <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 
+<script>
+$(function(){
+	$("input[id^=lead_remind_status_id4_]").bind("change", function(){
+			name=$(this).attr("name");
+			id=name.replace(/lead_remind_status_id4_/,'');
+			
+			
+			//alert($("input[name=tedner_remind_status_id_"+id+"]:checked").val());
+			 
+			
+			if($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==25){
+				$("#lead_remind_pdate_block4_"+id).show();
+			}else{
+				$("#lead_remind_pdate_block4_"+id).hide();
+			}
+			
+			
+			if($("input[name=lead_remind_status_id4_"+id+"]:checked").val()==34){
+				$("#lead_remind_results4_"+id).show();
+			}else{
+				$("#lead_remind_results4_"+id).hide();
+			}
+		});
+		
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		$("input[id^=lead_remind_pdate4_]").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+});
+</script>

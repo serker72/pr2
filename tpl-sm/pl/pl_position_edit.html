@@ -1,0 +1,1341 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+
+%{include file="every_help_dialog.html" filename="pos_edit.htm" prefix="" description="редактирование позиции прайс-листа"  style="float:right;  margin-left:10px;"  is_right=true}%
+
+
+
+
+<div style="float:right;">
+<input type="button" value="Файлы..." onclick="location.href='pos_files.php?bill_id=%{$position.id}%';" />
+
+
+
+</div>
+<br clear="all" />
+
+
+<form action="ed_pl_position.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" value="%{$position.id}%" />
+
+ <div style="float:left; margin-right:10px;"> 
+<strong>№ позиции:</strong><br />
+<strong> %{$position.id|escape}% </strong>
+
+</div>
+
+ <div style="float:left; margin-right:10px;">
+<label for="code">Код позиции:</label><br />
+<input type="text" name="code" size="10" maxlength="255" value="%{$position.code|escape}%" />
+ 
+</div>
+
+
+
+
+
+
+ <div style="float:left; margin-right:20px;">
+<label for="dimension_id">Ед. изм.:</label><br />
+<select name="dimension_id" id="dim_id" style="width:80px;">
+%{include file="catalog/dims_opt.html"}%
+</select>
+
+%{if $can_expand_dims}%
+<input type="button" value="Единицы..." id="show_dims" />
+
+<div id="dims_dialog" title="Единицы измерения"  style="display:none;">
+%{include file="catalog/alldims.html"}%
+</div>
+
+<script type="text/javascript">
+$(function(){
+  $("#dims_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				sel=$("#dim_id").val();
+				
+				$("#dim_id").html(data);
+				$("#dim_id").val(sel);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_dims").bind("click",function(){
+	  $("#dims_dialog").dialog("open");
+  });
+  
+  function Redrawdims(){
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_dim").bind("click", function(){
+		if($("#new_dim").attr("value").length<1){
+			$("#new_dim").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"add_dim",
+				"question":$("#new_dim").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Единица измерения добавлена!"); 
+			   $("#new_dim").attr("value","");
+			   Redrawdims();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления единицы измерения.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+
+
+</div>
+
+%{if $position.parent_id==0}%
+<div style="float:left;">
+<label for="supply_pdate_id">Срок поставки:</label><br />
+<select id="supply_pdate_id" name="supply_pdate_id" style="width:60px;" >
+%{html_options values=$supply_pdate_id_ids selected=$position.supply_pdate_id output=$supply_pdate_vals}%
+</select>
+</div>
+%{/if}%
+
+<br clear="all" />
+<p />
+
+
+ 
+ 
+<label for="name">Наименование позиции:</label><br />
+
+<textarea name="name" id="name" cols="35" rows="3" style="width:100%;">%{$position.name|escape}%</textarea>
+<p />
+<br />
+
+<label for="name_en">Наименование позиции (англ.):</label><br />
+
+<textarea name="name_en" id="name_en" cols="35" rows="3" style="width:100%;">%{$position.name_en|escape}%</textarea>
+
+ 
+
+<br clear="all" />
+<p />
+
+
+
+%{if $position.parent_id!=0}%
+  <input type="hidden" name="group_id" value="%{$group_id}%" />
+  <input type="hidden" name="group_id2" value="%{$gr_id2}%" />
+  
+  <input type="hidden" name="producer_id" value="%{$position.producer_id}%" />
+  
+  
+  
+  <label for="pl_group_id">Группа опций:</label><br />
+ <select name="pl_group_id" id="pl_group_id" style="width:250px;">
+ <option value="0">-выберите-</option>
+  %{include file="catalog/groups_opt.html"  group_values=$pl_group_values group_ids=$pl_group_ids group_id=$position.pl_group_id}%
+  </select>	
+  
+   %{if $can_expand_groups}%
+   <input type="button" value="Группы опций..." id="expand_plgr" />
+   %{include file="pl/plgrs_dialog.html" word="plgr" named="Группы опций" opfs_total=$plgrs}%
+   
+   %{/if}%
+   
+   
+   <input type="checkbox" value="1" name="is_install" id="is_install" %{if $position.is_install==1}% checked="checked"%{/if}% /><label for="is_install">Опция установки (ПНР)</label>
+  	
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    
+     
+   <input type="checkbox" value="1" name="is_delivery" id="is_delivery" %{if $position.is_delivery==1}% checked="checked"%{/if}% /><label for="is_delivery">Опция доставки</label>
+   
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    
+     
+   <!--<input type="checkbox" value="1" name="is_mandatory" id="is_mandatory" %{if $position.is_mandatory==1}% checked="checked"%{/if}% /><label for="is_mandatory">Обязательная опция</label>
+   -->
+   
+<p />
+  <label for="is_mandatory">Обязательная, рекомендуемая опция:</label>
+   <fieldset id="is_mandatory">
+   
+   
+   	<input type="radio" name="is_mandatory" id="is_mandatory_0" value="0" %{if $position.is_mandatory==0}% checked="checked"%{/if}% /><label for="is_mandatory_0">Не назначено</label>
+    <input type="radio" name="is_mandatory" id="is_mandatory_1" value="1" %{if $position.is_mandatory==1}% checked="checked"%{/if}% /><label for="is_mandatory_1">Обязательная опция</label>
+    <input type="radio" name="is_mandatory" id="is_mandatory_2" value="2" %{if $position.is_mandatory==2}% checked="checked"%{/if}% /><label for="is_mandatory_2">Рекомендуемая опция</label>
+   </fieldset>
+ 
+ <label for="pre_quantity">Рекомендуемое количество (0 - не определено):</label>  
+<input type="text" id="pre_quantity" name="pre_quantity" value="%{$position.pre_quantity}%" size="5" maxlength="10" />   
+<p />
+
+
+
+%{else}%
+    <input name="pl_group_id" value="0" type="hidden" />
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="group_id">Раздел:</label><br />
+    <select name="group_id" id="group_id" style="width:150px;">
+    %{include file="catalog/groups_opt.html"}%
+    </select>
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;">
+    <label for="producer_id">Производитель:</label><br />
+    <select name="producer_id" id="producer_id" style="width:150px;">
+    %{include file="catalog/groups_opt.html" group_values=$producer_values group_ids=$producer_ids group_id=$position.producer_id}%
+    </select>
+    </div>
+    
+    
+      <div style="float:left; margin-right:10px;">
+    <label for="group_id2">Категория:</label><br />
+    <select name="group_id2" id="group_id2" style="width:150px;">
+    %{include file="catalog/groups_opt.html" group_ids=$gr_ids2 group_id=$gr_id2 group_values=$gr_names2}%
+    </select>
+    </div>
+    
+    
+      <div style="float:left; margin-right:10px;">
+    <label for="group_id3">Подкатегория:</label><br />
+    <select name="group_id3" id="group_id3" style="width:150px;">
+    %{include file="catalog/groups_opt.html" group_ids=$gr_ids3 group_id=$gr_id3 group_values=$gr_names3}%
+    </select>
+    </div>
+    
+    
+    
+     <script type="text/javascript">
+        $(function(){
+            $("#group_id").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/pricelist.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_producer",
+                        "group_id":$("#group_id").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id3").empty();
+                      $("#producer_id").html(data);
+					  $.ajax({
+							async: true,
+							url: "/js/pricelist.php",
+							type: "POST",
+							data:{
+								"action":"toggle_categs_by_razd_producer",
+								"group_id":$("#group_id").val(),
+								"producer_id":$("#producer_id").val()
+													},
+							beforeSend: function(){
+								  
+							},
+							success: function(data){
+							 	$("#group_id3").empty();
+                   				 $("#group_id2").html(data);
+							  
+							},
+							error: function(xhr, status){
+								//alert("Ошибка выбора подгрупп.");	
+							}	 
+						});
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+				
+				
+				
+            });
+			
+			$("#producer_id").bind("change", function(){
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"toggle_categs_by_razd_producer",
+						"group_id":$("#group_id").val(),
+						"producer_id":$("#producer_id").val()
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+							$("#group_id3").empty();
+                   				 $("#group_id2").html(data);
+					  
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	 
+				});
+			});
+            
+            $("#group_id2").bind("change", function(){
+                //alert('zz');
+                $.ajax({
+                    async: true,
+                    url: "/js/catalog.php",
+                    type: "POST",
+                    data:{
+                        "action":"redraw_two_groups",
+                        "group_id":$("#group_id2").val()
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      $("#group_id3").html('<option value=""></option>'+data);
+                      
+                    },
+                    error: function(xhr, status){
+                        //alert("Ошибка выбора подгрупп.");	
+                    }	 
+                });
+            }); 
+        });
+        </script>
+    
+    
+    %{if $can_expand_groups}%
+     
+    <script type="text/javascript">
+    $(function(){
+      $("#groups_dialog").dialog({
+      autoOpen: false,
+	  dialogClass: 'semi_auth',
+      modal: true,
+      width: 350,
+      height: 490,
+      buttons: {
+          "Готово": function() { 
+            $.ajax({
+                async: true,
+                url: "/js/position.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_groups"
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                  $("#groups_dic").html(data);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+            
+            $.ajax({
+                async: true,
+                url: "/js/position.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_groups_page"
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                    
+                    sel=$("#group_id").val();
+                    
+                    $("#group_id").html(data);
+                    $("#group_id").val(sel);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+          
+          $(this).dialog("close"); }/*,
+          "Закрыть": function() { $(this).dialog("close"); }*/
+        }
+      
+      });
+      $("#show_groups").bind("click",function(){
+          $("#groups_dialog").dialog("open");
+      });
+      
+      function RedrawGroups(){
+            $.ajax({
+                async: true,
+                url: "/js/position.php",
+                type: "POST",
+                data:{
+                    "action":"redraw_groups"
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                  $("#groups_dic").html(data);
+                  
+                },
+                error: function(xhr, status){
+                    //alert("Ошибка добавления вопроса.");	
+                }	 
+            });
+        }
+        
+        $("#add_new_group").bind("click", function(){
+            if($("#new_group").attr("value").length<3){
+                $("#new_group").focus();
+                return false;
+            }
+            
+            $.ajax({
+                async: true,
+                url: "/js/position.php",
+                type: "POST",
+                data:{
+                    "action":"add_group",
+                    "question":$("#new_group").attr("value")
+                },
+                beforeSend: function(){
+                      
+                },
+                success: function(data){
+                   alert("Группа добавлена!"); 
+                   $("#new_group").attr("value","");
+                   RedrawGroups();
+                  // location.reload();
+                },
+                error: function(xhr, status){
+                    alert("Ошибка добавления группы.");	
+                }	 
+            });
+            
+        });
+      
+    });
+    </script>
+    %{/if}%
+    
+    
+ <!-- выберите форму для КП -->
+  <div style="float:left; margin-right:10px;">
+  <label for="kp_form_id">Форма для КП:</label><br />
+  <select name="kp_form_id" id="kp_form_id" style="width:150px;">
+  %{include file="catalog/groups_opt.html" group_values=$kp_form_values group_ids=$kp_form_ids group_id=$pl_item.kp_form_id}%
+  </select>
+  
+  </div>   
+    
+    
+ <br clear="all" />        
+%{/if}%
+
+
+<p />
+
+<label for="txt_for_kp">Текст для КП:</label><br />
+<textarea cols="100" rows="5" name="txt_for_kp">%{$position.txt_for_kp}%</textarea>
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+ <script type="text/javascript">
+		var editor = CKEDITOR.replace( 'txt_for_kp',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-kp.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash',
+						
+						 width:"100%"
+    				  }
+					  
+					 );
+		//CKFinder.setupCKEditor(editor) ;				 
+	</script>
+
+
+<p />
+
+
+<label for="txt_for_kp_en">Текст для КП (англ.):</label><br />
+<textarea cols="100" rows="5" name="txt_for_kp_en">%{$position.txt_for_kp_en}%</textarea>
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+ <script type="text/javascript">
+		var editor = CKEDITOR.replace( 'txt_for_kp_en',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-kp.js',
+						 filebrowserBrowseUrl : '/ckfinder/ckfinder.html',
+						filebrowserImageBrowseUrl : '/ckfinder/ckfinder.html?Type=Images',
+						filebrowserFlashBrowseUrl : '/ckfinder/ckfinder.html?Type=Flash',
+						filebrowserUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/file',
+						filebrowserImageUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/image',
+						filebrowserFlashUploadUrl : '/ckfinder/core/connector/php/connector.php?command=QuickUpload&type=/userfiles/flash',
+						 width:"100%"
+    				  }
+					 );
+		//CKFinder.setupCKEditor(editor) ;				 
+	</script>
+
+
+<p />
+ 
+
+
+
+<strong>Фото для КП:</strong>
+<input type="button" id="clear_photo" value="Сбросить фото"  onclick="$('#photo_for_kp').val('/img/no.gif'); $('#photo_for_kp_photo').attr('src','/img/no.gif'); $('#photo_for_kp_warning').show();  "  /><p />
+
+<input type="hidden" name="photo_for_kp" id="photo_for_kp" value="%{$position.photo_for_kp|escape:"html"}%" />
+<img src="%{$position.photo_for_kp}%" alt="" id="photo_for_kp_photo" border="0" />
+<div id="photo_for_kp_warning" style="display:none; color:red;">Для сохранения загруженного фото нажмите кнопку "Сохранить и перейти к списку позиций, или "Сохранить и остаться".</div>
+<p />
+
+
+
+
+<script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+<input type="hidden"  id="photo_" value="" />
+
+ <em>максимальный размер файла: 6M</em>  
+
+<div id="queue_"></div>
+
+
+
+<script type="text/javascript">
+$(function(){
+		 
+		
+		
+		$('#photo_').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите и загрузите файл...',
+			
+        	'fileType' : 'image/*', 
+				'fileSizeLimit' : '6 MB',
+				'uploadLimit' : 100, 
+			'multi'          : false, 
+				'width'           : 200,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%",
+									  
+									  "id":"%{$user.id}%"
+				                     },
+				'queueID'          : 'queue_',
+				'uploadScript'     : '/swfupl-js/upload_position_photo.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+		
+		 
+ 
+});
+ </script>
+
+ 
+ 
+  <p />
+ 
+
+
+
+<label for="notes">Примечания:</label><br />
+<textarea cols="100" rows="5" name="notes" style="width:100%;">%{$position.notes}%</textarea>
+<p />
+
+
+
+
+<br clear="all" />
+<p />
+
+
+
+<input type="checkbox" id="to_pl" name="to_pl" value="1" %{if $has_pl}% checked="checked"%{/if}% %{if !$can_to_pl}% disabled="disabled"%{/if}% /><label for="to_pl">Добавить позицию в прайс-лист</label>
+%{if $has_pl and !$can_to_pl}%
+<input type="hidden" name="to_pl" value="1" />
+%{/if}%
+
+
+<input type="hidden" name="was_pl" value="%{$has_pl}%" />
+
+%{if $has_pl==0}%
+<div style="float:left; margin-right:20px;">
+
+  <div style="width: 350px; border:1px solid silver; padding:5px 5px; overflow:auto;">
+    <img src="/img/voskl.png" width="64" height="64" alt="" border="0" align="left" hspace="5" />
+      <strong>Внимание!</strong><br />
+	  Позиция номенклатуры не занесена в прайс-лист.
+     
+  </div>
+
+</div>
+<p />
+<br clear="all" />
+%{/if}%
+
+<div style="float:left; margin-right:5px; %{if !$can_view_base_price}% display:none;%{/if}%"><br />
+<br />
+
+<label for="price">Цена:</label><br />
+<input type="text" id="price" name="price" size="10" maxlength="15" value="%{$pl_item.price}%" %{if !$can_pl_fields or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+
+<input type="hidden" value="0" id="price_was_changed" />
+</div>
+
+
+<div style="float:left; margin-right:20px; %{if !$can_view_base_price}% display:none;%{/if}%"><br />
+<br />
+<br />
+
+<select name="currency_id" id="currency_id" style="width:45px;" %{if !$can_add_to_pl or !$can_edit_base_price}% disabled="disabled"%{/if}%>
+%{section name=cursec loop=$currs}%
+<option value="%{$currs[cursec].id}%" %{if $currs[cursec].is_current}% selected="selected"%{/if}%>%{$currs[cursec].signature}%</option>
+%{/section}%
+</select>
+
+
+<input type="hidden" value="%{$pl_item.currency_id}%" id="old_currency_id" />
+</div>
+
+
+
+
+%{if $position.parent_id==0}%
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%"><br />
+
+<label for="delivery_ddpm">Доставка<br />
+до Москвы:</label><br />
+<input type="text" id="delivery_ddpm" name="delivery_ddpm" size="10" maxlength="15" value="%{$pl_item.delivery_ddpm}%" %{if !$can_pl_fields or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+
+<input type="hidden" value="0" id="delivery_ddpm_was_changed" />
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ <br /><br />
+
+<label for="duty_ddpm">  
+Сбор:</label><br />
+<input type="text" id="duty_ddpm" name="duty_ddpm" size="10" maxlength="15" value="%{$pl_item.duty_ddpm}%" %{if !$can_pl_fields or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+ 
+</div>
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ <br />
+
+<label for="svh_broker">СВХ, <br />
+брокер:</label><br />
+<input type="text" id="svh_broker" name="svh_broker" size="10" maxlength="15" value="%{$pl_item.svh_broker}%" %{if !$can_pl_fields or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+ 
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<br clear="all" />
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ 
+<label for="delivery_value">Доставка 
+ <br />
+до границы:</label><br />
+<input type="text" id="delivery_value" name="delivery_value" size="10" maxlength="15" value="%{$pl_item.delivery_value}%" %{if !$can_add_to_pl or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+
+<input type="hidden" value="2" name="delivery_value_currency" id="delivery_value_currency" />
+</div>
+
+
+
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ 
+<label for="delivery_rub">Доставка 
+
+ <br />
+после границы, руб. (без НДС):</label><br />
+<input type="text" id="delivery_rub" name="delivery_rub" size="10" maxlength="15" value="%{$pl_item.delivery_rub}%" %{if !$can_add_to_pl or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+
+<input type="hidden" value="2" name="delivery_rub_currency" id="delivery_rub_currency" />
+</div>
+
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ 
+<label for="customs">  
+
+ <br />
+Пошлина, %:</label><br />
+<input type="text" id="customs" name="customs" size="10" maxlength="15" value="%{$pl_item.customs}%" %{if !$can_add_to_pl or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+ 
+</div>
+
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_price}% display:none;%{/if}%">
+ 
+<label for="broker_costs">Затраты 
+
+ <br />
+брокера:</label><br />
+<input type="text" id="broker_costs" name="broker_costs" size="10" maxlength="15" value="%{$pl_item.broker_costs}%" %{if !$can_add_to_pl or !$can_edit_base_price}% disabled="disabled"%{/if}% />
+ 
+ 
+</div>
+
+
+
+%{/if}%
+
+
+
+<!-- Блоки базовой скидки, доп скидки, рент-ти exw, рент-ти ddpm -->
+%{if $position.parent_id==0}%
+<br clear="all" />
+<p /> 
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_discount}% display:none;%{/if}%">
+ 
+
+<label for="discount_base">Базовая ск-ка п-ка, %:</label><br />
+<input type="text" id="discount_base" name="discount_base" size="5" maxlength="15" value="%{$pl_item.discount_base}%" %{if !$can_edit_base_discount}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_base_discount}% display:none;%{/if}%">
+ 
+
+<label for="discount_base">Доп. ск-ка пост-ка, %:</label><br />
+<input type="text" id="discount_add" name="discount_add" size="5" maxlength="15" value="%{$pl_item.discount_add}%" %{if !$can_edit_base_discount}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_rent_koef}% display:none;%{/if}%">
+ 
+
+<label for="profit_exw">Рент-ть ExW, %:</label><br />
+<input type="text" id="profit_exw" name="profit_exw" size="5" maxlength="15" value="%{$pl_item.profit_exw}%" %{if !$can_edit_rent_koef}% disabled="disabled"%{/if}% />
+
+</div>
+
+
+<div style="float:left; margin-right:10px; %{if !$can_view_rent_koef}% display:none;%{/if}%">
+ 
+
+<label for="profit_ddpm">Рент-ть DDPM, %:</label><br />
+<input type="text" id="profit_ddpm" name="profit_ddpm" size="5" maxlength="15" value="%{$pl_item.profit_ddpm}%" %{if !$can_edit_rent_koef}% disabled="disabled"%{/if}% />
+
+</div>
+
+<br clear="all" />
+<p />
+%{/if}% %{* конец блока базовых скидок и к-та рент-ти *}%
+
+
+
+%{section name=discssec loop=$discs}%
+
+<div style="float:left; margin-right:20px;">
+
+
+   
+   <input type="hidden" id="discount_%{$discs[discssec].id}%" name="discount_%{$discs[discssec].id}%"  value="0" %{if !$can_add_to_pl}% disabled="disabled"%{/if}%  />
+
+  
+    <input type="hidden" id="discount_rub_or_percent_%{$discs[discssec].id}%" name="discount_rub_or_percent_%{$discs[discssec].id}%" value="1" />
+   
+
+
+	
+    <input type="hidden" value="1" name="dl_rub_or_percent_%{$discs[discssec].id}%" id="dl_rub_or_percent_%{$discs[discssec].id}%" %{if !$can_pl_fields}% disabled="disabled"%{/if}% /> 
+   
+   
+   
+</div>
+
+%{/section}%
+
+
+
+
+
+
+
+
+
+
+
+%{if $position.parent_id==0}%
+<br />
+
+<h3 style="float:left; margin-left:10px;">Опции позиции:</h3>
+<script type="text/javascript">
+$(function(){
+	touchScroll('position_options');
+});
+</script>
+
+<div style="float:left; margin-left:10px;">
+<input type="button" value="Добавить опцию..." id="position_add_opt" onClick="location.href='ed_pl_position.php?action=0&parent_id=%{$position.id}%';" %{if !$can_edit}% disabled="disabled"%{/if}% />
+</div>
+<br clear="all" />
+<div id="position_options" style="width:100%; height:400px; border:1px solid silver; overflow:auto;">
+	%{include file="pl/options_card.html"}%
+</div>
+<br />
+
+
+
+
+
+<h3>Взаимосвязь опций:</h3>
+
+
+%{include file="pl/rules/rules.html" }%
+
+
+
+
+
+%{/if}%
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+
+<div style="float:right;">
+<input type="checkbox" value="1" name="is_active" id="is_active" %{if $position.is_active==1}% checked="checked"%{/if}% /><label for="is_active">Позиция активна</label>
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к списку позиций" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='pricelist.php';
+}else location.href='pricelist.php';" />
+
+
+</form>
+<script type="text/javascript">
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+ 
+
+//проверка корр-ти макс. скидки (любой)
+function IsCorrectMaxSk(){
+	res=true;
+ 
+	return res;
+}
+
+//проверка корр-ти доставки ddpm
+function IsCorrectDeliveryDDPM(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#delivery_ddpm").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#delivery_ddpm").addClass("wrong");
+		alert("Некорректно заполнено поле Доставка до Москвы!");
+		$("#price").focus();
+		res=res&&false;	
+	}else{
+		$("#delivery_ddpm").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти Сбор, евро
+function IsCorrectduty_ddpm(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#duty_ddpm").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#duty_ddpm").addClass("wrong");
+		alert("Некорректно заполнено поле Сбор, евро!");
+		$("#price").focus();
+		res=res&&false;	
+	}else{
+		$("#duty_ddpm").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти СВХ, брокер, евро
+function IsCorrectsvh_broker(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#svh_broker").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)){
+		$("#svh_broker").addClass("wrong");
+		alert("Некорректно заполнено поле СВХ, брокер, евро!");
+		$("#price").focus();
+		res=res&&false;	
+	}else{
+		$("#svh_broker").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти цены
+function IsCorrectPrice(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#price").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)/*||(parseFloat(sum)<0)*/){
+		$("#price").addClass("wrong");
+		alert("Некорректно заполнено поле Цена!");
+		$("#price").focus();
+		res=res&&false;	
+	}else{
+		$("#price").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка корр-ти пошлины
+function IsCorrectCustoms(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#customs").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<0)||(parseFloat(sum)>99.99)){
+		$("#customs").addClass("wrong");
+		alert("Некорректно заполнено поле Пошлина!");
+		$("#customs").focus();
+		res=res&&false;	
+	}else{
+		$("#customs").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+
+
+
+
+$(function(){
+
+	
+	
+	$("#crea_form").bind("submit", function(){
+		res=true;
+		
+		/*if(res) if($("#code").val().length==0){
+			alert("Укажите код позиции!");
+			$("#code").focus(); 
+			res=res&&false;
+		}
+		
+		if(res) if($("#name").val().length==0){
+			alert("Укажите название позиции!");
+			$("#name").focus(); 
+			res=res&&false;
+		}
+		*/
+		
+		%{if $position.parent_id==0}%
+		if(res) if(($("#group_id").val()==0)||($("#group_id").val()==undefined)){
+			alert("Выберите раздел прайс-листа!");
+			$("#group_id").focus(); 
+			res=res&&false;
+		}
+		
+		
+		
+		if(res) if(($("#producer_id").val()==0)||($("#producer_id").val()==undefined)){
+			alert("Выберите производителя!");
+			$("#producer_id").focus();
+			res=res&&false;
+		}
+		
+		if(res) if(($("#group_id2").val()==0)||($("#group_id2").val()==undefined)){
+			alert("Выберите категорию!");
+			$("#group_id2").focus(); 
+			 res=res&&false;
+			 
+		}
+		
+		
+		
+		
+		%{/if}%
+		
+		if(res){
+		  if($("#to_pl").prop("checked")==false){
+			  res1=window.confirm("Добавить создаваемую позицию в прайс-лист?");
+			  $("#to_pl").prop("checked", res1);
+			  
+			  if(res1){
+				    //выполнить комплекс проверок цены и скидки	
+				 if(res) res=res&&IsCorrectMaxSk();
+				
+				
+				 if(res) res=res&&IsCorrectPrice();
+				 
+				 %{if $position.parent_id==0}%
+				  if(res) res=res&&IsCorrectDeliveryDDPM();
+				   if(res) res=res&&IsCorrectduty_ddpm();
+				 if(res) res=res&&IsCorrectsvh_broker();
+				 if(res) res=res&&IsCorrectCustoms();
+				 %{/if}%
+			   
+			  }
+		  }
+		}
+		
+		return res;
+	});
+	
+		
+	$("#price").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice();
+	 
+	 
+		
+		$("#price_was_changed%{$items[rowsec].pl_id}%%{$prefix}%").val('1');
+		
+		return res;
+		
+	});
+	
+	%{if $position.parent_id==0}%
+	$("#delivery_ddpm").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectDeliveryDDPM();
+	 
+		 
+		return res;
+		
+	});
+	
+	 $("#duty_ddpm").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectduty_ddpm();
+	 
+		 
+		return res;
+		
+	});
+	
+	$("#svh_broker").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectsvh_broker();
+	 
+		 
+		return res;
+		
+	});
+	
+	$("#customs").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectCustoms();
+	 
+		 
+		return res;
+		
+	});
+	 
+	
+	%{/if}%
+	
+	 %{foreach from=$discs item=discs1}%
+	 
+	 //обработчик изменения макс скидки (любой)
+	 $("#dl_value_%{$discs1.id}%").bind("change", function(){
+		 res=true;
+		  res=res&&IsCorrectMaxSk();
+		 
+		  
+		  
+		 return res;
+	 });
+	 $("#dl_rub_or_percent_%{$discs1.id}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectMaxSk();
+		 
+		 
+		return res;
+	 });
+	 
+	
+	 %{/foreach}%
+	
+	
+	
+	
+	
+	
+	$("#currency_id").bind("change", function(){
+		if($("#price_was_changed").val()==1){
+			//сохраняем цену
+			res=true;
+			res=res&&IsCorrectPrice();
+			if(res){
+				 
+				$.ajax({
+					async: true,
+					url: "/js/pricelist.php",
+					type: "POST",
+					data:{
+						"action":"update_price",
+						"id":"%{$position.id}%", 
+						"currency_id": $("#old_currency_id").val(),
+						"price_kind_id":"%{$PRICE_KIND_DEFAULT_ID}%",
+						"price": $("#price").val()
+						
+											},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  
+					  //alert(data);
+					},
+					error: function(xhr, status){
+						//alert("Ошибка выбора подгрупп.");	
+					}	
+				});
+				
+			}else{
+				$("#currency_id").val($("#old_currency_id").val());	
+				return false;
+			}
+		}
+		
+		//получить новую цену и пересчитать price_f
+		$.ajax({
+		  async: true,
+		  url: "/js/pricelist.php",
+		  type: "POST",
+		  data:{
+			  "action":"load_price",
+			  "id":"%{$position.id}%", 
+			  "currency_id": $("#currency_id").val(),
+			  "price_kind_id":"%{$PRICE_KIND_DEFAULT_ID}%"
+							  },
+		  beforeSend: function(){
+			  $("#old_currency_id").val($("#currency_id").val()); 
+			  $("#price").prop("disabled", true); 
+		  },
+		  success: function(data){
+			
+			//alert(data);
+			$("#price").val(data);
+			$("#price").prop("disabled", false);
+			 
+			//alert(data);
+		  },
+		  error: function(xhr, status){
+			  //alert("Ошибка выбора подгрупп.");	
+		  }	
+	  });
+		//
+	});
+	
+	
+});
+</script>
+
+ 
+<p />
+<br />
+ 
+<form action="ed_pl_pos_load_simple.php" method="post" enctype="multipart/form-data">
+	<h2>Импорт опций</h2>
+	<input type="hidden" name="action" value="1" />
+	<input type="hidden" name="id" value="%{$position.id}%" />
+    <input type="hidden" name="currency_id" value="2" />
+    <input type="hidden" name="price_kind_id" value="3" />
+	
+	<input type="file" name="file" />
+    <br />
+
+    <input type="submit" value="Загрузить опции..." />
+</form>
+ 

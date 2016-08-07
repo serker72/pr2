@@ -1,0 +1,235 @@
+<script type="text/javascript">
+	
+	
+	
+	
+	
+	function rebuild(){
+	    var selected_supplier_id=0;
+		var res=true;
+		$.each($("input[id^=supplier_]:checked"),function(k,v){
+			
+			
+			if($("#is_confirmed_"+$(v).val()).val()==0){
+			  alert("Для выбора контрагента "+$("#opf_name_"+$(v).val()).html()+" "+$("#full_name_"+$(v).val()).html()+" необходимо утвердить заполнение его карты.");
+			  res=res&&false;  
+			}
+			
+			selected_supplier_id=$(v).val();
+		});
+		
+		 
+	  //внести выбранных поставщиков в карту....
+	   if(res) {
+			 $("#city_id_string").val("-");  
+			 $("#city_id").val(0);  
+			
+			$("#supplier_id").val(selected_supplier_id);
+			$.ajax({
+				async: true,
+				url: "/js/mission.php",
+				type: "POST",
+				data:{
+					"action":"transfer_suppliers",
+					"selected_supplier_id":selected_supplier_id
+				   
+				},
+				beforeSend: function(){
+				 // $("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+				},
+				success: function(data){
+					
+				  $("#supplier_id_string").val(data);
+				  
+				  //подгрузить город....
+				  //взять первый!
+					$.ajax({
+						async: true,
+						url: "/js/mission.php",
+						type: "GET",
+						dataType:"json",
+						data:{
+							"action":"load_city",
+							"selected_supplier_id":selected_supplier_id
+						},
+						beforeSend: function(){
+						  //alert("Загрузка реквизитов.");
+						},
+						success: function(data,l,m){
+							//alert(data);
+						  $("#city_id_string").val(data.txt);  
+						  $("#city_id").val(data.id);  
+						  
+						},
+						error: function(xhr, status){
+						  // alert("Ошибка загрузки реквизитов.");	
+						}	 
+					  });
+				  
+				  
+				},
+				error: function(xhr, status){
+					alert("Ошибка загрузки контрагентов.");	
+				}	 
+			});
+			
+			
+		
+			$("#supplier_dialog").dialog("close"); 
+	   }
+	}
+$(function(){
+	
+	
+	
+	
+	$("#supplier_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 720,
+		height: 490,
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#selectSupplier").bind("click",function(){
+		
+		
+		$.ajax({
+					  async: true,
+					  url: "/js/mission.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_suppliers",
+						  "selected_supplier_id": $("#supplier_id").val()
+						  
+					  },
+					  beforeSend: function(){
+						$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#suppliers_found").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+					  }	 
+				  });
+		
+		$("#supplier_dialog").dialog("open");
+		
+	});
+	
+	$("#clearSupplier").bind("click",function(){
+		 $("#city_id_string").val("-");  
+		 $("#city_id").val(0);
+		 $("#supplier_id").val(0);  
+		 $("#supplier_id_string").val("-");
+	});
+	
+	
+	
+	 
+});
+</script>
+
+<div id="supplier_dialog" title="Выберите контрагента">
+
+
+
+    
+    
+    
+
+<div id="suppliers" style="overflow:auto; width: 680px; height:420px;"  > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        <td>
+        <input id="find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+       
+        <td>
+        <input id="find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_legal_address" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        <script type="text/javascript">
+		$(function(){
+			$("#doFind").bind("click",function(){
+				ret=true;
+				  
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/mission.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_suppliers",
+						  
+						  "code":$("#find_code").attr("value"),
+						
+						  "full_name":$("#find_full_name").attr("value"),
+						  "inn":$("#find_inn").attr("value"),
+						  "kpp":$("#find_kpp").attr("value"),
+						  "legal_address":$("#find_legal_address").attr("value")
+						  
+					  },
+					  beforeSend: function(){
+						$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#suppliers_found").html(data);
+						
+					  },
+					  error: function(xhr, status){
+						  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+					  }	 
+				  });
+				  
+				  
+				
+				return ret;
+			});
+		});
+		</script>
+        </td>
+    </tr>
+    <tbody id="suppliers_found">
+   	%{include file="mission/suppliers_list.html" pos=$suppliers}%
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>

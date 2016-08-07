@@ -1,0 +1,24 @@
+%{foreach from=$vyh_dates item=d}%
+<tr id="vyh_dates_row_%{$d.id}%">
+	<td>%{$d.pdate}%
+    <input id="new_vyh_date_pdate_%{$d.id}%" name="new_vyh_date_pdate_%{$d.id}%" type="hidden" value="%{$d.pdate}%" />
+    </td>
+    
+    <td>%{$d.w_day}%
+    
+    </td>
+    <td>
+    %{$d.time_from_h}%:%{$d.time_from_m}% - 
+    %{$d.time_to_h}%:%{$d.time_to_m}%
+     <input id="new_vyh_date_time_from_h_%{$d.id}%" name="new_vyh_date_time_from_h_%{$d.id}%" type="hidden" value="%{$d.time_from_h}%" />
+      <input id="new_vyh_date_time_from_m_%{$d.id}%" name="new_vyh_date_time_from_m_%{$d.id}%" type="hidden" value="%{$d.time_from_m}%" />
+       <input id="new_vyh_date_time_to_h_%{$d.id}%" name="new_vyh_date_time_to_h_%{$d.id}%" type="hidden" value="%{$d.time_to_h}%" />
+        <input id="new_vyh_date_time_to_m_%{$d.id}%" name="new_vyh_date_time_to_m_%{$d.id}%" type="hidden" value="%{$d.time_to_m}%" />
+    </td>
+    <td width="24">
+    %{if $can_modify}%
+    <a href="#"  data-comment="удалить дату работы" onClick="if(window.confirm('Вы действительно хотите удалить дату работы в выходные?')) $('#vyh_dates_row_%{$d.id}%').remove(); return false;" class="reestr_delete16 reestr_button16"></a> 
+    %{/if}%
+           </td>
+</tr>
+%{/foreach}%

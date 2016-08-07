@@ -1,0 +1,112 @@
+<html>
+<head>
+ 
+
+</head>
+<body >
+ 
+
+<style>
+div{
+	font-family:"Times New Roman", Times, serif;
+	font-size:12pt;
+	 
+}
+p{font-size:14pt; font-family:"Times New Roman", Times, serif;}
+h1{
+	text-align:center;
+	font-family:"Times New Roman", Times, serif;
+}
+</style>
+
+
+<table width="800" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="*">
+
+<div style="float:right;">
+
+<div>
+Генеральному директору %{$org.opf}% «%{$org.full_name}%»<br />
+
+%{$gen_dir.name_s}%
+ </div>
+<div>
+от <div style=" display:inline-block; width:250px; border-bottom:1px solid black; margin-bottom:0px;">%{$created_by_print}%</div>   
+</div>
+
+                                      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <small>(Ф.И.О., должность)</small>
+
+
+                                      
+<div>
+&nbsp;&nbsp;&nbsp;<div  style=" display:inline-block; width:250px; border-bottom:1px solid black;">%{$created_by_pos_print}%</div>
+</div>
+
+</div>
+
+ 
+<br clear="all" />
+
+<br />
+<br />
+<br />
+
+
+
+ <h1>Заявление</h1>
+
+
+
+
+<p>
+Прошу  предоставить  мне  другой день отдыха 
+
+%{foreach from=$vyh_otp_dates item=dt name=otp}%
+<nobr><u>%{$dt.pdate}%</u>%{if !$smarty.foreach.otp.last}%,</nobr> %{else}%</nobr>%{/if}%
+%{/foreach}%
+
+за ранее отработанное время 
+
+%{foreach from=$vyh_dates item=dt name=work}%
+<nobr><u>%{$dt.pdate}% с %{$dt.time_from_h}%:%{$dt.time_from_m}% по %{$dt.time_to_h}%:%{$dt.time_to_m}%</u>%{if !$smarty.foreach.work.last}%,</nobr> %{else}%</nobr>%{/if}%
+%{/foreach}% 
+
+%{if $claim.vyh_reason_id==2}%
+ (командировка № %{$sched.code}%)
+ 
+%{elseif $claim.vyh_reason_id==4}%
+ (встреча № %{$sched.code}%) 
+
+%{else}% 
+(причина: %{$claim.vyh_reason}%)
+%{/if}%
+ 
+<!-- причина работы: %{$vyh_reason_name.name}% 
+%{if $claim.vyh_reason_id==3}%
+ (%{$claim.vyh_reason}%)
+%{/if}%.-->
+
+
+</p>
+
+%{if $claim.wo_instead==0}%
+<p>
+На время моего отсутствия мои обязанности будет выполнять <u>%{$claim.instead_string}%</u>
+</p>
+%{/if}%
+
+
+ %{include file="petition/sign_block.html"}%
+
+
+
+ 
+ 
+   
+</td>
+</tr>
+</table>  
+
+</body>
+</html>

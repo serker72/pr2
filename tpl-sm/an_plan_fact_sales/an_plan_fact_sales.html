@@ -1,0 +1,348 @@
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+/*
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate1%{$prefix}%").datepicker();
+	$("#pdate2%{$prefix}%").datepicker();
+	*/
+	touchScroll('supplier_cities');
+	
+	$("#month%{$prefix}%").bind("click", function(){
+		
+		if($("#month%{$prefix}% option:selected").val()==0){
+			
+			$("#month%{$prefix}% option[value!=0]").prop("selected", true);
+			$("#month%{$prefix}% option[value=0]").prop("selected", false);
+			
+		}
+	});
+	$("#month%{$prefix}%").bind("change", function(){
+		
+		if($("#month%{$prefix}% option:selected").val()==0){
+			
+			$("#month%{$prefix}% option[value!=0]").prop("selected", true);
+			$("#month%{$prefix}% option[value=0]").prop("selected", false);
+			
+		}
+	});
+	
+	
+	$("#department_id%{$prefix}%").bind("click", function(){
+		
+		if($("#department_id%{$prefix}% option:selected").val()==0){
+			
+			$("#department_id%{$prefix}% option[value!=0]").prop("selected", true);
+			$("#department_id%{$prefix}% option[value=0]").prop("selected", false);
+			
+		}
+	});
+	$("#department_id%{$prefix}%").bind("change", function(){
+		
+		if($("#department_id%{$prefix}% option:selected").val()==0){
+			
+			$("#department_id%{$prefix}% option[value!=0]").prop("selected", true);
+			$("#department_id%{$prefix}% option[value=0]").prop("selected", false);
+			
+		}
+	});
+	
+	
+	
+	function split( val ) {
+			return val.split( /;\s*/ );
+		}
+		function extractLast( term ) {
+			return split( term ).pop();
+		}
+
+		$( "#eq_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_plan_fact_sales.php?action=load_eq", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+		
+		
+		$( "#user_name%{$prefix}%" )
+			// don't navigate away from the field on tab when selecting an item
+			.bind( "keydown", function( event ) {
+				if ( event.keyCode === $.ui.keyCode.TAB &&
+						$( this ).data( "autocomplete" ).menu.active ) {
+					event.preventDefault();
+				}
+			})
+			.autocomplete({
+				source: function( request, response ) {
+					$.getJSON( "/js/an_plan_fact_sales.php?action=load_user", {
+						term: extractLast( request.term )
+					}, response );
+				},
+				search: function() {
+					// custom minLength
+					var term = extractLast( this.value );
+					if ( term.length < 2 ) {
+						return false;
+					}
+				},
+				focus: function() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function( event, ui ) {
+					var terms = split( this.value );
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push( ui.item.value );
+					// add placeholder to get the comma-and-space at the end
+					terms.push( "" );
+					this.value = terms.join( "; " );
+					return false;
+				}
+			});
+			
+			
+			
+	
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#cccccc;
+}
+.blacktable th.main{
+	background-color:#e5edf0;
+}
+.blacktable th.contract, .blacktable  td.contract{
+	background-color:#eee;
+	font-weight:bold;
+}
+</style>
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get">
+<input type="hidden" name="print" value="0" id="print" />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" id="sortmode%{$prefix}%" />
+
+
+<div class="report_filter_right">
+	
+    
+	<div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+    <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub%{$prefix}%"  />
+    </div>
+    
+    <a href="%{$pagename}%?doSub%{$prefix}%=1"  class="reestr_zoom_deselect reestr_right_button24"  data-comment="Сбросить фильтры"  ></a>
+	
+  
+
+ %{if $can_print}%
+  %{section name=rowsec loop=$items}%%{/section}%
+  
+  <a href="#" id="print_table" class="reestr_print reestr_right_button24"  data-comment="Печать отчета"></a>
+  
+  
+  
+ 
+  
+  <script type="text/javascript">
+  $(function(){
+	 
+	  $("#print_table").bind("click",function(){
+		
+		var month='';
+		$("#month%{$prefix}% option:selected").each(function(index, el) {
+            month=month+'&month%{$prefix}%[]='+$(el).val();
+        });
+		
+		var departments='';
+		$("#department_id%{$prefix}% option:selected").each(function(index, el) {
+            departments=departments+'&department_id%{$prefix}%[]='+$(el).val();
+        });
+		
+		
+		
+		//city_selected_1776_1
+		var city_selected='';
+		$("input[id^=city_selected_]").each(function(index, el) {
+            city_selected=city_selected+'&city_selected_'+$(el).val()+'%{$prefix}%='+$(el).val();
+        });
+		
+		
+		supplier_is_new=0;
+		if($("#supplier_is_new%{$prefix}%").prop("checked")) supplier_is_new=1;
+	 	
+		zc=window.open('%{$pagename}%?tab_page=1&print='+'1'+
+						/*'&department_id%{$prefix}%='+$("#department_id%{$prefix}%").val()+*/
+						departments+
+						'&currency_id%{$prefix}%='+$("#currency_id%{$prefix}%").val()+
+						'&year%{$prefix}%='+$("#year%{$prefix}%").val()+
+						month+
+						'&user_name%{$prefix}%='+encodeURI($("#user_name%{$prefix}%").val())+
+						 
+						
+						'&doSub%{$prefix}%=1', 'an_plan_fact_sales','width=1100,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+		 return false; 
+	  });
+	  
+  });
+  </script>
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24"  data-comment="Печать отчета"></a>
+ %{/if}%
+
+	
+      %{include file="every_help_dialog.html" filename="an_pf_base.html" description="Отчет План/факт продаж  (сводный)"  prefix=$prefix style="display:inline-block; margin-right:0px;" is_right=true}%
+
+
+
+</div>
+
+<div class="report_filter_left">
+
+  <div style="float:left; margin-right:20px;">
+      <h3>Общие поля:</h3>
+      
+      <div style="float:left; margin-right:10px;">
+          
+         
+          
+          <div class="report_filter" style="width:195px;">
+
+          <div style="float:left; margin-right:10px;">
+           
+          <label for="currency_id%{$prefix}%">Валюта:</label><br />
+          <select name="currency_id%{$prefix}%" id="currency_id%{$prefix}%" style="width:75px;">
+          %{foreach from=$currencies item=pk}%
+              <option value="%{$pk.id}%" %{if $pk.id==$currency_id}% selected="selected"%{/if}%>%{$pk.signature}%</option>
+            %{/foreach}%
+          </select>	
+          </div>
+          
+          <div style="float:left; margin-right:10px;">
+          <label for="year%{$prefix}%">Год:</label><br />
+          <select name="year%{$prefix}%" id="year%{$prefix}%" style="width:65px;">
+           %{foreach from=$years item=pk}%
+              <option value="%{$pk}%" %{if $pk==$year}% selected="selected"%{/if}%>%{$pk|escape}%</option>
+            %{/foreach}%
+          </select>	
+          </div>  
+          </div>
+          
+          <br clear="all" />
+           
+          
+           <div class="report_filter" style="height:200px;">
+
+           <label for="department_id%{$prefix}%[]">Отдел: </label> <small><em>нажмите и удерживайте Ctrl<br />
+  
+  для выбора нескольких отделов </em></small><br />
+          <select name="department_id%{$prefix}%[]" id="department_id%{$prefix}%" style="width:150px;" multiple="multiple" size="8">
+          <option value="0" %{if $department_id==0}% selected="selected"%{/if}%>-все-</option>
+           %{foreach from=$departments item=pk}%
+              <option value="%{$pk.id}%" %{if $pk.is_selected}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+            %{/foreach}%
+          </select>
+          </div>
+          
+      
+      </div>
+      
+      <div class="report_filter" style="height:315px;">
+
+       <label for="month%{$prefix}%">Месяц:</label>
+          <small><em>нажмите и удерживайте Ctrl <br />
+          для выбора нескольких месяцев</em></small>
+       
+       <br />
+      <select name="month%{$prefix}%[]" id="month%{$prefix}%" style="width:150px;" multiple="multiple" size="13">
+           <option value="0" %{if $month==0}% selected="selected"%{/if}%>-все-</option>
+           %{foreach from=$monthes item=pk}%
+              <option value="%{$pk.no}%" %{if $pk.is_selected}% selected="selected"%{/if}%>%{$pk.name|escape}%</option>
+            %{/foreach}%
+      </select>	
+      </div>
+  
+      <div class="report_filter">
+
+    
+      <label for="user_name%{$prefix}%">Сотрудник:</label><br />
+      <input id="user_name%{$prefix}%" name="user_name%{$prefix}%" type="text" size="40" maxlength="512" value="%{$user_name}%" style="width:300px;" />
+      </div>
+  
+  </div>
+
+
+
+</div>
+
+
+
+ 
+
+
+
+
+
+<br clear="all" />
+<p />
+
+
+ 
+
+
+
+
+
+
+</form>
+
+<br />
+
+
+%{if $do_it}%
+%{include file="an_plan_fact_sales/an_plan_fact_sales_table.html"}%
+%{/if}%
+
+
+
+
+

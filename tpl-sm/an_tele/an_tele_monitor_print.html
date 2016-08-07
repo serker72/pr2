@@ -1,0 +1,62 @@
+<h1>Отчет Что мониторить?</h1>  
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<!--<div style="float:left; margin-right:20px;     overflow:hidden;">
+   
+   
+    
+    
+     <strong>Период:</strong><br>
+
+     с:&nbsp; %{$pdate_1}% 
+     &nbsp;&nbsp;
+    по:&nbsp; %{$pdate_2}% 
+    
+    </div>
+     -->
+     
+        
+   
+     
+    
+      %{if $has_1==1}%
+  <div style="float:left; margin-right:20px;     overflow:hidden;">
+   
+    
+   <strong>По виду оборудования</strong>
+    
+    </div>
+    %{/if}%
+    
+    
+    %{if $has_2==1}%
+  <div style="float:left; margin-right:20px;     overflow:hidden;">
+    
+    
+  	<strong>По контрагенту</strong>
+    
+    </div>
+    
+     %{/if}%
+    
+
+
+</div>
+
+
+
+
+ 
+
+<br clear="all" />
+<p /> 
+ 
+
+%{if $do_it}%
+%{include file="an_tele/an_tele_monitor_table.html"}%
+%{/if}%
+
+
+
+
+

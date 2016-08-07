@@ -1,0 +1,101 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Тендер</th>
+   <th>Статус</th>
+   <th>Название</th>
+   <th>Срок подачи заявок</th>
+   <th width="200"></th>
+   <th width="200"></th>
+  
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="tedner_remind_id_%{$item.id}%" value="%{$item.id}%" />
+          <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td>
+%{$item.status_name}%
+</td>
+
+<td>
+%{$item.topic}%
+</td>
+
+<td width="80"> 
+%{$item.pdate_claiming}% %{$item.ptime_claiming}%
+</td>
+
+<td width="200">         
+         <label for="tedner_remind_mode_%{$item.id}%_0">Да, подтверждаю работу</label>
+         
+         
+         <input type="radio" name="tedner_remind_mode_%{$item.id}%" id="tedner_remind_mode_%{$item.id}%_0" value="0">
+
+         <div id="tedner_remind_results_%{$item.id}%" style="display:none;">
+	         
+             <br>
+    
+             <label for="tedner_remind_comment_%{$item.id}%"><strong>Комментарий:</strong></label><br>
+    
+             <textarea cols="73" rows="5" id="tedner_remind_comment_%{$item.id}%" style="width:100%; height:70px;"></textarea><br><br>
+
+             
+            
+            
+         
+         </div>
+         
+       
+</td>
+<td width="200">
+        <label for="tedner_remind_mode_%{$item.id}%_1">Нет, тендер упущен</label>
+         
+         
+         <input type="radio" name="tedner_remind_mode_%{$item.id}%" id="tedner_remind_mode_%{$item.id}%_1" value="1">
+
+         
+          
+         
+             
+</td> 
+
+ 
+    
+    
+<td width="24">
+ <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 
+<script>
+$(function(){
+	
+	 
+		
+		$("input[id^=tedner_remind_mode_]").bind("change", function(){
+			name=$(this).attr("name");
+			id=name.replace(/tedner_remind_mode_/,'');
+			
+			
+			//alert($("input[name=tedner_remind_status_id_"+id+"]:checked").val());
+			 
+			
+			if($("input[name=tedner_remind_mode_"+id+"]:checked").val()==0){
+				$("#tedner_remind_results_"+id).show();
+			}else{
+				$("#tedner_remind_results_"+id).hide();
+			}
+		});
+		
+		 
+});
+</script>

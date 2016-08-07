@@ -1,0 +1,41 @@
+ 
+    
+     
+%{section name=rowsec loop=$items}%
+<tr align="left" valign="top" >
+    	<td   >
+        
+        <input type="radio" id="main_deps_%{$items[rowsec].id}%" name="main_deps" value="%{$items[rowsec].id}%" %{if $items[rowsec].id==$current_branch}% checked="checked"%{/if}% />
+       
+ 
+
+
+<input type="text" size="60" maxlength="255" id="edit_main_deps_%{$items[rowsec].id}%" value="%{$items[rowsec].name|escape:"html"}%" style="width:600px; background-color:silver;" />
+ 
+
+ 
+ 
+ 
+ 
+        </td>
+        
+       
+      
+        <td width="96">
+        
+        
+        
+         %{if $can_edit}% 
+        
+           
+		 <a href="#" onClick="edit_main_dep('%{$items[rowsec].id}%'); return false;"  class="reestr_edit16 reestr_button16" data-comment="Редактировать "> </a>
+          <a href="#" onClick="del_main_dep('%{$items[rowsec].id}%'); return false;" class="reestr_delete16 reestr_button16" data-comment="Удалить "></a>    
+	 
+   
+        %{/if}%
+      
+        </td>
+</tr>
+ 
+%{/section}%    
+ 

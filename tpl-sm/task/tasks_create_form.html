@@ -1,0 +1,306 @@
+<script type="text/javascript" src="/js/jquery.maskedinput-1.3.min.js"></script>
+<script type="text/javascript" src="/js/touch.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#task_pdate").datepicker();
+	$("#task_ptime").mask("99:99");
+	touchScroll('suppliers_list');
+	
+	
+	touchScroll('users_list');
+	
+	try{
+	  if(isTouchDevice()){
+		/*$("#sce_items").css("width","450px");
+		$("#sce_items").css("height","300px");		    
+		$("#sce_items").css("overflow","auto");*/
+		touchScrollXY('suppliers');	
+		touchScrollXY('users');		  
+	  }
+	}catch(e){}
+	
+	
+});
+</script>
+ %{include file="every_help_dialog.html" filename="task_create.html" prefix="" description="Информация о создании задачи" style="float:right"}%
+
+<h1>Создание задачи</h1>
+
+
+<form action="task_create.php" method="post" id="crea_form">
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="task_pdate">
+Предельный срок<br />
+ исполнения:
+</label><br />
+
+<input type="text" value="%{$now}%" id="task_pdate" name="task_pdate" size="10" maxlength="10" />
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+  <div id="div_task_ptime_show" ><br />
+  <br />
+  
+  <a href="#" id="a_task_ptime_show">уточните время исполнения</a>
+  </div>
+
+  <div id="div_task_ptime" style="display:none;">
+  
+  <label for="task_ptime">
+  <br />
+	Время исполнения:
+  </label><br />
+  
+  <input type="hidden" value="0" id="do_time" name="do_time" size="5" maxlength="5" />
+  <input type="text" value="" id="task_ptime" name="task_ptime" size="5" maxlength="5" />
+  &nbsp;
+  
+  <a href="#" id="a_task_ptime_hide">скрыть время исполнения</a>
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){
+	$("#a_task_ptime_show").bind("click", function(){
+		$("#div_task_ptime").css("display", "block");
+		$("#div_task_ptime_show").css("display", "none");
+		$("#do_time").val(1);
+		return false;
+	});
+	$("#a_task_ptime_hide").bind("click", function(){
+		$("#div_task_ptime").hide();
+		$("#div_task_ptime_show").show();
+		$("#do_time").val(0);
+		return false;
+	});
+});
+</script>
+
+<br clear="all" />
+<p />
+
+
+
+
+
+
+
+
+<label for="kind_id">Вид задачи:</label><br />
+<select name="kind_id" id="kind_id">
+%{section name=rowsec loop=$items}%
+  <option value="%{$items[rowsec].id}%">%{$items[rowsec].name|escape:"html"}%</option>
+%{/section}%
+</select>
+<p />
+
+
+<strong>Контрагенты:</strong>
+<input type="button" value="Выбрать..." id="selectSupplier" />
+<div id="suppliers_list" style="border:1px solid silver; width:600px; height:70px; overflow:auto;">
+      <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+        <th scope="col" width="24"></th>
+    </tr>
+   
+    
+    <tbody id="suppliers_in_card"> 
+    </tbody>
+    </table> 
+</div>
+
+%{include file="task/supplier_actions.html"}%
+<p />
+
+
+<strong>Ответственные за исполнение сотрудники:</strong>
+<input type="button" value="Выбрать..." id="selectUser" />
+<div id="users_list" style="border:1px solid silver; width:600px; height:120px; overflow:auto;">
+      <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="60">Логин</th>
+        
+        <th scope="col" width="*">ФИО</th>
+        <th scope="col" width="200">Должность</th>
+        <th scope="col" width="50">Карта</th>
+        <th scope="col" width="24"></th>
+       
+    </tr>
+   
+    
+    <tbody id="users_in_card"> 
+    </tbody>
+    </table> 
+</div>
+%{include file="task/user_actions.html"}%
+
+<p />
+
+
+<label for="txt">Описание задачи:</label><br />
+<textarea cols="80" rows="15" name="txt"></textarea>
+<p />
+
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+<script type="text/javascript">
+	CKEDITOR.replace( 'txt',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_mini.js'
+    				  }
+					 );
+	</script>
+
+
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "swfupl-js/upload_file_task.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%"
+				},
+				file_size_limit : "192 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите файл...</span>',
+				button_width: 130,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload2.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+
+<div id="uploaded_files">
+	
+</div>
+
+<strong>Приложите файл:</strong>
+
+
+
+<div class="fieldset flash" id="fsUploadProgress">
+			<span class="legend"></span>
+</div>
+<div id="divStatus"></div>
+<div>
+				<span id="spanButtonPlaceHolder"></span>
+                
+                <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+
+<br />
+<em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  				
+</div>
+
+
+<p />
+
+
+<input type="submit" value="Создать задачу" name="makeOrder" />
+<p />
+
+<input type="button" value="Отменить задачу" name="cancelOrder" onclick="location.href='tasks.php';" />
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+	
+	  if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 5 ){
+		  alert("Пожалуйста, добавьте описание к задаче!\nБез описания создание задачи невозможно.");
+		  CKEDITOR.instances.txt.focus();
+		  return false;
+	  }
+	  
+	  
+	  //д.б. выбран хотя бы 1 ответственный!
+	  if($("input[id^=user_id_]").length==0){
+		   alert("Пожалуйста, выберите хотя бы одного ответственного за исполнение сотрудника!\nБез выбора ответственных сотрудников создание задачи невозможно.");
+		  
+		  return false;
+	  }
+	 
+	
+	});
+});
+</script>

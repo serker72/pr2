@@ -1,0 +1,121 @@
+
+
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	 
+    	
+    <th scope="col" width="40">
+    Номер 
+    %{if $print==0}%   
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=1"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=0"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    
+    <th scope="col" width="40">
+    Код позиции 
+    %{if $print==0}%   
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=3"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=2"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+     <th scope="col" width="100">
+  	Наименование
+    %{if $print==0}%   
+    <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=5"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=4"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+    </th>
+    
+    <th scope="col" width="60">
+  	Произво-дитель
+   
+    </th>
+    
+    <th scope="col" width="60">
+  	Раздел/ категория
+   
+    </th>
+    
+      <th scope="col" width="40">
+  Дата
+  %{if $print==0}%   
+  <div class="sort_dir">
+    <a href="%{$link}%&sortmode%{$prefix}%=7"><img src="/img/up.gif" border="0" alt="" width="11" height="16" /></a>
+    <a href="%{$link}%&sortmode%{$prefix}%=6"><img src="/img/down.gif" border="0" alt="" width="11" height="16" /></a>
+    </div>
+    %{/if}%
+     </th>
+    
+     <th scope="col" width="60">
+  Действие
+     </th>
+    
+  <th scope="col" width="*">
+  Установленное значение
+     </th>
+      <th scope="col" width="100">
+ Внес изменения
+     </th>
+     
+  
+</tr>
+
+</thead>
+
+%{section name=rowsec loop=$items}%
+<tr align="center" valign="top" class="equip">
+    <td width="40"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.pos_id}%</td>
+    <td width="40"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.code}%</td>
+    <td width="100"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.name}%</td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.producer_name}%</td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.group_name}%</td>
+    <td width="40"  style="color:%{$items[rowsec].color}%;"> </td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;"> </td>
+    <td width="*"  style="color:%{$items[rowsec].color}%;"> </td>
+    <td width="100"  style="color:%{$items[rowsec].color}%;"> </td>
+</tr>
+%{foreach from=$items[rowsec].items item=item}%
+<tr align="left" valign="top">
+	 <td width="40"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.pos_id}%</td>
+    <td width="40"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.code}%</td>
+    <td width="100"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.name}%</td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.producer_name}%</td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;">%{$items[rowsec].obor.group_name}%</td>
+
+	 <td width="40"  style="color:%{$items[rowsec].color}%;">%{$item.pdate}%</td>
+    <td width="60"  style="color:%{$items[rowsec].color}%;">%{$item.description}%</td>
+    <td width="*"  style="color:%{$items[rowsec].color}%;">%{$item.value}% </td>
+    <td width="100"  style="color:%{$items[rowsec].color}%;">
+    %{if $print==0}%   
+    <a href="info.html?name=%{$item.manager_login}%" target="_blank">
+    %{/if}%
+    %{$item.manager_name}% (%{$item.manager_login}%)
+    %{if $print==0}%   
+    </a>
+    %{/if}%
+     </td>
+</tr>
+%{/foreach}%
+%{/section}%
+
+
+</table>
+<!--
+<strong>Итого за период с %{$pdate1}% по %{$pdate2}% командировано сотрудников: %{$count_of_users}% в %{$count_of_cities}% городов к %{$count_of_suppliers}% контрагентам.</strong>
+<br />
+-->
+
+
+
+

@@ -1,0 +1,49 @@
+ 
+%{section name=supsec loop=$items}%
+<tr align="center" valign="top">
+	<td width="80" class="bl3 bt1 %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+    
+     
+     
+     	 %{$items[supsec].code}% 
+    </td>
+    
+     
+    
+    <td align="left" width="*" class="bl3 bt1  %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+       %{$items[supsec].name}%
+    
+    </td>
+    
+     <td align="right" width="100" class="bl3 bt1  %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+      	 %{$items[supsec].cost_wo_nds}% 
+    
+    </td>
+      <td  align="right" width="100" class="bl3 bt1  %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+       %{$items[supsec].nds}% 
+    
+    </td>
+     <td  align="right" width="100" class="bl3 bt1  %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+       %{$items[supsec].nds_cost}% 
+    
+    </td>
+      <td  align="right" width="100" class="bl3 bt1  %{if $smarty.section.supsec.last}% bold bb3%{else}% bb1 %{/if}% br3">
+      %{$items[supsec].cost}% 
+        
+    </td>
+    
+      <td width="100" class="bl3 bt1  %{if $smarty.section.supsec.last}%  bb3%{else}% bb1 %{/if}% br3">
+     
+    	 
+         %{$items[supsec].notes|escape:"html"}%
+    
+    </td>
+    
+    
+   </tr> 
+%{/section}%
+ 
+ 
+ 
+ 
+

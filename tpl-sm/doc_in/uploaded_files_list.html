@@ -1,0 +1,5 @@
+%{foreach from=$items item=file}%
+
+%{include file="doc_out/uploaded_task_file.html" factname=$file.filename realname=$file.orig_name}%
+
+%{/foreach}%

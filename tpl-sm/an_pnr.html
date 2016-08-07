@@ -1,0 +1,21 @@
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0">
+<thead>
+	<tr align="center" valign="top">
+    	<th width="100">Производитель</th>
+        <th width="200">Категория</th>
+        <th width="400">Станок</th>
+        <th width="100">ПНР</th>
+    </tr>
+</thead>
+<tbody>
+	%{foreach from=$items item=item}%
+    <tr align="left" valign="top">
+    	<td>%{$item.prod_name}%</td>
+        <td>%{$item.group_name}%</td>
+        <td>%{$item.name}%</td>
+        <td>%{$item.price}% %{$item.signature}%</td>
+    </tr>
+    %{/foreach}%
+</tbody>
+</table>

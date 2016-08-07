@@ -1,0 +1,21 @@
+%{foreach name=af from=$items item=adr}%
+%{if $smarty.foreach.af.first}%
+<h2 style="margin-top:0px;">Контакты контрагента:</h2>
+%{/if}%
+
+%{if $adr.has_hr}%<h2 style="margin-top:0px;">Сотрудники:</h2> %{/if}%
+
+<p>
+<strong>%{$adr.name_s}% %{$adr.position_s}%:</strong><br />
+
+
+
+%{foreach from=$adr.data item=email}%
+<input type="checkbox" value="%{$email.value|escape}%" id="bdr_email_documents_address_%{$email.id}%_%{$adr.id}%">
+<label for="bdr_email_documents_address_%{$email.id}%_%{$adr.id}%">%{$email.value}%</label>
+<br />
+
+%{/foreach}%
+</p>
+
+%{/foreach}%

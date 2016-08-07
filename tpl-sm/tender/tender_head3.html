@@ -1,0 +1,225 @@
+ 
+<div id="tender_remind_gialog3" title="Напоминания о тендерах" style="display:none;">
+	
+    <h2>Внимание! У Вас есть просроченные тендеры!</h2>
+    <br>
+
+    <strong>Подтвердите работу по тендерам!</strong>
+    <br>
+
+	<div id="tender_reminders_block3">
+    
+    	 
+    
+    </div>
+
+
+</div>
+
+<script type="text/javascript">
+function CalcNewTenders3(){
+	 if(_window_is_active)  $.ajax({
+		  async: true,
+		  url: "/js/tender_checknew.php",
+		  type: "GET",
+		  data:{
+			  "action":"calc_new_kind3"
+		  },
+		  beforeSend: function(){
+			 
+		  },
+		  success: function(data){
+			 // alert(data); 
+		  	 if((data>0)&& !$("#tender_remind_gialog3").dialog("isOpen")) $("#tender_remind_gialog3").dialog("open");
+			 else if((data==0) && $("#tender_remind_gialog3").dialog("isOpen"))  $("#tender_remind_gialog3").dialog("close"); 
+			 
+		  },
+		  error: function(xhr, status,error){
+			 // alert(status+error);
+		  },
+		  complete: function(){
+			  
+		  } 
+	  });
+	}
+$(function(){
+	$("#tender_remind_gialog3").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth_no',
+		modal: true,
+		width: 1000,
+		
+		height: 420,
+		 
+		closeOnEscape: false,
+		 
+		 
+		buttons:{
+			"Готово": function(){
+				 
+			
+			
+			var can_ret=true;
+			
+				function doBlink(v){
+			
+					var blr=window.setInterval( function(){
+						$(v).toggleClass("blue");	
+					}, 100);
+					
+					window.setTimeout( function(){
+						window.clearInterval(blr);
+						$(v).removeClass("blue");
+					}, 3000);
+				}
+				
+				//проверка корректности
+				var err_fields=new Array();
+				$.each($("input[id^=tedner_remind_id_]"), function(k,v){
+					
+					id=$(v).val();
+					
+					mode=$("input[name=tedner_remind_mode_"+id+"]:checked").val();
+					
+					
+						
+					
+					
+					if((mode==null)||(mode==undefined)){
+						can_ret=can_ret&&false;
+						err_fields.push($("label[for=tedner_remind_mode_"+id+"_0]"));
+						err_fields.push($("label[for=tedner_remind_mode_"+id+"_1]"));
+					}
+					
+					
+					if(mode==0){
+						//проверять: дату, комеентарий, файлы
+						
+						
+						
+						
+						if(($.trim($("#tedner_remind_comment_"+id).val()).length<10)){
+							//	alert("Укажите комментарий (мин. 10 символов)!");
+								
+							can_ret=can_ret&&false;
+							err_fields.push($("#tedner_remind_comment_"+id));
+							 
+						}
+						
+						 
+						
+					 
+					}
+				});
+				
+				 
+				if(can_ret){
+					
+					 
+					//все ОК, формируем аргументы
+					var data=new Array();
+					$.each($("input[id^=tedner_remind_mode_]:checked"), function(k,v){
+					//	if($(v).val()!=0){
+							id=$(v).attr("name").replace(/tedner_remind_mode_/,'');
+							
+							hashed="";
+							
+							hashed+=id+"/"+$(v).val();
+							
+							if($(v).val()==0){
+								hashed+="/"+$("#tedner_remind_comment_"+id).val();
+								 
+							}
+							
+							//alert(hashed);
+							data.push(hashed);	
+						//}
+						 
+					});
+					//alert(data);
+					//отправляем аргументы
+					$.ajax({
+						  async: false,
+						  url: "/js/tender_checknew.php",
+						  type: "POST",
+						  data:{
+							  "action":"put_statuses3",
+							  "data[]":data
+							  
+						  }/*,
+						  success: function(data){
+							 alert(data); 
+						  }*/
+						 
+					  });
+					
+					$("#tender_remind_gialog3").dialog("close");
+					
+					 
+					
+					 
+				}else {
+					alert("Введите корректные данные в отмеченные поля!");
+					$.each(err_fields, function(k,v){
+						doBlink(v);
+					});
+					 
+				}
+					
+				 
+			 
+				
+				
+			}
+		},
+		open: function( event, ui ) {
+			
+			 
+			//подгрузка новых событий
+			$.ajax({
+			  async: true,
+			  url: "/js/tender_checknew.php",
+			  type: "GET",
+			  data:{
+				  "action":"load_kind3"
+			  },
+			  beforeSend: function(){
+				 $("#tender_reminders_block3").html('<img src="/img/wait.gif"   alt="идет проверка, подождите" />');
+			  },
+			  success: function(data){
+				  $("#tender_reminders_block3").html(data);
+				  
+				  //адаптировать высоту
+				 
+				   max_height=400; min_height=140;
+				 
+				   our_height=parseInt($("#tender_reminders_block3 table").height());
+				    
+				   if(our_height>max_height) our_height=max_height;
+				   if(our_height<min_height) our_height=min_height;
+				   
+				   $("#tender_reminders_block3").css('height', our_height);
+				   
+				   $("#tender_remind_gialog3").dialog( "option", "height", our_height+140);
+				   
+				   
+				 
+			  },
+			  error: function(xhr, status,error){
+				 
+			  },
+			  complete: function(){
+				  
+			  } 
+		  });	
+			
+		}
+		
+	});
+	
+	
+	
+	
+	window.setInterval('CalcNewTenders3()', 60000);
+});
+</script>

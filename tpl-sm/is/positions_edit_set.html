@@ -1,0 +1,477 @@
+<!-- таблица в диалоге -->
+<div id="position_filter_block" %{if $has_filter==false}% style="display:none;"%{/if}%>
+<strong>Поиск позиции</strong><br />
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left">
+      <tr  align="left" valign="top">
+        <td><input type="text" value="" size="40" maxlength="255" id="qry" /></td>
+        <td>
+        <select id="dimension_id" style="width:50px;">
+    %{section name=dimsec loop=$dim}%
+    	<option value="%{$dim[dimsec].id}%" %{if $dim[dimsec].is_current}%selected="selected"%{/if}%>%{$dim[dimsec].name|escape:"html"}%</option>
+    %{/section}%
+    </select></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="length" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="width" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="height" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="weight" /></td>
+        <td><input type="text" size="4" maxlength="255" value="" id="volume" /></td>
+        
+        <td><input type="text" size="4" maxlength="255" value="" id="diametr" /></td>
+      </tr>
+      <tr align="left" valign="top">
+        <td><small>наименование позиции</small></td>
+        <td><small>ед. изм.</small></td>
+        <td><small>Длина, мм</small></td>
+        <td><small>Ширина, мм</small></td>
+        <td><small>Высота/ <br />
+толщина, мм</small></td>
+
+		<td><small>Вес <br />
+1 ед., кг</small></td>
+        <td><small>Объем <br />
+1 ед., м<sup>3</sup></small></td>
+
+        <td><small>Диаметр, мм</small></td>
+      </tr>
+    </table>
+	&nbsp;
+    &nbsp;
+   
+	
+    <table width="*" border="0" cellspacing="3" cellpadding="0" align="left">
+      <tr align="left" valign="top">
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><input type="button" value="Найти" id="doSrch"  /></td>
+        <td width="10"><img src="/img/01.gif" border="0" alt="" width="10" height="24" /></td>
+        <td><a href="#" id="more_info" title=""><img src="/img/icons/help.png" border="0" alt="подсказка" width="24" height="24" /></a></td>
+      </tr>
+    </table>
+
+ 	<div id="positions_dialog_help" title="Информация о поиске позиций номенклатуры">
+    Вы можете выбрать позиции номенклатуры для распоряжения на межсклад одним из следующих способов:<p />
+	
+    <strong>1. По наименованию позиции.</strong> <br />
+	Для этого введите наименование позиции (или его фрагмент) в поле "наименование позиции".<p />
+	
+    <strong>2. По единице измерения.</strong><br />
+	Выберите необходимую единицу измерения из списка "ед. изм.".<p />
+    
+    <strong>3. По свойствам.</strong><br />
+	Укажите значение свойства в его поле. Например, введенное значение
+     200 в поле "Длина, мм" - позволит найти все позиции с длиной 200 мм.<p />
+     
+    <strong>4. По товарной группе.</strong><br />
+    Выберите необходимую товарную группу (и, при необходимости, подгруппу 1 или 2 уровня).
+    
+    <p />
+    Можно сочетать разные фильтры, например, найти все позиции с длиной 200 и высотой 50 мм в определенной товарной группе. 
+    <p />
+    
+    После заполнения хотя бы одного из полей нажмите кнопку <strong>"Найти"</strong>.<br />
+    Под полями будет показан список найденных позиций номенклатуры. Для того, чтобы добавить к распоряжению на межсклад найденные позиции, необходимо в колонке "Количество" указать количество добавляемых позиций.<br />
+	Затем, нажав кнопку <strong>"Добавить выбранное и продолжить поиск"</strong>, Вы можете занести отобранные позиции в распоряжение на межсклад, и остаться в окне поиска позиций.<br />
+	Нажав кнопку <strong>"Добавить выбранное и закрыть"</strong>, Вы добавите отобранные позиции в распоряжение и закроете окно поиска позиций.<br />
+	Кнопка <strong>"Закрыть"</strong> позволяет закрыть окно поиска позиций, не добавляя ничего в распоряжение.
+	
+    
+    </div>
+    
+    <br />
+	
+    
+    <table width="*" border="0" cellspacing="3" cellpadding="0">
+  <tr align="left" valign="top">
+    <td>
+    <select id="tov_grp" style="width:150px;">
+    %{html_options values=$tov_group_ids selected=$tov_group_id output=$tov_group_names}%
+    </select>
+    </td>
+    <td>
+    <select id="group_id2" style="width:150px;">
+    
+    </select>
+    </td>
+    <td>
+    <select id="group_id3" style="width:150px;">
+   
+    </select>
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <small>товарная группа</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;1&nbsp;ур.</small>
+    </td>
+    <td>
+    <small>подгруппа&nbsp;2&nbsp;ур.</small>
+    </td>
+  </tr>
+</table>
+
+    <script type="text/javascript">
+	$(function(){
+		$("#positions_dialog_help").dialog({
+		  autoOpen: false,
+		  modal: true,
+		  width: 600,
+		  height: 450,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#more_info").bind("click", function(){
+			$("#positions_dialog_help").dialog("open");
+			return false;
+		});
+		
+		
+		/*выборка товарной группы*/
+		$("#tov_grp").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#tov_grp").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+					//alert(data);
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		
+		//поиск позиций по филтьру
+		$("#doSrch").bind("click",function(){
+			
+				//получить набор уже набранных позиций:
+			
+				var position_ids=new Array(); var quantities=new Array();
+				
+				$.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+					
+					//вычленить айди позиции, заполнить массивы данными
+					if(value.id.indexOf('new_position_id_')!=-1){
+						//alert(value.id);
+						position_id=value.value;
+						position_ids.push(value.value);
+						quantities.push($("#new_quantity_"+position_id).attr("value"));
+					
+					}
+				});
+				
+				
+				
+				var group_id=0;
+				if($("#group_id3").val()>0) group_id=$("#group_id3").val();
+				else if($("#group_id2").val()>0) group_id=$("#group_id2").val();
+				else if($("#tov_grp").val()>0) group_id=$("#tov_grp").val();
+				
+				var qry=$("#qry").attr("value");
+				var dimension_id=$("#dimension_id").val();
+				var length=$("#length").attr("value");
+				var width=$("#width").attr("value");
+				var height=$("#height").attr("value");
+				var diametr=$("#diametr").attr("value");
+				
+				var weight=$("#weight").attr("value");
+				var volume=$("#volume").attr("value");
+					  
+				
+				
+				$.ajax({
+				  async: true,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"load_positions",
+					  "storage_id":$("#sender_storage_id").attr("value"),
+					  "sector_id":$("#sender_sector_id").attr("value"),
+					  "selected_positions[]":position_ids,
+					  "selected_quantities[]":quantities,
+					  "change_low_mode":$("#change_low_mode").val(),
+					  "is_confirmed":"%{$is_confirmed}%",
+					  "id":$("#id").val(),
+					  
+					  "group_id":group_id,
+					  "qry":$("#qry").attr("value"),
+					  "dimension_id":$("#dimension_id").val(),
+					  "length":$("#length").attr("value"),
+					  "width":$("#width").attr("value"),
+					  "height":$("#height").attr("value"),
+					  "diametr":$("#diametr").attr("value"),
+					  
+					  "weight":$("#weight").attr("value"),
+					  "volume":$("#volume").attr("value")
+					  
+				  },
+				  beforeSend: function(){
+					//alert("Загрузка реквизитов.");
+				  },
+				  success: function(data){
+					$("#positions_dialog_table").html(data);
+					
+					
+					//подставить поля поиска
+					
+					//group_id-?
+					
+					$("#qry").attr("value",qry);
+					$("#dimension_id").val(dimension_id);
+					$("#length").attr("value", length);
+					$("#width").attr("value", width);
+					$("#height").attr("value", height);
+					$("#diametr").attr("value", diametr);
+					  
+					$("#weight").attr("value", weight);
+					$("#volume").attr("value", volume);
+					
+					$("#group_id3").val(group_id);
+					$("#group_id2").val(group_id);
+					$("#tov_grp").val(group_id);
+					  
+				  },
+				  error: function(xhr, status){
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+				
+			  
+			
+		});
+		
+		
+	});
+	</script>
+    
+	<p />
+    
+    
+    <strong>Найденные позиции:</strong><br />
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 1= меняем распоряжение, счет 0=не меняем -->
+<input type="hidden" id="pos_change_low_mode" value="%{$pos_change_low_mode}%" />
+
+<div id="positions_scroll_block" style="overflow:auto; width: 850px; height:420px;"  >
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="24">Код</th>
+    	<th scope="col" width="*">Номенклатура</th>
+        <th scope="col" width="80">Ед. изм.</th>
+       
+        <th scope="col" width="80">Кол-во к перемещению</th>
+        <th scope="col" width="80">Доступное кол-во</th>
+       <th scope="col" width="80">Фактически перемещаемое кол-во</th>
+        
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" >
+    	<td width="24">
+         <span id="val_position_code_%{$pospos[pospossec].position_id}%">%{$pospos[pospossec].position_id|string_format:"%05d"}%</span>
+        </td>
+        <td width="*">
+        <span id="val_position_name_%{$pospos[pospossec].position_id}%">%{$pospos[pospossec].position_name}%</span>
+        <input type="hidden" id="position_id_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].position_id}%" />
+        </td>
+        <td width="80">
+        <span id="val_position_dim_name_%{$pospos[pospossec].position_id}%">%{$pospos[pospossec].dim_name}%</span>
+        <input type="hidden" id="dimension_id_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+       
+        <td width="80">
+       
+        %{if $is_confirmed==0}%
+        <input type="text" id="quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].quantity}%" size="4" maxlength="20" />
+    	%{else}%
+        %{$pospos[pospossec].quantity}%
+        <input type="hidden" id="quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].quantity}%" />
+        %{/if}%
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].max_quantity}%
+        <input type="hidden" id="max_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].max_quantity}%" />
+        
+         <script type="text/javascript">
+		$(function(){
+			
+			function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+			
+			 %{if $is_confirmed==0}%
+			//проверка количества к перемещению
+			$("#quantity_%{$pospos[pospossec].position_id}%").bind("change",function(){
+				ret=true;
+				
+				if($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").length==0){
+					alert("Заполните поле Кол-во к перемещению!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))||(parseFloat($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))<0)){
+					alert("Неверное значение в поле Кол-во к перемещению!");
+					ret=ret&&false;
+				}
+				
+				if(!isNaN($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))&&(parseFloat($("#quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))>parseFloat("%{$pospos[pospossec].max_quantity}%"))){
+					
+					//-alert("Превышено допустимое количество!");
+					
+					alert("Внимание!\nВы превышаете допустимое количество позиции "+$("#val_position_code_%{$pospos[pospossec].position_id}%").html()+" "+$("#val_position_name_%{$pospos[pospossec].position_id}%").html()+".\nДоступно к перемещению: %{$pospos[pospossec].max_quantity}% "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html()+"\nВы ввели "+$("#quantity_%{$pospos[pospossec].position_id}%").val()+" "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html()+"\nПревышение составляет "+roundPlus(parseFloat($("#quantity_%{$pospos[pospossec].position_id}%").val().replace("\,","\."))-parseFloat("%{$pospos[pospossec].max_quantity}%"),3)+" "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html());
+					
+					ret=ret&&false;
+				
+				}
+				
+				
+				if(!ret) {
+					$("#quantity_%{$pospos[pospossec].position_id}%").addClass("wrong");
+					$("#quantity_%{$pospos[pospossec].position_id}%").focus();
+				}else{
+					//peres4et	
+					$("#quantity_%{$pospos[pospossec].position_id}%").removeClass("wrong");
+					//RecalcPrices();
+				}
+				return ret;
+				
+				
+			});
+			%{else}%
+			//проверка фактически перемещаемого количества
+			$("#fact_quantity_%{$pospos[pospossec].position_id}%").bind("change",function(){
+				ret=true;
+				
+				if($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").length==0){
+					alert("Заполните поле Фактически перемещаемое кол-во!");
+					ret=ret&&false;
+					//return false;	
+				}
+				if(isNaN($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))||(parseFloat($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))<0)){
+					alert("Неверное значение в поле Фактически перемещаемое кол-во!");
+					ret=ret&&false;
+				}
+				
+				if(!isNaN($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))&&(parseFloat($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))>parseFloat("%{$pospos[pospossec].max_fact_quantity}%"))){
+					
+					//alert("Превышено допустимое количество!");
+					alert("Внимание!\nВы превышаете допустимое количество позиции "+$("#val_position_code_%{$pospos[pospossec].position_id}%").html()+" "+$("#val_position_name_%{$pospos[pospossec].position_id}%").html()+".\nДоступно к перемещению: %{$pospos[pospossec].max_fact_quantity}%"+" "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html()+"\nВы ввели "+$("#fact_quantity_%{$pospos[pospossec].position_id}%").val()+" "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html()+"\nПревышение составляет "+roundPlus(parseFloat("%{$pospos[pospossec].max_fact_quantity}%")-parseFloat($("#quantity_%{$pospos[pospossec].position_id}%").val().replace("\,","\.")),3)+" "+$("#val_position_dim_name_%{$pospos[pospossec].position_id}%").html());
+					
+					ret=ret&&false;
+				
+				}
+				
+				if(!isNaN($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))&&(parseFloat($("#fact_quantity_%{$pospos[pospossec].position_id}%").attr("value").replace("\,","\."))<parseFloat("%{$pospos[pospossec].min_fact_quantity}%"))){
+					alert("Вы не можете снизить фактически перемещаемое количество позиции "+$("#val_position_code_%{$pospos[pospossec].position_id}%").html()+" "+$("#val_position_name_%{$pospos[pospossec].position_id}%").html()+"!\nМинимальное фактически перемещаемое количество %{$pospos[pospossec].min_fact_quantity}%.\nДля снижения фактически перемещаемого количества удалите распоряжение по списанию.");
+					ret=ret&&false;
+				
+				}
+				
+				
+				if(!ret) {
+					$("#fact_quantity_%{$pospos[pospossec].position_id}%").addClass("wrong");
+					$("#fact_quantity_%{$pospos[pospossec].position_id}%").focus();
+				}else{
+					//peres4et	
+					$("#fact_quantity_%{$pospos[pospossec].position_id}%").removeClass("wrong");
+					//RecalcPrices();
+				}
+				return ret;
+				
+				
+			});
+			
+			%{/if}%
+		});
+		</script>
+        
+        </td>
+        
+        <td width="80">
+        
+        %{if $is_confirmed==0}%
+          %{$pospos[pospossec].fact_quantity}%
+          <input type="hidden" id="fact_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].fact_quantity}%" />
+          <input type="hidden" id="max_fact_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].max_fact_quantity}%" />
+        %{else}%
+        	<input type="text" id="fact_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].fact_quantity}%" size="5" maxlength="20" />
+        
+			<input type="hidden" id="max_fact_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].max_fact_quantity}%" />        
+        %{/if}%
+        
+        
+        <input type="hidden" id="min_fact_quantity_%{$pospos[pospossec].position_id}%" value="%{$pospos[pospossec].min_fact_quantity}%" />
+       <!-- <small>min=%{$pospos[pospossec].min_fact_quantity}%</small>
+        <small>max=%{$pospos[pospossec].max_fact_quantity}%</small>
+        -->
+    	</tr>
+    %{/section}%
+    </tbody>
+    </table>
+    
+</div>

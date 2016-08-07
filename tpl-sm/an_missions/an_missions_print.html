@@ -1,0 +1,125 @@
+<h1>Отчет о командировках</h1>
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+
+%{if $supplier_name!=""}%
+<div style="float:left; margin-right:10px;">
+
+<strong>Название контрагента содержит:</strong><br />
+
+<em>%{$supplier_name}%</em>
+
+</div>
+%{/if}%
+
+
+%{if $city_name!=""}%
+<div style="float:left; margin-right:10px;">
+
+<strong>Город:</strong><br />
+
+<em>%{$city_name}%</em>
+
+</div>
+%{/if}%
+
+
+
+%{if $current_month==1}%
+<div style="float:left; margin-right:10px;">
+<strong>Период</strong><br />
+
+<em>за текущий месяц</em>
+
+</div>
+%{else}%
+<div style="float:left; margin-right:10px;">
+
+ <div style="float:left; margin-right:10px;">
+  <strong>Период:</strong><br />
+  <strong>c:</strong><br />
+
+  <em>%{$pdate1}%</em>
+  </div>
+  
+  <div style="float:left; margin-right:10px;">
+  <br />
+      <strong>по:</strong><br />
+      <em>%{$pdate2}%</em>
+  </div>
+
+
+</div>
+%{/if}%
+
+
+
+<br clear="all" />
+
+
+%{if $manager_name!=""}%
+<div style="float:left; margin-right:10px;">
+
+<strong>Менеджер:</strong><br />
+
+<em>%{$manager_name}%</em>
+
+</div>
+%{/if}%
+
+
+<div style="float:left; margin-right:10px;">
+%{if $only_excess==1 or $only_no_excess==1}%
+	<strong>Вы выбрали:</strong><br />
+
+%{/if}%
+ %{if $only_excess==1}%
+ 
+ <em>Только с перерасходом</em>
+ %{/if}%
+ %{if $only_no_excess==1}%
+<em> Только без перерасхода</em>
+%{/if}%
+
+
+</div>
+
+<br clear="all" />
+
+
+
+<div style="float:left; margin-right:10px;">
+<strong>Статус:</strong><br />
+
+%{if $status_all_5==1}%
+<em>все, кроме "Аннулирована"</em>
+%{else}%
+	<em>%{if $status_id==0}% все командировки%{/if}%
+	 %{if $status_id==1}% создана%{/if}%
+    %{if $status_id==2}% утверждена%{/if}%
+   %{if $status_id==3}% в работе%{/if}%
+  %{if $status_id==4}% выполнена%{/if}%
+   %{if $status_id==5}% аннулирована%{/if}%</em>
+%{/if}%
+
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+%{if $do_it}%
+%{include file="an_missions/an_missions_table.html"}%
+%{/if}%
+
+
+
+
+

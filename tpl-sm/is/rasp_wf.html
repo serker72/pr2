@@ -1,0 +1,114 @@
+%{section name=rowsec loop=$items}%
+    <div class="common_block">
+	 
+     %{if $can_edit}%
+<a href="#" id="delete_%{$word}%_%{$items[rowsec].id}%" title="удалить %{$named}%"><img src="/img/del.gif" width="15" height="15" border="0" alt="" align="right" /></a>        
+    
+    %{/if}%
+    
+    
+    <em>Номер:</em><strong>%{$user_id}%/%{$items[rowsec].id}%</strong>
+    <em>Дата:</em><strong>%{$items[rowsec].pdate}%</strong>
+    %{$items[rowsec].manager_name}% (%{$items[rowsec].manager_login}%)
+    <br />
+
+    
+    <em>Позиции:</em><br />
+  	%{section name=rowsec1 loop=$items[rowsec].positions}%
+    %{$items[rowsec].positions[rowsec1].id|string_format:"%05d"}%
+     %{$items[rowsec].positions[rowsec1].position_name}%
+     %{$items[rowsec].positions[rowsec1].dim_name}%
+     %{$items[rowsec].positions[rowsec1].quantity}%
+    
+    <br />
+
+    
+	%{/section}% 
+  	<br />
+
+
+   
+    </div>
+    %{if $can_edit}%
+    <script type="text/javascript">
+	$(function(){
+		//удаление
+		$("#delete_%{$word}%_%{$items[rowsec].id}%").bind("click",function(){
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/is.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$items[rowsec].id}%",
+						"user_id":"%{$user_id}%"
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  //обновим блок расп.
+					  $.ajax({
+						  async: true,
+						  url: "/js/is.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+							$("#%{$word}%").html('<img src="/img/images/wait.gif" width="32" height="32" alt="пожалуйста, подождите" border="0" />');	
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					  //обновим позиции
+					  if($("#is_confirmed").prop("checked")) isc=1;
+					  else isc=0;
+					 
+					  $.ajax({
+						  async: true,
+						  url: "/js/is.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_positions",
+							  "id":$("#id").val(),
+							  "change_low_mode":$("#change_low_mode").val(),
+							  "is_confirmed":isc
+						  },
+						  beforeSend: function(){
+							$("#positions_wrapper").html('<img src="/img/images/wait.gif" width="32" height="32" alt="пожалуйста, подождите" border="0" />');	
+						  },
+						  success: function(data){
+							$("#positions_wrapper").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		
+	});
+	</script>
+    %{/if}%
+%{/section}%
+%{if $smarty.section.rowsec.total==0}%
+<em>%{$named}% не заданы...</em>
+%{/if}%

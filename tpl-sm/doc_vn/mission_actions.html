@@ -1,0 +1,476 @@
+ 
+
+
+
+<script type="text/javascript">
+$(function(){	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		 
+	$("#find_pdate1").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#find_pdate2").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+	function rebuild(mode){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=mission_radio]:checked").val()==0)||($("input[name=mission_radio]:checked").val()==null)||($("input[name=mission_radio]:checked").val()==undefined)  
+	   
+	   
+	   ){
+	    
+			
+				alert("Выберите командировку!"); 
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+		selected_supplier=$("input[name=mission_radio]:checked").val();
+		$("#sched_id").val(selected_supplier);
+		
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "GET",
+			dataType:"json",
+			data:{
+				"action":"retrieve_mission",
+				
+				"id":selected_supplier
+				
+			},
+			beforeSend: function(){
+			   // $("#supplier_contact_row_"+supplier_id).html('<td colspan=7><img src="/img/wait.gif" width="32" border="0" alt="" height="32" /></td>'); 
+			},
+			success: function(data){
+			   //alert(data);
+			   $("#sched_str").val(data.code);
+			   
+			   $("#pdate_beg").val(data.pdate_beg);
+			   $("#pdate_end").val(data.pdate_end);
+			   $("#ptime_beg_h").val(data.ptime_beg_hr);
+			   $("#ptime_beg_m").val(data.ptime_beg_mr);
+			   $("#ptime_end_h").val(data.ptime_end_hr);
+			   $("#ptime_end_m").val(data.ptime_end_mr);
+			   $("#manager_id").val(data.manager_id);
+			   $("#manager_string").val(data.manager_string);
+			   
+			   PutToTable(0);
+			   
+			   $("#vyh_hd_count").val(data.hd_count);
+			   
+			   if(data.hd_count>0) { 
+			   		$("#vyh_reason").show(); 
+					$("#hd_count").html(data.hd_count);
+					
+			   }else $("#vyh_reason").hide();
+			  
+			},
+			error: function(xhr, status){
+				//$("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+			}	 
+		}); 
+		
+		//города, контрагенты
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"retrieve_mission_cities",
+				
+				"id":selected_supplier
+				
+			},
+			beforeSend: function(){
+			    $("#supplier_cities").html(' <img src="/img/wait.gif" width="32" border="0" alt="" height="32" /> '); 
+			},
+			success: function(data){
+			   //alert(data);
+			   $("#supplier_cities").html(data);
+			   
+			  
+			},
+			error: function(xhr, status){
+				 $("#supplier_cities").html("Ошибка загрузки данных.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"retrieve_mission_suppliers",
+				
+				"id":selected_supplier
+				
+			},
+			beforeSend: function(){
+			    $("#suppliers").html(' <img src="/img/wait.gif" width="32" border="0" alt="" height="32" /> '); 
+			},
+			success: function(data){
+			   //alert(data);
+			   $("#suppliers").html(data);
+			   
+			  
+			},
+			error: function(xhr, status){
+				 $("#suppliers").html("Ошибка загрузки данных.");	
+			}	 
+		});
+		   
+	   
+		  
+		$("#mission_dialog").dialog("close"); 
+	}
+ 
+	
+	
+	
+	
+	$("#mission_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 600,
+		 
+		buttons: {
+			 
+			"Готово": function(){
+				rebuild(0);
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#sched_select").bind("click",function(){
+		 
+		 
+		$("#mission_dialog").dialog("open");
+	});
+	
+	$("#sched_clear").bind("click",function(){
+		$("#sched_id").val('');
+		 $("#sched_str").val('');
+		 
+		 $("#pdate_beg").val('');
+		 $("#pdate_end").val('');
+		 $("#ptime_beg_h").val('');
+		 $("#ptime_beg_m").val('');
+		 $("#ptime_end_h").val('');
+		 $("#ptime_end_m").val('');
+		 $("#manager_id").val('');
+		 $("#manager_string").val('');
+		 $("#supplier_cities").empty();
+		 $("#suppliers").empty();
+		 
+		 PutToTable(0);
+		 
+		$("#vyh_reason").hide();
+		$("#vyh_hd_count").val(0);
+		 
+	});
+	
+	$("#sched_open").bind("click",function(){
+		if(($("#sched_id").val()!=0)&&($("#sched_id").val()!="")){
+			window.open("ed_sched.php?action=1&id="+$("#sched_id").val()+"&from_begin=1");	
+		}
+	});
+	
+ 
+	 
+	$("#find_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_pdate1").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#find_pdate2").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_city").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#find_supplier").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	 $("#find_status").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	 $("#find_manager").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFind").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	 
+	
+	
+	$("#doFind").bind("click",function(){
+		ret=true;
+
+		already_loaded=new Array();
+	
+	
+	  
+		$.when( 
+
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/doc_vns.php",
+			  type: "POST",
+			  data:{
+				  "action":"find_missions",
+				   
+				  "code":$("#find_code").val(),
+				
+				  "pdate1":$("#find_pdate1").val(),
+				  "pdate2":$("#find_pdate2").val(),
+				  
+				  "city":$("#find_city").val(), 
+				  
+				  "supplier":$("#find_supplier").val(),
+				  
+				   "status":$("#find_status").val(),
+				   "manager":$("#find_manager").val(),
+ 
+				   
+				  "already_loaded[]":already_loaded
+				  
+			  },
+			  beforeSend: function(){
+				$("#missions_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				//  alert(data);
+				$("#missions_found").html(data);
+				 
+				 
+				 
+			  },
+			  error: function(xhr, status){
+				  $("#missions_found").html("Ошибка загрузки данных.");	
+			  }	
+			  
+		 })).then(function(){
+			 
+			 
+			 
+			 
+			 
+			 /*if($.trim($("#find_contact").val()).length>0){
+			 	$("#supplier_radio_"+$("input[type=radio][id^=supplier_radio_]:first-child").val()).prop("checked", true); //.trigger("change"); 
+				
+				
+				  supplier_id=$("input[type=radio][id^=supplier_radio_]:first-child").val();
+					
+				
+				//сбросить другие выборы
+					$.each($("tr[id^=supplier_contact_row_]"),function(k1,v1){
+						if($(v1).attr("id")!=("supplier_contact_row_"+supplier_id)){
+							$(v1).empty();
+							 
+						}
+					});
+	
+				$.when(
+					$.ajax({
+						  async: true,
+						  url: "/js/doc_ins.php",
+						  type: "POST",
+						  data:{
+							  "action":"retrieve_only_contacts",
+							  
+							  "supplier_id":supplier_id
+							  
+						  },
+						  beforeSend: function(){
+							  $("#supplier_contact_row_"+supplier_id).html('<td colspan=7><img src="/img/wait.gif" width="32" border="0" alt="" height="32" /></td>'); 
+						  },
+						  success: function(data){
+							 //alert(data);
+							 
+							 $("#supplier_contact_row_"+supplier_id).html(data);
+							 
+							 $("input[id^=supplier_contact_]").bind("change", function(){	
+								if($(this).prop("checked")){
+									
+									$("#supplier_radio_"+$("#supplier_selected_code_"+$(this).val()).val()).prop("checked", true);
+									 
+								}
+							 });
+							
+						  },
+						  error: function(xhr, status){
+							  //$("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+						  }	 
+					  })).then(function(){
+						 total_fam=$("#supplier_contact_row_"+supplier_id+" input[id^=contact_name_]").length;
+						//alert(total_fam);
+						
+						total_fam_matched=0; contact_id=0;
+						$.each($("#supplier_contact_row_"+supplier_id+" input[id^=contact_name_]"), function(k,v){
+							 
+							if($(v).val().toUpperCase().search( $("#find_contact").val().toUpperCase())!=-1){
+								if(total_fam_matched==0) contact_id=$(v).attr("id").replace(/^contact_name_/,'');
+								total_fam_matched++;	
+							}
+						});
+						
+						//alert(total_fam_matched);
+						if(total_fam_matched==1){
+							//сколько контактов??? если он один - выбрать его!!!!
+							$("#supplier_contact_"+contact_id).prop("checked", true).trigger("change");
+						} 
+					  });
+				
+			 }
+			  */
+	   
+		  });
+		  
+		  
+		
+		return ret;
+	});
+	 
+	 
+	 
+});
+</script>
+
+<div id="mission_dialog" title="Выберите командировку" style="display:none;">
+
+ 
+	 
+    
+
+
+
+
+<div id="missions"   > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	<th scope="col">№</th>
+        <th scope="col">Период</th>
+        <th scope="col">План/факт</th>
+       <th scope="col">Город(а)</th>
+       <th scope="col">Контрагент(ы) </th>
+       <th scope="col">Статус</th>
+       
+       <th scope="col">Сотрудник</th>
+        
+        
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        
+       
+        <td>
+        <input id="find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td width="60">
+         
+         
+     	дата начала с:&nbsp;<input type="text" id="find_pdate1" size="10" maxlength="10" value="" style="width:60px;" /><br />
+	по:&nbsp;<input type="text" id="find_pdate2" size="10" maxlength="10" value="" style="width:60px;" />
+	 
+
+       
+        </td>
+         <td>
+         
+            
+       
+        </td>
+         <td>
+         
+            <input id="find_city" type="text" size="15" maxlength="128" value="" />
+       
+        </td>
+        <td>
+        <input id="find_supplier" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_status" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        <td>
+        <input id="find_manager" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        
+        </td>
+    </tr>
+    <tbody id="missions_found">
+   	%{*include file="doc_in/suppliers_many_list.html" pos=$suppliers*}%
+    </tbody>
+    </table>
+	
+    <!--
+     <em>
+    <ul>
+    <li>Поиск контрагентов возможен по нескольким критериям в каждом поле.</li>
+    <li>Для этого укажите требуемые значения через точку с запятой.</li>
+    
+    <li>Например, поиск по критерию:&nbsp;
+
+<strong>гласс;первый</strong>
+ &nbsp;
+в поле "Полное наименование" позволит найти всех контрагентов, у которых в названии встречаются сочетания букв "гласс", либо "первый".</li>
+
+	</ul>
+</em>-->
+ 	
+  
+    </div>
+  
+</div>
+ 

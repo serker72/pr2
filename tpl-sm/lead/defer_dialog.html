@@ -1,0 +1,54 @@
+<div id="defer_comment_dialog" title="Новая дата" style="display:none;">
+	 
+
+	<div style="float:left; display:block; width:40px; margin-right:-50px; " >
+		<img src="/img/gydex_tiny.png" width="40" height="46" /> 
+	</div>
+    <div style="float:left; padding-left:50px;">
+    	
+         
+
+        <div style="font-weight:bold; display:inline-block;" >
+   Для перевода лида в статус "Отложен" укажите новую прогнозируемую дату заключения контракта
+    
+    
+    	</div>
+    
+    <br><br>
+		<label for="defer_pdate">Прогнозир-мая дата закл. контр-та:</label><br>
+        <input type="text" value="" size="10" maxlength="10" id="defer_pdate"  />
+        
+        
+
+
+
+	 
+    </div> 
+   
+    
+   
+</div>
+
+<script>
+$(function(){
+	$("#defer_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 550,
+	  height: 200,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	$("#defer_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+});
+</script>

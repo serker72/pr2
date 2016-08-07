@@ -1,0 +1,37 @@
+%{section name=possec loop=$pos}%
+<tr align="left" valign="top" id="suppliers_in_card_row_%{$pos[possec].id}%" >
+    	<td>
+        <input type="hidden" id="supplier_id_%{$pos[possec].id}%" name="supplier_id_%{$pos[possec].id}%" value="%{$pos[possec].id}%" />
+        %{$pos[possec].code}%
+        
+       
+        </td>
+        
+       
+        <td>%{$pos[possec].full_name}%</td>
+        <td>%{$pos[possec].opf_name}%</td>
+        <td>%{$pos[possec].inn}%</td>
+        <td>%{$pos[possec].kpp}%</td>
+        <td>%{$pos[possec].legal_address}%</td>
+        
+        <td>
+       
+        %{if $pos[possec].is_org==0}%
+        <a href="supplier.php?action=1&id=%{$pos[possec].id}%" target="_blank"> арта</a>
+        %{else}%
+        <a href="ed_organization.php?action=1&id=%{$pos[possec].id}%" target="_blank"> арта</a>
+        %{/if}%
+        </td>
+        <td width="24">
+        <a href="#" id="del_supplier_%{$pos[possec].id}%"><img src="/img/del.gif" width="15" height="15" alt="удалить контрагента из задачи" title="удалить контрагента из задачи" border="0" /></a>
+        <script type="text/javascript">
+		$(function(){
+			$("#del_supplier_%{$pos[possec].id}%").bind("click", function(){
+				$("#suppliers_in_card_row_%{$pos[possec].id}%").remove();
+				return false;
+			});
+		});
+		</script>
+        </td>
+    </tr>
+%{/section}%    

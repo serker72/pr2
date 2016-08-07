@@ -1,0 +1,279 @@
+<h1>Отчет Тендеры</h1>  
+				
+	<div style="float:left; margin-right:20px;    overflow:hidden;">
+    
+     
+    
+    
+    <strong>   Статусы: </strong><br>
+    
+      %{if $status_id_18==1 or $all_statuses==1}% Создан<br>
+%{/if}%  
+
+ %{if $status_id_33==1 or $all_statuses==1}% Новый<br>
+%{/if}% 
+            %{if $status_id_2==1 or $all_statuses==1}% Утвержден<br>
+%{/if}%  
+             
+           
+ %{if $status_id_28==1 or $all_statuses==1}% В работе<br>
+%{/if}%  
+%{if $status_id_34==1 or $all_statuses==1}% Отказ<br>
+%{/if}%  
+ %{if $status_id_32==1 or $all_statuses==1}% Отменен<br>
+%{/if}%  
+ %{if $status_id_36==1 or $all_statuses==1}% Упущен<br>
+%{/if}%  
+ %{if $status_id_26==1 or $all_statuses==1}% Ждет контроля<br>
+%{/if}%  
+ %{if $status_id_23==1 or $all_statuses==1}% Ждет выполнения<br>
+%{/if}%  
+
+
+ 
+ %{if $status_id_29==1 or $all_statuses==1}% Заявлен<br>
+%{/if}%  
+            %{if $status_id_30==1 or $all_statuses==1}% Выигран<br>
+%{/if}% 
+            %{if $status_id_31==1 or $all_statuses==1}% Проигран<br>
+%{/if}% 
+            %{if $status_id_32==1 or $all_statuses==1}% Отменен<br>
+%{/if}%  
+            
+            %{if $status_id_3==1 or $all_statuses==1}% Аннулирован<br>
+%{/if}% 
+        
+     
+    
+    </div>			
+		 
+	 
+    
+    <div style="float:left; margin-right:20px;    white-space:nowrap;">
+    <strong>Дата размещения:</strong><br>
+
+     с:&nbsp; %{$pdate_placing_1}% 
+     &nbsp;&nbsp;
+    по:&nbsp; %{$pdate_placing_2}% 
+    
+    </div>
+    
+     <div style="float:left; margin-right:20px;  white-space:nowrap;">
+    <strong>Срок подачи заявок:</strong><br>
+
+     с:&nbsp; %{$pdate_claiming_1}% 
+     &nbsp;&nbsp;
+    по:&nbsp; %{$pdate_claiming_2}% 
+    
+    </div>
+    
+    
+     <div style="float:left; margin-right:20px;    white-space:nowrap;">
+    <strong>Дата окончания рассмотрения:</strong><br>
+
+     с:&nbsp; %{$pdate_finish_1}% 
+     &nbsp;&nbsp;
+    по:&nbsp; %{$pdate_finish_2}% 
+    
+    </div>
+     
+     
+        
+    
+    
+    
+    
+        
+     
+    
+    <div style="float:left; margin-right:20px;    overflow:hidden;">
+    
+     
+    
+    
+        <b>Вид:</b><br>
+    %{if $kind==""}% Все
+       %{else}%
+            %{foreach from=$kinds item=item}%
+             %{if  $item.id==$kind}% %{$item.name}%%{/if}% 
+            %{/foreach}%
+       %{/if}%     
+        
+        
+        
+    
+    
+    </div>
+    
+    
+    
+    <div style="float:left; margin-right:20px;     overflow:hidden;">
+    
+    
+         <strong>Тип оборудования: </strong><br>
+    
+    	  %{if $eq_type==""}% Все
+       %{else}%
+            %{foreach from=$eqs item=item}%
+             %{if  $item.id==$eq_type}% %{$item.name}%%{/if}% 
+            %{/foreach}%
+       %{/if}%     
+        
+     
+    
+    
+    </div>
+    
+    
+      <div style="float:left; margin-right:20px;     overflow:hidden;">
+    
+    
+         <strong>ФЗ: </strong><br>
+    
+    	  %{if $fz==""}% Все
+       %{else}%
+            %{foreach from=$fzs item=item}%
+             %{if  $item.id==$fz}% %{$item.name}%%{/if}% 
+            %{/foreach}%
+       %{/if}%     
+        
+     
+    
+    
+    </div>
+    
+    
+    %{if $topic!=""}%
+    <div style="float:left; margin-right:20px;    overflow:hidden;">
+    
+    
+      <strong> Название: </strong><br>
+         %{$topic}% 
+        
+    
+    
+    </div>
+     %{/if}%   
+    
+    
+%{foreach name=u1 from=$our_suppliers item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+    <div style="float:left; margin-right:20px;    ">
+<strong> Контрагент: </strong><br />
+
+%{foreach from=$our_suppliers item=item}%
+				 %{$item.code}% %{$item.full_name}%, %{$item.opf_name}%
+				 
+				%{/foreach}%
+
+%{if $has_holdings}%
+  
+Включая субхолдинги и подчиненные предприятия
+ 
+%{/if}% 				
+ 
+</div>
+%{/if}%
+    
+    
+   
+
+%{foreach name=u1 from=$our_countries item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Страна контрагента: </strong><br />
+%{foreach from=$our_countries item=item}%
+%{$item.name}% <br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+
+%{foreach name=u1 from=$our_fos item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong>Федеральный округ контрагента: </strong><br />
+%{foreach from=$our_fos item=item}%
+%{$item.name}% <br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+
+
+%{foreach name=u1 from=$our_cities item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+<div style="float:left; margin-right:20px; margin-bottom:15px; max-width:260px;">
+<strong> Город контрагента: </strong><br />
+%{foreach from=$our_cities item=item}%
+%{$item.fullname}% <br>
+			 
+				%{/foreach}%
+ 
+</div>
+%{/if}% 
+ 
+     
+     
+         %{foreach name=u1 from=$our_users item=item}%%{/foreach}%
+%{if $smarty.foreach.u1.total>0}%
+    <div style="float:left; margin-right:20px;  ">
+<strong> Отв. сотрудник: </strong><br />
+
+%{foreach from=$our_users item=item}%
+				 %{$item.name_s}% 
+				 
+				%{/foreach}%
+ 
+				
+ 
+</div>
+%{/if}%
+   
+     
+    
+   %{if $content!=""}%
+    <div style="float:left; margin-right:20px;  overflow:hidden;">
+    
+    
+      <strong> Содержание: </strong><br>
+         %{$content}% 
+        
+    
+    
+    </div>
+     %{/if}%    
+    
+    
+    
+    
+    
+     %{if $has_content}%
+    <div style="float:left; margin-right:20px;  max-width:230px;     ">
+    
+      <b>Расширенная форма</b>
+   
+    
+    </div>
+    
+    %{/if}%
+    
+ 
+
+
+
+ 
+
+<br clear="all" />
+<p />
+  
+%{if $do_it}%
+%{include file="an_tele/an_tele_tender_table.html"}%
+%{/if}%
+
+
+
+
+

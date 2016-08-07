@@ -1,0 +1,50 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+  %{if $tab_page==1}%
+	selected: 0
+%{elseif $tab_page==2}%	
+	selected: 1
+%{elseif $tab_page==3}%	
+	selected: 2
+
+%{/if}%	
+  
+  });
+});
+</script>
+<style type="text/css">
+.blacktable th{
+	background-color:#f1f1f1;
+}
+
+ 
+.blacktable th.small, td.small{
+	font-size:10px !important;
+	 
+}
+ 
+</style>
+
+ 
+<div id="tabs">
+  <ul>
+    %{if $has_wt}%
+    <li><a href="#tabs-1">Время обработки документов</a></li>
+    %{/if}%
+    
+    
+  </ul>
+   %{if $has_wt}%
+  <div id="tabs-1">
+    <p>
+    <h2>Отчет Время обработки документов</h2>
+    %{$log}%
+    
+    </p>
+  </div>
+   %{/if}%
+  
+  
+
+</div>

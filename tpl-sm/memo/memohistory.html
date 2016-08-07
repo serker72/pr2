@@ -1,0 +1,116 @@
+<script type="text/javascript">
+$(function(){
+  //$("#tabs").tabs();
+  $("#tabs").tabs({
+	selected:%{$tab_page}%  
+  });
+});
+</script>
+
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">События служебной записки</a></li>
+   
+      %{if $has_syslog}%
+    <li><a href="#tabs-6">Журнал событий</a></li>
+    %{/if}%
+    
+  </ul>
+  <div id="tabs-1">
+    <p>
+    <div style="float:right;">
+    
+    
+    <div style="float:left;">
+    <a href="#" id="print_s"><img src="/img/icons/print.png" width="24" height="24" alt="печать..." title="печать..." hspace="3" border="0" align="absmiddle" /></a>
+    </div>
+    
+    
+    %{include file="every_help_dialog.html" filename="memohistory.html" prefix="" description="Информация о карточке служебной записки" style="float:left"}%
+    
+    <br clear="all" />
+   
+    </div>
+    
+    
+  
+    
+    
+    
+   
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		
+		$("#print_s").bind("click", function(){
+			
+			zc=window.open('memohistory.php?id=%{$claim.id}%&print=1', '_blank','width=1000,height=700,toolbar=1,menubar=1,resizable=1,status=1,scrollbars=1');
+			if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати заявки.');
+			
+			
+			return false;
+		});
+	});
+	</script>
+    
+    
+     <h1>Служебная записка № %{$claim.code}%</h1>
+     <strong>Дата создания:</strong>
+    %{$claim.pdate}%
+    <p />
+    
+  
+   
+    <strong>Вид:</strong>
+    %{$claim.kind_name}%
+    <p />
+   
+ 
+    <strong>Статус:</strong> %{$claim.status}%
+    <p />
+    
+    
+    <strong>Создал:</strong> %{$claim.org}%
+    <p />
+    
+   
+    
+    
+    <strong>Получатели:</strong><br />
+    <small><span style="color:red;"><em>Для утверждения служебной записки используйте форму создания события: нажмите кнопку "Добавить событие...".</em></span></small><br />
+
+	%{include file="memo/users_list_form.html" pos=$users}% 
+     
+    <p />
+    
+    
+    
+    <strong>Текст:</strong>
+    <div class="message">%{$claim.txt}%</div>
+    <p />
+    
+    
+   
+    
+    
+    
+  
+    %{$log}%
+    
+    </p>
+  </div>
+ 
+  
+   %{if $has_syslog}%
+  <div id="tabs-6">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+
+
+</div>

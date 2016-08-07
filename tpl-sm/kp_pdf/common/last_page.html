@@ -1,0 +1,332 @@
+
+
+<div style="page-break-after:always;"></div>
+
+
+<h2 style="margin-top:20px;">Комплектация</h2>
+
+
+ 
+
+
+<table width="100%" border="1" cellpadding="2" cellspacing="0">
+<thead>
+<tr align="left" valign="top">
+<th scope="col" width="80" align="center" style="background-color:#999;">
+Код
+</th>
+<th scope="col" width="400" align="center" style="background-color:#999;">
+Название
+</th>
+<th scope="col" width="80" align="center" style="background-color:#999;">
+Кол-во
+</th>
+
+%{if $primary_position.print_form_has_komplekt==1}%
+<th scope="col" width="80" align="center" style="background-color:#999;">
+Цена
+</th>
+%{/if}%
+
+</tr>
+</thead>
+<tbody>
+
+%{foreach from=$pospos item=gr}%
+ 
+<tr align="left" valign="top">
+ 
+<td width="100%" align="center" colspan="4"><strong> %{$gr.name}%</strong></td>
+
+</tr>
+	%{foreach from=$gr.items item=eq}%
+    <tr align="left" valign="top">
+<td width="80" valign="top">
+ %{$eq.code}% 
+</td>
+<td width="400">
+%{$eq.position_name}%
+</td>
+<td width="80" valign="top">
+%{$eq.quantity}%
+</td>
+
+%{if $primary_position.print_form_has_komplekt==1}%
+<td width="80" valign="top">
+%{if $eq.print_form_has_komplekt==1}%
+%{$eq.price}%&nbsp;%{$eq.signature}%
+%{/if}%
+</td>
+%{/if}%
+</tr>
+
+%{if $eq.txt_for_kp|strip_tags|trim!="" and $eq.parent_id!=0}%
+<tr align="left" valign="top">
+ 
+<td width="100%" colspan="4"> <div class="pdf_txt_for_kp">%{$eq.txt_for_kp}%</div></td>
+
+</tr>
+%{/if}%
+    %{/foreach}%
+ 
+%{/foreach}%
+
+
+
+</tbody>
+</table>
+
+<br />
+<br />
+<h3>
+
+
+%{if $primary_position.print_form_has_komplekt==1}%
+    %{if  $primary_position.pl_discount_value>0}%
+    
+    Базовая стоимость выбранного оборудования и опций:  %{$total_cost_base}%&nbsp;%{$signature}%
+    
+    <br />
+    
+    Ваша скидка:  %{$primary_position.pl_discount_value}%%
+    <br />
+    
+    %{/if}%
+    
+    
+    %{if  $primary_position.pl_discount_value>5}%
+    <span class="red">
+    %{/if}%
+    Итоговая цена: %{$total_cost}%&nbsp;%{$signature}%
+    %{if  $primary_position.pl_discount_value>5}%
+    </span>
+    %{/if}%
+%{else}%
+	<span class="red">
+	Ваша специальная цена: %{$total_cost}%&nbsp;%{$signature}% 
+ 	</span>
+%{/if}%
+
+</h3>
+
+
+
+
+
+
+
+ 
+
+
+<div style="page-break-after:always;"></div>
+
+
+<h2 style="margin-top:40px;">ОБЩИЕ УСЛОВИЯ ПОСТАВКИ</h2>
+
+
+<table width="100%" border="0" cellpadding="2" cellspacing="0">
+
+<tr align="left" valign="top">
+<td width="250">
+<strong>Срок действия предложения:</strong>
+</td>
+<td width="350">
+<strong>%{$bill.valid_pdate}%</strong>
+</td>
+</tr>
+
+<tr align="left" valign="top">
+<td width="200">
+<strong>Срок поставки:</strong>
+</td>
+<td width="300">
+<strong>%{$supply_pdate_name}%</strong>
+</td>
+</tr>
+
+
+<tr align="left" valign="top">
+<td width="200">
+<strong>Установка:</strong>
+</td>
+<td width="300">
+%{if $bill.install_mode==0}%
+не включена
+%{else}%
+включена; в стоимость ПНР не включены затраты на проезд, проживание, питание, технического специалиста.
+%{/if}%
+ 
+
+
+ 
+</td>
+</tr>
+
+<tr align="left" valign="top">
+<td width="200">
+<strong>Базис поставки:</strong>
+</td>
+<td width="300">
+<strong>%{$supply.name}%
+%{if $supply.id==1}%
+%{$bill.supply_city}%
+%{elseif $supply.id==3}%
+%{$bill.supply_out_city}%
+%{/if}%
+</strong>
+</td>
+</tr>
+
+<tr align="left" valign="top">
+<td width="200">
+<strong>Гарантия:</strong>
+</td>
+<td width="300">
+ %{$warranty.name}%:<br />
+%{if $producer_id==17}%
+2 года
+%{else}%
+ %{if $warranty.id==1}%
+ 1 год на механические части<br />
+ 6 мес. на электрические части
+ %{/if}%
+%{/if}% 
+%{$bill.warranty_text}%
+</td>
+</tr>
+
+
+<tr align="left" valign="top">
+<td width="200">
+<strong>Условия оплаты:</strong>
+</td>
+<td width="300">
+%{$paymode.name}%:
+%{if $bill.paymode_id==2}%
+%{$bill.paymode_txt}%
+%{else}%
+%{$bill.paymode_pred}% предоплата,
+
+<br />
+%{$bill.paymode_pered_otgr}%  перед отгрузкой с завода,
+
+<br />
+%{$bill.paymode_pnr}% после подписания акта приемки-передачи
+%{/if}%
+
+</td>
+</tr>
+
+</table>
+
+
+%{if $primary_position.print_form_has_komplekt==1}%
+    <h3>
+    %{if $primary_position.pl_discount_value>0}%
+    
+    Базовая стоимость выбранного оборудования и опций:  %{$total_cost_base}%&nbsp;%{$signature}%
+    
+    <br />
+    
+    Ваша скидка:  %{$primary_position.pl_discount_value}%%
+    <br />
+    %{/if}%
+    
+    
+    
+    
+    
+    
+    <h3>
+    %{if  $primary_position.pl_discount_value>5}%
+    <span class="red">
+    %{/if}%
+    
+    ОБЩАЯ СТОИМОСТЬ ОБОРУДОВАНИЯ:             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        %{$total_cost}% %{$signature}%
+    
+    %{if  $primary_position.pl_discount_value>5}%
+    </span>
+    %{/if}%
+    
+    </h3>
+%{else}%    
+ <h3>
+ <span class="red">
+	Ваша специальная цена: %{$total_cost}%&nbsp;%{$signature}% 
+ 	</span>
+</h3>
+%{/if}%
+
+
+
+<br />
+<br />
+<h3>C уважением,</h3>
+
+<strong>Ваш менеджер:</strong><br />
+<strong>%{$m_user.name_s}%</strong><br />
+%{$m_user.position_name}%<br />
+
+%{$opf.name}% "%{$org.full_name}%"<br />
+%{$org.legal_address}%<br />
+
+
+  %{foreach from=$m_contacts item=contact}%
+     %{if $contact.kind_id==1 or $contact.kind_id==3 or $contact.kind_id==5}%
+     %{$contact.pc_name}%:
+     
+     %{if $contact.kind_id==5}%
+      <a href="mailto:%{$contact.value}%">%{$contact.value}%</a>
+     %{else}% 
+     %{$contact.value}%
+     %{/if}%
+      
+      <br />
+
+	%{/if}%
+%{/foreach}%
+<a href="http://www.aerotechgroup.ru">www.aerotechgroup.ru</a> <br />
+
+ 
+ 
+<br />
+<br />
+
+
+<!--<strong>%{$d_user.name_s}%</strong><br />
+%{$d_user.position_name}%<br />
+
+%{$opf.name}% "%{$org.full_name}%"<br />
+%{$org.legal_address}%<br />
+
+
+ %{foreach from=$d_contacts item=contact}%
+     %{if $contact.kind_id==1 or $contact.kind_id==5}%
+     %{$contact.pc_name}%:
+     
+     %{if $contact.kind_id==5}%
+      <a href="mailto:%{$contact.value}%">%{$contact.value}%</a>
+     %{else}% 
+     %{$contact.value}%
+     %{/if}%
+      
+      <br />
+
+	%{/if}%
+%{/foreach}%-->
+
+<div style="font-size:11px;"><span style="color:red;">Содержание данного предложения обусловлено общими условиями продаж. Мы сохраняем за собой право вносить изменения в технические данные, которые не могут считаться обязательными до момента подписания договора. Все рисунки представлены для информационных целей и не могут считаться обязательными.<br />
+<br />
+
+
+Техническое описание и схема являются исключительной собственностью компании Аэротэк. Дублирование и /или передача третьей стороне строго запрещены.
+
+</span></div>
+<br />
+<br />
+
+ 
+Контроль качества работы менеджеров:<br>
+тел. 7 (495) 411 8382 доб. 320, <a href="mailto:gladkih@aerotechgroup.ru">gladkih@aerotechgroup.ru</a><br />
+<br />
+ 

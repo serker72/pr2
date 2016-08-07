@@ -1,0 +1,61 @@
+
+
+	
+    <td width="20" class="small">
+    <span id="no_%{$items[rowsec].positions[possec].position_id}%" class="small">%{$smarty.section.possec.index+1}%</span>
+    </td>
+    <td width="*" class="small">
+    <span id="name_%{$items[rowsec].positions[possec].position_id}%" class="small">%{$items[rowsec].positions[possec].position_name}%</span>
+	
+    
+    </td>
+    <td width="20" class="small"  style="min-width:20px; width:20px; max-width:30px;">
+    <span id="dim_name_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].dim_name}%</span>
+    </td>
+	
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+    <a href="#" id="link_in_bills_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%" title="подробно...">%{$items[rowsec].positions[possec].in_bill-$items[rowsec].positions[possec].quantity}%</a>
+    </td>
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+    <a href="#" id="link_in_sh_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%" title="подробно...">%{$items[rowsec].positions[possec].quantity-$items[rowsec].positions[possec].in_acc}%</a>
+    </td>
+    <td width="30" class="small" style="min-width:30px; width:30px; max-width:50px;">
+    <a href="#" id="link_in_pol_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%" title="подробно...">%{$items[rowsec].positions[possec].in_acc}%</a>
+    </td>
+    
+    <td width="30" style="min-width:30px; width:30px; max-width:50px;  font-weight:bold;">
+   
+    
+    <span id="in_free_%{$items[rowsec].positions[possec].position_id}%">%{$items[rowsec].positions[possec].quantity-$items[rowsec].positions[possec].in_acc|string_format:"%.3f"}%</span>
+    
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		 $("#link_in_bills_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%").bind("click", function(){
+			  return link_in_bills("%{$items[rowsec].id}%", "%{$items[rowsec].positions[possec].position_id}%", "%{$items[rowsec].bill_id}%", "%{$items[rowsec].positions[possec].pl_position_id}%", "%{$items[rowsec].positions[possec].pl_discount_id}%" , "%{$items[rowsec].positions[possec].pl_discount_value}%", "%{$items[rowsec].positions[possec].pl_discount_rub_or_percent}%", "%{$items[rowsec].positions[possec].out_bill_id}%");
+			  
+			
+		  });
+		  
+		  
+		  $("#link_in_sh_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%").bind("click", function(){
+			 return link_in_sh("%{$items[rowsec].id}%", "%{$items[rowsec].positions[possec].position_id}%", "%{$items[rowsec].bill_id}%", "%{$items[rowsec].positions[possec].pl_position_id}%", "%{$items[rowsec].positions[possec].pl_discount_id}%" , "%{$items[rowsec].positions[possec].pl_discount_value}%", "%{$items[rowsec].positions[possec].pl_discount_rub_or_percent}%", "%{$items[rowsec].positions[possec].out_bill_id}%");
+			 
+			
+		  });
+		  
+		  $("#link_in_pol_%{$smarty.section.rowsec.index}%_%{$smarty.section.possec.index}%").bind("click", function(){
+			  return link_in_pol("%{$items[rowsec].id}%", "%{$items[rowsec].positions[possec].position_id}%", "%{$items[rowsec].bill_id}%", "%{$items[rowsec].positions[possec].pl_position_id}%", "%{$items[rowsec].positions[possec].pl_discount_id}%" , "%{$items[rowsec].positions[possec].pl_discount_value}%", "%{$items[rowsec].positions[possec].pl_discount_rub_or_percent}%", "%{$items[rowsec].positions[possec].out_bill_id}%");
+			 
+			 
+		  });
+		  
+		 
+	});
+	</script>
+    </td>
+    
+   
+   
+

@@ -1,0 +1,181 @@
+ <script type="text/javascript" src="/js/select2/select2.min.js"></script> 
+<script type="text/javascript" src="/js/select2/select2_locale_ru.js"></script>
+
+<link href="/js/select2/select2.css?v=1" rel="stylesheet"/>
+ 
+<script type="text/javascript">
+$(function(){
+
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+  
+	
+	 $("#print_table%{$prefix}%").bind("click",function(){
+			// $("#print").val(1);
+	 		//alert('doSub=1&print=1&'+$("#rep_form2").serialize());
+			 
+		can_ret=true;
+		
+		if(!$("#has_1%{$prefix}%").prop("checked")&&!$("#has_2%{$prefix}%").prop("checked")){
+			can_ret=can_ret&&false;
+			alert("Выберите хотя бы один режим: По виду контрагента или По виду оборудования!");	
+		}
+		
+		if(can_ret) window.open('an_tele.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize());
+		   
+		 return false; 
+	  });   
+	 
+	 
+	 $("#rep_form%{$prefix}%").bind("submit", function(){
+		can_ret=true;
+		
+		if(!$("#has_1%{$prefix}%").prop("checked")&&!$("#has_2%{$prefix}%").prop("checked")){
+			can_ret=can_ret&&false;
+			alert("Выберите хотя бы один режим: По виду контрагента или По виду оборудования!");	
+		}
+		
+		return can_ret; 
+	 });
+	
+	 
+});
+</script>
+
+
+
+%{section name=rowsec loop=$items}%%{/section}%
+
+
+%{$pages}%
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+ 
+<input type="hidden" name="tab_page" value="3"  />
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" id="sortmode%{$prefix}%" />
+
+
+
+
+
+<div class="report_filter_right">
+  
+  <div class="reestr_zoom reestr_right_button24" data-comment="Вывести">
+  <input type="image" src="/img/24.png" value="Вывести" alt="Вывести"   name="doSub%{$prefix}%"  />
+  </div>
+  
+  <a href="%{$pagename}%?doSub%{$prefix}%=1&tab_page=2" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+  
+   %{if $can_print}%
+    %{section name=rowsec loop=$items}%%{/section}%
+    
+    <a href="#" id="print_table%{$prefix}%" class="reestr_print reestr_right_button24 " data-comment="Печать..." ></a>
+    
+    
+   
+    
+    
+    %{else}%
+    <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24 " data-comment="Печать..."></a>
+   %{/if}%
+  
+  
+  %{include file="every_help_dialog.html" filename="an_tele_monitor.html" description="Отчет Что мониторить"  prefix=$prefix style="display:inline;" is_right=true}%
+
+
+</div>
+
+
+
+
+
+
+
+
+ 
+
+
+<div class="report_filter_left">
+	 
+      
+     
+     <!--
+    
+   <div class="report_filter">
+    <strong>Период:</strong>
+    <br>
+    
+    
+    <label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10"  class="sched_report_field" />
+     &nbsp;&nbsp;
+    <label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10"  class="sched_report_field" />
+    
+    </div>
+     
+     -->
+        
+   
+     
+    
+    
+   <div class="report_filter" style="height:50px;">
+    
+    
+    <input type="checkbox" id="has_1%{$prefix}%" name="has_1%{$prefix}%" value="1" %{if $has_1}% checked%{/if}%>
+    <label for="has_1%{$prefix}%">По виду оборудования</label>
+    
+    </div>
+    
+    
+    
+    <div class="report_filter" style="height:50px;">
+     
+    
+    <input type="checkbox" id="has_2%{$prefix}%" name="has_2%{$prefix}%" value="1" %{if $has_2}% checked%{/if}%>
+    <label for="has_2%{$prefix}%">По контрагенту</label>
+    
+    </div>
+    
+    
+    
+
+
+</div>
+
+
+
+
+ 
+
+<br clear="all" />
+ 
+</form>
+
+
+
+<small>
+<!--Примечания.
+
+<br />
+<br />
+1. <strong>Фильтр "Период"</strong>: лиды отбираются в отчет по прогнозируемым датам заключения контракта, попадающим в выбранный период.<br />
+ 
+
+2. <strong>Расширенная форма отчета</strong> позволяет включить в отчет комментарии.<br />
+<br />
+-->
+
+</small>
+
+%{if $do_it}%
+%{include file="an_tele/an_tele_monitor_table.html"}%
+%{/if}%
+
+
+
+
+

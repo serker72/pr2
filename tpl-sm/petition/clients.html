@@ -1,0 +1,168 @@
+%{foreach from=$clients item=client}%
+    <tr align="left" valign="top" id="%{$word}%_%{$client.id}%">
+	<td width="*" >
+    <span id="span_client_name_%{$client.id}%">%{$client.name}%</span>
+    <input type="hidden" id="client_name_%{$client.id}%" name="client_name_%{$client.id}%" value="%{$client.name|escape}%" />
+    
+    </td>
+    <td width="*" >
+	<span id="span_purpose_name_%{$client.id}%">%{$client.purpose_name}%</span>
+    
+    <span id="span_purpose_txt_%{$client.id}%">%{$client.purpose_txt}%</span>
+    
+    
+    
+    
+	<input type="hidden" id="purpose_name_%{$client.id}%"   value="%{$client.purpose_name|escape}%" />
+    <input type="hidden" id="purpose_txt_%{$client.id}%" name="purpose_txt_%{$client.id}%" value="%{$client.purpose_txt|escape}%" />
+    
+    <input type="hidden" id="purpose_id_%{$client.id}%" name="purpose_id_%{$client.id}%" value="%{$client.purpose_id|escape}%" />
+    </td>
+    <td width="32">
+  %{if $client.can_delete}%
+    <a href="#" id="delete_%{$word}%_%{$client.id}%" title="удалить %{$named}%"><img src="/img/del.gif" width="15" height="15" border="0" alt="" align="right" /></a>        
+ 
+ %{/if}%
+  %{if $client.can_edit}%
+    <a href="#" id="edit_%{$word}%_%{$client.id}%" title="редактировать %{$named}%"><img src="/img/icon_edit_16x16.gif" width="16" height="16" id="icon_%{$word}%_%{$client.id}%" border="0" alt="" align="right" /></a>
+    %{/if}%
+    </td>
+   
+    </tr>
+   
+    <script type="text/javascript">
+	$(function(){
+		$("#delete_%{$word}%_%{$client.id}%").bind("click",function(){	
+			if(window.confirm("%{$named}%: Вы действительно хотите удалить данную запись?")){
+				$.ajax({
+					async: true,
+					url: "/js/petition.php",
+					type: "POST",
+					data:{
+						"action":"delete_%{$word}%",
+						"id":"%{$client.id}%",
+						"user_id":"%{$user_id}%"
+					},
+					beforeSend: function(){
+						  
+					},
+					success: function(data){
+					  $.ajax({
+						  async: true,
+						  url: "/js/petition.php",
+						  type: "POST",
+						  data:{
+							  "action":"redraw_%{$word}%",
+							  "user_id":"%{$user_id}%"
+						  },
+						  beforeSend: function(){
+								
+						  },
+						  success: function(data){
+							$("#%{$word}%").html(data);
+							
+						  },
+						  error: function(xhr, status){
+							  
+						  }	 
+					  });
+					  
+					},
+					error: function(xhr, status){
+						alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+			}
+			return false;
+		});
+		
+		//правка
+		$("#edit_%{$word}%_%{$client.id}%").bind("click",function(){
+			$("#%{$word}%_client_name").val($("#client_name_%{$client.id}%").val());
+		 	$("#%{$word}%_purpose_txt").val($("#purpose_txt_%{$client.id}%").val());
+		 	$("#%{$word}%_purpose_id").val($("#purpose_id_%{$client.id}%").val());
+			 
+			 
+			  $("#dialog_%{$word}%").dialog({
+				buttons:{
+					"Редактировать": function(){
+						
+						res=true; 
+						if(res&&($("#%{$word}%_client_name").val().length<3)){
+							res=res&&false;
+							alert("Заполните поле Название клиента!");
+							$("#%{$word}%_client_name").focus();
+						}
+						
+						if(res&&(($("#%{$word}%_purpose_id").val()==0)||($("#%{$word}%_purpose_id").val()==null)||($("#%{$word}%_purpose_id").val()==undefined))){
+							res=res&&false;
+							alert("Заполните поле Цель визита!");
+							$("#%{$word}%_purpose_id").focus();
+						}
+						
+						if(res&&($("#%{$word}%_purpose_has_txt_"+$("#%{$word}%_purpose_id").val()).val()==1)&&($("#%{$word}%_purpose_txt").val().length==0)){
+							res=res&&false;
+							alert("Укажите описание цели визита!");
+							$("#%{$word}%_purpose_txt").focus();
+						}
+						
+						if(res){
+						
+						
+							$.ajax({
+								async: true,
+								url: "/js/petition.php",
+								type: "POST",
+								data:{
+									"action":"edit_%{$word}%",
+									"client_name": $("#%{$word}%_client_name").val(),
+									"purpose_txt": $("#%{$word}%_purpose_txt").val(),
+									"purpose_id": $("#%{$word}%_purpose_id").val(),
+									"id":"%{$client.id}%",
+									"user_id":"%{$user_id}%"
+								},
+								beforeSend: function(){
+									  
+								},
+								success: function(data){
+								  $.ajax({
+									  async: true,
+									  url: "/js/petition.php",
+									  type: "POST",
+									  data:{
+										  "action":"redraw_%{$word}%",
+										  "user_id":"%{$user_id}%"
+									  },
+									  beforeSend: function(){
+											
+									  },
+									  success: function(data){
+										$("#%{$word}%").html(data);
+										
+									  },
+									  error: function(xhr, status){
+										  
+									  }	 
+								  });
+								},
+								error: function(xhr, status){
+									alert("%{$named}%: Ошибка редактирования.");	
+								}	 
+							});
+						}
+						
+						$(this).dialog("close");
+					},
+					"Отмена": function(){$(this).dialog("close");}	
+				}
+			 });
+			
+			$("#dialog_%{$word}%").dialog("open");
+			return false;
+		});
+		
+		
+	 
+	});
+	</script>
+ %{/foreach}%  

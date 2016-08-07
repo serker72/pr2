@@ -1,0 +1,178 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Тендер</th>
+   <th>Статус</th>
+   <th>Название</th>
+   <th></th>
+   <th></th>
+   <th></th>
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="tedner_remind_id_%{$item.id}%" value="%{$item.id}%" />
+          <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td>
+%{$item.status_name}%
+</td>
+
+<td>
+%{$item.topic}%
+</td>
+
+<td width="180">         
+         <label for="tedner_remind_status_id_%{$item.id}%_29">Да, конкурс заявлен</label>
+         
+         
+         <input type="radio" name="tedner_remind_status_id_%{$item.id}%" id="tedner_remind_status_id_%{$item.id}%_29" value="29">
+
+         <div id="tedner_remind_results_%{$item.id}%" style="display:none;">
+	         <br>
+
+         	<label for="tedner_remind_pdate_%{$item.id}%"><strong>Дата подведения итогов конкурса:</strong></label>
+        	<input type="text" size="10" maxlength="10" value="" id="tedner_remind_pdate_%{$item.id}%" />
+        
+             <br>
+    
+             <label for="tedner_remind_comment_%{$item.id}%"><strong>Комментарий:</strong></label><br>
+    
+             <textarea cols="73" rows="5" id="tedner_remind_comment_%{$item.id}%" style="width:100%; height:70px;"></textarea><br><br>
+
+             
+             <b>Файл(ы) уведомления:</b>
+        
+            <div id="tedner_remind_uploaded_files_%{$item.id}%">
+            
+            </div><br />
+            
+            
+            <strong>Приложите файл:</strong>
+            
+             
+            <input type="file" id="tedner_remind_file_%{$item.id}%" /> 
+            <em>максимальный размер файла: 512M</em>  
+            
+            <div id="tedner_remind_queue_%{$item.id}%"></div>
+	
+            
+         
+         </div>
+         
+       
+</td>
+<td width="180">
+        <label for="tedner_remind_status_id_%{$item.id}%_36">Нет, тендер упущен</label>
+         
+         
+         <input type="radio" name="tedner_remind_status_id_%{$item.id}%" id="tedner_remind_status_id_%{$item.id}%_36" value="36">
+
+         
+          
+         
+             
+</td> 
+
+<td width="180">
+        <label for="tedner_remind_status_id_%{$item.id}%_0">Напомнить позже</label>
+         
+         
+         <input type="radio" name="tedner_remind_status_id_%{$item.id}%" id="tedner_remind_status_id_%{$item.id}%_0" value="0" checked>
+
+    
+             
+</td> 
+    
+    
+<td width="24">
+ <a href="ed_tender.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 
+<script>
+$(function(){
+	
+	function AddCode(inname, realname, id){
+		var id=id;
+			$.ajax({
+				async: true,
+				url: "/js/upload_tender_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#tedner_remind_uploaded_files_"+id).append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		
+		
+		$("input[id^=tedner_remind_status_id_]").bind("change", function(){
+			name=$(this).attr("name");
+			id=name.replace(/tedner_remind_status_id_/,'');
+			
+			
+			//alert($("input[name=tedner_remind_status_id_"+id+"]:checked").val());
+			 
+			
+			if($("input[name=tedner_remind_status_id_"+id+"]:checked").val()==29){
+				$("#tedner_remind_results_"+id).show();
+			}else{
+				$("#tedner_remind_results_"+id).hide();
+			}
+		});
+		
+		$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+		$("input[id^=tedner_remind_pdate_]").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	
+%{foreach from=$items item=item}%
+	
+	
+	
+	
+	
+	$('#tedner_remind_file_%{$item.id}%').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите файл...',
+				 
+				'fileTypeDesc' : 'Все файлы',
+				'fileTypeExts' : '*.*', 
+				'fileSizeLimit' : '512 MB', 
+				'width'           : 120,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%",
+									   "id": "%{$item.id}%"
+				                     },
+				'queueID'          : 'tedner_remind_queue_%{$item.id}%',
+				'uploadScript'     : '/swfupl-js/upload_file_tender_mass.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+%{/foreach}% 
+});
+</script>

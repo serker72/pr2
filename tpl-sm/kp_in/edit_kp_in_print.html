@@ -1,0 +1,224 @@
+ 
+ 
+
+
+ 
+
+<h1>Входящее КП</h1>
+
+ 
+
+ 
+
+
+ 
+
+
+ 
+
+ 
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    
+</div>
+
+
+
+ <div style="float:left; white-space:nowrap; margin-right:20px; height:50px;">
+     
+    
+    <strong>Дата КП:</strong>
+       <br>
+    
+        
+       %{$bill.given_pdate}% 
+      
+        
+    </div>
+ 
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <strong> Лид: </strong> <br>
+
+  
+    %{$lead.code}%
+     
+	 
+</div>
+
+
+
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <strong> ТЗ: </strong> <br>
+
+  
+    %{$tz.code}%
+     
+	 
+</div>
+
+
+
+      
+
+ 
+
+<br clear="all" />
+<p />
+
+ 
+<div style="float:left; margin-right: 0px; width:100%;">
+<strong> Описание КП: </strong><br>
+ %{$bill.description }% 
+
+
+ 
+</div> 
+
+<br>
+<p />
+<br>
+
+%{$files}%
+
+<br clear="all">
+<p />
+ 
+   
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="kp_in/supplier_many_actions_print.html" many=false can_modify=false}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Поставщики:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="kp_in/suppliertz_many_actions_print.html" many=false can_modify=false suppliers=$supplierstz}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+ 
+ <div style="float:left; margin-right:20px;">
+	
+    <div style=" float:left; margin-right:10px;"> 
+	<strong>Ответственный сотрудник:</strong><br>
+
+	 %{$bill.manager_string}% 
+    
+</div> 
+ 
+ 
+
+<br clear="all" />
+<p />
+   
+ 
+  
+
+<br clear="all" />
+<p />
+  
+%{if $bill.fulful_kp==1}% 
+<strong>Отдел закупок: ТЗ соответствует КП</strong>
+%{$fulful_kp_1_confirmer}%
+<br>
+<br>
+
+
+%{/if}%
+
+  
+%{if $bill.fulful_kp==2}% 
+<strong>Отдел закупок: ТЗ не соответствует КП</strong>
+%{$fulful_kp_2_confirmer}%
+<br>
+
+<strong> Несоответствия:</strong><br>
+ %{$bill.fulfil_kp_not}%
+<br>
+<br>
+
+
+%{/if}%
+ 
+
+  
+%{if $bill.fulful_kp1==1}% 
+<strong>Технический отдел: ТЗ соответствует КП</strong>
+%{$fulful_kp1_1_confirmer}%
+<br>
+<br>
+
+
+%{/if}%
+
+  
+%{if $bill.fulful_kp1==2}% 
+<strong>Технический отдел: ТЗ не соответствует КП</strong>
+%{$fulful_kp1_2_confirmer}%
+<br>
+
+<strong> Несоответствия:</strong><br>
+ %{$bill.fulfil_kp_not1}%
+<br>
+<br>
+
+
+%{/if}%
+ 
+
+ 
+
+
+ <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 

@@ -1,0 +1,457 @@
+%{section name=rowsec loop=$items}%%{/section}%
+ 
+<script type="text/javascript">
+$(function(){
+	
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	 
+	$("#pdate1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	 
+	 
+	 $("#percent_dialog").dialog({
+		 dialogClass: 'semi_auth',
+		autoOpen: false,
+		modal: true,
+		width: 400,		 
+		height: 500
+		
+	});
+	
+	function IsCorrectPdate(){
+		res=true;
+		if($("#pdate").val().length==0){
+			$("#pdate").addClass("wrong");	
+			alert("Укажите дату!");
+			$("#pdate").focus();
+			res=res&&false;	
+		}else{
+			$("#pdate").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	function IsCorrectDays(){
+		res=true;
+		if( ($("#min_days").val().length==0)||isNaN($("#min_days").val().replace(/\,/,'.'))||(parseFloat($("#min_days").val().replace(/\,/,'.'))<0)   ){
+			$("#min_days").addClass("wrong");	
+			alert("Укажите корректный Мин. оплачиваемый срок!");
+			$("#min_days").focus();
+			res=res&&false;	
+		}else{
+			$("#min_days").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	function IsCorrectSutRus(){
+		res=true;
+		if( ($("#cost_rus").val().length==0)||isNaN($("#cost_rus").val().replace(/\,/,'.'))||(parseFloat($("#cost_rus").val().replace(/\,/,'.'))<0)   ){
+			$("#cost_rus").addClass("wrong");	
+			alert("Укажите корректные Суточные руб./сутки по России!");
+			$("#cost_rus").focus();
+			res=res&&false;	
+		}else{
+			$("#cost_rus").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	function IsCorrectSutNotRus(){
+		res=true;
+		if( ($("#cost_not_rus").val().length==0)||isNaN($("#cost_not_rus").val().replace(/\,/,'.'))||(parseFloat($("#cost_not_rus").val().replace(/\,/,'.'))<0)   ){
+			$("#cost_not_rus").addClass("wrong");	
+			alert("Укажите корректные Суточные руб./сутки ВНЕ России!");
+			$("#cost_not_rus").focus();
+			res=res&&false;	
+		}else{
+			$("#cost_not_rus").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	function IsCorrectSutLastNotRus(){
+		res=true;
+		if( ($("#last_day_cost").val().length==0)||isNaN($("#last_day_cost").val().replace(/\,/,'.'))||(parseFloat($("#last_day_cost").val().replace(/\,/,'.'))<0)   ){
+			$("#last_day_cost").addClass("wrong");	
+			alert("Укажите корректную Стоимость за последний день ВНЕ России, руб!");
+			$("#last_day_cost").focus();
+			res=res&&false;	
+		}else{
+			$("#last_day_cost").removeClass("wrong");
+		}
+		
+		return res;
+	}
+	
+	
+	function AddPercent(){
+		res=true;
+		
+		if(res) res=res&&IsCorrectPdate();
+		if(res) res=res&&IsCorrectDays();
+		if(res) res=res&&IsCorrectSutRus();
+		if(res) res=res&&IsCorrectSutNotRus();
+		if(res) res=res&&IsCorrectSutLastNotRus();	
+		
+		
+		if(res){
+			
+			//ajax...
+			$.ajax({
+				async: true,
+				url: "/js/doc_vns.php",
+				type: "POST",
+				data:{
+					"action":"add_doc_sut",
+					"begin_pdate":$("#pdate").val(),
+					"min_days":$("#min_days").val(),
+					"cost_rus":$("#cost_rus").val(),
+					"cost_not_rus":$("#cost_not_rus").val(),
+					"last_day_cost":$("#last_day_cost").val(),
+					"notes":$("#notes").val()
+					 
+				},
+				beforeSend: function(){
+				  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+				},
+				success: function(data){
+				   //alert(data);
+					//$("#code_list").html(data);
+					alert("правило создано!");
+					$("#percent_dialog").dialog("close");
+					location.reload();
+				},
+				error: function(xhr, status, m){
+					  // alert('e '+status+m);  
+				}	 
+			});	
+			
+		}
+		
+		return res;
+	}
+	
+	
+	
+	$("#create_percent").bind("click", function(){
+		$("#id").val('');
+		$("#pdate").val('');
+		$("#min_days").val('');
+					$("#cost_rus").val('');
+					$("#cost_not_rus").val('');
+					$("#last_day_cost").val('');
+		$("#notes").val('');
+		
+		$("#percent_dialog").dialog({
+			buttons:{
+				"Создать правило":function(){
+					AddPercent();
+				},
+				"Отмена": function(){
+					$("#percent_dialog").dialog("close");
+				}
+			}
+		});
+			
+		
+		$("#percent_dialog").dialog("open");
+	});
+	
+	
+	
+	
+	 
+	
+});
+
+function EditPercent(id){
+	$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"edit_doc_sut",
+				"id":id,
+				"begin_pdate":$("#pdate").val(),
+					"min_days":$("#min_days").val(),
+					"cost_rus":$("#cost_rus").val(),
+					"cost_not_rus":$("#cost_not_rus").val(),
+					"last_day_cost":$("#last_day_cost").val(),
+					"notes":$("#notes").val()
+				 
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("правило отредактировано!");
+				$("#percent_dialog").dialog("close");
+				location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});		
+}
+
+function DelPercent(id){
+	if(window.confirm("Вы действительно хотите удалить правило?")){
+		$.ajax({
+			async: true,
+			url: "/js/doc_vns.php",
+			type: "POST",
+			data:{
+				"action":"del_doc_sut",
+				"id":id 
+				 
+			},
+			beforeSend: function(){
+			  //$("#code_list").html('<img src="/img/wait.gif" width="32" height="32" alt="подождите, пожалуйста..." />');	
+			},
+			success: function(data){
+			   //alert(data);
+				//$("#code_list").html(data);
+				alert("правило удалено!");
+				location.reload();
+			},
+			error: function(xhr, status, m){
+				  //alert('e '+status+m);  
+			}	 
+		});	
+	}
+}
+function LaunchEdit(id){
+	var id=id;
+	$("#id").val(id);
+	$("#pdate").val($("#begin_pdate_"+id).val());
+	$("#min_days").val($("#min_days_"+id).val());
+					$("#cost_rus").val($("#min_days_"+id).val());
+					$("#cost_not_rus").val($("#cost_not_rus_"+id).val());
+					$("#last_day_cost").val($("#last_day_cost_"+id).val());
+	$("#notes").val($("#notes_"+id).val());
+	
+	$("#percent_dialog").dialog({
+		buttons:{
+			"Править правило":function(){
+				EditPercent(id);
+			},
+			"Отмена": function(){
+				$("#percent_dialog").dialog("close");
+			}
+		}
+	});
+		
+	
+	$("#percent_dialog").dialog("open");
+}
+</script>
+
+ 
+<div id="percent_dialog" title="Редактирование правила" style="display:none;">
+	<input type="hidden" id="id" value="" />
+    <input type="hidden" id="code_id" value="%{$code_id}%" />
+    
+    <label for="pdate">Дата начала действия:</label><br />
+    <input type="text" size="10" maxlength="20" id="pdate" value="%{$pdate}%" />
+	<p />
+    
+    <label for="min_days">Мин. оплачиваемый срок, дней:</label><br />
+    <input type="text" size="10" maxlength="20" id="min_days" value="" />
+	<p />
+    
+    
+     
+    <label for="cost_rus">Суточные руб./сутки по России:</label><br />
+    <input type="text" size="10" maxlength="20" id="cost_rus" value="" />
+	<p />
+    
+    <label for="cost_not_rus">Суточные руб./сутки ВНЕ России:</label><br />
+    <input type="text" size="10" maxlength="20" id="cost_not_rus" value="" />
+	<p />
+    
+    <label for="last_day_cost">Стоимость за последний день ВНЕ России, руб.:</label><br />
+    <input type="text" size="10" maxlength="20" id="last_day_cost" value="" />
+	<p />
+    
+    
+     <label for="notes">Примечания:</label><br />
+    <textarea cols="50" rows="5" id="notes"></textarea>
+    <p />
+	<p />   
+</div>
+
+
+
+
+%{include file="every_help_dialog.html" filename="doc_sut.htm" prefix=$prefix description="Реестр правил расчета суточных"  style="float:right;  margin-right:0px;" is_right=true}%
+
+
+ 
+ 
+
+
+ 
+
+ 
+<input type="button" value="Создать правило..." id="create_percent"   />
+&nbsp;&nbsp;
+
+
+ 
+     
+<br clear="all" />
+<p />  
+ 
+<table width="100%" border="0" cellpadding="1" cellspacing="0" class="reptable">
+<thead>
+<tr align="center" valign="top">
+	
+   
+    
+    <th scope="col" width="60">
+    Дата начала действия
+   
+    </th>
+    
+     <th scope="col" width="50">
+    Мин. оплачиваемый срок, дней
+   
+    </th>
+    
+     <th scope="col" width="100">
+   Суточные руб./сутки по России
+   
+    </th>
+    
+     <th scope="col" width="100">
+   Суточные руб./сутки ВНЕ России
+   
+    </th>
+     <th scope="col" width="100">
+   Стоимость за последний день ВНЕ России, руб.
+   
+    </th>
+  
+  
+   
+    
+      
+  
+    
+     <th scope="col" width="*">
+    Примечания
+   
+    </th>
+    
+   
+    
+   <th scope="col" width="24" >&nbsp;
+   
+   </th>
+    <th scope="col"  width="24">&nbsp;
+   
+   </th>
+</tr>
+
+</thead>
+<tbody>
+ 
+%{section name=rowsec loop=$items}%
+
+
+<tr align="center" valign="top" id="pay_item_row%{$prefix}%_%{$items[rowsec].id}%">
+
+    
+     
+     <td width="60" %{if $items[rowsec].is_active}%class="item_active"%{/if}%><a name="#user%{$prefix}%_%{$items[rowsec].id}%"></a>
+    %{$items[rowsec].begin_pdate}%
+    
+    <input type="hidden" id="begin_pdate_%{$items[rowsec].id}%" value="%{$items[rowsec].begin_pdate}%" />
+    
+    </td>
+    
+    <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].min_days}%
+   <input type="hidden" id="min_days_%{$items[rowsec].id}%" value="%{$items[rowsec].min_days}%" />
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+    
+     <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].cost_rus}%
+   <input type="hidden" id="cost_rus_%{$items[rowsec].id}%" value="%{$items[rowsec].cost_rus}%" />
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+    
+    
+     <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].cost_not_rus}%
+   <input type="hidden" id="cost_not_rus_%{$items[rowsec].id}%" value="%{$items[rowsec].cost_not_rus}%" />
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+    
+    
+     <td width="50"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%> 
+   %{if $items[rowsec].is_active}%<strong>%{/if}%
+   
+    %{$items[rowsec].last_day_cost}%
+   <input type="hidden" id="last_day_cost_%{$items[rowsec].id}%" value="%{$items[rowsec].last_day_cost}%" />
+      %{if $items[rowsec].is_active}%</strong>%{/if}%
+    </td>
+     
+   
+   
+    <td width="*"  %{if $items[rowsec].is_active}%class="item_active"%{/if}% align="left">
+    <div style="max-height:100px; overflow:auto;"><small>  
+    %{$items[rowsec].notes}%
+   </small></div>
+   
+    <input type="hidden" id="notes_%{$items[rowsec].id}%" value="%{$items[rowsec].notes|escape:"html"}%" />
+    </td>
+   
+   
+    <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+   
+    <a href="#" onclick=" LaunchEdit('%{$items[rowsec].id}%'); return false;" class="reestr_edit reestr_right_button24" data-comment="Подробно..."></a>
+    
+  
+    
+    </td>
+    
+     <td width="24"  %{if $items[rowsec].is_active}%class="item_active"%{/if}%>
+  <a href="#" onclick=" DelPercent('%{$items[rowsec].id}%'); return false;" class="reestr_delete reestr_right_button24" data-comment="Удалить..."></a>
+    
+    </td>
+    
+   
+</tr>
+ 
+%{/section}%
+ 
+</tbody>
+</table>
+ 
+%{if $smarty.section.rowsec.total==0}%
+<em>Правил не найдено.</em><br />
+%{/if}%
+
+
+
+
+ 

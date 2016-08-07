@@ -1,0 +1,69 @@
+<table width="100%" class="reptable">
+<thead>
+	<th>Лид</th>
+   <th>Статус</th>
+   <th>Название</th>
+    <th width="100">Прогноз. дата закл-ия конт-та</th>
+   <th></th>
+   <th></th>
+   
+   <th></th>
+</thead>
+<tbody>
+%{foreach from=$items item=item}%
+<tr>
+<td>
+         
+        <input type="hidden" id="lead_remind_id_%{$item.id}%" value="%{$item.id}%" />
+        <input type="hidden" id="lead_remind_code_%{$item.id}%" value="%{$item.code}%" />
+        
+        <input type="hidden" id="lead_refuse_counts_%{$item.id}%" value="%{$item.refuse_counts}%" />
+        
+        
+         <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." >%{$item.code}% </a>
+         
+          
+</td>
+<td width="*">
+%{$item.status_name}%
+</td>
+
+<td>
+%{$item.topic}%
+</td>
+<td>
+%{$item.pdate_finish}%
+</td>
+
+<td width="180">         
+         <label for="lead_remind_status_id_%{$item.id}%_28">Да, принять в работу</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id_%{$item.id}%" id="lead_remind_status_id_%{$item.id}%_28" value="28">
+
+         
+       
+</td>
+<td width="180">
+        <label for="lead_remind_status_id_%{$item.id}%_0">Нет</label>
+         
+         
+         <input type="radio" name="lead_remind_status_id_%{$item.id}%" id="lead_remind_status_id_%{$item.id}%_0" value="0">
+
+         
+          
+         
+             
+</td> 
+
+ 
+    
+    
+<td width="24">
+ <a href="ed_lead.php?action=1&id=%{$item.id}%&from_begin=1" target="_blank" title="Подробно..." class="gydex_edit"></a>
+</td>
+        
+</tr>        
+%{/foreach}%   
+</tbody>
+</table> 

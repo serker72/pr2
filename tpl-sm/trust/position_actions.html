@@ -1,0 +1,192 @@
+<div id="positions" style="/* border:1px solid silver; width:650px; height:200px; overflow:scroll;*/">
+%{if $has_positions}%
+%{include file="trust/positions_on_page_set.html" pospos=$positions}%
+%{/if}%
+</div>
+
+
+
+
+<div id="positions_dialog" title="Выберите позиции">
+<span id="positions_dialog_komplekt_name"></span>:<br />
+
+<div id="positions_dialog_table"></div>
+
+</div>
+
+<script type="text/javascript">
+$(function(){
+	//обработка нажатия Выбрать позиции
+	$("#add_pos").bind("click",function(){
+		
+			//подгрузим позиции, выведем диалог!	
+			//получить набор уже набранных позиций:
+			
+			/*var position_ids=new Array(); var quantities=new Array(); var bill_ids=new Array();						
+			var another_bill_ids=new Array(); 
+			*/
+			var complex_positions=new Array();
+			var another_bill_ids=new Array(); 
+			
+			
+			$.each($("#positions table tbody tr td input[id^='new_hash_']"), function(key, value){
+				//alert(value.value);
+				//вычленить айди позиции, заполнить массивы данными
+				hash=$(value).val();
+				
+				hstr='';
+				hstr=$("#new_pl_position_id_"+hash).val(); //0
+				hstr=hstr+';'+$("#new_position_id_"+hash).val(); //1
+				hstr=hstr+';'+$("#new_bill_id_"+hash).val(); //2				
+				hstr=hstr+';'+$("#new_quantity_"+hash).val(); //3				
+				
+				//alert(hstr);
+				complex_positions.push(hstr);
+			});
+			
+			$.each($("#all_bills_by_supplier input[type=checkbox]:checked"), function(key, value){
+				another_bill_ids.push(value.value);	
+			});
+			
+			
+			//alert("%{$ship.id}%");
+			if($("#has_another_bills").prop("checked")) has_another_bills=1;
+			else has_another_bills=0;
+			$.ajax({
+			  async: true,
+			  url: "/js/trust.php",
+			  type: "POST",
+			  data:{
+				  "action":"load_positions",
+				  "trust_id":"%{$ship.id}%",
+				  "bill_id":$("#bill_id").val(),
+				  
+				  "complex_positions[]":complex_positions,
+				  "has_another_bills":has_another_bills,
+				  "another_bill_ids[]":another_bill_ids
+				  
+				  
+			  },
+			  beforeSend: function(){
+				//alert("Загрузка реквизитов.");
+				$("#positions_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" />');  
+			  },
+			  success: function(data){
+				$("#positions_dialog_table").html(data);  
+			  },
+			  error: function(xhr, status){
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+			
+			$("#positions_dialog_komplekt_name").html($("#sdelka_string").attr("value"));
+			$("#positions_dialog").dialog("open");
+		
+	});
+	
+	$("#positions_dialog").dialog({
+		autoOpen: false,
+		modal: true,
+		width: 900,
+		height: 490,
+		buttons:{
+			"Готово": function(){
+				//общая проверка всех полей
+				var can_put=true;
+				var complex_positions=new Array();
+				
+				function roundPlus(x, n) { //x - число, n - количество знаков
+				  if(isNaN(x) || isNaN(n)) return false;
+				  var m = Math.pow(10,n);
+				  return Math.round(x*m)/m;
+				}
+				
+				$.each($("#positions_dialog_table table tbody tr td input[id^='hash_']"), function(key, value){
+					//alert(value.value);
+					//вычленить айди позиции, заполнить массивы данными
+					hash=$(value).val();
+					
+					hstr='';
+					hstr=$("#pl_position_id_"+hash).val(); //0
+					hstr=hstr+';'+$("#position_id_"+hash).val(); //1
+					hstr=hstr+';'+$("#bill_id_"+hash).val(); //2				
+					hstr=hstr+';'+$("#quantity_"+hash).val(); //3				
+					
+					//alert(hstr);
+					complex_positions.push(hstr);
+					
+					
+					local_put=true;
+					
+					
+					//кол-во
+				   
+					if($("#quantity_"+hash).attr("value").length==0){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					if(isNaN($("#quantity_"+hash).attr("value").replace("\,","\."))||(parseFloat($("#quantity_"+hash).attr("value").replace("\,","\."))<0)){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					
+					
+					
+					if(!isNaN($("#quantity_"+hash).attr("value").replace("\,","\."))&&(roundPlus(parseFloat($("#quantity_"+hash).attr("value").replace("\,","\.")),3)>roundPlus(parseFloat($("#max_quantity_"+hash).attr("value").replace("\,","\."))*parseFloat("%{$TRUSTUP}%"),3))){
+						can_put=can_put&&false;
+						local_put=local_put&&false;
+					}
+					
+					if(local_put){
+						$("#quantity_"+hash).removeClass("wrong");	
+					}else $("#quantity_"+hash).addClass("wrong");
+					
+					
+					
+				});
+				
+				
+				
+				
+				
+				if(can_put) {
+					
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/trust.php",
+					  type: "POST",
+					  data:{
+						  "action":"transfer_positions",
+						  "trust_id":"%{$ship.id}%",
+						  "bill_id":$("#bill_id").attr("value"),
+						  "complex_positions[]":complex_positions
+						 
+					  },
+					  beforeSend: function(){
+						$("#positions_dialog_table").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" title="подождите, пожалуйста" />');  
+					  },
+					  success: function(data){
+						$("#positions").html(data); 
+						
+					  },
+					  error: function(xhr, status){
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+					
+					
+					$(this).dialog("close"); 
+				}else{
+					
+					alert("Неверно заполнены поля таблицы!");	
+				}
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+	
+});
+</script>

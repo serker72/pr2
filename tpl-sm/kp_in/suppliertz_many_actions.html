@@ -1,0 +1,477 @@
+%{if $can_modify}%  
+ <div style="float:left; margin-right:10px;"> 
+<input type="button" id="supplierstz_add" value="..." />
+
+</div>
+%{/if}%
+
+
+  
+ 
+
+ <br clear="all" />
+    <p />
+
+
+<div id="suppliertz_cities" style="border:1px solid silver; min-width:480px; width:100%; %{if $many}% height:140px; %{else}% height:100px; %{/if}% overflow:auto;">
+%{include file="kp_in/supplierstz_many_table.html" has_header=true}%
+
+
+</div>
+
+
+
+
+<script type="text/javascript">
+$(function(){	
+	
+	
+	function rebuild(mode){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=suppliertz_radio]:checked").val()==0)||($("input[name=suppliertz_radio]:checked").val()==null)||($("input[name=suppliertz_radio]:checked").val()==undefined) ||
+	   ($("input[id^=suppliertz_contact_]:checked").length==0)
+	   
+	   
+	   ){
+	    
+			
+				alert("Выберите контрагента и его контакт(ы)!"); 
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=suppliertz_radio]:checked").val()
+		   
+	  
+	   
+		  
+		  
+		  
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			  //alert('load');
+			  
+			  %{if !$many}%
+			  $("#supplierstz_tbody").empty();
+			  %{/if}%
+			  already_loaded=new Array();
+			  $.each($("input[id^=suppliertz_id_]"), function(k,v){
+				  already_loaded.push($(v).val());
+			  });
+			  
+			  
+			  
+			  var contact_ids=new Array();
+			  $.each($("input[id^=suppliertz_contact_]:checked"), function(k,v){
+				  contact_ids.push($(v).val());
+				  
+			  });
+			 // alert(contact_ids);
+			  $.ajax({
+				  async: true,
+				  url: "/js/tzs.php",
+				  type: "POST",
+				  data:{
+					  "action":"add_supplier",
+					  "supplier_id":selected_supplier,
+					  "already_loaded[]":already_loaded,
+					  "contact_ids[]":contact_ids
+					   
+				  },
+				  beforeSend: function(){
+					   
+				  },
+				  success: function(data){
+					 //alert(data);
+					// $("#manager_clear").trigger("click"); 
+					 $("#supplierstz_tbody").append(data);
+					 
+					 
+					 
+				  },
+				  error: function(xhr, status){
+					  //alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			  
+		
+		  }
+	  if(mode==1){
+		 $("#suppliertz_row_"+  selected_supplier).remove();
+		 $("#suppliertz_contact_row_"+  selected_supplier).remove();
+	  }
+	   
+	  if(mode==0) $("#suppliertz_dialog").dialog("close"); 
+	}
+ 
+	
+	
+	
+	
+	$("#suppliertz_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 1000,
+		height: 600,
+		 
+		buttons: {
+			%{if $many}%
+			"Добавить контрагента и продолжить выбор": function(){
+				rebuild(1);
+			},
+			%{/if}%
+			"Готово": function(){
+				rebuild(0);
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	$("#supplierstz_add").bind("click",function(){
+		 
+		 
+		
+		 
+		$("#suppliertz_dialog").dialog("open");
+	});
+	
+	$("#suppliertz_add").bind("click",function(){
+		window.open("supplier.php", "adder");
+	});
+	 
+	$("#findtz_code").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#findtz_full_name").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#findtz_opf").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#findtz_inn").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	$("#findtz_kpp").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	 $("#findtz_contact").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#findtz_city").bind("keypress", function(e){
+		if(e.keyCode==13){
+			$("#doFindtz").trigger("click");
+			e.stopPropagation();
+			e.preventDefault();
+		}	
+	});
+	
+	
+	$("#doFindtz").bind("click",function(){
+		ret=true;
+
+		already_loaded=new Array();
+	  $.each($("input[id^=suppliertz_id_]"), function(k,v){
+		  already_loaded.push($(v).val());
+	  });
+	  
+		$.when( 
+
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/tzs.php",
+			  type: "POST",
+			  data:{
+				  "action":"find_many_suppliers",
+				  
+				  "code":$("#findtz_code").val(),
+				
+				  "full_name":$("#findtz_full_name").val(),
+				  
+				  "contact":$("#findtz_contact").val(), 
+				  
+				  "city":$("#findtz_city").val(),
+				  
+				   "opf":$("#findtz_opf").val(),
+				  "inn":$("#findtz_inn").val(),
+				  "kpp":$("#findtz_kpp").val(),
+ 
+				  
+				  "already_loaded[]":already_loaded
+				  
+			  },
+			  beforeSend: function(){
+				$("#supplierstz_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+			  },
+			  success: function(data){
+				//  alert(data);
+				$("#supplierstz_found").html(data);
+				
+				$("input[name=suppliertz_radio]").bind("change", function(){
+					//alert($(this).val());
+					
+					var supplier_id=$(this).val();
+					//вызвать подгрузку всех контактов
+					
+					//сбросить ранее выделенные другие контакты
+					
+					//сбросить другие выборы
+					$.each($("tr[id^=suppliertz_contact_row_]"),function(k1,v1){
+						if($(v1).attr("id")!=("suppliertz_contact_row_"+supplier_id)){
+							$(v1).empty();
+							 
+						}
+					});
+	
+					
+					$.ajax({
+						  async: true,
+						  url: "/js/tzs.php",
+						  type: "POST",
+						  data:{
+							  "action":"retrieve_only_contacts",
+							  
+							  "supplier_id":supplier_id
+							  
+						  },
+						  beforeSend: function(){
+							  $("#suppliertz_contact_row_"+supplier_id).html('<td colspan=7><img src="/img/wait.gif" width="32" border="0" alt="" height="32" /></td>'); 
+						  },
+						  success: function(data){
+							 //alert(data);
+							 
+							 $("#suppliertz_contact_row_"+supplier_id).html(data);
+							 
+							 $("input[id^=suppliertz_contact_]").bind("change", function(){	
+								if($(this).prop("checked")){
+									
+									$("#suppliertz_radio_"+$("#suppliertz_selected_code_"+$(this).val()).val()).prop("checked", true);
+									 
+								}
+							 });
+							
+						  },
+						  error: function(xhr, status){
+							  //$("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+						  }	 
+					  });
+				});
+				  
+				 
+			  },
+			  error: function(xhr, status){
+				  $("#supplierstz_found").html("Ошибка загрузки контрагентов.");	
+			  }	
+			  
+		 })).then(function(){
+			 if($.trim($("#findtz_contact").val()).length>0){
+			 	$("#suppliertz_radio_"+$("input[type=radio][id^=suppliertz_radio_]:first-child").val()).prop("checked", true); //.trigger("change"); 
+				
+				
+				  supplier_id=$("input[type=radio][id^=suppliertz_radio_]:first-child").val();
+					
+				
+				//сбросить другие выборы
+					$.each($("tr[id^=suppliertz_contact_row_]"),function(k1,v1){
+						if($(v1).attr("id")!=("suppliertz_contact_row_"+supplier_id)){
+							$(v1).empty();
+							 
+						}
+					});
+	
+				$.when(
+					$.ajax({
+						  async: true,
+						  url: "/js/tzs.php",
+						  type: "POST",
+						  data:{
+							  "action":"retrieve_only_contacts",
+							  
+							  "supplier_id":supplier_id
+							  
+						  },
+						  beforeSend: function(){
+							  $("#suppliertz_contact_row_"+supplier_id).html('<td colspan=7><img src="/img/wait.gif" width="32" border="0" alt="" height="32" /></td>'); 
+						  },
+						  success: function(data){
+							 //alert(data);
+							 
+							 $("#suppliertz_contact_row_"+supplier_id).html(data);
+							 
+							 $("input[id^=suppliertz_contact_]").bind("change", function(){	
+								if($(this).prop("checked")){
+									
+									$("#suppliertz_radio_"+$("#suppliertz_selected_code_"+$(this).val()).val()).prop("checked", true);
+									 
+								}
+							 });
+							
+						  },
+						  error: function(xhr, status){
+							  //$("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+						  }	 
+					  })).then(function(){
+						 total_fam=$("#suppliertz_contact_row_"+supplier_id+" input[id^=contacttz_name_]").length;
+						//alert(total_fam);
+						
+						total_fam_matched=0; contact_id=0;
+						$.each($("#suppliertz_contact_row_"+supplier_id+" input[id^=contacttz_name_]"), function(k,v){
+							 
+							if($(v).val().toUpperCase().search( $("#find_contact").val().toUpperCase())!=-1){
+								if(total_fam_matched==0) contact_id=$(v).attr("id").replace(/^contact_name_/,'');
+								total_fam_matched++;	
+							}
+						});
+						
+						//alert(total_fam_matched);
+						if(total_fam_matched==1){
+							//сколько контактов??? если он один - выбрать его!!!!
+							$("#suppliertz_contact_"+contact_id).prop("checked", true).trigger("change");
+						} 
+					  });
+				
+			 }
+			  
+	   
+		  });
+		  
+		  
+		
+		return ret;
+	});
+	 
+	
+ 
+	
+	 
+});
+</script>
+
+<div id="suppliertz_dialog" title="Выберите контрагента" style="display:none;">
+
+
+ 
+     
+
+
+
+
+<div id="supplierstz"   > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+       
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Город</th>
+        <th scope="col">Контакт</th>
+        
+        
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        
+       
+        <td>
+        <input id="findtz_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+         
+          <input id="findtz_opf" type="text" size="5" maxlength="128" value="" />
+
+       
+        </td>
+         <td>
+         
+           <input id="findtz_inn" type="text" size="7" maxlength="128" value="" />
+       
+        </td>
+         <td>
+         
+            <input id="findtz_kpp" type="text" size="7" maxlength="128" value="" />
+       
+        </td>
+        <td>
+        <input id="findtz_city" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="findtz_contact" type="text" size="15" maxlength="128" value="" />
+        </td>
+        
+        <td>
+        <input type="button" value="Найти" id="doFindtz" />
+        
+        </td>
+    </tr>
+    <tbody id="supplierstz_found">
+   	%{*include file="kp_in/supplierstz_many_list.html" pos=$suppliers*}%
+    </tbody>
+    </table>
+	
+    
+     <em>
+    <ul>
+    <li>Поиск контрагентов возможен по нескольким критериям в каждом поле.</li>
+    <li>Для этого укажите требуемые значения через точку с запятой.</li>
+    
+    <li>Например, поиск по критерию:&nbsp;
+
+<strong>гласс;первый</strong>
+ &nbsp;
+в поле "Полное наименование" позволит найти всех контрагентов, у которых в названии встречаются сочетания букв "гласс", либо "первый".</li>
+
+	</ul>
+</em>
+ 	
+  
+    </div>
+  
+</div>
+ 

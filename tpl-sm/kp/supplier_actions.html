@@ -1,0 +1,344 @@
+ 
+
+
+ 
+
+<div id="supplier_dialog" title="Выберите контрагента" style="display:none;">
+
+
+ 
+    
+    
+    <script type="text/javascript">
+	$(function(){
+		
+		$("#address_dialog_help").dialog({
+		  autoOpen: false,
+		  dialogClass: 'semi_auth',
+		  modal: true,
+		  width: 600,
+		  height: 380,
+		  buttons: {
+			  "Закрыть": function(){
+			   $(this).dialog("close");	
+			  }
+			}
+		 });
+		 
+		 $("#more_info").bind("click", function(){
+			$("#address_dialog_help").dialog("open");
+			return false;
+		});
+	});
+	</script>
+
+
+
+
+<div id="suppliers"   > 
+
+	<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col">Код</th>
+        
+        <th scope="col">Полное наименование</th>
+        <th scope="col">ОПФ</th>
+        <th scope="col">ИНН</th>
+        <th scope="col">КПП</th>
+        <th scope="col">Юридический адрес</th>
+        <th scope="col">Карта</th>
+    </tr>
+    <tr align="center" valign="top">
+    	
+        <td>
+        <input id="find_code" type="text" size="7" maxlength="128" value="" />
+        </td>
+       
+        <td>
+        <input id="find_full_name" type="text" size="15" maxlength="128" value="" />
+        </td>
+         <td>&nbsp;
+       
+        </td>
+        
+        <td>
+        <input id="find_inn" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_kpp" type="text" size="7" maxlength="128" value="" />
+        </td>
+        <td>
+        <input id="find_legal_address" type="text" size="15" maxlength="128" value="" />
+        </td>
+        <td>
+        <input type="button" value="Найти" id="doFind" />
+        <script type="text/javascript">
+		$(function(){
+			$("#find_code").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_full_name").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_inn").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_kpp").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			$("#find_legal_address").bind("keypress", function(e){
+				if(e.keyCode==13){
+					$("#doFind").trigger("click");
+					e.stopPropagation();
+					e.preventDefault();
+				}	
+			});
+			
+			
+			$("#doFind").bind("click",function(){
+				ret=true;
+		
+		
+				
+					
+					$.ajax({
+					  async: true,
+					  url: "/js/kp.php",
+					  type: "POST",
+					  data:{
+						  "action":"find_suppliers",
+						  
+						  "code":$("#find_code").val(),
+						
+						  "full_name":$("#find_full_name").val(),
+						  "inn":$("#find_inn").val(),
+						  "kpp":$("#find_kpp").val(),
+						  "legal_address":$("#find_legal_address").val()
+						  
+					  },
+					  beforeSend: function(){
+						$("#suppliers_found").html('<img src="/img/wait.gif" width="32" border="0" alt="" height="32" />');    
+					  },
+					  success: function(data){
+						$("#suppliers_found").html(data);
+						
+						 $("input[name=supplier_radio]").bind("change", function(){
+							//alert($(this).val());
+							
+							supplier_id=$(this).val();
+							
+							//сбросить ранее выделенные другие контакты
+							
+							//сбросить другие выборы
+							$.each($("tr[id^=supplier_contact_row_]"),function(k1,v1){
+								if($(v1).attr("id")!=("supplier_contact_row_"+supplier_id)){
+									$(v1).empty();
+								}
+							});
+			
+							
+							
+							//вызвать подгрузку всех контактов
+							$.ajax({
+								  async: true,
+								  url: "/js/kp.php",
+								  type: "POST",
+								  data:{
+									  "action":"retrieve_contacts",
+									  
+									  "supplier_id":supplier_id
+									  
+								  },
+								  beforeSend: function(){
+									  $("#supplier_contact_row_"+supplier_id).html('<td colspan=7><img src="/img/wait.gif" width="32" border="0" alt="" height="32" /></td>'); 
+								  },
+								  success: function(data){
+									 //alert(data);
+									 
+									 $("#supplier_contact_row_"+supplier_id).html(data);
+									 
+									 $("input[name^=supplier_contact_]").bind("change", function(){	
+									 	if($(this).prop("checked")){
+											
+											$("#supplier_radio_"+$("#selected_supplier_code_"+$(this).val()).val()).prop("checked", true);
+										}
+									 });
+									
+								  },
+								  error: function(xhr, status){
+									  //$("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+								  }	 
+							  });
+						});
+						  
+						 
+					  },
+					  error: function(xhr, status){
+						  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+					  }	 
+				  });
+				  
+				  
+				
+				return ret;
+			});
+			
+			
+			
+			
+			function rebuild(mode){
+			   
+			   var selected_supplier=0;
+			   
+			   
+			   if( ($("input[name=supplier_radio]:checked").val()==0)||($("input[name=supplier_radio]:checked").val()==null)||($("input[name=supplier_radio]:checked").val()==undefined) ||
+			   ($("input[id^=supplier_contact_]:checked").length==0)
+			   
+			   
+			   ){
+				
+					
+						alert("Выберите контрагента и его контакт(ы)!"); 
+				   return false;  
+				}
+			   
+			   
+			   
+			   
+			   
+			 selected_supplier=$("input[name=supplier_radio]:checked").val()
+				   
+			  
+			 
+			   var new_ret=true;
+				
+				
+				  
+				  
+				  
+			  if($("#supplier_id").val()!=selected_supplier){
+				  $("#supplier_clear").trigger("click");
+				  //подгружаем все данные по контрагенту
+				  if(selected_supplier>0){
+					$.ajax({
+					  async: true,
+					  url: "/js/kp.php",
+					  type: "GET",
+					  dataType: "json",
+					  data:{
+						  "action":"retrieve_supplier",
+						  "id":selected_supplier
+						  
+					  },
+					  beforeSend: function(){
+						
+					  },
+					  success: function(data){
+						
+						//alert(data.contract_no);
+						$("#supplier_string").val(data.opf_name+" "+data.full_name);
+						$("#supplier_id").val(data.id);
+						
+						
+						 $("#contact_id").val( $("input[name=supplier_contact_"+data.id+"]:checked").val());
+						
+						$("#contact_string").val( $("label[for=supplier_contact_"+$("#contact_id").val()+"]").html()); 
+						 
+					  },
+					  error: function(xhr, status){
+						 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+						// alert("Ошибка загрузки реквизитов.");	
+					  }	 
+					});
+				  }
+			  }
+			   
+			  $("#supplier_dialog").dialog("close"); 
+			}
+		 
+		 
+			
+			
+			
+			
+			$("#supplier_dialog").dialog({
+				autoOpen: false,
+				dialogClass: 'semi_auth',
+				modal: true,
+				width: 800,
+				height: 490,
+				 
+				buttons: {
+					 
+					"Готово": function(){
+						rebuild(0);
+					},
+					"Отмена": function(){
+						 $(this).dialog("close"); 
+					}
+				}
+			 });
+			
+			$("#supplier_select").bind("click",function(){
+				  
+				
+				//$("#doFind").trigger("click");
+				$("#supplier_dialog").dialog("open");
+			});
+			
+			$("#supplier_clear").bind("click",function(){
+				  
+				$("#supplier_id").val('');
+				$("#contact_id").val('');
+				
+				$("#supplier_string").val('');
+				$("#contact_string").val('');
+				
+				
+			});
+			
+			 
+			
+			 %{if $supplier!=false}%
+				  /*открыть диалог поиска контрагента, вписав его код в поле Код*/
+				$("#supplier_select").trigger("click");
+				$("#find_code").val("%{$supplier.code|escape:"html"}%");
+				$("#doFind").trigger("click");
+				
+			 %{/if}%	
+			
+		});
+		</script>
+        </td>
+    </tr>
+    <tbody id="suppliers_found">
+   	%{include file="kp/suppliers_list.html" pos=$suppliers}%
+    </tbody>
+    </table>
+	
+  
+    </div>
+  
+</div>
+ 

@@ -1,0 +1,165 @@
+<div id="tz_email_documents_dialog" title="Отправка pdf-документов на email" style="display:none;">
+<input id="tz_email_documents_id" value="" type="hidden" />
+
+
+<b>Выберите адресата:</b>
+
+<div id="tz_email_documents_addresses" style="border:1px solid silver; width:530px; height:350px; overflow:auto;">
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+<script type="text/javascript">
+ 
+	
+	 
+	
+	//блок/разблок отгр. док.
+	 
+	//подгрузка адресатов
+	function tz_email_documents_GetAddresses(sched_id){
+		$.ajax({
+			async: true,
+			url: "/js/tzs.php",
+			type: "POST",
+			data:{
+				"action":"load_pdf_addresses",
+				"id":sched_id //$("#supplier_id").val()
+			},
+			beforeSend: function(){
+				$("#tz_email_documents_addresses").html('<img src="/img/images/wait.gif" alt="подождите, пожалуйста..." border="0" width="32" height="32" />');
+			},
+			success: function(data){
+			  $("#tz_email_documents_addresses").html(data);
+			},
+			error: function(xhr, status){
+				//alert("%{$named}%: Ошибка удаления.");	
+			}	 
+		});	
+	}
+	
+	//вызов отправки 
+	function tz_email_documents_SendData(){
+		res=true;
+		
+		 
+		
+		if(res&&($("input[id^=tz_email_documents_address_]:checked").length==0)){
+			res=res&&false;
+			alert("Выберите хотя бы одного адресата!");
+		}
+		
+		
+		
+		
+		
+		if(res){
+			//вызов отправщика	
+			
+			  var addresses=new Array();
+			 
+			
+			$("input[id^=tz_email_documents_address_]:checked").each(function(index, element) {
+                addresses.push($(element).val());
+            });
+			
+			
+			var cf=0; with_files=0;
+				$.ajax({
+					async: false,
+					url: "/js/tzs.php",
+					type: "POST",
+					data:{
+						"action":"has_files",
+						"id": $("#tz_email_documents_id").val()
+					},
+					beforeSend: function(){
+						 
+					},
+					success: function(data){
+					//	alert(data);
+					  cf=data;
+					},
+					error: function(xhr, status){
+						//alert("%{$named}%: Ошибка удаления.");	
+					}	 
+				});	
+				//
+				if(cf>0){
+					if(window.confirm("Внимание! К данному ТЗ прикреплены файлы. Приложить ли эти файлы к отправляемому письму?")) with_files=1;
+					
+				} 
+			
+			
+			zc=window.open('ed_tz_pdf.php?id='+$("#tz_email_documents_id").val()+'&send_email=1&email='+addresses+'&with_files='+with_files,'emb','width=1300,height=768,resizable=yes,scrollbars=yes,status=yes,menubar=yes,toolbar=yes,location=yes,directories=yes');	
+						
+			if(zc==null) alert('Окно печати не было открыто, т.к. Ваш броузер блокирует всплывающие окна. Отключите блокировку всплывающих окон для печати документа.');
+			
+			
+			$("#tz_email_documents_dialog").dialog("close"); 
+			
+			 
+		//	location.reload();
+		}
+	}
+	
+	
+	//запуск из карты
+	$("#tz_email_documents").bind("click", function(){
+		$("#tz_email_documents_id").val($("#id").val());
+		
+		 
+		
+		tz_email_documents_GetAddresses($("#id").val());
+		
+	 
+		
+		$("#tz_email_documents_dialog").dialog("open");
+		return false;
+	});
+	
+	//запуск из реестра
+	function  tz_email_documents_launch(id){
+		$("#tz_email_documents_id").val(id);
+		 
+		
+		tz_email_documents_GetAddresses(id);
+		
+		//блокировка/разблокировка отгр. докум-тов
+		 
+		
+		$("#tz_email_documents_dialog").dialog("open");
+		return false;
+	}
+	
+	
+	
+	$("#tz_email_documents_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 600,
+		height: 500,
+		dialogClass: 'semi_auth',
+		buttons: {
+			"Готово": function(){
+				
+				
+					tz_email_documents_SendData();
+				 
+				
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	});
+ 
+</script>

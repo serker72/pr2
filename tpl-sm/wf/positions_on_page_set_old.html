@@ -1,0 +1,85 @@
+<!-- таблица на странице -->
+<table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <thead>
+    <tr align="center" valign="top">
+    	<th scope="col" width="60%">Ќоменклатура</th>
+        <th scope="col" width="80">≈д. изм.</th>
+        <th scope="col" width="80"> ол-во</th>
+        
+        <th scope="col" width="80">&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody>
+    %{section name=pospossec loop=$pospos}%
+    <tr align="left" valign="top" id="new_row_%{$pospos[pospossec].id}%">
+    	<td width="60%">
+        %{$pospos[pospossec].position_name}%
+        <input type="hidden" id="new_position_id_%{$pospos[pospossec].id}%" name="new_position_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].id}%" />
+        
+       
+        </td>
+        <td width="80">
+        %{$pospos[pospossec].dim_name}%
+        <input type="hidden" id="new_dimension_id_%{$pospos[pospossec].id}%" name="new_dimension_id_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].dimension_id}%" />
+        </td>
+        
+        <td width="80">
+        %{$pospos[pospossec].quantity}%
+        <input type="hidden" id="new_quantity_%{$pospos[pospossec].id}%" name="new_quantity_%{$pospos[pospossec].id}%" value="%{$pospos[pospossec].quantity}%"  />
+    	</td>
+        
+       
+        <td width="80">
+        <input type="button" id="new_del_%{$pospos[pospossec].id}%" value="-" %{if !$can_modify}% disabled="disabled"%{/if}% />
+       
+			
+		
+    	</td>
+    </tr>
+    %{/section}%
+    </tbody>
+    </table>
+     <script type="text/javascript">
+		$(function(){
+			//при удалении строки в таблице - пересчет стоимости
+			var position_ids=new Array(); var quantities=new Array();
+		/*	var has_pms=new Array();
+			var prices=new Array(); var rub_or_percents=new Array();
+			var plus_or_minuses=new Array(); var values=new Array();
+			*/
+			function BuildRows(){
+			   position_ids=new Array();  quantities=new Array();
+			/*   has_pms=new Array();
+			   prices=new Array();  rub_or_percents=new Array();
+			   plus_or_minuses=new Array();  values=new Array();
+			  */
+			  $.each($("#positions table tbody tr td input[type=hidden]"), function(key, value){
+				  
+				  //вычленить айди позиции, заполнить массивы данными
+				  if(value.id.indexOf('new_position_id_')!=-1){
+					  //alert(value.id);
+					  position_id=value.value;
+					  position_ids.push(value.value);
+					  quantities.push($("#new_quantity_"+position_id).attr("value"));
+					/*  has_pms.push($("#new_has_pm_"+position_id).attr("value"));
+					  
+					  prices.push($("#new_price_"+position_id).attr("value"));
+					  rub_or_percents.push($("#new_rub_or_percent_"+position_id).val());
+					  plus_or_minuses.push($("#new_plus_or_minus_"+position_id).val());
+					  values.push($("#new_value_"+position_id).val());*/
+				  }
+			  });	  
+			}
+    		
+		%{section name=pospossec loop=$pospos}%
+   			$("#new_del_%{$pospos[pospossec].id}%").bind("click",function(){
+				if(window.confirm('¬ы действительно хотите удалить позицию распор€жени€ на списание?')){ 
+					$('#new_row_%{$pospos[pospossec].id}%').remove();
+					BuildRows();
+					
+				}
+			});
+    	%{/section}%
+	
+	});
+      </script>

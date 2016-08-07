@@ -1,0 +1,884 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+});
+</script>
+
+
+%{include file="every_help_dialog.html" filename="pos_create.htm" prefix="" description="создание позиции номенклатуры"  style="float:right;  margin-left:10px;"}%
+
+
+
+<form action="position.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="0" />
+
+
+
+<table width="*" border="0" cellspacing="0" cellpadding="0">
+  <tr align="left" valign="top">
+    <td>
+    <div style="float:left; margin-right:20px;">
+<label for="name">Наименование позиции:</label><br />
+<input type="text" name="name" size="40" maxlength="255" value="" />
+
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id">Товарная группа:</label><br />
+<select name="group_id" id="group_id" style="width:150px;">
+%{include file="catalog/groups_opt.html"}%
+</select>
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id2">Подгруппа 1 ур.:</label><br />
+<select name="group_id2" id="group_id2" style="width:150px;">
+</select>
+</div>
+    
+    </td>
+  </tr>
+  <tr align="left" valign="top">
+    <td>
+    <div style="float:left; margin-right:20px;">
+<label for="gost_tu">ГОСТ/ТУ:</label><br />
+<input type="text" name="gost_tu" size="40" maxlength="255" value="" />
+
+</div>
+    
+    </td>
+    <td>
+    
+<div style="float:left; margin-right:20px;">
+<label for="dimension_id">Ед. изм.:</label><br />
+<select name="dimension_id" id="dim_id" style="width:80px;">
+%{include file="catalog/dims_opt.html"}%
+</select>
+
+%{if $can_expand_dims}%
+<input type="button" value="Единицы..." id="show_dims" />
+
+<div id="dims_dialog" title="Единицы измерения">
+%{include file="catalog/alldims.html"}%
+</div>
+
+<script type="text/javascript">
+$(function(){
+  $("#dims_dialog").dialog({
+  autoOpen: false,
+  dialogClass: 'semi_auth',
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				sel=$("#dim_id").val();
+				
+				$("#dim_id").html(data);
+				$("#dim_id").val(sel);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_dims").bind("click",function(){
+	  $("#dims_dialog").dialog("open");
+  });
+  
+  function Redrawdims(){
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_dims"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#dims_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_dim").bind("click", function(){
+		if($("#new_dim").attr("value").length<1){
+			$("#new_dim").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"add_dim",
+				"question":$("#new_dim").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Единица измерения добавлена!"); 
+			   $("#new_dim").attr("value","");
+			   Redrawdims();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления единицы измерения.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+
+</div>
+    
+    </td>
+    <td>
+    <div style="float:left; margin-right:10px;">
+<label for="group_id3">Подгруппа 2 ур.:</label><br />
+<select name="group_id3" id="group_id3" style="width:150px;">
+</select>
+</div>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#group_id").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").empty();
+				  $("#group_id2").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+		
+		$("#group_id2").bind("change", function(){
+			//alert('zz');
+			$.ajax({
+				async: true,
+				url: "/js/catalog.php",
+				type: "POST",
+				data:{
+					"action":"redraw_two_groups",
+					"group_id":$("#group_id2").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  $("#group_id3").html('<option value=""></option>'+data);
+				  
+				},
+				error: function(xhr, status){
+					//alert("Ошибка выбора подгрупп.");	
+				}	 
+			});
+		});
+	});
+	</script>
+
+
+
+%{if $can_expand_groups}%
+<!--
+<input type="button" value="Группы..." id="show_groups" />
+
+<div id="groups_dialog" title="Товарные группы">
+%{include file="catalog/allgroups.html"}%
+</div>
+-->
+<script type="text/javascript">
+$(function(){
+  $("#groups_dialog").dialog({
+	  dialogClass: 'semi_auth',
+  autoOpen: false,
+  modal: true,
+  width: 350,
+  height: 490,
+  buttons: {
+  	  "Готово": function() { 
+	  	$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#groups_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups_page"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+				
+				sel=$("#group_id").val();
+				
+				$("#group_id").html(data);
+				$("#group_id").val(sel);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	  
+	  $(this).dialog("close"); }/*,
+  	  "Закрыть": function() { $(this).dialog("close"); }*/
+  	}
+  
+  });
+  $("#show_groups").bind("click",function(){
+	  $("#groups_dialog").dialog("open");
+  });
+  
+  function RedrawGroups(){
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"redraw_groups"
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			  $("#groups_dic").html(data);
+			  
+			},
+			error: function(xhr, status){
+				//alert("Ошибка добавления вопроса.");	
+			}	 
+		});
+	}
+	
+	$("#add_new_group").bind("click", function(){
+		if($("#new_group").attr("value").length<3){
+			$("#new_group").focus();
+			return false;
+		}
+		
+		$.ajax({
+			async: true,
+			url: "/js/position.php",
+			type: "POST",
+			data:{
+				"action":"add_group",
+				"question":$("#new_group").attr("value")
+			},
+			beforeSend: function(){
+				  
+			},
+			success: function(data){
+			   alert("Группа добавлена!"); 
+			   $("#new_group").attr("value","");
+			   RedrawGroups();
+			  // location.reload();
+			},
+			error: function(xhr, status){
+				alert("Ошибка добавления группы.");	
+			}	 
+		});
+		
+	});
+  
+});
+</script>
+%{/if}%
+    </td>
+  </tr>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<label for="notes">Примечания:</label><br />
+<textarea cols="100" rows="5" name="notes" style="width:600px;"></textarea>
+<p />
+
+
+
+<div style="float:left; margin-right:10px;">
+<label for="length">Длина, мм:</label><br />
+<input type="text" name="length" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="width">Ширина, мм:</label><br />
+<input type="text" name="width" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="height">Высота/ толщина, мм:</label><br />
+<input type="text" name="height" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px;">
+<label for="weight">Вес 1 единицы, кг:</label><br />
+<input type="text" name="weight" size="7" maxlength="255" />
+
+</div>
+
+<div style="float:left; margin-right:10px; margin-top:-3px;">
+<label for="volume">Объем 1 единицы, м<sup>3</sup>:</label><br />
+<input type="text" name="volume" size="7" maxlength="255" />
+
+</div>
+
+
+<div style="float:left; margin-right:10px;">
+<label for="volume">Диаметр, мм:</label><br />
+<input type="text" name="diametr" size="7" maxlength="255" />
+
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+
+
+<input type="checkbox" id="to_pl" name="to_pl" value="1" %{if !$can_add_to_pl}% disabled="disabled"%{/if}% /><label for="to_pl">Добавить позицию в прайс-лист</label>
+
+
+
+<div style="float:left; margin-right:20px;">
+<label for="price">Цена, руб.:</label><br />
+<input type="text" id="price" name="price" size="10" maxlength="15" value="" />
+
+</div>
+
+
+%{section name=discssec loop=$discs}%
+
+<div style="float:left; margin-right:20px;">
+<label for="discount_%{$discs[discssec].id}%">%{$discs[discssec].name}%:</label><br />
+<input type="text" id="discount_%{$discs[discssec].id}%" name="discount_%{$discs[discssec].id}%" size="5" maxlength="15" value="0" %{if !$can_add_to_pl}% disabled="disabled"%{/if}%  />
+
+<select id="discount_rub_or_percent_%{$discs[discssec].id}%" name="discount_rub_or_percent_%{$discs[discssec].id}%" style="width:45px;" %{if !$can_add_to_pl}% disabled="disabled"%{/if}%>
+   <option value="0" >руб.</option>
+   <option value="1" selected="selected">%</option>
+   </select>
+
+ %{if $can_max_val}%
+    <!-- ecли есть ограничения, нужно их также выписать -->
+    <br />
+    Макс. скидка:<br />
+
+	<input type="text" size="4" maxlength="255" value="%{$discs[discssec].dl_value}%" name="dl_value_%{$discs[discssec].id}%" id="dl_value_%{$discs[discssec].id}%" %{if !$can_add_to_pl}% disabled="disabled"%{/if}% />
+    
+    <select id="dl_rub_or_percent_%{$discs[discssec].id}%" name="dl_rub_or_percent_%{$discs[discssec].id}%" style="width:45px;" %{if !$can_add_to_pl}% disabled="disabled"%{/if}%>
+   <option value="0"  >руб.</option>
+   <option value="1" selected="selected">%</option>
+   </select>
+%{/if}%    
+   
+   
+   
+</div>
+
+%{/section}%
+
+
+
+
+
+
+
+
+
+<div style="float:left; margin-right:20px;">
+<b>Итоговая цена, руб.:</b><br />
+<span id="price_f">-</span>
+</div>
+
+
+<br clear="all" />
+<p />
+
+<label for="txt_for_kp">Текст для КП:</label><br />
+<textarea cols="100" rows="5" name="txt_for_kp"></textarea>
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+ <script type="text/javascript">
+	CKEDITOR.replace( 'txt_for_kp',
+					 
+					 {
+						 customConfig : '/ckeditor4/config-kp.js'
+    				  }
+					 );
+	</script>
+
+<p />
+
+
+%{if $can_create}%
+<input type="submit" name="doNew" value="Создать позицию" />
+%{/if}%
+
+%{if $can_edit}%
+<input type="submit" name="doNewEdit" value="Создать позицию и перейти к редактированию" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='catalog.php';
+}else location.href='catalog.php';" />
+
+
+</form>
+%{if $can_add_to_pl}%
+<script type="text/javascript">
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+function RecalcPrice(){
+	res=true;
+	
+	
+	sum=$("#price").val();	
+	sum=sum.replace("\,","\.");
+	sum=parseFloat(sum);
+	
+	skidka=0;
+	
+	mode='';
+	//найти любую скидку не нулевую
+	%{section name=discssec loop=$discs}%
+	sk=$("#discount_"+"%{$discs[discssec].id}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk!="")&&!isNaN(sk)&&(parseFloat(sk)>0)){
+		 skidka=parseFloat(sk);
+		 mode="%{$discs[discssec].id}%";
+	}
+	%{/section}%
+	
+	if(mode!=""){
+		if($("#discount_rub_or_percent_"+mode).val()==1){
+			sum=roundPlus(parseFloat(sum)-parseFloat(sum)*parseFloat(skidka)/100,2);	
+		}else{
+			sum=roundPlus(parseFloat(sum)-parseFloat(skidka),2);
+		}
+	}
+	
+	$("#price_f").text(sum);
+	
+	return res;
+}
+
+//проверка корр-ти макс. скидки (любой)
+function IsCorrectMaxSk(){
+	res=true;
+
+	
+	%{section name=discssec loop=$discs}%
+	
+	
+	local_res=true;
+	sk=$("#dl_value_"+"%{$discs[discssec].id}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk!="")&&(isNaN(sk)||(parseFloat(sk)<0))){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#dl_value_"+"%{$discs[discssec].id}%").focus();
+		alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+		
+		$("#dl_value_"+"%{$discs[discssec].id}%").addClass("wrong");
+		
+	}else $("#dl_value_"+"%{$discs[discssec].id}%").removeClass("wrong");
+	
+	
+	//если выбраны ПРОЦЕНТЫ: то не более 99.99 процентов
+	if(local_res){
+	  if((sk!="")&&!isNaN(sk)&&($("#dl_rub_or_percent_"+"%{$discs[discssec].id}%").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#dl_value_"+"%{$discs[discssec].id}%").focus();
+			alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+			
+			$("#dl_value_"+"%{$discs[discssec].id}%").addClass("wrong");
+			
+	  }else $("#dl_value_"+"%{$discs[discssec].id}%").removeClass("wrong");
+	
+	}
+	
+	
+	
+	%{/section}%
+	
+	return res;
+}
+
+
+//проверка корр-ти скидки (любой)
+function IsCorrectSk(){
+	res=true;
+
+	
+	%{section name=discssec loop=$discs}%
+	
+	local_res=true;
+	sk=$("#discount_"+"%{$discs[discssec].id}%").val();	
+	sk=sk.replace("\,","\.");
+	if((sk=="")||isNaN(sk)||(parseFloat(sk)<0)){
+		res=res&&false;
+		local_res=local_res&&false;	
+		$("#discount_"+"%{$discs[discssec].id}%").focus();
+		alert("Некорректно заполнено значение поля %{$discs[discssec].name}%!");
+		
+		$("#discount_"+"%{$discs[discssec].id}%").addClass("wrong");
+		
+	}else $("#discount_"+"%{$discs[discssec].id}%").removeClass("wrong");
+	
+	
+	//если выбраны ПРОЦЕНТЫ: то не более 99.99 процентов
+	if(local_res){
+	  if(!isNaN(sk)&&($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%").val()==1)&&(parseFloat(sk)>99.99)){		
+	  		res=res&&false;
+			local_res=local_res&&false;	
+			$("#discount_"+"%{$discs[discssec].id}%").focus();
+			alert("Некорректно заполнено максимальное значение поля %{$discs[discssec].name}%!");
+			
+			$("#discount_"+"%{$discs[discssec].id}%").addClass("wrong");
+			
+	  }else $("#discount_"+"%{$discs[discssec].id}%").removeClass("wrong");
+	
+	}
+	
+	if(local_res){
+		
+		
+		sum=$("#price").val();	
+		sum=sum.replace("\,","\.");
+		sum=parseFloat(sum);
+		
+		if(!isNaN(sk)&&($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%").val()==0)&&(parseFloat(sk)>sum)){	
+			res=res&&false;
+			local_res=local_res&&false;	
+			$("#discount_"+"%{$discs[discssec].id}%").focus();
+			alert("Введенная %{$discs[discssec].name}% в рублях превышает цену позиции!");
+			
+			$("#discount_"+"%{$discs[discssec].id}%").addClass("wrong");
+		}else{
+			$("#discount_"+"%{$discs[discssec].id}%").removeClass("wrong");
+		}
+	}
+	
+	
+	%{/section}%
+	
+	return res;
+}
+
+//проверка корр-ти цены
+function IsCorrectPrice(){
+	res=true;
+	
+	//проверим сумму, скидку
+	sum=$("#price").val();	
+	sum=sum.replace("\,","\.");
+	if((sum.length==0)||isNaN(sum)||(parseFloat(sum)<=0)){
+		$("#price").addClass("wrong");
+		alert("Некорректно заполнено поле Цена!");
+		$("#price").focus();
+		res=res&&false;	
+	}else{
+		$("#price").removeClass("wrong");
+	}
+	
+	
+	
+	return res;	
+}
+
+
+//проверка на взаимокорректность скидок (скидка не м.б. больше максимальной)
+function IsCorrectBounds(){
+	res=true;
+	
+	%{section name=discssec loop=$discs}%
+	
+	local_res=true;
+	sum=$("#price").val();	
+	sum=sum.replace("\,","\.");
+	
+	sk=$("#discount_"+"%{$discs[discssec].id}%").val();	
+	sk=sk.replace("\,","\.");
+	
+	max_sk=$("#dl_value_"+"%{$discs[discssec].id}%").val();	
+	max_sk=max_sk.replace("\,","\.");
+	
+	
+	sk_in_rub=0;
+	max_sk_in_rub=0;
+	
+	if($("#discount_rub_or_percent_"+"%{$discs[discssec].id}%").val()==1){
+		sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(sk)/100,2);	
+	}else{
+		sk_in_rub=roundPlus(sk,2);
+	}
+	
+	if(max_sk!=""){
+		if($("#dl_rub_or_percent_"+"%{$discs[discssec].id}%").val()==1){
+			max_sk_in_rub=roundPlus(parseFloat(sum)*parseFloat(max_sk)/100,2);	
+		}else{
+			max_sk_in_rub=roundPlus(max_sk,2);
+		}
+	}else max_sk_in_rub=sum;
+	
+	
+	
+	
+		
+	if(sk_in_rub>max_sk_in_rub){
+		res=res&&false;
+		alert("Введенная скидка превышает максимальную скидку!");
+		$("#discount_"+"%{$discs[discssec].id}%").addClass("wrong");
+		$("#dl_value_"+"%{$discs[discssec].id}%").addClass("wrong");	
+	}else{
+		$("#discount_"+"%{$discs[discssec].id}%").removeClass("wrong");
+		$("#dl_value_"+"%{$discs[discssec].id}%").removeClass("wrong");	
+	}
+	
+	
+	%{/section}%
+	
+	return res;	
+}
+
+
+
+
+
+
+$(function(){
+	$("#crea_form").bind("submit", function(){
+		if($("#to_pl").prop("checked")==false){
+			res=window.confirm("Добавить создаваемую позицию в прайс-лист?");
+			$("#to_pl").prop("checked", res);
+			if(res) return false;
+			else return true;
+				
+		}else{
+			//выполнить комплекс проверок цены и скидки	
+			
+			 res=true;
+		 res=res&&IsCorrectMaxSk();
+		  if(res) res=res&&IsCorrectSk();
+		 if(res) res=res&&IsCorrectBounds();
+		 if(res) res=res&&IsCorrectPrice();
+		 if(res) res=res&&RecalcPrice();
+			return res;
+		}
+	});
+	
+	
+	
+	
+	
+	$("#price").bind("change", function(){
+		
+		res=true;
+		res=res&&IsCorrectPrice();
+		if(res) res=res&&IsCorrectBounds();
+		if(res) res=res&&RecalcPrice();
+		
+		return res;
+		
+	});
+	
+	
+	
+	 %{foreach from=$discs item=discs1}%
+	 
+	 //обработчик изменения макс скидки (любой)
+	 $("#dl_value_%{$discs1.id}%").bind("change", function(){
+		 res=true;
+		  res=res&&IsCorrectMaxSk();
+		  if(res) res=res&&IsCorrectBounds();
+		  if(res) res=res&&RecalcPrice();
+		  
+		 return res;
+	 });
+	 $("#dl_rub_or_percent_%{$discs1.id}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectMaxSk();
+		 if(res) res=res&&IsCorrectBounds();
+		 if(res) res=res&&RecalcPrice();
+		 
+		return res;
+	 });
+	 
+	 //обработчик изменения скидки (любой)
+	 $("#discount_%{$discs1.id}%").bind("change", function(){
+		 
+		  
+		  //сброс прочих скидок
+		  if(parseFloat($(this).val())!==0){
+				%{foreach from=$discs item=discs2}%
+				 %{if $discs2!=$discs1}%
+				 $("#discount_%{$discs2.id}%").val('0');
+				 %{/if}%
+				 %{/foreach}% 
+		  }
+		  
+		  res=true;
+		  res=res&&IsCorrectSk();
+		  if(res) res=res&&IsCorrectBounds();
+		  if(res) res=res&&RecalcPrice();
+		  
+		  return res;
+	 });
+	 $("#discount_rub_or_percent_%{$discs1.id}%").bind("change", function(){
+		 res=true;
+		 res=res&&IsCorrectSk();
+		 if(res) res=res&&IsCorrectBounds();
+		 if(res) res=res&&RecalcPrice();
+		 
+		 return res;
+	 });
+	 
+	 %{/foreach}%
+	
+	
+	
+	
+	
+	
+	
+	
+	/*$("#to_pl").bind("change", function(){
+		if($(this).prop("checked")){
+			 res=true;
+		 res=res&&IsCorrectMaxSk();
+		  if(res) res=res&&IsCorrectSk();
+		 if(res) res=res&&IsCorrectBounds();
+		 if(res) res=res&&RecalcPrice();
+			
+			
+			if(!res) $(this).prop("checked", false);
+		}
+	});
+	
+	*/
+	
+	
+	
+});
+</script>
+%{/if}%

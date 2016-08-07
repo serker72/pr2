@@ -1,0 +1,245 @@
+<script type="text/javascript">
+$(function(){	
+
+	$("#pl_position_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 600,
+		height: 200,
+		 
+		buttons: {
+			"Готово": function(){
+				if(($("#pl_position_eq").val()==0)||($("#pl_position_eq").val()==null)||($("#pl_position_eq").val()==undefined)){
+					alert("Выберите оборудование!");
+					return false;
+				}else{
+					//подгрузка в карту, выход
+					$("#pl_position_id").val($("#pl_position_eq").val());
+					$("#pl_position_string").val($("#pl_position_eq option:selected").text());
+					
+					$(this).dialog("close"); 		
+				}
+				
+			},
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	 
+	
+	//смена вида обор
+	$("#pl_position_gr").bind("change", function(){
+		gr_id=$(this).val();
+		$.ajax({
+		  async: true,
+		  url: "/js/tzs.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_prod",
+			  "gr_id":gr_id 
+			  
+		  },
+		  beforeSend: function(){
+			//$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			  
+			 
+			$("#pl_position_prod").html(data);
+			$("#pl_position_gr1").empty();
+			
+			$("#pl_position_eq").empty();
+			//подгрузить обор-ие
+			$("#pl_position_gr1").trigger("change");
+		  },
+		  error: function(xhr, status){
+			 
+			// alert("Ошибка загрузки.");	
+		  }	 
+		});
+		
+	});
+	
+	//смена поставщика
+	$("#pl_position_prod").bind("change", function(){
+		gr_id=$("#pl_position_gr").val();
+		prod_id=$(this).val();
+		$.ajax({
+		  async: true,
+		  url: "/js/tzs.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_gr1",
+			  "gr_id":gr_id,
+			  "prod_id":prod_id 
+			  
+		  },
+		  beforeSend: function(){
+			//$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			//alert(data);
+			 
+			 
+		 
+			$("#pl_position_gr1").html(data);
+			
+			$("#pl_position_eq").empty();
+			//подгрузить обор-ие
+			$("#pl_position_gr1").trigger("change");
+		  },
+		  error: function(xhr, status){
+			 
+			// alert("Ошибка загрузки.");	
+		  }	 
+		});
+		
+	});
+	
+	//смена категории
+	$("#pl_position_gr1").bind("change", function(){
+		gr_id=$("#pl_position_gr").val();
+		prod_id=$("#pl_position_prod").val();
+		gr_id1=$("#pl_position_gr1").val();
+		$.ajax({
+		  async: true,
+		  url: "/js/tzs.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_eq",
+			  "gr_id":gr_id,
+			  "gr_id1":gr_id1,
+			  "prod_id":prod_id 
+			  
+		  },
+		  beforeSend: function(){
+			//$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			 
+			  
+			
+			$("#pl_position_eq").html(data);
+			//подгрузить обор-ие
+		  },
+		  error: function(xhr, status){
+			 
+			// alert("Ошибка загрузки.");	
+		  }	 
+		});
+		
+	});
+	
+	//смена оборуд-ия
+	
+	
+	$("#pl_position_select").bind("click",function(){
+		
+		//заполнить все поля
+		//подставим ВИД
+		//остальное - из обработчиков выбора
+		//в каждом обработчике - проверять права
+		$.ajax({
+		  async: true,
+		  url: "/js/tzs.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_gr" 
+			  
+		  },
+		  beforeSend: function(){
+			//$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			//alert(data);
+			 
+			$("#pl_position_gr").html(data); 
+			$("#pl_position_prod").empty();
+			$("#pl_position_gr1").empty();
+			$("#pl_position_eq").empty();
+			//подгрузить обор-ие
+		  },
+		  error: function(xhr, status){
+			 
+			// alert("Ошибка загрузки.");	
+		  }	 
+		});
+		
+		
+		
+		  
+	
+		$("#pl_position_dialog").dialog("open");
+		 
+		
+	});
+	
+	$("#pl_position_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+		$("#pl_position_string").val("");
+	 	$("#pl_position_id").val("");
+		 
+		
+	});
+	
+	
+	
+	
+	   
+	
+	 
+});
+</script>
+
+<div id="pl_position_dialog" title="Выберите оборудование" style="display:none;">
+
+	<div style="float:left; margin-right:10px; margin-bottom:15px;">
+    	<label for="pl_position_gr">
+	        Вид оборудования:
+        </label><br>
+		<select id="pl_position_gr" style="width:250px;">
+        
+        </select>
+    </div>
+    
+    <div style="float:left; margin-right:10px;  margin-bottom:15px;">
+    	<label for="pl_position_prod">
+	        Производитель:
+        </label><br>
+		<select id="pl_position_prod" style="width:250px;">
+        
+        </select>
+    </div>
+    
+	<div style="float:left; margin-right:10px;  margin-bottom:15px;">
+    	<label for="pl_position_gr1">
+	        Категория:
+        </label><br>
+		<select id="pl_position_gr1" style="width:250px;">
+        
+        </select>
+    </div>
+    
+    
+    <div style="float:left; margin-right:10px;  margin-bottom:15px;">
+    	<label for="pl_position_eq">
+	        Оборудование:
+        </label><br>
+		<select id="pl_position_eq" style="width:250px;">
+        
+        </select>
+    </div>
+
+  
+ 
+</div>
+ 
+ 
+ 

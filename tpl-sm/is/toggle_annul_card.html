@@ -1,0 +1,223 @@
+%{if $bill.can_annul}%
+<a href="#" id="do_annul">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		$("#do_annul").bind("click",function(){
+			%{if $bill.binded_to_annul!=""}%
+			alert("Внимание! С данным распоряжением связаны следующие документы: %{$bill.binded_to_annul}%.\nДля аннулирования распоряжения необходимо аннулировать все связанные документы.");
+			return false;
+			%{/if}%
+			
+			
+			usl=true;
+			do_it=false;
+			note='';
+			while(usl){
+					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+					if(res==undefined) {
+						break;
+					}
+					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+						note=res;
+						usl=false;
+						do_it=true;						
+					}
+			}
+			
+			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать распоряжение на межсклад № %{$bill.id}%?")){
+				$.ajax({
+				  async: true,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"toggle_annul",
+					  "id":"%{$bill.id}%",
+					  "shorter":0,
+					  "from_card":1,
+					  "note":note
+				  },
+				  beforeSend: function(){
+						$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 $("#toggle_annul").html(data);
+					location.reload();
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			}
+		  return false;
+		});
+	});
+	</script>
+
+%{else}%
+%{if $bill.can_restore}%
+%{include file="annul_dialog.html"}%
+    <a href="#" id="do_annul">
+<img src="/img/icons/delete.png" width="24" height="24" align="right" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" vspace="2" hspace="5" />
+</a>
+
+ <script type="text/javascript">
+	$(function(){
+		 var new_values=new Array();
+		$("#do_annul").bind("click",function(){
+			
+			$.ajax({
+				  async: true,
+				  url: "/js/is.php",
+				  type: "POST",
+				  data:{
+					  "action":"confirm_annul",
+					  "id":"%{$bill.id}%",
+					  "new_values[]":new_values
+				  },
+				  beforeSend: function(){
+						//$("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+				  },
+				  success: function(data){
+					 //alert(data);
+					 
+					 if(data==0){
+						 if(window.confirm("Внимание! Вы действительно хотите восстановить распоряжение на межсклад № %{$bill.id}%?")){
+							 /* $.each(new_values, function(k,v){
+								 alert(v); 
+							  });*/
+							  $.ajax({
+								async: true,
+								url: "/js/is.php",
+								type: "POST",
+								data:{
+									"action":"toggle_annul",
+									"id":"%{$bill.id}%",
+									"shorter":0,
+									"from_card":1,
+					 				 "new_values[]":new_values
+								},
+								beforeSend: function(){
+									  $("#toggle_annul").html('<img src="/img/wait.gif" width="32" height="32" alt="" />');
+								},
+								success: function(data){
+								   $("#toggle_annul").html(data);
+								   location.reload();
+								},
+								error: function(xhr, status){
+								  //  alert("Ошибка добавления %{$named}%.");	
+								}	 
+							});
+						  }
+					 }else{
+						 
+						 
+						 
+						 $("#annul_dialog").dialog({
+							autoOpen: false,
+							modal: true,
+							width: 500,
+							height: 350,
+							stack: true,
+							buttons:{
+								"Внести изменения":function(){
+									//new_values=new Array();
+									var can_can=true;
+									
+									$.each($("input[id^=new_qua_]"), function(k,v){
+										//alert($(v).val());
+										//сделать проверки корректности (>=0, chislo)
+										if(isNaN($(v).val())||(parseFloat($(v).val())<0)){
+											can_can=can_can&&false;	
+											$(v).focus();
+										}
+										key=$(v).attr('id').replace('new_qua_', '');
+										//alert(key);
+										
+										hash=key+';'+$(v).val();
+										
+										index=-1;
+										$.each(new_values, function(kk, vv){
+											if(vv.indexOf(key+';')!=-1) index=kk;
+										});
+										if(index>-1) new_values[index]=hash;
+										else new_values.push(hash);
+										
+										
+									});
+									
+									if(can_can){
+										$("#annul_dialog").dialog("close");
+										$("#do_annul").trigger("click");
+									}else{
+										alert("Введите корректное значение количества!");
+									}
+								},
+								
+								"Отмена":function(){
+									new_values=new Array();
+									$("#annul_dialog").dialog("close");
+								}
+							}
+						});
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 
+						 $('#annul_dialog').dialog({ title: "Невозможно восстановить распоряжение на межсклад" });
+						
+						$('#annul_dialog').dialog('open'); 
+						$('#annul_dialog_text').html('Невозможно восстановить распоряжение на межсклад № %{$bill.id}%.<br /> Причина:<br /> '+data+'.');
+   						 $('#annul_dialog').dialog('open'); 
+						 
+					 }
+					 
+					 
+				  },
+				  error: function(xhr, status){
+					//  alert("Ошибка добавления %{$named}%.");	
+				  }	 
+			  });
+			
+			
+			
+			
+			
+			
+			
+			
+			
+		  return false;
+		});
+	});
+	</script>
+    %{else}%
+	
+    %{include file="annul_dialog.html"}%
+
+<a href="#" onclick="
+$('#annul_dialog_text').html('Невозможно аннулировать распоряжение на межсклад № %{$bill.id}%.<br /> Причина: %{$bill.can_annul_reason}%.');
+    $('#annul_dialog').dialog('open');
+	 return false;"><img src="/img/icons/delete_inactive.png" width="24" height="24" alt="Аннулировать/Восстановить..." title="Аннулировать/Восстановить..." border="0" align="right" align="right" /></a>
+%{/if}%
+
+%{/if}%
+
+<strong>Статус:</strong><br />
+%{if $bill.status_id==1}%
+не утверждено 
+%{elseif $bill.status_id==17}%
+выполнено
+%{elseif $bill.status_id==2}%
+утверждено
+%{elseif $bill.status_id==3}%
+аннулировано
+%{/if}%

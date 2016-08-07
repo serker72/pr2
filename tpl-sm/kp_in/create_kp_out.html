@@ -1,0 +1,377 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+ 
+	 
+	$("#given_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	  
+	 
+	 
+	
+	 
+	
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	 
+	 
+	 
+	
+	 
+});
+</script>
+
+ %{include file="every_help_dialog.html" filename="kp_ins.html" prefix="" description="Информация о создании исходящего КП" style="float:right" is_right=true}%
+
+
+
+<h1>Создать исходящее КП</h1>
+
+<form action="ed_kp_in.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+<input type="hidden" name="kind_id" value="1">
+
+<input type="hidden" name="lead_id" id="lead_id" value="%{$lead_id}%"> 
+<input type="hidden" name="tz_id" id="tz_id" value="%{$tz_id}%"> 
+<input type="hidden" name="kp_in_id" id="kp_in_id" value="%{$kp_in_id}%"> 
+
+
+<div style="float:right; margin-right:0px; min-width:120px; height:50px;">
+<a href="#" onclick="$('#do_close').trigger('click'); return false;" style="float:right;" class="reestr_right_button24 reestr_delete" data-comment="Аннулировать/Восстановить...">
+ 
+</a>
+
+<strong>Статус:</strong><br />
+
+создан
+
+
+</div>
+
+<div style="float:right;  margin-right:10px; height:50px; ">
+  <a href="#"   onclick="alert('В данном режиме печать исходящего КП недоступна. Пожалуйста, нажмите кнопку Создать исходящее КП и остаться в карте для получения возможности печати КП.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать лида..."></a>
+</div>  
+
+
+<div style="float:left; margin-right:20px; height:50px;">
+    
+    
+        <label for="pdate">
+        Дата создания: 
+        </label><br />
+        
+        %{$now_time}%
+        <input type="hidden" value="%{$now_date}%" name="pdate" />
+    
+</div>
+
+
+  <div style="float:left; white-space:nowrap; margin-right:20px; height:50px;">
+     
+    <label for="given_pdate">
+    Дата КП:
+        </label> <br>
+    
+        
+        <input type="text" value="%{$now_date}%" id="given_pdate" name="given_pdate"  size="10"   maxlength="10" style="width:60px;" />
+        
+      
+        
+    </div>
+ 
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+ 
+    <label for="lead_str">Лид:</label> <br>
+
+  
+    <a href="ed_lead.php?action=1&id=%{$lead_id}%&from_begin=1" target="_blank">%{$lead.code}%</a>
+     
+	 
+</div>
+
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="tz_str">ТЗ:</label> <br>
+  <a href="ed_tz.php?action=1&id=%{$tz.id}%&from_begin=1" target="_blank">%{$tz.code}%</a>
+	 
+</div>
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+    <label for="kp_in_str">КПВ:</label> <br>
+  <a href="ed_kp_in.php?action=1&id=%{$kp_in.id}%&from_begin=1" target="_blank">%{$kp_in.code}%</a>
+	 
+</div>
+
+ 
+
+<br clear="all">
+<p />
+
+
+<div style="float:left; margin-right: 0px; width:100%;">
+<label for="description">Описание КП:</label><br>
+<textarea id="description" name="description" style="width:100%; height:75px;"></textarea>
+
+
+ 
+<script type="text/javascript">
+
+ 
+ 
+	try{
+		$("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'50px'
+            });		
+		
+	}catch(e){}
+	
+</script>
+
+</div> 
+
+<br clear="all">
+<p />
+
+ <div>
+    
+    
+
+   <strong>Приложите файлы:</strong><br />
+
+
+    <input type="file" id="file" /> 
+     
+    <em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+    
+    <div id="uploaded_files">
+        
+    </div>
+     
+     
+    
+    <script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+    
+    <div id="queue"></div>
+    
+    <script type="text/javascript">
+    $(function(){
+                function AddCode(inname, realname){
+                $.ajax({
+                    async: true,
+                    url: "/js/sched_task_upload_draw.php",
+                    type: "POST",
+                    data:{
+                        "action":"add_file_entry",
+                        "factname":inname,
+                        "realname":realname
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      
+                       $("#uploaded_files").append(data);
+                       
+                        
+                       //перерисовать блок сообщений
+                                    },
+                    error: function(xhr, status){
+                            
+                    }	 
+                });	
+                
+            }
+            
+            $('#file').uploadifive({
+                    'auto'             : true,
+                    'buttonText' : 'Выберите файл...',
+                'fileTypeDesc' : 'Все файлы',
+                'fileTypeExts' : '*.*', 
+                    'fileSizeLimit' : '512 MB', 
+                    'width'           : 120,
+                    'formData'         : {
+                                           "PHPSESSID" : "%{$session_id}%"
+                                         },
+                    'queueID'          : 'queue',
+                    'uploadScript'     : '/swfupl-js/kp_in_upload_file.php',
+                    'onUploadComplete' : function(file, data) { 
+                            eval(data)
+							//alert(data)
+                    
+                    }
+                });
+            
+         
+    });
+     </script>
+
+    
+   
+</div>
+ 
+ 
+<br clear="all" />
+ 
+<h3>Файлы входящего КП</h3> 
+  
+%{$in_files}%
+
+<br clear="all">
+<p />
+ 
+   
+ 
+   
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="kp_in/supplier_many_actions.html" many=false can_modify=false}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+   
+ 
+   
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Поставщик:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="kp_in/suppliertz_many_actions.html" many=false can_modify=false suppliers=$supplierstz}%
+
+</div>  
+ 
+ <br clear="all" />
+<p />
+   
+ 
+ <div style="float:left; margin-right:20px;">
+
+	<label for="manager_select">Ответственный сотрудник:</label><br>
+
+	<input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+   
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+  
+
+	 
+	
+    %{include file="lead/manager_actions.html" can_modify=false}%
+    
+</div> 
+ 
+<br clear="all" />
+<p />
+
+
+
+
+<br>
+
+ 
+ <!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+ 
+
+
+
+<input type="submit" value="Создать исход. КП" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать исход. КП и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='kps.php';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+var frmvalidator  = new Validator("crea_form");
+
+function DoCustomValidation()
+{
+	  
+ 	function doBlink(v){
+		
+		var blr=window.setInterval( function(){
+			$(v).toggleClass("blue");	
+		}, 100);
+		
+		window.setTimeout( function(){
+			window.clearInterval(blr);
+			$(v).removeClass("blue");
+		}, 3000);
+	}
+ 
+    if($("input[name^=upload_file_]").length==0){
+		alert("Прикрепите хотя бы один файл!");
+		 
+		return false;	
+	}
+	
+ 
+	
+	
+	%{if $can_confirm}% 
+	if(window.confirm("Желаете ли вы утвердить заполнение КП?")){
+		$("#do_confirm").val(1);	
+	}else $("#do_confirm").val(0);	
+	%{/if}%
+	
+	
+	return true; 
+}
+
+frmvalidator.addValidation("given_pdate","req","Укажите дату КП!");
+ 
+
+ 
+
+
+/*
+frmvalidator.addValidation("manager_id","req","Выберите ответственного сотрудника!");
+frmvalidator.addValidation("manager_id","gt=0","Выберите ответственного сотрудника!");
+*/
+ 
+
+frmvalidator.setAddnlValidationFunction(DoCustomValidation);
+</script>

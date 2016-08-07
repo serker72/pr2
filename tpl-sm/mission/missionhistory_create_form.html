@@ -1,0 +1,264 @@
+<h1>Создание события командировки № %{$claim.id}%</h1>
+
+
+<form action="missionhistory_create.php" method="post" id="crea_form">
+<input type="hidden" name="id" value="%{$claim.id}%" />
+
+
+<strong>Расходы на командировку:</strong><br />
+<script type="text/javascript">
+function roundPlus(x, n) { //x - число, n - количество знаков
+  if(isNaN(x) || isNaN(n)) return false;
+  var m = Math.pow(10,n);
+  return Math.round(x*m)/m;
+}
+
+function RecalcSumm(mode){
+	//$("#value_"+hash).val().replace("\,","\.")
+	var itogo=0.0;
+	var is_correct=true;
+	$.each($("input[id^=exp_id_"+mode+"_]"), function(k,v){
+		
+		if(is_correct){
+		  vv=$(v).val().replace("\,","\.");
+		  
+		  
+		  if(isNaN(vv)||($(v).val().length==0)){
+			  alert("Неправильно введена сумма!");
+			  $(v).addClass("wrong");
+			  $(v).focus();
+			  //break;
+			  is_correct=is_correct&&false;
+		  }else{
+			  $(v).removeClass("wrong");
+		  }
+		  
+		  itogo+=parseFloat(vv);
+		}
+	});
+	
+	$("#exp_cost_"+mode+"").html(roundPlus(itogo,2));
+}
+
+</script>
+<table width="600" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+    <tr align="center" valign="top">
+    	
+        <th scope="col" width="400">Наименование</th>
+        
+        <th scope="col" width="100">План., руб.</th>
+        <th scope="col" width="100">Факт., руб.</th>
+      
+    </tr>
+   <tbody> 
+   %{section name=rasec loop=$ras}% 
+   <tr align="left" valign="top">
+   		<td width="400"><strong>%{$ras[rasec].name}%</strong></td>
+        
+        <td width="100">
+        <input type="text" value="%{$ras[rasec].plan}%" id="exp_id_plan_%{$ras[rasec].id}%" name="exp_id_plan_%{$ras[rasec].id}%" style="width:100px;" size="18" maxlength="255" %{if $ras[rasec].plan>0 and !$can_change_ras}%  disabled="disabled"%{/if}% />
+        
+        
+        </td>
+        <td width="100"> 
+         <input type="text" value="%{$ras[rasec].fact}%" id="exp_id_fact_%{$ras[rasec].id}%" name="exp_id_fact_%{$ras[rasec].id}%" style="width:100px;" size="18" maxlength="255" %{if $ras[rasec].fact>0 and !$can_change_ras}%  disabled="disabled"%{/if}% />
+      	
+         <script type="text/javascript">
+		$(function(){
+			$("#exp_id_plan_%{$ras[rasec].id}%").bind("change", function(){
+
+				RecalcSumm("plan");
+			});
+			$("#exp_id_fact_%{$ras[rasec].id}%").bind("change", function(){
+								
+				RecalcSumm("fact");
+			});
+		});
+		</script>    
+      
+        </td>
+   </tr>
+   %{/section}%
+   <tr align="left" valign="top">
+   		<td width="400"><strong>Итого, руб.</strong></td>
+        
+        <td width="100" align="center" id="exp_cost_plan" style="font-weight:bold;">
+        %{$claim.plan}%
+        </td>
+        <td width="100" align="center" id="exp_cost_fact" style="font-weight:bold;">
+        %{$claim.fact}%
+        </td>
+   </tr>
+   </tbody>
+    </table> 
+    
+    <p />
+
+
+
+
+
+
+
+<label for="txt">Описание события:</label><br />
+<textarea cols="80" rows="15" name="txt"></textarea>
+<p />
+
+
+<!--<script type="text/javascript" src="/ckeditor/ckeditor.js"></script>-->
+<script type="text/javascript">
+	CKEDITOR.replace( 'txt',
+					 
+					 {
+						 customConfig : '/ckeditor4/config_mini.js'
+    				  }
+					 );
+	</script>
+
+<label for="status_id">Статус командировки:</label><br />
+<select id="status_id" style="width:150px;" %{if $cannot_change_status}% disabled="disabled"%{else}% name="status_id"%{/if}%>
+%{html_options values=$status_ids selected=$claim.status_id output=$status_names}%
+</select>
+%{if $cannot_change_status}%
+<input type="hidden" name="status_id" value="%{$claim.status_id}%" />
+%{/if}%
+<p />
+
+
+
+
+<link rel="stylesheet" href="swfuploader.css" type="text/css">
+    <script type="text/javascript" src="swfupl/swfupload.js"></script>
+	<script type="text/javascript" src="swfupl-js/swfupload.queue.js"></script>
+	<script type="text/javascript" src="swfupl-js/fileprogress.js"></script>
+	<script type="text/javascript" src="swfupl-js/handlers.js"></script>
+    <script type="text/javascript">
+		var swfu;
+		function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		window.onload = function() {
+			var settings = {
+				flash_url : "swfupl/swfupload.swf",
+				upload_url: "swfupl-js/upload_file_mission.php",
+				post_params: {"PHPSESSID" : "%{$session_id}%"
+				},
+				file_size_limit : "192 MB",
+				file_types : "*.*",
+				file_types_description : "Все файлы",
+				file_upload_limit : 1000,
+				file_queue_limit : 1,
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				debug: false,
+
+				// Button settings
+				button_placeholder_id: "spanButtonPlaceHolder",
+				button_text: '<span class="theFont">Выберите файл...</span>',
+				button_width: 130,
+				button_height: 29,
+				button_text_style: ".theFont { font-size: 12px; font-family: sans-serif; }",
+				button_text_left_padding: 12,
+				button_text_top_padding: 5,
+				button_image_url: "/img/upload2.png",
+				
+				
+				// The event handler functions are defined in handlers.js
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				queue_complete_handler : queueComplete	// Queue plugin event
+			};
+
+			swfu = new SWFUpload(settings);
+			
+			
+			
+	     };
+	</script>
+    <style type="text/css">
+	/*#btnCancel{display:none;}*/
+	</style>
+
+<div id="uploaded_files">
+	
+</div>
+
+<strong>Приложите файл:</strong>
+
+
+
+<div class="fieldset flash" id="fsUploadProgress">
+			<span class="legend"></span>
+</div>
+<div id="divStatus"></div>
+<div>
+				<span id="spanButtonPlaceHolder"></span>
+                
+                <input id="btnCancel" type="button" value="Отменить все загрузки" onclick="swfu.cancelQueue();" disabled="disabled" style="margin-left: 2px; font-size: 8pt; height: 29px;" />
+				
+</div>
+
+<em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+<p />
+
+
+
+
+<input type="submit" value="Создать событие" name="makeOrder" />
+<p />
+
+<input type="button" value="Отмена" name="cancelOrder" onclick="location.href='missionhistory.php?id=%{$claim.id}%';" />
+
+</form>
+<script type="text/javascript">
+$(function(){
+	
+	$("#status_id").bind("change",function(){
+		
+		
+		
+	});
+	
+	
+	$("#crea_form").bind("submit",function(){
+	 
+	  if ( (CKEDITOR.instances.txt.getData().replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length < 5 ){
+		  alert("Пожалуйста, добавьте описание к событию!\nБез описания создание события невозможно.");
+		  CKEDITOR.instances.txt.focus();
+		  return false;
+	  }
+	
+	});
+});
+</script>

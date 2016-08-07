@@ -1,0 +1,50 @@
+<html>
+<head>
+ <style>
+ body, div, td{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:12px;
+ }
+ </style>
+
+</head>
+<body style="margin: 0 0 0 0; padding: 0 0 0 0 ;">
+
+
+<div style="" >
+
+
+ <img src="/img/topdf/doc_out_head.png" alt="" width="230" height="350" border="0" />
+ </div>
+
+
+<p align="right">
+»сх. є %{$bill.reg_no}% от %{$bill.reg_pdate}%
+
+</p>
+<br>
+<br>
+ 
+
+
+
+<p>%{$bill.description}%
+
+</p>
+<br>
+<br>
+<br>
+
+<br>
+<p align="center">
+%{include file="doc_out/sign_many_actions_print.html" kind=2  pospos=$sign2}%
+</p>
+<br>
+<br>
+<p align="left">
+<small>
+»сп. %{$bill.manager_string}%<br>
+%{$position_s}%<br>
+%{$phone}%%{if $dob!=""}% доб. %{$dob}%%{/if}%
+</small>
+</p>

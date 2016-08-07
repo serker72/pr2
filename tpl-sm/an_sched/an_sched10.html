@@ -1,0 +1,219 @@
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+ 	$("#pdate%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	$("#pdate_1%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	$("#pdate_2%{$prefix}%").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	
+	
+	  function SelectGo2(name){
+		var mode=mode;
+		 $("#"+name).select2(
+		 
+		 {
+		
+		multiple: true,
+		minimumInputLength:2,
+		separator:';',
+		
+		ajax: {
+				url: "/js/an_sched_newcli.php",
+				dataType: 'json',
+				quietMillis: 100,
+				data: function (term, page) {
+					return {
+						term: term, //search term
+						page_limit: 10 // page size
+					};
+				},
+				results: function (data, page) {
+					return { results: data.results };
+				}
+	
+			},
+			initSelection: function(element, callback) {
+				//var data = {id: element.val(), text: element.val()};
+				var data = new Array();  
+				//data.push({id: '4', text: 'lelelelel'});
+				
+				
+				
+				
+				 
+				%{foreach from=$our_users item=item}%
+				data.push({id: '%{$item.id|escape:"html"}%', text: '%{$item.name_s|escape:"html"}%, %{$item.position_s|escape:"html"}%'});
+				 
+				%{/foreach}%
+				
+				 
+				
+				callback(data);
+			}
+		 }
+		 );  
+	}
+	
+	 
+	
+	
+	SelectGo2("user%{$prefix}%");
+  
+	
+  
+	
+	 $("#print_table%{$prefix}%").bind("click",function(){
+ 
+			
+			can_ret=true;
+		 		 
+		 	if(can_ret) window.open('an_sched.php?'+'doSub%{$prefix}%=1&print=1&'+$("#rep_form%{$prefix}%").serialize(), 'an_sched');
+		   
+		 return false; 
+	  });
+	
+	
+	
+});
+</script>
+
+
+
+
+
+<form action="%{$pagename}%" method="get" id="rep_form%{$prefix}%">
+<input type="hidden" name="sortmode%{$prefix}%" value="%{$sortmode}%" /> 
+ 
+
+
+
+
+
+<div class="report_filter_right">
+ 
+  
+      <div class="reestr_zoom reestr_right_button24" data-comment="Найти">
+
+     <input type="image" name="doSub%{$prefix}%" id="doSub%{$prefix}%" src="/img/24.png" border="0" alt="Найти"  />
+     </div>
+    
+    <a href="an_sched.php?doSub%{$prefix}%=1" class="reestr_zoom_deselect reestr_right_button24" data-comment="Сбросить все фильтры"></a>
+
+  
+  
+  %{if $can_print}%
+  
+   
+  
+   <a href="#" id="print_table%{$prefix}%"   class="reestr_print reestr_right_button24" data-comment="Печать..."></a>
+  
+  
+  
+  
+  %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати отчета.'); return false;"  class="reestr_print reestr_inactive reestr_right_button24" data-comment="Печать..."</a>
+ %{/if}%
+ 
+ 
+ 	        
+  %{include file="every_help_dialog.html" filename="an_sched.html;an_sched_10.html" prefix=$prefix description="отчет Планировщик"  style="display:inline-block; margin-right:0px;" is_right=true}%  
+  
+ 
+</div> 
+ 
+
+ 
+<div class="report_filter_left">
+	
+     
+     <div class="report_filter">
+    <strong>Период:</strong>
+    <br>
+    
+    
+    <label for="pdate_1%{$prefix}%">с:&nbsp;</label><input type="text" id="pdate_1%{$prefix}%" name="pdate_1%{$prefix}%" value="%{$pdate_1}%" size="10" maxlength="10" class="sched_report_field" />
+     &nbsp;&nbsp;
+    <label for="pdate_2%{$prefix}%">по:&nbsp;</label><input type="text" id="pdate_2%{$prefix}%" name="pdate_2%{$prefix}%" value="%{$pdate_2}%" size="10" maxlength="10" class="sched_report_field" />
+    
+    </div>
+    
+    
+    
+     
+     
+    
+    
+    
+    <div class="report_filter">
+    <label for="user%{$prefix}%">Ответственный сотрудник:</label><br />
+    <input type="text" value="%{$user}%" id="user%{$prefix}%" name="user%{$prefix}%" size="30" maxlength="512" style="width:300px;"  />
+    </div>
+     
+     
+    
+     
+      
+</div>     
+ 
+ <br clear="all" />
+ 
+
+  
+ 
+</form>
+ 
+ 
+<br>
+
+
+<small>
+<strong>Фильтр Период</strong>: поиск данных осуществляется следующим образом:<br>
+<!--<strong>Действия</strong> -  наличие хотя бы одного звонка, хотя бы одной встречи, командировки по каждому контрагенту, дата утверждения выполнения попадает в выбранный период;<br>-->
+
+<strong>Звонки</strong>  -  наличие хотя бы одного звонка по каждому контрагенту, дата утверждения выполнения попадает в выбранный период;<br>
+<strong>Встречи</strong> - наличие хотя бы одной встречи по активности "Встречи" планировщика + хотя бы одной встречи по активности "Командировки" планировщика, для которой не отмечена галочка "не встречался", по каждому контрагенту, дата утверждения выполнения попадает в выбранный период;<br>
+
+
+ <strong>КП</strong> - дата утверждения коммерческого предложения попадает в выбранный период;<br>
+<strong>Лиды</strong> - во всех статусах, кроме создан, аннулирован, дата утверждения заполнения лида попадает в выбранный период;<br>
+<strong>Контракты</strong> - строится по двум видам документов:<br>
+
+<strong>Тендеры</strong> в статусе выигран, дата утверждения выполнения попадает в выбранный период;
+<strong>Договоры и приложения</strong> - месяц, год договора попадает в выбранный период.<br>
+<br>
+
+
+
+ 
+ </small> 
+
+
+%{if $do_it}%
+
+%{if $prefix==1}%
+%{include file="an_sched/table_1.html"}% 
+%{elseif $prefix==2}%
+%{include file="an_sched/table_2.html"}% 
+%{elseif $prefix==3}%
+%{include file="an_sched/table_3.html"}% 
+%{elseif $prefix==4}%
+%{include file="an_sched/table_4.html"}% 
+%{elseif $prefix==5}%
+%{include file="an_sched/table_5.html"}% 
+%{elseif $prefix==6}%
+%{include file="an_sched/table_6.html"}% 
+%{elseif $prefix==7}%
+%{include file="an_sched/table_7.html"}% 
+%{elseif $prefix==8}%
+%{include file="an_sched/table_8.html"}% 
+%{elseif $prefix==9}%
+%{include file="an_sched/table_9.html"}% 
+%{elseif $prefix==10}%
+%{include file="an_sched/table_10.html"}% 
+%{else}%
+%{include file="an_sched/table.html"}%  
+%{/if}%
+
+%{/if}%

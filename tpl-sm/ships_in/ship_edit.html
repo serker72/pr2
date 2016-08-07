@@ -1,0 +1,595 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/period_checker.js"></script>
+%{include file="unavailable_dates.html}%
+<script type="text/javascript">
+var was_changed=false;
+$(function(){
+$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	$("#pdate").datepicker();
+	$("#pdate_shipping_plan").datepicker();
+	/*$("#pdate_payment_contract").datepicker();
+	
+	$("#pdate_shipping_fact").datepicker();
+	$("#pdate_payment_ind").datepicker();*/
+	
+	$.each($("#crea_form input"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form select"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	$.each($("#crea_form textarea"), function(key, value){
+	 	$(value).bind("change",function(){
+			was_changed=was_changed||true;
+		});
+	});
+	
+	
+	touchScroll('notes');
+});
+</script>
+<h1 style="">Редактирование распоряжения на приемку</h1>
+
+
+
+<form action="ed_ship_in.php" method="post" id="crea_form">
+<input type="hidden" name="action" value="1" />
+<input type="hidden" name="id" id="id" value="%{$ship.id}%" />
+<input type="hidden" name="bill_id" id="bill_id" value="%{$ship.bill_id}%" />
+
+<input type="hidden" name="current_status_id" value="%{$ship.status_id}%" />
+
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Номер:</strong><br />
+
+%{$ship.id}%
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+<strong>Дата создания:</strong><br />
+
+%{$ship.pdate}%
+<small>создано: %{$created_by}%</small>
+</div>
+
+
+
+
+
+
+
+%{include file="every_help_dialog.html" filename="ship_in_edit.htm" prefix="" description="редактирование распоряжения на приемку"  style="float:right;  margin-right:0px;"}%
+
+
+
+<div style="float:right; margin-right:10px;">
+<input type="button" value="Файлы..." onclick="location.href='ship_in_files.php?ship_id=%{$ship.id}%';" />
+
+</div>
+
+
+
+
+<br clear="all" />
+<p />
+
+
+<div style="float:left; margin-right:20px;">
+<label for="pdate">Плановая дата поставки:</label><br />
+
+<input type="text" size="10" maxlength="10" value="%{$ship.pdate_shipping_plan}%" name="pdate_shipping_plan" id="pdate_shipping_plan" %{if !$can_modify}% disabled="disabled"%{/if}% />
+</div>
+
+
+<div style="float:left; margin-right:20px;">
+	<div style="float:left; margin-right:5px;"><strong>Фактическая <br />
+дата поставки:</strong><br />
+
+	</div>
+	<div style="float:left; margin-right:5px;">%{$fact_days}%</div>
+</div>
+
+
+<div style="float:right; margin-right:00px; min-width:120px;" id="toggle_annul">
+%{include file="ships_in/toggle_annul_card.html"}%
+</div>
+
+
+<br clear="all" />
+<p />
+
+<div style="float:left; margin-right:20px;">
+<label for="">Организация:</label>
+<input type="text" size="30" maxlength="255" value="%{$org}%" disabled="disabled" />
+</div>
+
+
+
+<br clear="all" />
+<p />
+
+
+<!-- блок выбора контрагента -->
+
+<div style="float:left; margin-right:20px;">
+<label for="supplier_id_string">Контрагент:</label>
+<input type="text" size="40" maxlength="255" value="%{$supplier_id_string}%" id="supplier_id_string" disabled="disabled" />
+
+</div>
+
+<div style="float:left; margin-right:20px;">
+<label for="sdelka_string">Сделка:</label>
+<input type="text" size="50" maxlength="255" value="%{$sdelka_string}%" id="sdelka_string" disabled="disabled" style="width:285px;" />
+</div>
+
+<br clear="all" />
+<p />
+
+<!-- конец блока выбора контрагента -->
+
+
+
+
+
+
+
+<table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr align="left" valign="top">
+<td width="50%" valign="bottom">
+<strong>Позиции распоряжения:</strong> 
+
+<!--
+<input type="button" id="add_pos" value="Редактировать позиции..." %{if !$can_modify or !$can_add_positions}% disabled="disabled"%{/if}% />-->
+
+</td>
+<td width="50%" align="right">
+
+
+%{if $ship.is_confirmed==0}%
+      <a href="#" onclick="alert('Распоряжение на приемку не утверждено. Пожалуйста, утвердите распоряжение на приемку!'); return false;"><img src="/img/icons/new-gr.png" width="24" height="24" alt="создать новое поступление товара" title="создать новое поступление товара" border="0" /></a> 
+      
+      %{elseif $ship.is_confirmed==1}%
+    	
+        %{if !$can_make_acceptance}%
+        <a href="#" onclick="alert('У Вас недостаточно прав для создания поступления!'); return false;"><img src="/img/icons/new-gr.png" width="24" height="24" alt="создать новое поступление товара" title="создать новое поступление товара" border="0" /></a> 
+        
+        %{else}%
+        <!-- включить проверку закрытого периода -->
+        <a href="#" id="make_bill"><img src="/img/icons/new.png" width="24" height="24" alt="создать новое поступление товара..." title="создать новое поступление товара..." border="0" /></a>
+        
+        <script type="text/javascript">
+        $(function(){
+			$("#make_bill").bind("click",function(){
+				%{if $not_in_closed_period}%
+				//to_bill_
+				counter=0; kols=0;
+				$.each($("#ship_positions_table input[type=checkbox]:checked"), function(index, value) { 
+				  //alert(index + ': ' + value); 
+				  counter++;
+				  kols=kols+parseFloat($(value).val());
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для добавления в поступление товара.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(kols==0){
+					if(!window.confirm("Внимание!\nПо данному распоряжению на приемку поступили все позиции. Поступление будет создано без позиций.\nВсе равно продолжить?")){
+						return false;
+					}
+				}
+				
+				
+				url='ed_acc_in.php?';
+				url=url+"bill_id="+"%{$ship.bill_id}%";
+				url=url+"&sh_i_id="+"%{$ship.id}%";
+				
+				
+				url=url+"&to_back_bill=1";
+				url=url+"&from_begin=1";
+				
+				
+					
+				$.each($("#ship_positions_table tr td input[type=checkbox][id^=to_acc_]:checked"), function(key, value){
+					 
+					  thash=$(value).attr("id").replace(/^to_acc_/,"");
+					 url=url+"&"+$(value).attr("id")+"="+$("#new_position_id_"+thash).val()+";"+$("#new_pl_position_id_"+thash).val()+";"+$("#new_pl_discount_id_"+thash).val()+";"+$("#new_pl_discount_value_"+thash).val()+";"+$("#new_pl_discount_rub_or_percent_"+thash).val()+";"+value.value+";"+$("#new_out_bill_id_"+thash).val();
+					 
+							
+					
+				});
+				
+				//alert(url);
+				location.href=url;
+				
+				%{else}%
+				
+				alert("Невозможно создать поступление товара. Причина: %{$closed_period_reason}%");
+				%{/if}%
+				return false;
+			});
+		});
+        </script>
+        
+        %{/if}%
+    %{/if}%
+
+
+	%{if $can_edit_quantities}%
+    
+       
+        <a href="#" id="edit_quantities"><img src="/img/icons/edit.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+         <script type="text/javascript">
+        $(function(){
+			function roundPlus(x, n) { //x - число, n - количество знаков
+					  if(isNaN(x) || isNaN(n)) return false;
+					  var m = Math.pow(10,n);
+					  return Math.round(x*m)/m;
+					}
+			
+			
+			$("#edit_quantities").bind("click",function(){
+				
+				counter=0; 
+				$.each($("#ship_positions_table input[id^=to_acc_][type=checkbox]:checked"), function(index, value) { 
+				 	counter++;
+				  
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для редактирования количества.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				$.each($("#ship_positions_table input[id^=to_acc_][type=checkbox]:checked"), function(index, value) { 
+				  //alert($(value).attr('id').replace(/^to_bill_/,''));
+				  
+				  id=$(value).attr('id').replace(/^to_acc_/,'');
+				  usl=true;
+				  res='1';
+				  while(usl){
+					res=window.prompt('Введите новое количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text(), $('#new_quantity_span_'+id).text());
+					if(res==undefined) break;
+					
+					res=res.replace("\,","\.");
+					if((res.length==0)||(res<=0)||isNaN(res)) {
+						alert('Неправильно введено количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text()+'. Пожалуйста, введите правильное значение.');
+					}else if(res>parseFloat($("#new_max_quantity_span_"+id).text())){
+							alert('Введенное количество позиции '+$('#new_position_name_'+id).text()+', '+$('#new_dim_name_'+id).text()+' превышает максимально доступное количество по входящему счету ('+$("#new_max_quantity_span_"+id).text()+'). Уменьшите количество позиции.'); 
+							  
+						  }else usl=false; 
+					  
+				  }
+				  if(res!=undefined){
+					  //внесем изменения
+					 $('#new_quantity_span_'+id).html(res);
+					 $('#new_quantity_'+id).val(res);
+				  }
+				});
+				
+				return false;
+			});
+			
+		});
+		</script>
+        
+       
+    %{else}%
+    	%{if $ship.is_confirmed==1}%
+    	
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций: распоряжение на приемку утверждено. Снимите утверждение для редактирования.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+        %{else}%
+        <a href="#" onclick="alert('Невозможно редактировать количества позиций. Причина: %{$cannot_edit_reason}% у Вас недостаточно прав для данного действия.'); return false;"><img src="/img/icons/edit_inactive.png" width="24" height="24" alt="редактировать количество..." title="редактировать количество..." border="0" /></a>
+        %{/if}%
+    %{/if}%
+
+
+	%{if $ship.is_confirmed==0}%
+	
+    <a href="#" onclick="alert('В данном режиме печать распоряжения недоступна. Пожалуйста, утвердите распоряжение для получения возможности печати.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения..." title="печать распоряжения..." border="0" /></a>
+    
+    
+    
+     %{elseif $ship.is_confirmed==1}%
+       %{if $can_print}%
+       <a href="ed_ship_in.php?action=1&id=%{$ship.id}%&print=1" target="_blank"><img src="/img/icons/print.png" width="24" height="24" alt="печать распоряжения..." title="печать распоряжения..." border="0" /></a>
+     
+      
+ %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для печати распоряжения.'); return false;"><img src="/img/icons/print-gr.png" width="24" height="24" alt="печать распоряжения..." title="печать распоряжения..." border="0" /></a>
+ %{/if}%
+      
+    %{/if}%
+    
+    
+    %{if $can_eq}%
+    %{if $ship.is_confirmed==0}%
+     <a href="#" onclick="alert('Для выравнивания позиций необходимо утвердить распоряжение на приемку!'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>
+    %{elseif $ship.is_confirmed==1}%
+     <a href="#" id="make_eq"><img src="/img/icons/eq.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>
+     <div id="eq_indicator" style="display:inline;">
+     
+     </div>
+     
+      <script type="text/javascript">
+        $(function(){
+			$("#make_eq").bind("click",function(){
+				
+				
+				counter=0;  var args=new Array();
+				$.each($("#ship_positions_table input[type=checkbox][id^=to_acc_]:checked"), function(index, value) { 
+				  //alert(index + ': ' + value); 
+				  counter++;
+				  
+				  thash=$(value).attr("id").replace(/^to_acc_/,"");
+				  
+				  stri=$("#new_position_id_"+thash).val()+";";  //0
+				  stri=stri+$("#new_pl_position_id_"+thash).val()+";";	//1
+				  stri=stri+$("#new_pl_discount_id_"+thash).val()+";";	//2
+				  stri=stri+$("#new_pl_discount_value_"+thash).val()+";";	//3	
+				  stri=stri+$("#new_pl_discount_rub_or_percent_"+thash).val()+";";	//4
+				  stri=stri+$("#new_quantity_"+thash).val()+";";	//5
+				  stri=stri+$("#new_out_bill_id_"+thash).val();	//6
+				  //alert(stri);
+				  args.push(stri);
+				  	    
+				});
+				
+				if(counter==0){
+					alert("Внимание! Вы не выбрали ни одной позиции для выравнивания.\nПожалуйста, выберите хотя бы одну позицию.");
+					return false;
+				}
+				
+				if(window.confirm("Вы уверены, что хотите выровнять выбранные позиции с фактически полученными?")){
+				
+					
+					$.each(	args, function(k,v){
+						var targs=new Array();
+						targs.push(v);
+						//alert(v);
+						$.ajax({
+							async: false,
+							url: "/js/ship_in.php",
+							type: "POST",
+							data:{
+								"action":"toggle_scan_eq",
+								"id":$("#id").val(),
+								"args[]": targs
+							},
+							beforeSend: function(){
+								$("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+							},
+							success: function(data){
+							   //data - это сообщение
+							   //ОК - запуск выравнивания
+							   //Отмена - выход...
+							   
+							  
+							   if(window.confirm("Внимание! "+data+"")){
+								   $.ajax({
+									  async: false,
+									  url: "/js/ship_in.php",
+									  type: "POST",
+									  data:{
+										  "action":"toggle_eq",
+										  "id":$("#id").val(),
+										  "args[]": targs
+									  },
+									  beforeSend: function(){
+										  $("#eq_indicator").html('<img src="/img/images/wait.gif" width="32" height="32" alt="подождите, пожалуйста" border="0" />');  
+									  },
+									  success: function(data){
+										
+										 //$("#eq_indicator").html(data); 
+									  },
+									  error: function(xhr, status){
+										  //alert("Ошибка добавления вопроса.");	
+									  }	 
+								  });
+							   }
+							   
+							},
+							error: function(xhr, status){
+								//alert("Ошибка добавления вопроса.");	
+							}	 
+						});
+					}); //of each
+					alert("Выравнивание позиций завершено.");
+					location.reload();
+				}
+				return false;
+			});
+		});
+      </script>
+      %{/if}%
+     %{else}%
+  <a href="#" onclick="alert('У Вас недостаточно прав для выравнивания позиций!'); return false;"><img src="/img/icons/eq-gr.gif" width="24" height="24" alt="выровнять позиции с фактически полученными..." title="выровнять позиции с фактически полученными..." border="0" /></a>
+ %{/if}%
+    
+ </td>
+</tr>    
+<tr align="left" valign="top">
+<td width="*" colspan="2"> 
+
+%{include file="ships_in/position_actions.html"}%
+ 
+ 
+ 
+</td>
+</tr>
+</table>
+<p />
+
+
+
+<h4>Примечания:</h4>
+<div id="notes" style="border:1px solid silver; width:100%; height:100px; overflow:scroll;">
+        %{include file="ships_in/d_notes.html" items=$notes word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    </div>
+    %{if $can_notes_edit}%
+    %{include file="ships_in/d_notes_dialog.html" word="notes" named="Примечания" user_id=$ship.id can_edit=$can_notes_edit}%
+    %{/if}%
+<p />    
+
+
+
+<div style="float:left; margin-right:20px;">
+<input type="checkbox" name="is_confirmed" id="is_confirmed" value="1" onchange="" %{if $ship.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{/if}% /><label for="is_confirmed">Утверждаю</label>
+<span id="is_confirmed_confirmer">%{$is_confirmed_confirmer}%</span>
+
+
+<script type="text/javascript">
+$(function(){
+	$("#is_confirmed").bind("click",function(){
+		if(	this.checked) state=1;
+		else state=0;
+		
+		$.ajax({
+              async: true,
+              url: "/js/ship_in.php",
+              type: "POST",
+              data:{
+                  "action":"redraw_is_confirmed_confirmer",
+				  state: state
+              },
+              beforeSend: function(){
+                $("#is_confirmed_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');    
+              },
+              success: function(data){
+                $("#is_confirmed_confirmer").html(data);
+                
+              },
+              error: function(xhr, status){
+                  //alert("Ошибка добавления вопроса.");	
+              }	 
+          });
+		
+	});
+});
+</script>
+
+</div>
+<br clear="all" />
+<p />
+
+
+
+%{if $can_edit}%
+<input type="submit" name="doEdit" value="Сохранить и перейти к входящему счету" />
+<input type="submit" name="doEditStay" value="Сохранить и остаться" />
+%{/if}%
+
+<input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='ed_bill_in.php?action=1&id=%{$ship.bill_id}%';
+}else location.href='ed_bill_in.php?action=1&id=%{$ship.bill_id}%';" />
+
+
+</form>
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		var can_ret=true;
+		
+		if($("#ship_positions_table tbody tr").length==0){
+			alert('Невозможно сохранить распоряжение на приемку без позиций! Пожалуйста, укажите позиции распоряжения на приемку!');
+			can_ret=false;
+			return false;
+		}
+		
+		
+		
+		
+		if(!PeriodChecker('pdate_shipping_plan', '%{$pch_date}%')){
+			alert("Плановая дата поставки должна быть не ранее %{$pch_date}%!");
+			can_ret=false;
+			return false;
+		}
+		
+		
+		
+		if(!PeriodCheckerByPeriod('pdate_shipping_plan', closed_date )){
+			alert('Плановая дата поставки не должна попадать в закрытый период '+interval_string+'!');
+			can_ret=false;
+			return false;	
+		}
+		
+		
+		
+		
+		if($("#is_confirmed").prop("checked")&&("%{$ship.is_confirmed}%"=="0")){
+			
+			$.ajax({
+				async: false,
+				url: "/js/ship_in.php",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$ship.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить распоряжение на приемку. Причина: "+data+"."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=true;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения на приемку. Пожалуйста, попытайтесь сохранить распоряжение на приемку снова.");
+					can_ret=false;	
+				}	 
+			});
+			
+			return can_ret;		
+		}
+		
+		if((%{$ship.is_confirmed}%==1)&&!$("#is_confirmed").prop("checked")){
+			
+			//alert("По данному распоряжению есть поступления: %{$accs_list}%. Невозможно снять утверждение данного распоряжения.");
+			$.ajax({
+				async: false,
+				url: "/js/ship_in.php",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$ship.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение распоряжения. Причина: "+data+"\nДля снятия утверждения распоряжения необходимо снять утверждения всех связанных документов."); 
+					 can_ret=false;
+				  }else{
+					 can_ret=window.confirm("Вы уверены, что хотите снять утверждение распоряжения %{$ship.id}%?");
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния распоряжения. Пожалуйста, попытайтесь сохранить распоряжение снова.");
+					can_ret=false;	
+				}	 
+			});
+		}
+		
+		return can_ret;
+	});
+});
+</script>

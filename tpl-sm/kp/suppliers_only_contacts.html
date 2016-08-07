@@ -1,0 +1,41 @@
+
+ 
+    	<td colspan="7">
+         
+         
+         
+         
+         <table width="100%" cellpadding="1" cellspacing="0" border="0" class="blacktable">
+         
+         %{section name=rowsec loop=$items}%
+            <tr align="left" valign="top">
+                
+            
+            <td width="*">
+            
+            <input type="radio" id="supplier_contact_%{$supplier_id}%_%{$items[rowsec].id}%" name="supplier_contact_%{$supplier_id}%" value="%{$items[rowsec].id}%" /><label for="supplier_contact_%{$items[rowsec].id}%">%{$items[rowsec].name}%, %{$items[rowsec].position}%</label>
+         
+            <input type="hidden" id="supplier_selected_code_%{$items[rowsec].id}%" value="%{$supplier_id}%" />
+            </td>
+            
+         
+            
+             
+          
+              
+            </tr>
+        %{/section}%
+         
+</table>         
+         
+         
+         
+         
+         
+         
+         
+         
+        </td>
+ 
+  
+ 	

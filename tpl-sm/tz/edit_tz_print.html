@@ -1,0 +1,150 @@
+ 
+ 
+
+
+ 
+
+<h1>Техническое задание</h1>
+
+ 
+
+ 
+
+ 
+
+
+ 
+
+ 
+
+<div style="float:left; margin-right:10px; height:50px;">
+ 
+    <strong>Номер:</strong><br>
+	<strong>%{$bill.code}%</strong>
+
+</div>
+<div style="float:left; margin-right:20px; height:50px;">
+    
+   <strong> Дата создания: </strong>
+   <br />
+    
+      %{$bill.pdate}% 
+    
+</div>
+
+
+ 
+ 
+
+<div style="float:left; margin-right:20px;  height:50px;">
+
+
+
+    
+    <strong> Лид: </strong> <br>
+
+  
+    %{$lead.code}%
+     
+	 
+</div>
+
+
+
+
+
+
+
+
+      
+
+ 
+
+<br clear="all" />
+<p />
+
+ 
+<div style="float:left; margin-right: 0px; width:100%;">
+<strong> Описание ТЗ: </strong><br>
+ %{$bill.description }% 
+
+
+ 
+</div> 
+
+<br>
+<p />
+<br>
+
+%{$files}%
+
+<br clear="all">
+<p />
+ 
+   
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="tz/supplier_many_actions_print.html" many=false can_modify=false}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+
+
+
+
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+ 
+       
+    
+    <div style="float:left; margin-right:20px;"> 
+    <h3 style="display:inline;">Поставщики:</h3>
+    </div>
+     
+   
+    
+    
+    %{include file="tz/suppliertz_many_actions_print.html" many=true can_modify=false suppliers=$supplierstz}%
+
+</div>
+ 
+ <br clear="all" />
+<p />
+   
+
+ 
+ <div style="float:left; margin-right:20px;">
+	
+    <div style=" float:left; margin-right:10px;"> 
+	<strong>Ответственный сотрудник:</strong><br>
+
+	 %{$bill.manager_string}% 
+    
+</div> 
+ 
+ 
+
+<br clear="all" />
+<p />
+ 
+ 
+
+<br clear="all">
+
+ <p>
+Отчет сформирован %{$print_pdate}% пользователем %{$print_username}%.
+</p> 

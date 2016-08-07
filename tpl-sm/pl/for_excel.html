@@ -1,0 +1,451 @@
+<table width="100%" border="1">
+<thead>
+	<tr align="left" valign="top">
+    	<th width="*">Наименование</th>
+        <th width="*">Производитель</th>
+    	<th width="*">Валюта</th>
+        <th width="*">Базовая цена поставщика</th>
+        <th width="*">Баз. скидка пост- ка, %</th>
+        <th width="*">Доп. скидка пост- ка, %</th>
+        <th width="*">Цена ExW пост-ка</th>
+        
+        
+        <!-- aet -->
+         <th width="*">
+        Пошлина, % 
+        </th>
+        
+         <th width="*">
+       Пошлина
+        </th>
+         <th width="*">
+       Затраты брокера
+        </th>
+         <th width="*">
+       Доставка до границы
+        </th>
+         <th width="*">
+        Доставка после границы без НДС, руб.
+        </th>
+         <th width="*">
+        Тамож. НДС, 18% 
+        </th>
+         <th width="*">
+        Сбор
+        </th>
+         <th width="*">
+       СВХ, брокер
+        </th>
+         <th width="*">
+        	Страховка, 0,1% 
+        </th>
+        
+        <!-- -->
+        
+        
+        <!-- intermac -->
+        <th width="*">
+        Доставка до Москвы
+        </th>
+        
+         <th width="*">
+        Тамож. НДС, 18% 
+        </th>
+         <th width="*">
+        Сбор
+        </th>
+         <th width="*">
+        СВХ, брокер
+        </th>
+         <th width="*">
+        Страховка, 0,2% 
+        </th>
+         <th width="*">
+        Комиссия за перевод д/с, 1%
+        </th>
+        
+        <!-- -->
+        
+        
+        
+        
+         <th width="*">
+       Итоговая цена DDPM 
+        </th>
+      <!--   <th width="*">
+        Рент- ть ExW, % 
+        </th>
+         <th width="*">
+        Рент- ть DDPM, % 
+        </th>
+        
+        
+          <th width="*">
+      Цена продажи ExW 
+        </th>
+        
+          <th width="*">
+       Цена продажи DDPM 
+        </th>
+        
+          <th width="*">
+       Маржа ExW, % 
+        </th>
+        
+          <th width="*">
+       Маржа DDPM, %
+        </th>
+        -->
+        
+        
+    </tr>
+
+</thead>
+<tbody>
+%{section name=rowsec loop=$items}%
+	
+    <tr align="left" valign="top">
+    	<td>
+        <strong>%{$items[rowsec].name}%</strong>
+        </td>
+        <td>
+        %{$items[rowsec].producer_name}%
+        </td>
+        <td>
+        %{$items[rowsec].signature}%
+        </td>
+        
+        <td>
+        %{$items[rowsec].price|replace:".":","}%
+        </td>
+        
+         <td>
+        %{$items[rowsec].discount_base|replace:".":","}%
+        </td>
+        
+         <td>
+        %{$items[rowsec].discount_add|replace:".":","}%
+        </td>
+        
+        
+        <td>
+        %{$items[rowsec].price_f|replace:".":","}%
+        </td>
+        
+         <!-- aet -->
+		 %{if $items[rowsec].calculation_form_id==2}%
+        <td>
+        %{$items[rowsec].customs|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$items[rowsec].customs_value|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].broker_costs|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].delivery_value|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].delivery_rub|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].nds|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].duty_ddpm|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].svh_broker|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].insur|replace:".":","}%
+        </td>
+		%{else}%
+		 <td>
+        -
+        </td>
+        
+        <td>
+        -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+		%{/if}%
+        
+         <!--   -->
+         
+         
+        <!-- intermac -->
+         %{if $items[rowsec].calculation_form_id==1}%
+        <td>
+       %{$items[rowsec].delivery_ddpm|replace:".":","}%
+        </td>
+        <td>
+       %{$items[rowsec].nds|replace:".":","}%
+        </td>
+        <td>
+       %{$items[rowsec].duty_ddpm|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].svh_broker|replace:".":","}%
+        </td>
+        <td>
+       %{$items[rowsec].insur|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].commission|replace:".":","}%
+        </td>
+        %{else}%
+         <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        %{/if}%
+        
+         
+          <!--   --> 
+          
+      
+         <td>
+        %{$items[rowsec].price_ddpm|replace:".":","}%
+        </td>
+         <!--  
+         <td>
+        %{$items[rowsec].profit_exw|replace:".":","}%
+        </td>
+         <td>
+        %{$items[rowsec].profit_ddpm|replace:".":","}%
+        </td> 
+        
+        
+        <td>
+        %{$items[rowsec].price_sale_exw|replace:".":","}%
+        </td>
+        <td>
+        %{$items[rowsec].price_sale_ddpm|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$items[rowsec].profit_sale_exw|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$items[rowsec].profit_sale_ddpm|replace:".":","}%
+        </td>
+          -->
+    
+    </tr>
+<!-- Options row -->    
+%{foreach from=$items[rowsec].options item=option}%
+%{if $option.kind=="option"}%
+ <tr align="left" valign="top">
+    	<td>
+        %{$option.name}%
+        </td>
+        <td>
+        %{$items[rowsec].producer_name}%
+        </td>
+        <td>
+        %{$items[rowsec].signature}%
+        </td>
+        
+        <td>
+        %{$option.price|replace:".":","}%
+        </td>
+        
+         <td>
+        %{$option.discount_base|replace:".":","}%
+        </td>
+        
+         <td>
+        %{$option.discount_add|replace:".":","}%
+        </td>
+        
+        
+        <td>
+        %{$option.price_f|replace:".":","}%
+        </td>
+        
+         <!-- aet -->
+		 %{if $option.calculation_form_id==2}%
+        <td>
+        %{$option.customs|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$option.customs_value|replace:".":","}% 
+        </td>
+        <td>
+        %{$option.broker_costs|replace:".":","}%
+        </td>
+        <td>
+        %{$option.delivery_value|replace:".":","}%
+        </td>
+        <td>
+        %{$option.delivery_rub|replace:".":","}%
+        </td>
+        <td>
+        %{$option.nds|replace:".":","}%
+        </td>
+        <td>
+        %{$option.duty_ddpm|replace:".":","}%
+        </td>
+        <td>
+        %{$option.svh_broker|replace:".":","}%
+        </td>
+        <td>
+        %{$option.insur|replace:".":","}%
+        </td>
+		%{else}%
+		 <td>
+        -
+        </td>
+        
+        <td>
+        -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+        -
+        </td>
+        <td>
+       -
+        </td>
+		%{/if}%
+        
+         <!--   -->
+         
+         
+        <!-- intermac -->
+         %{if $option.calculation_form_id==1}%
+        <td>
+       %{$option.delivery_ddpm|replace:".":","}%
+        </td>
+        <td>
+       %{$option.nds|replace:".":","}%
+        </td>
+        <td>
+       %{$option.duty_ddpm|replace:".":","}%
+        </td>
+        <td>
+        %{$option.svh_broker|replace:".":","}%
+        </td>
+        <td>
+       %{$option.insur|replace:".":","}%
+        </td>
+        <td>
+        %{$option.commission|replace:".":","}%
+        </td>
+        %{else}%
+         <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        <td>
+       -
+        </td>
+        %{/if}%
+        
+         
+          <!--   --> 
+          
+         
+         <td>
+        %{$option.price_ddpm|replace:".":","}%
+        </td>
+      <!--   <td>
+        %{$option.profit_exw|replace:".":","}%
+        </td>
+         <td>
+        %{$option.profit_ddpm|replace:".":","}%
+        </td> 
+        
+        
+        <td>
+        %{$option.price_sale_exw|replace:".":","}%
+        </td>
+        <td>
+        %{$option.price_sale_ddpm|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$option.profit_sale_exw|replace:".":","}%
+        </td>
+        
+        <td>
+        %{$option.profit_sale_ddpm|replace:".":","}%
+        </td>
+          
+    -->
+    </tr>
+%{else}%    
+ <tr align="left" valign="top">
+    	<td colspan="23">
+        <strong>%{$option.name}%</strong>
+        </td>
+</tr>        
+%{/if}%
+%{/foreach}%
+%{/section}%
+</tbody>
+</table>

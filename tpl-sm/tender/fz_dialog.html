@@ -1,0 +1,120 @@
+<div id="fz_dialog" title="Виды ФЗ" style="display:none;">
+      <div id="fz_dic">
+      %{include file="tender/fzs.html"}%
+      </div>
+      
+      Новый ФЗ:<br>
+      <input type="text" id="new_fz" size="30" maxlength="255" />
+      <input type="button" value="Добавить ФЗ" id="add_new_fz"  />
+      </div>
+      
+      
+      <script type="text/javascript">
+      $(function(){
+        $("#fz_dialog").dialog({
+        autoOpen: false,
+        dialogClass: 'semi_auth',
+        modal: true,
+        width: 350,
+        height: 490,
+        buttons: {
+            "Готово": function() { 
+                $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fzs_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#fz_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fzs_page"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                      $("#fz_id").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+            
+            $(this).dialog("close"); }
+          }
+        
+        });
+        $("#expand_fz").bind("click",function(){
+            $("#fz_dialog").dialog("open");
+        });
+        
+        function RedrawDic(){
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"redraw_fzs_dics"
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                    $("#fz_dic").html(data);
+                    
+                  },
+                  error: function(xhr, status){
+                      //alert("Ошибка добавления вопроса.");	
+                  }	 
+              });
+          }
+          
+          $("#add_new_fz").bind("click", function(){
+              if($("#new_fz").val().length<3){
+                  $("#new_fz").focus();
+                  return false;
+              }
+              
+              $.ajax({
+                  async: true,
+                  url: "/js/tender.php",
+                  type: "POST",
+                  data:{
+                      "action":"add_fz",
+                      "fz":$("#new_fz").val()
+                  },
+                  beforeSend: function(){
+                        
+                  },
+                  success: function(data){
+                     alert("ФЗ добавлен!"); 
+                     $("#new_fz").val('');
+                     RedrawDic();
+                    // location.reload();
+                  },
+                  error: function(xhr, status){
+                      alert("Ошибка добавления ФЗ.");	
+                  }	 
+              });
+              
+          });
+        
+      });
+      </script>

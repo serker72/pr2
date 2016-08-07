@@ -1,0 +1,132 @@
+ 
+
+<div id="task_comment_dialog" title="Введите комментарий" style="display:none;">
+	 
+	<div id="task_comment_dialog_caption" style="font-weight:bold; display:inline-block;" >
+   Укажите причину отправки на доработку:  
+    
+    
+    </div>
+
+     
+    <input type="hidden" value="" id="task_comment_id" />
+    
+    
+    <div id="task_comment_change_id_block">
+    <select id="task_comment_change_id">
+	 %{html_options values=$fail_ids selected=0 output=$fail_vals}%    
+    </select>
+    <input type="button" value="..." %{if !$can_edit_fail_reasons}% disabled%{/if}% id="expand_fails" />
+    
+    <br>
+    </div>
+    
+    
+   
+	<br>
+
+    
+    <textarea cols="73" rows="5" id="task_comment" style="width:100%; height:100px;"></textarea><br>
+	
+    
+     <div id="task_comment_pdate_block"><br>
+
+    	<label for="task_comment_pdate"><strong>Дата подведения итогов конкурса:</strong></label>
+        <input type="text" size="10" maxlength="10" value="" id="task_comment_pdate" />
+    
+    </div>
+    
+    <br>
+	
+    <div id="task_files_block">
+    	<b>Файл(ы) уведомления:</b>
+        
+        <div id="task_uploaded_files">
+        
+        </div><br />
+        
+        
+        <strong>Приложите файл:</strong>
+        
+         
+        <input type="file" id="task_file" /> 
+        <em>максимальный размер файла: 512M</em>  
+        
+        <div id="task_queue"></div>
+
+    </div>
+    
+</div>
+
+
+%{include file="tender/fails_dialog.html"}%
+
+<script>
+$(function(){
+	$("#task_comment_dialog").dialog({
+	  autoOpen: false,
+	  dialogClass: 'semi_auth',
+	  modal: true,
+	  width: 500,
+	  height: 400,
+   
+	   
+	  buttons:{
+		  
+		  "Отмена":function(){
+			  $(this).dialog('close');
+		  }
+	  }
+	   
+  });
+		
+	$("#task_comment_pdate").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	
+	function AddCode(inname, realname){
+			$.ajax({
+				async: true,
+				url: "/js/upload_tender_draw.php",
+				type: "POST",
+				data:{
+					"action":"add_file_entry",
+					"factname":inname,
+					"realname":realname
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  
+				   $("#task_uploaded_files").append(data);
+				   
+					
+				   //перерисовать блок сообщений
+				   				},
+				error: function(xhr, status){
+						
+				}	 
+			});	
+			
+		}
+		
+		$('#task_file').uploadifive({
+				'auto'             : true,
+				'buttonText' : 'Выберите файл...',
+				 
+				'fileTypeDesc' : 'Все файлы',
+				'fileTypeExts' : '*.*', 
+				'fileSizeLimit' : '512 MB', 
+				'width'           : 120,
+				'formData'         : {
+									   "PHPSESSID" : "%{$session_id}%"
+				                     },
+				'queueID'          : 'task_queue',
+				'uploadScript'     : '/swfupl-js/upload_file_tender.php',
+				'onUploadComplete' : function(file, data) { 
+						eval(data)
+				
+				}
+			});
+	
+});
+</script>
