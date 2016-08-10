@@ -144,16 +144,14 @@ $_menu_id=84;
 		}
 	}
 	
-	if(isset($_GET['supplier_is_new'])&&(strlen($_GET['supplier_is_new'])>0)){
-		if($_GET['supplier_is_new']==0) {
-			
-			$decorator->AddEntry(new SqlEntry('p.supplier_is_new',0, SqlEntry::E));
-			$decorator->AddEntry(new UriEntry('supplier_is_new',0));
+	if(isset($_GET['is_active'])&&(strlen($_GET['is_active'])>0)){
+		if($_GET['is_active']==0) {
+			$decorator->AddEntry(new SqlEntry('p.is_active',0, SqlEntry::E));
+			$decorator->AddEntry(new UriEntry('is_active',0));
 		}
-		if($_GET['supplier_is_new']==1) {
-			
-			$decorator->AddEntry(new SqlEntry('p.supplier_is_new',1, SqlEntry::E));
-			$decorator->AddEntry(new UriEntry('supplier_is_new',1));
+		if($_GET['is_active']==1) {
+			$decorator->AddEntry(new SqlEntry('p.is_active',1, SqlEntry::E));
+			$decorator->AddEntry(new UriEntry('is_active',1));
 		}
 	}
 	
@@ -232,53 +230,15 @@ $_menu_id=84;
 	}
 	
 	
-	$_rl=new RLMan;
-	//отбор по себе и подчиненным сотр-кам
-	if(!$au->user_rights->CheckAccess('w',784)){
-		
-		//если есть права просмотра ВСЕХ фактов по определенному поставщику - 
-		if($au->user_rights->CheckAccess('w',845)){
-			
-			$restricted_producers=$_rl->GetBlockedItemsArr($result['id'],34,'w', 'pl_producer', 0);
-			//var_dump($restricted_producers);
-			$decorator->AddEntry(new SqlEntry('p.producer_id', NULL, SqlEntry::NOT_IN_VALUES, NULL,$restricted_producers));	
-		}else{
-		//иначе
-		
-			
-			$decorator->AddEntry(new SqlEntry(NULL,NULL, SqlEntry::SKOBKA_L));
-			
-			$decorator->AddEntry(new SqlEntry('p.user_id',$result['id'], SqlEntry::E));
-			
-			$decorator->AddEntry(new SqlEntry(NULL,NULL, SqlEntry::AE_OR));
-			
-			$decorator->AddEntry(new SqlEntry('p.user_id','select id from user where manager_id="'.$result['id'].'" and is_in_plan_fact_sales=1 and is_active=1', SqlEntry::IN_SQL));
-			
-			//если тек. сотр-к является руководителем отдела - добавить ему руководимых сотрудников
-			$_pos=new UserPosItem;
-			$pos=$_pos->Getitembyid($result['position_id']);
-			if($pos['is_ruk_otd']){
-				$decorator->AddEntry(new SqlEntry(NULL,NULL, SqlEntry::AE_OR));
-			
-				$decorator->AddEntry(new SqlEntry('p.user_id','select id from user where is_active=1 and is_in_plan_fact_sales=1 and department_id="'.$result['department_id'].'" and id<>"'.$result['id'].'"', SqlEntry::IN_SQL));
-			}
-			
-			
-			$decorator->AddEntry(new SqlEntry(NULL,NULL, SqlEntry::SKOBKA_R));
-		}
-	}
-	
-	 
-	
 	//ограничения по сотруднику
-	$limited_user=NULL;
+	/*$limited_user=NULL;
 	if($au->FltUser($result)){
 		//echo 'z';
 		$_u_to_u=new UserToUser();
 		$u_to_u=$_u_to_u->GetExtendedViewedUserIdsArr($result['id']);
 		$limited_user=$u_to_u['sector_ids'];
 		
-	}
+	}*/
 	//print_r($limited_user);
 	
 	//сортировку можно подписать как дополнительный параметр для UriEntry
@@ -366,24 +326,16 @@ $_menu_id=84;
 	
 	
 	
-	$llg=$log->ShowPos('app_contract/app_contract_list'.$print_add.'.html', 
-	  $decorator, 
-	  $from, 
-	  $to_page,   
-	  
-		$au->user_rights->CheckAccess('w',793) , 
-		$au->user_rights->CheckAccess('w',791), 
-		true,
-		false ,
-		$au->user_rights->CheckAccess('w',794),
-		$au->user_rights->CheckAccess('w',792), 
-		$au->user_rights->CheckAccess('w',788), 
-		$au->user_rights->CheckAccess('w',813),
-		$au->user_rights->CheckAccess('w',823),
-		$temp_alls,
-		$au->user_rights->CheckAccess('w',825),
-		$limited_user
-		
+	$llg = $log->ShowPos(
+            'app_contract/app_contract_list'.$print_add.'.html', 
+            $decorator, 
+            $from, 
+            $to_page,
+            $result['id'],
+            $au->user_rights->CheckAccess('w',1151) , 
+            $au->user_rights->CheckAccess('w',1152), 
+            $au->user_rights->CheckAccess('w',1153),
+            false
 	);
 	
 	

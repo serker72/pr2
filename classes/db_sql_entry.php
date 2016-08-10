@@ -14,6 +14,10 @@ class SqlEntry extends AbstractEntry{
 		}elseif($this->action==self::LIKE){
 			$txt=str_replace('%value',$this->value,self::LIKE);
 			$txt=$this->name.' '.$txt;
+                }elseif($this->action==self::IS_NULL){
+                        $txt=self::IS_NULL;
+                }elseif($this->action==self::IS_NOT_NULL){
+                        $txt=self::IS_NOT_NULL;
 		}elseif($this->action==self::IN_VALUES){
 			$values=implode(', ',$this->in_values);
 			$txt=str_replace('%values',$values,self::IN_VALUES);

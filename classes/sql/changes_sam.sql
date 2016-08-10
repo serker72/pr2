@@ -10,6 +10,7 @@ CREATE TABLE `app_contract` (
   `supplier_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `supplier_contact_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `supplier_contact_data_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `is_active` tinyint(3) unsigned NOT NULL DEFAULT '1',
   `is_confirmed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `user_confirm_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `confirm_pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
@@ -87,7 +88,7 @@ INSERT INTO `app_contract_view_field` (`id`, `name`, `colname`) VALUES
 (1, 'Номер', 'code'),
 (2, 'Дата', 'pdate'),
 (3, 'Контрагент', 'supplier'),
-(4, 'Сотрудник', 'manager'),
+(4, 'Менеджер', 'manager'),
 (5, 'Статус', 'status'),
 (6, 'Утверждение', 'confirmed');
 
@@ -97,7 +98,8 @@ INSERT INTO `app_contract_view` (`id`, `col_id`, `user_id`, `ord`) VALUES
 (3, 3, 0, 30),
 (4, 4, 0, 40),
 (5, 5, 0, 50),
-(6, 6, 0, 60);
+(6, 6, 0, 60),
+(7, 7, 0, 70);
 
 INSERT INTO `object_group` (`id`, `name`, `description`, `ord`) VALUES 
 ('86', 'Раздел "Заявки на договора"', 'Раздел "Заявки на договора"', '0');

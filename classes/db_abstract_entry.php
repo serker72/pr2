@@ -29,8 +29,12 @@ class AbstractEntry{
 	const E_SET=' = '; //переопределить в реализации
 	const IN_SQL=' IN '; //переопределить в реализации
 	const NOT_IN_SQL=' NOT IN '; //переопределить в реализации
-	
-	
+        
+        // KSK - 30.06.2016 - перенос констант из аналогичного класса программы SYA
+        // Перенос выполнен для создания полного варианта класса AbstractEntry
+        const IS_NULL=' is NULL ';
+        const IS_NOT_NULL=' is NOT NULL ';
+		
 	function __construct( $name, $value, $action, $value2=NULL,$in_values=NULL){
 		$this->name=$name;
 		//$this->name2=$name2;

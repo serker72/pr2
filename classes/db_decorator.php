@@ -16,11 +16,19 @@ class DBDecorator{
 	
 	
 	//получить кусок запроса по фильтрации
-	public function GenFltSql($mode=' and '){
+        // KSK - 03.07.2016 - перенос второго параметра $skip_names из аналогичного класса программы SMU
+        // ѕеренос выполнен дл€ создани€ полного варианта класса
+	public function GenFltSql($mode=' and ', $skip_names=NULL){
 		$txt='';
 		$arr=array(); $to_skip=0;
+                // KSK - 28.06.2016 - добавлены счетчики дл€ вложенных скобок
+                $skobka_l = 0;
+                $skobka_r = 0;
 		foreach($this->entries as $k=>$v){
 			if($v instanceof SqlEntry) {
+                                // KSK - 03.07.2016 - перенос услови€ из аналогичного класса программы SMU
+                                // ѕеренос выполнен дл€ создани€ полsного варианта класса
+                                if(is_array($skip_names) && in_array($v->GetName(), $skip_names)) continue;
 				
 				if($to_skip>0){
 					$to_skip--;
@@ -30,6 +38,7 @@ class DBDecorator{
 				
 				if($v->GetAction()==SqlEntry::SKOBKA_L){
 					//$_t_arr=array();
+                                        $skobka_l++;
 					$_t='';
 					$_t.=''.$v->Deploy().'';
 					$to_skip=0;
@@ -39,12 +48,23 @@ class DBDecorator{
 							
 							$_t.=''.$vv->Deploy().'';
 							
+							if($vv->GetAction()==SqlEntry::SKOBKA_L){
+								$skobka_l++;
+							}
+                                                        
 							if($vv->GetAction()==SqlEntry::SKOBKA_R){
-								break;	
+                                                            $skobka_r++;
+                                                            
+                                                            if ($skobka_r == $skobka_l) {
+                                                                break;
+                                                            }
 							}
 						}
 					}
 					$arr[]=''.$_t.'';
+                                        
+                                        $skobka_l = 0;
+                                        $skobka_r = 0;
 				}else{
 					$to_skip=0;
 				
@@ -58,11 +78,17 @@ class DBDecorator{
 	
 	
 	//получить кусок запроса по фильтрации дл€ HAVING
-	public function GenFltHavingSql($mode=' and '){
+        // KSK - 03.07.2016 - добавление второго параметра $skip_names по аналогии с методом GenFltSql
+	public function GenFltHavingSql($mode=' and ', $skip_names=NULL){
 		$txt='';
 		$arr=array(); $to_skip=0;
+                // KSK - 28.06.2016 - добавлены счетчики дл€ вложенных скобок
+                $skobka_l = 0;
+                $skobka_r = 0;
 		foreach($this->entries as $k=>$v){
 			if($v instanceof SqlHavingEntry) {
+                                // KSK - 03.07.2016 - добавление  услови€ по аналогии с методом GenFltSql
+                                if(is_array($skip_names) && in_array($v->GetName(), $skip_names)) continue;
 				
 				if($to_skip>0){
 					$to_skip--;
@@ -72,6 +98,7 @@ class DBDecorator{
 				
 				if($v->GetAction()==SqlHavingEntry::SKOBKA_L){
 					//$_t_arr=array();
+                                        $skobka_l++;
 					$_t='';
 					$_t.=''.$v->Deploy().'';
 					$to_skip=0;
@@ -81,12 +108,23 @@ class DBDecorator{
 							
 							$_t.=''.$vv->Deploy().'';
 							
+							if($vv->GetAction()==SqlHavingEntry::SKOBKA_L){
+								$skobka_l++;
+							}
+                                                        
 							if($vv->GetAction()==SqlHavingEntry::SKOBKA_R){
-								break;	
+                                                            $skobka_r++;
+                                                            
+                                                            if ($skobka_r == $skobka_l) {
+                                                                break;
+                                                            }
 							}
 						}
 					}
 					$arr[]=''.$_t.'';
+                                        
+                                        $skobka_l = 0;
+                                        $skobka_r = 0;
 				}else{
 					$to_skip=0;
 				
@@ -132,6 +170,19 @@ class DBDecorator{
 		return $txt;
 	}
 	
+        // KSK - 30.06.2016 - перенос метода из аналогичного класса программы SYA
+        // ѕеренос выполнен дл€ создани€ полного варианта класса DBDecorator
+        // и дальнейшего тиражировани€ между программами
+	public function GenFltOrdArr(){
+		 
+		$arr=array();
+		foreach($this->entries as $k=>$v){
+			if($v instanceof SqlOrdEntry) $arr[]=$v;
+		}
+	 
+		return $arr;
+	}
+        
 	//получить список элементов SQL
 	public function GetSqls(){
 		$arr=array();

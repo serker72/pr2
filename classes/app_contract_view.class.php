@@ -8,8 +8,8 @@ class AppContract_ViewGroup extends Abstract_ViewGroup{
 	 
 	//установка всех имен
 	protected function init(){
-		$this->tablename='app_contract_s_view';
-		$this->col_tablename='app_contract_s_view_field';
+		$this->tablename='app_contract_view';
+		$this->col_tablename='app_contract_view_field';
 		$this->pagename='view.php';		
 		$this->subkeyname='user_id';	
 		$this->vis_name='is_shown';		
@@ -22,7 +22,7 @@ class AppContract_ViewGroup extends Abstract_ViewGroup{
 //элемент столбец конфигурации
 class  AppContract_ViewItem extends Abstract_ViewItem{
 	protected function init(){
-		$this->tablename='app_contract_s_view';
+		$this->tablename='app_contract_view';
 		$this->item=NULL;
 		$this->pagename='page.php';	
 		$this->vis_name='is_shown';	
@@ -34,7 +34,7 @@ class  AppContract_ViewItem extends Abstract_ViewItem{
 //элемент колонка
 class AppContract_ColItem extends Abstract_ColItem{
 	protected function init(){
-		$this->tablename='app_contract_s_view_field';
+		$this->tablename='app_contract_view_field';
 		$this->item=NULL;
 		$this->pagename='page.php';	
 		$this->vis_name='is_shown';	
@@ -48,7 +48,7 @@ class AppContract_ColGroup extends Abstract_ColGroup {
 	 
 	//установка всех имен
 	protected function init(){
-		$this->tablename='app_contract_s_view_field';
+		$this->tablename='app_contract_view_field';
 		$this->pagename='view.php';		
 		$this->subkeyname='mid';	
 		$this->vis_name='is_shown';		
