@@ -1,0 +1,149 @@
+%{if $item.status_id==3}%
+    <nobr><strong>аннулирована</strong></nobr><br />
+
+    %{if $can_restore_contract}%
+    <input type="button" value="Восстановить" id="deaunnul%{$prefix}%_%{$item.id}%" />
+    %{/if}%
+%{elseif  $item.is_confirmed==0}%
+    <nobr><strong>не утв.</strong></nobr><br />
+
+    %{if $can_confirm_contract}%
+    <input type="button" value="Утвердить" id="confirm%{$prefix}%_%{$item.id}%"   />
+    %{/if}% 
+%{else}%
+    <nobr><strong>утв.</strong></nobr><br />
+
+    %{if $can_unconfirm_contract}%
+    <input type="button" value="Не утвердить" id="confirm%{$prefix}%_%{$item.id}%" %{if $item.is_confirmed_shipping==1}% disabled="disabled"%{/if}% />
+    %{/if}% 
+%{/if}%
+    <br />
+
+%{if $item.user_confirm_name != '' && $item.confirm_pdate != 0}%
+    %{$item.user_confirm_name}%   %{$item.confirm_pdate|date_format:"%d.%m.%Y %H:%M:%S"}%
+%{/if}%
+    
+  
+    <script type="text/javascript">
+	$(function(){
+		 %{if  $can_confirm_contract}%
+		$("#confirm%{$prefix}%_%{$item.id}%").bind("click",function(){
+			
+			var can_ret=true;
+			%{if $item.is_confirmed==1}%
+			
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_unconfirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				  if(data!=0){
+					 
+					 alert("Невозможно снять утверждение заявки на договор %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния заявки на договор. Пожалуйста, попытайтесь сохранить заявку на договор снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{elseif $item.is_confirmed==0}%
+			$.ajax({
+				async: false,
+				url: "/js/%{$filename}%",
+				type: "POST",
+				data:{
+					"action":"check_confirm",
+					id: "%{$item.id}%"
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				   
+				  if(data!=0){
+					 
+					 alert("Невозможно утвердить заявки на договор %{$item.code}%. Причина:\n"+data+""); 
+					 can_ret=false;
+				  }
+				},
+				error: function(xhr, status){
+					
+					alert("Ошибка при проверке состояния заявки на договор. Пожалуйста, попытайтесь сохранить заявку на договор снова.");
+					can_ret=false;	
+				}	 
+			});
+			%{/if}%
+			
+			if(!can_ret){
+				return false;	
+			}
+			
+			
+			
+			
+			
+			$.ajax({
+			  async: true,
+			  url: "/js/%{$filename}%",
+			  type: "POST",
+			  data:{
+				  "action":"toggle_confirm",
+				  "id":"%{$item.id}%",
+				  "shorter":"%{$shorter}%"
+			  },
+			  beforeSend: function(){
+				$("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="18"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+			  },
+			  success: function(data){
+					//alert(data);
+					$("#item_row%{$prefix}%_%{$item.id}%").html(data);
+				
+				
+			  },
+			  error: function(xhr, status){
+				  //alert("Ошибка добавления %{$named}%.");	
+			  }	 
+		  });
+		});
+		 %{/if}%
+		 
+		 
+		 %{if $item.status_id==3 and $can_restore_contract}%
+		  $("#deaunnul%{$prefix}%_%{$item.id}%").bind("click",function(){
+				  $.ajax({
+					async: true,
+					url: "/js/%{$filename}%",
+					type: "POST",
+					data:{
+						"action":"toggle_annul",
+						"id":"%{$item.id}%",
+						"shorter":"%{$shorter}%"
+					},
+					beforeSend: function(){
+						  $("#item_row%{$prefix}%_%{$item.id}%").html('<td colspan="18"><img src="/img/wait.gif" width="32" height="32" alt=""></td>');
+					},
+					success: function(data){
+					   $("#item_row%{$prefix}%_%{$item.id}%").html(data);
+					  
+					},
+					error: function(xhr, status){
+					  //  alert("Ошибка добавления %{$named}%.");	
+					}	 
+				});
+		  });
+		  %{/if}%
+	});
+	</script>
+   
+    
+    

@@ -15,10 +15,10 @@ class AppContractItem extends AbstractItem{
 		$this->tablename = 'app_contract';
 		$this->item = NULL;
 		$this->pagename = 'page.php';	
-		$this->vis_name = 'is_shown';	
+		$this->vis_name = 'is_active';	
 		$this->subkeyname = 'id';
-                $this->subkeyname1 = 's_user_id';	
-                $this->subkeyname2 = 'd_user_id';	
+                $this->subkeyname1 = 'user_id';	
+                $this->subkeyname2 = 'posted_user_id';	
 		$this->order_name = 'order_id';
 		
 		$this->subkeyvalue = '';	
@@ -52,18 +52,27 @@ class AppContractItem extends AbstractItem{
 	}	
 
 	//получить по айди и коду видимости
-	public function GetItemById($id,$mode=0){
+	public function GetItemById($id, $mode=0){
 		if($id === NULL) return false;
-                $sql = 'select o.*, 
-                            u1.login as s_user_login, u1.name_s as s_user_name,
-                            u2.login as d_user_login, u2.name_d as d_user_name,
+                
+                $sql = 'select p.*, 
+                            u1.login as user_login, u1.name_s as user_name,
+                            u2.login as posted_user_login, u2.name_s as posted_user_name,
+                            u3.login as user_confirm_login, u3.name_s as user_confirm_name,
+                            sup.full_name as supplier_name,
+                            spo.name as opf_name,
+                            supc.name as supplier_contact_name, supc.position as supplier_contact_position,
                             st.name as last_status,
-                            (select count(id) from app_contract_history where app_contract_id=o.id) as history_message_count
-                        from ' . $this->tablename . ' as o
-                            left join user as u1 on o.' . $this->subkeyname1 . ' = u1.id	
-                            left join user as u2 on o.' . $this->subkeyname2 . ' = u2.id	
-                            left join app_contract_status as st on o.status_id = st.id
-                        where o.' . $this->subkeyname . ' = ' . $id;
+                            (select count(id) from app_contract_history where app_contract_id=p.id) as history_message_count
+                        from ' . $this->tablename . ' as p
+                            left join user as u1 on p.' . $this->subkeyname1 . ' = u1.id	
+                            left join user as u2 on p.' . $this->subkeyname2 . ' = u2.id	
+                            left join user as u3 on p.user_confirm_id = u3.id
+                            left join supplier as sup on p.supplier_id = sup.id
+                            left join opf as spo on spo.id = sup.opf_id 
+                            left join supplier_contact as supc on p.supplier_contact_id = supc.id
+                            left join app_contract_status as st on p.status_id = st.id
+                        where p.' . $this->subkeyname . ' = ' . $id;
                 
 		if($mode == 0) $item = new mysqlSet($sql . ';');
 		else $item = new mysqlSet($sql . ' and ' . $this->vis_name . ' = 1;');
@@ -85,6 +94,51 @@ class AppContractItem extends AbstractItem{
 			return false;
 		}
 	}
-        
+
+	//возможность утвердить
+	public function CanConfirm($id, &$reason, $item=NULL){
+            $can = true;	
+            $reason = '';
+            $reasons = array();
+            if($item === NULL) $item = $this->GetItemById($id);
+
+            if($item['is_confirmed'] != 0){
+                $can = $can && false;
+                $reasons[] = 'заявка уже утверждена';
+            }else{
+                if($item['supplier_id'] == 0){
+                    $can = $can && false;
+                    $reasons[] = 'не указан контрагент';
+                }
+
+                if($item['supplier_contact_id'] == 0){
+                    $can = $can && false;
+                    $reasons[] = 'не указано контактное лицо контрагента';
+                }
+            }
+
+            $reason .= implode(', ', $reasons);
+
+            return $can;	
+	}
+	
+	//запрос о возможности снятия утв-ия и возвращение причины, почему нельзя 
+	public function CanUnConfirm($id ,&$reason){
+            $can = true;	
+            $reason = ''; 
+            $reasons = array();
+            $item = $this->GetItemById($id);
+
+            if ($item['is_confirmed'] != 1){
+                $can = $can && false;
+                $reasons[] = 'уже снято утверждение заявки';
+                $reason .= implode(', ', $reasons);
+            } else {
+            }
+
+            $reason = implode(', ', $reasons);
+            
+            return $can;
+	}
 }
 ?>

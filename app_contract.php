@@ -335,6 +335,10 @@ $_menu_id=84;
             $au->user_rights->CheckAccess('w',1151) , 
             $au->user_rights->CheckAccess('w',1152), 
             $au->user_rights->CheckAccess('w',1153),
+            $au->user_rights->CheckAccess('w',1154),
+            $au->user_rights->CheckAccess('w',1155),
+            $au->user_rights->CheckAccess('w',1156),
+            $au->user_rights->CheckAccess('w',1157),
             false
 	);
 	

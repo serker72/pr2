@@ -15,7 +15,7 @@ class AppContractGroup extends AbstractGroup {
     }
 
     // Показать договора
-    public function ShowPos($template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $user_id=0, $can_create_contract, $can_edit_contract, $can_delete_contract, $can_view_all=false){
+    public function ShowPos($template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $user_id=0, $can_create_contract, $can_edit_contract, $can_delete_contract, $can_confirm_contract, $can_unconfirm_contract, $can_annul_contract, $can_restore_contract,$can_view_all=false){
         $sm = new SmartyAdm;
 
         $sql = 'select p.*, 
@@ -141,6 +141,11 @@ class AppContractGroup extends AbstractGroup {
         $sm->assign('can_create_contract', $can_create_contract);
         $sm->assign('can_edit_contract', $can_edit_contract);
         $sm->assign('can_delete_contract', $can_delete_contract);
+        $sm->assign('can_confirm_contract', $can_confirm_contract);
+        $sm->assign('can_unconfirm_contract', $can_unconfirm_contract);
+        $sm->assign('can_annul_contract', $can_annul_contract);
+        $sm->assign('can_restore_contract', $can_restore_contract);
+        
 
         $sss = $sm->fetch($template);
         return $sss;
