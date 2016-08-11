@@ -73,7 +73,7 @@ $ret = '';
     // Если операция выполнилась - обновим строчку таблицы
     if ($ret == 0) {
         $dec = new  DBDecorator;
-        $template='app_contract/app_contract_list.html';
+        $template = 'app_contract/table_items.html';
         $dec->AddEntry(new SqlEntry('p.id', $id, SqlEntry::E));
         
         $appcg->SetAuthResult($result);
@@ -113,7 +113,7 @@ $ret = '';
     // Если операция выполнилась - обновим строчку таблицы
     if ($ret == 0) {
         $dec = new  DBDecorator;
-        $template='app_contract/app_contract_list.html';
+        $template = 'app_contract/table_items.html';
         $dec->AddEntry(new SqlEntry('p.id', $id, SqlEntry::E));
         
         $appcg->SetAuthResult($result);

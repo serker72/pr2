@@ -1,0 +1,71 @@
+%{section name=rowsec loop=$items}%
+<!--tr align="center" valign="top" id="item_row%{$prefix}%_%{$items[rowsec].id}%"-->
+%{foreach from=$view item=col}%
+
+ 
+%{if $col.colname=="code"}%   
+    <td width="100" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+        <a href="ed_app_contract.php?action=1&id=%{$items[rowsec].id}%" target="_blank">
+        %{$items[rowsec].code}%
+        </a>
+    </td>
+%{/if}%
+%{if $col.colname=="pdate"}%   
+    <td width="100" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+        %{$items[rowsec].pdate}%
+    </td>
+%{/if}%
+%{if $col.colname=="supplier"}%       
+    <td width="*"  %{if $items[rowsec].is_active==0}% style="color:red; text-align:left;"%{/if}%>
+        <a href="supplier.php?action=1&id=%{$items[rowsec].supplier_id}%" target="_blank">%{$items[rowsec].opf_name}% %{$items[rowsec].supplier_name}%,</a>
+        <br>
+        %{$items[rowsec].supplier_contact_name}%, %{$items[rowsec].supplier_contact_position}%
+    </td>
+%{/if}%
+%{if $col.colname=="manager"}%   
+    <td width="80" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+        %{$items[rowsec].user_name}%
+    </td>
+%{/if}%
+%{if $col.colname=="status"}%       
+    <td  %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+        %{$items[rowsec].last_status}%
+    </td>
+%{/if}%
+
+%{/foreach}%                             
+
+    <td width="*" %{if $items[rowsec].is_confirmed==0 and $items[rowsec].status_id!=3}%class="item_inactive"%{/if}% >
+        <div id="status_price_%{$items[rowsec].id}%">%{include file="app_contract/toggle_confirm.html" filename="app_contract.php" item=$items[rowsec] shorter=0}%</div>
+    </td>
+
+    <td width="48" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
+    %{if $can_edit_contract}%
+   
+    <a href="ed_app_contract.php?action=1&id=%{$items[rowsec].id}%" class="reestr_edit reestr_right_button24" target="_blank" data-comment="Правка позиции">
+   
+    </a>
+    
+    %{/if}%
+   
+    %{if $can_delete_contract}%
+    
+    %{if $items[rowsec].can_delete}%
+    <a href="#" class="reestr_delete reestr_right_button24" onclick="if(window.confirm('Вы действительно хотите удалить позицию %{$items[rowsec].name|escape}%?')) location.href='position.php?action=2&id=%{$items[rowsec].id}%'; return false;" data-comment="Удалить позицию">
+ 
+    </a>
+    %{else}%
+    
+    <a href="#" class="reestr_delete reestr_inactive reestr_right_button24" onclick= "return false;" data-comment="Удалить позицию"></a> 
+    %{/if}%
+     %{else}%
+    
+    <a href="#" class="reestr_delete reestr_inactive reestr_right_button24" onclick= "return false;" data-comment="Удалить позицию"></a> 
+    %{/if}%
+   
+    
+    </td>
+    
+    
+<!--/tr-->
+%{/section}%
