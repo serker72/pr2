@@ -13,6 +13,7 @@ $(function(){
 
 
 %{include file="admin_records/admin_dialog.html" }%
+%{include file="annul_dialog.html" prefix=""}%
 
 
 %{$pages}%
@@ -193,29 +194,9 @@ $(function(){
 
     <td width="48" %{if $items[rowsec].is_active==0}% style="color:red;"%{/if}%>
     %{if $can_edit_contract}%
-   
-    <a href="ed_app_contract.php?action=1&id=%{$items[rowsec].id}%" class="reestr_edit reestr_right_button24" target="_blank" data-comment="Правка позиции">
-   
-    </a>
-    
+        <a href="ed_app_contract.php?action=1&id=%{$items[rowsec].id}%" class="reestr_edit reestr_right_button24" target="_blank" data-comment="Правка позиции"></a>
     %{/if}%
-   
-    %{if $can_delete_contract}%
-    
-    %{if $items[rowsec].can_delete}%
-    <a href="#" class="reestr_delete reestr_right_button24" onclick="if(window.confirm('Вы действительно хотите удалить позицию %{$items[rowsec].name|escape}%?')) location.href='position.php?action=2&id=%{$items[rowsec].id}%'; return false;" data-comment="Удалить позицию">
- 
-    </a>
-    %{else}%
-    
-    <a href="#" class="reestr_delete reestr_inactive reestr_right_button24" onclick= "return false;" data-comment="Удалить позицию"></a> 
-    %{/if}%
-     %{else}%
-    
-    <a href="#" class="reestr_delete reestr_inactive reestr_right_button24" onclick= "return false;" data-comment="Удалить позицию"></a> 
-    %{/if}%
-   
-    
+    %{include file="app_contract/toggle_annul.html" filename="app_contract.php"}%
     </td>
     
     

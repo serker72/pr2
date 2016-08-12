@@ -14,6 +14,7 @@ CREATE TABLE `app_contract` (
   `is_confirmed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `user_confirm_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `confirm_pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `restore_pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `byuser_id` (`user_id`),
   KEY `code` (`code`)
@@ -77,6 +78,17 @@ CREATE TABLE `app_contract_creation_session` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
 
+CREATE TABLE `app_contract_notes` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `app_contract_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `note` mediumtext NOT NULL,
+  `posted_user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `is_auto` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `by_app_contract_id` (`app_contract_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
+
 /* Добавление записей */
 INSERT INTO `app_contract_status` (`id`, `name`, `description`) VALUES
 (1, 'Создана', ''),
@@ -121,7 +133,8 @@ INSERT `user_rights` (`id`, `user_id`, `right_id`, `object_id`) VALUES
 (0, 2, 2, 1153),
 (0, 2, 2, 1154),
 (0, 2, 2, 1155),
-(0, 2, 2, 1156);
+(0, 2, 2, 1156),
+(0, 2, 2, 1157);
 
 INSERT INTO `left_menu_new` (`id`, `parent_id`, `object_id`, `name`, `description`, `url`, `ord`) VALUES 
 (null, '0', '0', 'Заявки на договора', 'Раздел "Заявки на договора"', '#', ''),

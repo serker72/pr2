@@ -327,7 +327,7 @@ $_menu_id=84;
 	
 	
 	$llg = $log->ShowPos(
-            'app_contract/app_contract_list'.$print_add.'.html', 
+            'app_contract/list'.$print_add.'.html', 
             $decorator, 
             $from, 
             $to_page,
@@ -358,7 +358,7 @@ $_menu_id=84;
 	
  
 	
-	$content=$sm->fetch('app_contract/app_contract'.$print_add.'.html');
+	$content=$sm->fetch('app_contract/page'.$print_add.'.html');
 	
 	
 	

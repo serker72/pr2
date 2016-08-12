@@ -1,30 +1,28 @@
-%{if $items[rowsec].can_annul and  $items[rowsec].has_access}%
+%{if $items[rowsec].status_id==1 || $items[rowsec].status_id==4}%
     <a href="#" id="delete%{$prefix}%_%{$items[rowsec].id}%"  data-comment="Аннулировать..." class="reestr_delete reestr_right_button24"></a>
     
      <script type="text/javascript">
 	$(function(){
 		$("#delete%{$prefix}%_%{$items[rowsec].id}%").bind("click",function(){
-			
-			
 			usl=true;
 			do_it=false;
 			note='';
 			while(usl){
-					res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
-					if(res==undefined) {
-						break;
-					}
-					if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
-						note=res;
-						usl=false;
-						do_it=true;						
-					}
+                            res=window.prompt('Укажите причину аннулирования документа (мин.длина 5 символов):', note);
+                            if(res==undefined) {
+                                    break;
+                            }
+                            if((res.replace(/<.*?>/g, '').replace(/^\s+|\s+$/g, '').replace(/[\.,!\?\-_\#\*\+]+/g, '').replace(/(\r\n|\r|\n|\t)/g, '').replace(/(\&nbsp;)/g, '')).length >= 5 ){
+                                    note=res;
+                                    usl=false;
+                                    do_it=true;						
+                            }
 			}
 			
-			if(do_it&&window.confirm("Внимание! Вы действительно хотите аннулировать коммерческое предложение № %{$items[rowsec].code}%?")){
+			if(do_it && window.confirm("Внимание! Вы действительно хотите аннулировать заявку на договор № %{$items[rowsec].code}%?")){
 				$.ajax({
 				  async: true,
-				  url: "/js/kp.php",
+				  url: "/js/%{$filename}%",
 				  type: "POST",
 				  data:{
 					  "action":"toggle_annul",
@@ -37,7 +35,8 @@
 				  },
 				  success: function(data){
 					// alert(data);
-					 $("#item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+					//$("#item_row%{$prefix}%_%{$items[rowsec].id}%").html(data);
+                                        location.reload();
 					
 				  },
 				  error: function(xhr, status){
@@ -49,13 +48,9 @@
 		});
 	});
 	</script>
-    
-    
-    %{elseif  $items[rowsec].has_access}%
+%{else}%
     <a href="#" onclick="
-     $('#annul_dialog_text%{$prefix}%').html('Невозможно аннулировать коммерческое предложение № %{$items[rowsec].code}%. <br /> Причина: %{$items[rowsec].can_annul_reason}%.');
-    
+    $('#annul_dialog_text%{$prefix}%').html('Невозможно аннулировать заявку на договор № %{$items[rowsec].code}%. <br /> Причина: статус заявки - %{$items[rowsec].last_status}%.');
     $('#annul_dialog%{$prefix}%').dialog('open');
-    
     return false;" data-comment="Аннулировать..."  class="reestr_delete reestr_inactive reestr_right_button24"></a>
-    %{/if}%
+%{/if}%
