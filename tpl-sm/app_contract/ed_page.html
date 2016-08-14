@@ -1,0 +1,75 @@
+<script type="text/javascript">
+$(function(){
+  $("#tabs").tabs({
+		%{if $from_begin==1}%
+		selected:0
+		%{elseif $show_tz==1}%
+		selected:1
+		
+		%{elseif $show_bdr==1}%
+		selected:3
+		%{else}%
+		 
+		 
+		cookie: { expires: 14, name: 'edleadTab' }
+		%{/if}%	
+  });
+  
+ $("#intabskp").tabs({
+		   
+		
+		cookie: { expires: 14, name: 'edleadkpsTab' }
+		 
+  }) 
+  
+  %{if $has_doc_tz==false}%
+ 
+ 
+
+   if(($("#tabs").tabs("option", "active")==2)||($("#tabs").tabs("option", "active")==3)||($("#tabs").tabs("option", "active")==4)) $("#tabs").tabs('select', 0);
+   $("#tabs").tabs("disable", "#tabskp");
+   $("#tabs").tabs("disable", "#tabs-5");
+   $("#tabs").tabs("disable", "#tabs-6");
+   
+ 
+  
+  %{/if}%
+   
+});
+</script>
+
+<div id="tabs">
+  <ul>
+    <li><a href="#tabs-1">Заявки на договора</a></li>
+    <li><a href="#tabs-7">Действия по лиду</a></li>
+    
+    %{if $has_syslog}%
+    <li><a href="#tabs-3">Журнал событий</a></li>
+    %{/if}%
+  </ul>
+    
+  <div id="tabs-1">
+    <p>
+    %{$users}%
+    </p>
+  </div>
+    
+  <div id="tabs-7">
+    <p>
+    %{$actions}%
+    
+    </p>
+  </div>
+
+  
+   %{if $has_syslog}%
+  <div id="tabs-3">
+    <p>
+    %{$syslog}%
+    
+    </p>
+  </div>
+  %{/if}%
+ 
+
+</div>

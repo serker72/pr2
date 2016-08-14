@@ -1,0 +1,381 @@
+<script type="text/javascript">
+$(function(){	
+
+
+	$("#change_otv").bind("click", function(){
+		%{if $can_change_manager}%
+		 
+		%{if $bill.tender_id!=0}%
+		alert("Смена ответственного сотрудника заявки на договор производится только в карте заявки на договор.\nПерейдите в карту тендера и смените ответственного сотрудника в ней.");
+		%{else}%
+		 $.ajax({
+		  async: true,
+		  url: "/js/tender.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_users_1" 
+			  
+		  },
+		  beforeSend: function(){
+			$("#managers_found1").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			
+			//alert(data.contract_no);
+			$("#managers_found1").html(data); 
+		 
+			$("#manager_radio1_"+$("#manager_id").val()).prop("checked",true);
+			 
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		
+
+		$("#manager_dialog1").dialog("open"); 
+		%{/if}%
+		%{/if}%
+		
+		
+		return false;
+	});
+	
+
+
+
+	$("#manager_iam").bind("click", function(){
+		//подгрузить текущего сотрудника как менеджера
+		$.ajax({
+			  async: true,
+			  url: "/js/lead.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"iam_manager" 
+				  
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#manager_string").val(data.name_s);
+				$("#manager_id").val(data.id);
+				
+			 
+				
+				 
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+	});
+	
+	
+	function rebuild(){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=manager_radio]:checked").val()==0)||($("input[name=manager_radio]:checked").val()==null)||($("input[name=manager_radio]:checked").val()==undefined)  ){
+			
+			alert("Выберите сотрудника!");
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=manager_radio]:checked").val()
+		   
+	  
+	  
+	 
+	  
+	  if($("#manager_id").val()!=selected_supplier){
+		  $("#manager_clear").trigger("click");
+		  //подгружаем все данные по контрагенту
+		  if(selected_supplier>0){
+			$.ajax({
+			  async: true,
+			  url: "/js/lead.php",
+			  type: "GET",
+			  dataType: "json",
+			  data:{
+				  "action":"retrieve_manager",
+				  "id":selected_supplier
+				  
+			  },
+			  beforeSend: function(){
+				
+			  },
+			  success: function(data){
+				
+				//alert(data.contract_no);
+				$("#manager_string").val(data.name_s);
+				$("#manager_id").val(data.id);
+				
+			 
+				
+				 
+			  },
+			  error: function(xhr, status){
+				 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+				// alert("Ошибка загрузки реквизитов.");	
+			  }	 
+			});
+		  }
+	  }
+	   
+	  $("#manager_dialog").dialog("close"); 
+	}
+ 
+	
+	//подстановка менеджера с кучей проверок
+	function rebuild1(){
+	   
+	   var selected_supplier=0;
+	   
+	   
+	   if( ($("input[name=manager_radio1]:checked").val()==0)||($("input[name=manager_radio1]:checked").val()==null)||($("input[name=manager_radio1]:checked").val()==undefined)  ){
+			
+			alert("Выберите сотрудника!");
+		   return false;  
+		}
+	   
+	   
+	   
+	   
+	   
+	 selected_supplier=$("input[name=manager_radio1]:checked").val()
+		   
+	  
+	  var can_go=true;
+	 
+	  
+	  if($("#manager_id").val()!=selected_supplier){
+		  
+		  can_go=can_go&&window.confirm("Внимание!\nВыбранный сотрудник будет добавлен в качестве куратора в карту контрагента. Продолжить?");
+		  
+		  
+		  if(can_go){
+				//проверка  
+				//can_go=can_go&&window.confirm();
+				can_del=false;
+				
+				if($("#manager_id").val()!=0)
+					can_del=window.confirm("Удалять ли предыдущего куратора из карты контрагента?");
+					
+				if(can_del) $("#manager_delete_previous").val(1);
+				else $("#manager_delete_previous").val(0);
+			  
+		  }
+		  
+		  if(can_go){
+				//проверка доступа текущего сотрудника к тендеру после смены куратора
+				$.ajax({
+				  async: false,
+				  url: "/js/lead.php",
+				  type: "POST",
+				 
+				  data:{
+					  "action":"scan_available_by_user_id",
+					  "manager_id":selected_supplier
+					  
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					
+					//alert(data.contract_no);
+					//$("#manager_string").val(data.name_s);
+					//$("#manager_id").val(data.id);
+					
+				 	if(data==0) can_go=can_go&&window.confirm("После сохранения изменений у Вас не будет доступа к данному лиду.\nПродолжить?");
+					
+					 
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});	  
+		  }
+		  
+		  
+		  if(!can_go) alert("Куратор не может быть сменен!");
+		  
+		   if(can_go){
+			  $("#manager_clear").trigger("click");
+			  //подгружаем все данные по контрагенту
+			  if(selected_supplier>0){
+				$.ajax({
+				  async: true,
+				  url: "/js/lead.php",
+				  type: "GET",
+				  dataType: "json",
+				  data:{
+					  "action":"retrieve_manager",
+					  "id":selected_supplier
+					  
+				  },
+				  beforeSend: function(){
+					
+				  },
+				  success: function(data){
+					
+					//alert(data.contract_no);
+					$("#manager_string").val(data.name_s);
+					$("#manager_id").val(data.id);
+					
+				 
+					
+					 
+				  },
+				  error: function(xhr, status){
+					 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+					// alert("Ошибка загрузки реквизитов.");	
+				  }	 
+				});
+			  }
+			 
+		  }
+	  }
+	   
+	  if(can_go) $("#manager_dialog1").dialog("close"); 
+	}
+	
+	
+	$("#manager_dialog").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 720,
+		height: 490,
+		 
+		buttons: {
+			"Готово": rebuild,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	 $("#manager_dialog1").dialog({
+		autoOpen: false,
+		dialogClass: 'semi_auth',
+		modal: true,
+		width: 720,
+		height: 490,
+		 
+		buttons: {
+			"Готово": rebuild1,
+			"Отмена": function(){
+				 $(this).dialog("close"); 
+			}
+		}
+	 });
+	
+	
+	
+	$("#manager_select").bind("click",function(){
+		
+		 
+		if($("tr[id^=our_supplier_row_]").length==0){
+			alert('Укажите контрагента лида!');
+				return false;	
+			
+		}
+		
+		//подгрузить ответственных сотрудников по контрагенту
+		supplier_id=0;
+		supplier_id=$("input[id^=supplier_id_]:first").val();
+		//alert(supplier_id);
+		
+		$.ajax({
+		  async: true,
+		  url: "/js/lead.php",
+		  type: "POST",
+	 
+		  data:{
+			  "action":"load_users",
+			  "supplier_id":supplier_id
+			  
+		  },
+		  beforeSend: function(){
+			$("#managers_found").html('<img src="/img/wait.gif" alt="подождите, пожалуйста..." />'); 
+		  },
+		  success: function(data){
+			
+			//alert(data.contract_no);
+			$("#managers_found").html(data); 
+		 
+			$("#manager_radio_"+$("#manager_id").val()).prop("checked",true);
+			 
+		  },
+		  error: function(xhr, status){
+			 // $("#pos_rows").html("Ошибка загрузки позиций.");	
+			// alert("Ошибка загрузки реквизитов.");	
+		  }	 
+		});
+		
+		
+	//	$("#doFind").trigger("click");
+		$("#manager_dialog").dialog("open");
+	});
+	
+	$("#manager_clear").bind("click",function(){
+		//очистка выбранного п-ка
+		 
+		
+		
+		$("#manager_string").val("");
+	 
+		
+		$("#manager_id").val("");
+		 
+		
+	});
+	
+	
+	
+	
+	   
+	
+	 
+});
+</script>
+
+<div id="manager_dialog" title="Выберите сотрудника" style="display:none;">
+
+
+   <div id="managers_found">
+   
+   </div>
+
+
+  
+ 
+</div>
+ 
+ 
+<div id="manager_dialog1" title="Выберите сотрудника" style="display:none;">
+
+
+   <div id="managers_found1">
+   
+   </div>
+
+
+  
+ 
+</div>

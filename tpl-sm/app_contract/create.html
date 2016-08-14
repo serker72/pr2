@@ -1,0 +1,406 @@
+<script type="text/javascript" src="/js/gen_validatorv4.js"></script>
+<script type="text/javascript" src="/js/jquery.mask.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
+	 
+	
+ 
+	 
+	$("#pdate_finish").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
+	 
+	  
+	 
+	 
+	
+	 
+	
+	
+	function ZeroFormat(val){
+		val=""+val;
+		
+		if(val.length==1) val="0"+val;
+		return val;	
+	}
+	
+	 
+	 
+	%{if $tender_id==0}%
+	
+	$("#kind_id").bind("change", function(){
+		if($("#kind_id").val()==3){
+			$("#kind_id").val(0);
+			alert("Вид лида 'Тендер' доступен только при создании лида из карты тендера.");
+		}
+	});
+	%{/if}%
+	
+	$("#wo_producer").bind("change",function(){
+		if($("#wo_producer").prop("checked")){
+			$("#producer_id").val(0);
+			$("#producer_id").prop("disabled", true);	
+		}else{
+			$("#producer_id").prop("disabled", false);	
+		}
+		
+		
+	});
+});
+</script>
+
+%{include file="every_help_dialog.html" filename="tender.html" prefix="" description="Информация о создании заявки на договор" style="float:right" is_right=true}%
+
+%{include file="error_window.html"   prefix="" }%
+
+<h1>Создать заявку на договор</h1>
+
+<form action="ed_app_contract.php" method="post" id="crea_form">
+
+<input type="hidden" name="action" value="0">
+
+<!--input type="hidden" name="tender_id" id="tender_id" value="%{$tender_id}%"--> 
+
+<div style="float:left; margin-right:20px; height:50px;">
+    <label for="pdate">Дата создания:</label><br />
+    %{$now_time}%
+    <input type="hidden" value="%{$now_date}%" name="pdate" />
+</div>
+ 
+
+<div style="float:left; margin-right:20px; min-width:120px; height:50px;">
+    <!--a href="#" onclick="$('#do_close').trigger('click'); return false;" style="float:right;" class="reestr_right_button24 reestr_delete" data-comment="Аннулировать/Восстановить..."></a-->
+    <strong>Статус:</strong><br />создана
+</div>
+
+<div style="float:right;  margin-right:10px; height:50px; ">
+  <a href="#"   onclick="alert('В данном режиме печать заявки на договор недоступна. Пожалуйста, нажмите кнопку Создать заявку и остаться в карте для получения возможности печати заявки на договор.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать заявки на договор..."></a>
+</div>  
+
+<br clear="all">
+<p />
+
+<div style="float:left; margin-right: 0px; width:100%;">
+    <label for="description">Описание заявки:</label><br>
+    <textarea id="description" name="description" style="width:100%; height:75px;"></textarea>
+ 
+    <script type="text/javascript">
+	try{
+            $("#description").ckeditor({
+              customConfig : '/ckeditor4/config-kp.js',
+				width:'99%',
+				height:'50px'
+            });		
+	} catch(e){}
+    </script>
+</div> 
+
+<br clear="all">
+<p />
+
+ <div>
+    <strong>Приложите файлы:</strong><br />
+    <input type="file" id="file" /> 
+    <em>максимальный размер файла: %{php}%echo ini_get("post_max_size");%{/php}%</em>  
+    <div id="uploaded_files">
+    </div>
+    
+    <script src="/uploadifive/jquery.uploadifive.js" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="/uploadifive/uploadifive.css">
+    
+    <div id="queue"></div>
+    
+    <script type="text/javascript">
+    $(function(){
+                function AddCode(inname, realname){
+                $.ajax({
+                    async: true,
+                    url: "/js/sched_task_upload_draw.php",
+                    type: "POST",
+                    data:{
+                        "action":"add_file_entry",
+                        "factname":inname,
+                        "realname":realname
+                    },
+                    beforeSend: function(){
+                          
+                    },
+                    success: function(data){
+                      
+                       $("#uploaded_files").append(data);
+                       
+                        
+                       //перерисовать блок сообщений
+                                    },
+                    error: function(xhr, status){
+                            
+                    }	 
+                });	
+                
+            }
+            
+            $('#file').uploadifive({
+                    'auto'             : true,
+                    'buttonText' : 'Выберите файл...',
+                'fileTypeDesc' : 'Все файлы',
+                'fileTypeExts' : '*.*', 
+                    'fileSizeLimit' : '512 MB', 
+                    'width'           : 120,
+                    'formData'         : {
+                                           "PHPSESSID" : "%{$session_id}%"
+                                         },
+                    'queueID'          : 'queue',
+                    'uploadScript'     : '/swfupl-js/lead_upload_file.php',
+                    'onUploadComplete' : function(file, data) { 
+                            eval(data)
+							//alert(data)
+                    
+                    }
+                });
+            
+         
+    });
+     </script>
+</div>
+ 
+<br clear="all" />
+ 
+<div style="float:left; width:100%; min-width:480px;  margin-right:0px; ">
+    <div style="float:left; margin-right:20px;"> 
+        <h3 style="display:inline;">Контрагент:</h3>
+    </div>
+     
+    %{include file="app_contract/supplier_many_actions.html" many=false can_modify=$can_modify_supplier}%
+</div>
+ 
+<br clear="all" />
+<p />
+   
+
+ <div style="float:left; margin-right:20px;">
+    <label for="manager_select">Ответственный сотрудник:</label><br>
+    <input type="hidden"  id="manager_id" name="manager_id" value="%{$manager_id}%" />
+    <input type="text"  id="manager_string"  value="%{$manager_string|escape}%"  disabled size="40" maxlength="255" style="width:300px;" />
+    <input type="button" id="manager_select" %{if !$can_modify_manager}% disabled%{/if}% value="..." />
+    <input type="button" id="manager_clear" %{if !$can_modify_manager}% disabled%{/if}% value="x" />
+	
+    %{include file="app_contract/manager_actions.html" can_modify=$can_modify_manager}%
+</div> 
+ 
+<br clear="all" />
+<p />
+
+
+
+
+<br>
+
+ 
+ <!-- Блок разрешения утверждения -->
+<input type="hidden" name="do_confirm" id="do_confirm" value="0" />
+ 
+
+
+
+<input type="submit" value="Создать лид" name="doNew" />
+
+
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать лид и остаться в карте" />
+
+
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='leads.php';" />
+ 
+
+</form>
+
+
+<script type="text/javascript">
+$(function(){
+	$("#crea_form").bind("submit",function(){
+		var res=true;
+		var error_fields=new Array();
+		
+		
+		if($("#pdate_finish").val()==""){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"pdate_finish",
+				"name":"Прогнозируемая дата заключения контракта",
+				"error":"Выберите прогнозируемую дату заключения контракта!"
+			});			 
+		}
+		
+		if(($("#kind_id").val()==0)||($("#kind_id").val()==null)||($("#kind_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"kind_id",
+				"name":"Вид лида",
+				"error":"Выберите вид лида!"
+			});			 
+		}
+		
+		if(($("#eq_type_id").val()==0)||($("#eq_type_id").val()==null)||($("#eq_type_id").val()==undefined)){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"eq_type_id",
+				"name":"Тип оборудования",
+				"error":"Выберите тип оборудования!"
+			});			 
+		}
+		
+		if($("#topic").val().length==0){
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"topic",
+				"name":"Название лида",
+				"error":"Укажите название лида!"
+			});			 
+		}
+		
+		
+		probability=$("#probability").val();
+		probability=probability.replace(/,/,'.');
+		if((probability.length==0)||isNaN(probability)||(parseFloat(probability)<1)||(parseFloat(probability)>100)){
+			 
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"probability",
+				"name":"Вероятность заключения контракта",
+				"error":"Введите корректную вероятность заключения контракта!"
+			});			
+		}
+		
+		 
+		//хотя бы 1 контрагент
+		if($("tr[id^=our_supplier_row_]").length==0){
+			 
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"supplier_str",
+				"name":"Контрагент",
+				"error":"Укажите контрагента лида!"
+			});			
+			
+		}	
+		 
+		
+		//контрлль пр-ля
+		if(($("#wo_producer").prop("checked")==false)&&( ($("#producer_id").val()==0)||($("#producer_id").val()==null) ||($("#producer_id").val()==undefined) )) {
+				
+			res=res&&false;
+			 
+			error_fields.push({
+				"id":"producer_id",
+				"name":"Производитель",
+				"error":"Отметьте галочку Пр-ль не в линейке, либо выберите производителя."
+			});		
+				
+			 
+		}
+		
+		
+		//контроль даты по род. тендеру...
+		if($("#kind_id").val()==3){
+			var can_ret=true;
+			$.ajax({
+				async: false,
+				url: "/js/lead.php",
+				type: "POST",
+				data:{
+					"action":"check_pdate_finish",
+					tender_id: $("#tender_id").val(),
+					pdate: $("#pdate_finish").val(),
+					ptime_h: $("#ptime_finish_h").val(),
+					ptime_m: $("#ptime_finish_m").val()
+				},
+				beforeSend: function(){
+					  
+				},
+				success: function(data){
+				 
+				  if(data!=0){
+					 
+					 
+					 
+					res=res&&false;
+			 
+					error_fields.push({
+						"id":"pdate_finish",
+						"name":"Прогнозируемая дата заключения контракта",
+						"error":"Некорректная прогнозируемая дата заключения контракта: "+data+".\n"
+					});
+					 
+				  } 
+				},
+				error: function(xhr, status){
+					
+					 
+					 
+					res=res&&false;
+			 
+					error_fields.push({
+						"id":"pdate_finish",
+						"name":"Прогнозируемая дата заключения контракта",
+						"error":"Ошибка при проверке связанного тендера. Пожалуйста, попытайтесь сохранить лид снова."
+					});
+				}	 
+			});
+				
+			 
+			
+			
+		}
+		
+		
+		%{if $can_confirm}% 
+		if(res) if(window.confirm("Желаете ли вы утвердить заполнение лида?")){
+			$("#do_confirm").val(1);	
+		}else $("#do_confirm").val(0);	
+		%{/if}%
+		
+		
+		$(".blue").removeClass("blue");
+		if(!res){
+			
+			 
+			var tt='<ul>';
+			$.each(error_fields,function(k,v){
+				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+				
+				$("#"+v.id).addClass("blue");
+			});
+			
+			tt+='</ul>';
+			
+			
+			$("#error_window_text").html(tt);
+			
+			 max_height=700; min_height=300;
+				 
+			 our_height=parseInt($("#error_window_text").height());
+			  
+			 if(our_height>max_height) our_height=max_height;
+			 if(our_height<min_height) our_height=min_height;
+			 
+			 
+			 
+			 $("#error_window_dialog").dialog( "option", "height", our_height+140);
+			
+			
+			$("#error_window_dialog").dialog("open");
+		}
+	
+	 
+		return res;
+	});
+	
+});
+
+ 
+</script>

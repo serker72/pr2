@@ -14,6 +14,7 @@ require_once('../classes/db_decorator.php');
 
 require_once('../classes/app_contract_group.php');
 require_once('../classes/app_contract_item.php');
+require_once('../classes/app_contract_notesitem.php');
 
  
 
@@ -94,7 +95,6 @@ $rec_upd = false;
             $log->PutEntry($result['id'], 'восстановление заявки на договор', NULL, 1157, NULL, NULL, $appc_item['code']);
             
             //внести примечание
-            $note = SecStr(iconv("utf-8","windows-1251", $_POST['note']));
             $_ni = new AppContractNotesItem;
             $_ni->Add(array(
                 'app_contract_id' => $id,
