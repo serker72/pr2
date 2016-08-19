@@ -105,6 +105,26 @@ $rec_upd = false;
             ));	
         } 
     }
+elseif(isset($_POST['action'])&&($_POST['action']=="retrieve_only_contacts")){
+	$_sc=new lead_SupplierContactGroup;
+	
+	
+	$supplier_id=abs((int)$_POST['supplier_id']);
+	$current_id=abs((int)$_POST['current_id']);
+	$current_k_id=abs((int)$_POST['current_k_id']);
+	
+	
+	
+	
+	$alls=$_sc->GetItemsByIdArr($supplier_id,$current_id, $current_k_id); 
+	$sm=new SmartyAj;
+	
+	
+	$sm->assign('supplier_id', $supplier_id);
+	$sm->assign('items', $alls);
+	
+	$ret=$sm->fetch('app_contract/suppliers_only_contacts.html');
+    
 }
 
 

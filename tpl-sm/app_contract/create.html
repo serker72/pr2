@@ -2,20 +2,7 @@
 <script type="text/javascript" src="/js/jquery.mask.min.js"></script>
 <script type="text/javascript">
 $(function(){
-	
 	$.datepicker.setDefaults($.extend($.datepicker.regional['ru']));
-	 
-	
- 
-	 
-	$("#pdate_finish").datepicker({changeMonth: true, changeYear:true, yearRange: '2012:+15'});
-	 
-	  
-	 
-	 
-	
-	 
-	
 	
 	function ZeroFormat(val){
 		val=""+val;
@@ -26,16 +13,6 @@ $(function(){
 	
 	 
 	 
-	%{if $tender_id==0}%
-	
-	$("#kind_id").bind("change", function(){
-		if($("#kind_id").val()==3){
-			$("#kind_id").val(0);
-			alert("Вид лида 'Тендер' доступен только при создании лида из карты тендера.");
-		}
-	});
-	%{/if}%
-	
 	$("#wo_producer").bind("change",function(){
 		if($("#wo_producer").prop("checked")){
 			$("#producer_id").val(0);
@@ -49,7 +26,7 @@ $(function(){
 });
 </script>
 
-%{include file="every_help_dialog.html" filename="tender.html" prefix="" description="Информация о создании заявки на договор" style="float:right" is_right=true}%
+%{include file="every_help_dialog.html" filename="app_contract.html" prefix="" description="Информация о создании заявки на договор" style="float:right" is_right=true}%
 
 %{include file="error_window.html"   prefix="" }%
 
@@ -150,7 +127,7 @@ $(function(){
                                            "PHPSESSID" : "%{$session_id}%"
                                          },
                     'queueID'          : 'queue',
-                    'uploadScript'     : '/swfupl-js/lead_upload_file.php',
+                    'uploadScript'     : '/swfupl-js/app_contract_upload_file.php',
                     'onUploadComplete' : function(file, data) { 
                             eval(data)
 							//alert(data)
