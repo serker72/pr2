@@ -46,7 +46,7 @@ CREATE TABLE `app_contract_view_field` (
   UNIQUE KEY `colname` (`colname`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
 
-CREATE TABLE `app_contract_file` (
+CREATE TABLE `app_contract_history_file` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `history_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `filename` varchar(512) NOT NULL DEFAULT '',
@@ -89,6 +89,43 @@ CREATE TABLE `app_contract_notes` (
   KEY `by_app_contract_id` (`app_contract_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
 
+CREATE TABLE `app_contract_file` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `storage_id` bigint(255) unsigned NOT NULL DEFAULT '0',
+  `bill_id` bigint(255) unsigned NOT NULL DEFAULT '0',
+  `user_id` bigint(255) unsigned NOT NULL DEFAULT '0',
+  `filename` varchar(512) NOT NULL DEFAULT '',
+  `orig_name` varchar(514) NOT NULL DEFAULT '',
+  `pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `txt` text NOT NULL,
+  `folder_id` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `text_contents` mediumtext NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `storage_id` (`storage_id`),
+  KEY `byuser_id` (`user_id`),
+  KEY `bybill_id` (`bill_id`),
+  KEY `folder_id` (`folder_id`),
+  FULLTEXT KEY `text_contents` (`text_contents`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
+
+CREATE TABLE `app_contract_file_folder` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `parent_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `storage_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `filename` varchar(512) NOT NULL DEFAULT '',
+  `pdate` bigint(20) NOT NULL DEFAULT '0',
+  `txt` text NOT NULL,
+  `org_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `doc_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `parent_id` (`parent_id`),
+  KEY `storage_id` (`storage_id`),
+  KEY `user_id` (`user_id`),
+  KEY `org_id` (`org_id`),
+  KEY `doc_id` (`doc_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=cp1251;
+
 /* Добавление записей */
 INSERT INTO `app_contract_status` (`id`, `name`, `description`) VALUES
 (1, 'Создана', ''),
@@ -124,7 +161,10 @@ INSERT INTO `object` (`id`, `group_id`, `name`, `description`, `ord`) VALUES
 ('1154', '86', 'Утверждение заявки на договор', 'Утверждение заявки на договор', '0'),
 ('1155', '86', 'Снятие утверждения заявки на договор', 'Снятие утверждения заявки на договор', '0'),
 ('1156', '86', 'Аннулирование заявки на договор', 'Аннулирование заявки на договор', '0'),
-('1157', '86', 'Восстановление заявки на договор', 'Восстановление заявки на договор', '0');
+('1157', '86', 'Восстановление заявки на договор', 'Восстановление заявки на договор', '0'),
+('1158', '86', 'Правка ленты заявки на договор (свои записи)', 'Правка ленты заявки на договор (свои записи)', '0'),
+('1159', '86', 'Правка ленты заявки на договор (все записи)', 'Правка ленты заявки на договор (все записи)', '0'),
+('1160', '86', 'Доступ к заявкам на договор всех ответственных сотрудников', 'Доступ к заявкам на договор всех ответственных сотрудников', '0');
 
 INSERT `user_rights` (`id`, `user_id`, `right_id`, `object_id`) VALUES 
 (0, 2, 2, 1150),
@@ -134,7 +174,10 @@ INSERT `user_rights` (`id`, `user_id`, `right_id`, `object_id`) VALUES
 (0, 2, 2, 1154),
 (0, 2, 2, 1155),
 (0, 2, 2, 1156),
-(0, 2, 2, 1157);
+(0, 2, 2, 1157),
+(0, 2, 2, 1158),
+(0, 2, 2, 1159),
+(0, 2, 2, 1160);
 
 INSERT INTO `left_menu_new` (`id`, `parent_id`, `object_id`, `name`, `description`, `url`, `ord`) VALUES 
 (null, '0', '0', 'Заявки на договора', 'Раздел "Заявки на договора"', '#', ''),

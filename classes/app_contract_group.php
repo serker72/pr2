@@ -1,7 +1,9 @@
 <?
-
 require_once('abstractgroup.php');
 require_once('app_contract_view.class.php');
+require_once('discr_man.php');
+require_once('user_s_item.php');
+require_once('user_pos_item.php');
 
 // абстрактная группа
 class AppContractGroup extends AbstractGroup {
@@ -151,5 +153,105 @@ class AppContractGroup extends AbstractGroup {
         return $sss;
         //return $sm->fetch($template);
     }
+    
+    //список ID лидов, которых может видеть текущий сотрудник
+    public function GetAvailableAppContractIds($user_id){
+        $arr=array();
+
+        $_man=new DiscrMan;
+
+        //проверить супердоступ
+        //если он есть - то это все лиды
+        if($_man->CheckAccess($user_id,'w',1160)){
+                $sql='select id from app_contract';
+                $set=new mysqlSet($sql);
+                $rs=$set->GetResult();
+                $rc=$set->GetResultNumRows();
+
+                for($i=0; $i<$rc; $i++){
+                        $f=mysqli_fetch_array($rs);		
+                        $arr[]=$f['id'];	
+                }
+        }else{
+                //свои
+                $sql='select id from app_contract where user_id="'.$user_id.'" '; // or created_id="'.$user_id.'" ';	
+
+                //руководитель отдела - давать доступ к документам подчиненных
+                $_ui=new UserSItem;
+                $user=$_ui->GetItemById($user_id);
+                $_upos=new UserPosItem;
+                $upos=$_upos->GetItemById($user['position_id']);
+                if($upos['is_ruk_otd']==1){
+                        $sql.=' or user_id in(select id from user where department_id="'.$user['department_id'].'")';
+
+                } 
+
+
+                //echo $sql;
+                $set=new mysqlSet($sql);
+                $rs=$set->GetResult();
+                $rc=$set->GetResultNumRows();
+
+                for($i=0; $i<$rc; $i++){
+                        $f=mysqli_fetch_array($rs);		
+                        $arr[]=$f['id'];	
+                }
+
+        }
+
+
+        //вставка -1 для корректности
+        //if(!$except_me) $arr[]=$user_id;
+        //else 
+        if(count($arr)==0) $arr[]=-1;
+
+        return $arr;	
+    }  
+
+    //проверка, будет ли доступен лид при указанном менеджере указанному сотруднику
+    public function ScanAvailableByUserId($manager_id, $user_id){
+            $arr=array();
+
+            $_man=new DiscrMan;
+
+            //проверить супердоступ
+            //если он есть - то это все лиды
+            if($_man->CheckAccess($user_id,'w',1160)){
+
+
+                    return true;
+            }else{
+                    //свои
+                    if($manager_id==$user_id){
+                            return true;	
+                    }
+
+                    //echo $sql;
+
+                    //руководитель отдела - давать доступ к документам подчиненных
+                    $_ui=new UserSItem;
+                    $user=$_ui->GetItemById($user_id);
+                    $_upos=new UserPosItem;
+                    $upos=$_upos->GetItemById($user['position_id']);
+                    if($upos['is_ruk_otd']==1){
+                            //$sql.=' or manager_id in(select id from user where department_id="'.$user['department_id'].'")';
+                            $user_ids=array();
+                            $sql=' select id from user where department_id="'.$user['department_id'].'"';
+                            $set=new mysqlset($sql); $rs=$set->GetResult(); $rc=$set->GetResultnumrows();
+                            for($i=0; $i<$rc; $i++){
+                                    $f=mysqli_fetch_array($rs); $user_ids[]=$f['id'];	
+                            }
+                            if(in_array($manager_id,$user_ids)) return true;	 
+                    } 
+
+
+
+            }
+
+
+            return false;
+
+    }  
+    
 }
 ?>

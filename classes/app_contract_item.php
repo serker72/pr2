@@ -56,7 +56,7 @@ class AppContractItem extends AbstractItem{
 		if($id === NULL) return false;
                 
                 $sql = 'select p.*, 
-                            u1.login as user_login, u1.name_s as user_name,
+                            u1.login as user_login, u1.name_s as user_name, u1.id as manager_id,
                             u2.login as posted_user_login, u2.name_s as posted_user_name,
                             u3.login as user_confirm_login, u3.name_s as user_confirm_name,
                             sup.full_name as supplier_name,

@@ -1,11 +1,11 @@
 <?
 require_once('abstractitem.php');
 
-require_once('reclamitem.php');
+//require_once('reclamitem.php');
 require_once('user_s_item.php');
 require_once('messageitem.php');
 
-require_once('specdelgroup.php');
+//require_once('specdelgroup.php');
 
 
 //абстрактный элемент

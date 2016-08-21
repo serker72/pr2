@@ -18,7 +18,7 @@
 
 
 <div id="supplier_cities" style="border:1px solid silver; min-width:480px; width:100%; %{if $many}% height:250px; %{else}% height:100px; %{/if}% overflow:auto;">
-%{include file="suppliers_many_table.html" has_header=true}%
+%{include file="app_contract/suppliers_many_table.html" has_header=true}%
 
 
 </div>
@@ -86,10 +86,10 @@ $(function(){
 				  contact_ids.push($(v).val());
 				  
 			  });
-			 // alert(contact_ids);
+			  //alert(contact_ids);
 			  $.ajax({
 				  async: true,
-				  url: "/js/lead.php",
+				  url: "/js/app_contract.php",
 				  type: "POST",
 				  data:{
 					  "action":"add_supplier",
@@ -110,7 +110,7 @@ $(function(){
 					 //вызвать сканирование менеджера
 					 $.ajax({
 						  async: true,
-						  url: "/js/lead.php",
+						  url: "/js/app_contract.php",
 						  type: "GET",
 						  dataType: "json",
 						  data:{
@@ -270,7 +270,7 @@ $(function(){
 			
 			$.ajax({
 			  async: true,
-			  url: "/js/lead.php",
+			  url: "/js/app_contract.php",
 			  type: "POST",
 			  data:{
 				  "action":"find_many_suppliers",
@@ -317,7 +317,7 @@ $(function(){
 					
 					$.ajax({
 						  async: true,
-						  url: "/js/lead.php",
+						  url: "/js/app_contract.php",
 						  type: "POST",
 						  data:{
 							  "action":"retrieve_only_contacts",
@@ -351,7 +351,7 @@ $(function(){
 				 
 			  },
 			  error: function(xhr, status){
-				  $("#suppliers_found").html("Ошибка загрузки контрагентов.");	
+				  $("#suppliers_found").html("Ошибка загрузки контрагентов."+xhr+"-"+status);	
 			  }	
 			  
 		 })).then(function(){
@@ -444,7 +444,7 @@ $(function(){
 		
 			$.ajax({
 			  async: true,
-			  url: "/js/lead.php",
+			  url: "/js/app_contract.php",
 			  type: "POST",
 			  data:{
 				  "action":"find_many_suppliers",

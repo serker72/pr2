@@ -10,19 +10,6 @@ $(function(){
 		if(val.length==1) val="0"+val;
 		return val;	
 	}
-	
-	 
-	 
-	$("#wo_producer").bind("change",function(){
-		if($("#wo_producer").prop("checked")){
-			$("#producer_id").val(0);
-			$("#producer_id").prop("disabled", true);	
-		}else{
-			$("#producer_id").prop("disabled", false);	
-		}
-		
-		
-	});
 });
 </script>
 
@@ -51,7 +38,7 @@ $(function(){
 </div>
 
 <div style="float:right;  margin-right:10px; height:50px; ">
-  <a href="#"   onclick="alert('В данном режиме печать заявки на договор недоступна. Пожалуйста, нажмите кнопку Создать заявку и остаться в карте для получения возможности печати заявки на договор.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать заявки на договор..."></a>
+  <a href="#"   onclick="alert('В данном режиме печать заявки на договор недоступна. Пожалуйста, нажмите кнопку \"Создать заявку и остаться в карте\" для получения возможности печати заявки на договор.'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать заявки на договор..."></a>
 </div>  
 
 <br clear="all">
@@ -179,13 +166,13 @@ $(function(){
 
 
 
-<input type="submit" value="Создать лид" name="doNew" />
+<input type="submit" value="Создать заявку" name="doNew" />
 
 
-<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать лид и остаться в карте" />
+<input type="submit" name="doNewEdit"  id="doNewEdit" value="Создать заявку и остаться в карте" />
 
 
-<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='leads.php';" />
+<input type="button" value="Отмена" name="cancelOrder" id="do_close" onclick="location.href='app_contract.php';" />
  
 
 </form>
@@ -198,61 +185,16 @@ $(function(){
 		var error_fields=new Array();
 		
 		
-		if($("#pdate_finish").val()==""){
+		if($("#description").val().length==0){
 			res=res&&false;
 			 
 			error_fields.push({
-				"id":"pdate_finish",
-				"name":"Прогнозируемая дата заключения контракта",
-				"error":"Выберите прогнозируемую дату заключения контракта!"
+				"id":"description",
+				"name":"Описание заявки",
+				"error":"Укажите описание заявки !"
 			});			 
 		}
 		
-		if(($("#kind_id").val()==0)||($("#kind_id").val()==null)||($("#kind_id").val()==undefined)){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"kind_id",
-				"name":"Вид лида",
-				"error":"Выберите вид лида!"
-			});			 
-		}
-		
-		if(($("#eq_type_id").val()==0)||($("#eq_type_id").val()==null)||($("#eq_type_id").val()==undefined)){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"eq_type_id",
-				"name":"Тип оборудования",
-				"error":"Выберите тип оборудования!"
-			});			 
-		}
-		
-		if($("#topic").val().length==0){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"topic",
-				"name":"Название лида",
-				"error":"Укажите название лида!"
-			});			 
-		}
-		
-		
-		probability=$("#probability").val();
-		probability=probability.replace(/,/,'.');
-		if((probability.length==0)||isNaN(probability)||(parseFloat(probability)<1)||(parseFloat(probability)>100)){
-			 
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"probability",
-				"name":"Вероятность заключения контракта",
-				"error":"Введите корректную вероятность заключения контракта!"
-			});			
-		}
-		
-		 
 		//хотя бы 1 контрагент
 		if($("tr[id^=our_supplier_row_]").length==0){
 			 
@@ -261,82 +203,14 @@ $(function(){
 			error_fields.push({
 				"id":"supplier_str",
 				"name":"Контрагент",
-				"error":"Укажите контрагента лида!"
+				"error":"Укажите контрагента заявки !"
 			});			
 			
 		}	
 		 
 		
-		//контрлль пр-ля
-		if(($("#wo_producer").prop("checked")==false)&&( ($("#producer_id").val()==0)||($("#producer_id").val()==null) ||($("#producer_id").val()==undefined) )) {
-				
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"producer_id",
-				"name":"Производитель",
-				"error":"Отметьте галочку Пр-ль не в линейке, либо выберите производителя."
-			});		
-				
-			 
-		}
-		
-		
-		//контроль даты по род. тендеру...
-		if($("#kind_id").val()==3){
-			var can_ret=true;
-			$.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_pdate_finish",
-					tender_id: $("#tender_id").val(),
-					pdate: $("#pdate_finish").val(),
-					ptime_h: $("#ptime_finish_h").val(),
-					ptime_m: $("#ptime_finish_m").val()
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				 
-				  if(data!=0){
-					 
-					 
-					 
-					res=res&&false;
-			 
-					error_fields.push({
-						"id":"pdate_finish",
-						"name":"Прогнозируемая дата заключения контракта",
-						"error":"Некорректная прогнозируемая дата заключения контракта: "+data+".\n"
-					});
-					 
-				  } 
-				},
-				error: function(xhr, status){
-					
-					 
-					 
-					res=res&&false;
-			 
-					error_fields.push({
-						"id":"pdate_finish",
-						"name":"Прогнозируемая дата заключения контракта",
-						"error":"Ошибка при проверке связанного тендера. Пожалуйста, попытайтесь сохранить лид снова."
-					});
-				}	 
-			});
-				
-			 
-			
-			
-		}
-		
-		
 		%{if $can_confirm}% 
-		if(res) if(window.confirm("Желаете ли вы утвердить заполнение лида?")){
+		if(res) if(window.confirm("Желаете ли вы утвердить заполнение заявки ?")){
 			$("#do_confirm").val(1);	
 		}else $("#do_confirm").val(0);	
 		%{/if}%

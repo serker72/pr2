@@ -1,96 +1,37 @@
 <?
-require_once('abstractfilegroup.php');
+require_once('abstractfiledocfoldergroup.php');
 
-// абстрактна€ группа файлов
-class AppContractFileGroup extends AbstractFileGroup {
-	protected $storage_id;
-	protected $storage_name;
-	protected $storage_path;
+require_once('filedocfolderitem.php');
+
+// группа файлов лида
+class AppContractFileGroup extends AbstractFileDocFolderGroup {
 	
-	public function __construct($id=1){
-		$this->init($id);
-	}
-	
-	//установка всех имен
-	protected function init($id){
+	protected function init($id, $doc_id, $folder_instance){
 		$this->tablename='app_contract_file';
-		$this->item=NULL;
-		$this->pagename='page.php';	
+		$this->file_instance=$file_instance; //экземпл€р класса файла
+		$this->folder_instance=$folder_instance; //экземпл€р класса папки
+		$this->pagename='ed_app_contract.php';	
 		$this->vis_name='is_shown';	
-		$this->subkeyname='history_id';
+		$this->subkeyname='bill_id';
 			
 		$this->storage_id=$id;	
 		$this->storage_name='storage_id';	
-		$this->storage_path=ABSPATH.'upload/app_contract/';	
-	}
-	
-	
-	
-	
-	public function GetItemsByIdArr($id){
-		$arr=Array();
+		$this->storage_path=ABSPATH.'upload/files/app_contract/';	
 		
-		$set=new MysqlSet('select * from '.$this->tablename.' where '.$this->subkeyname.'="'.$id.'"  order by id asc');
 		
-		$rs=$set->GetResult();
-		$rc=$set->GetResultNumRows();
-		for($i=0; $i<$rc; $i++){
+		$this->tablename_folder='app_contract_file_folder';
+		$this->doc_id=$doc_id;
+		$this->doc_id_name='id';
+		
+		$this->folder_instance->tablename=$this->tablename_folder;
+		$this->folder_instance->doc_id_name=$this->doc_id_name;
 			
-			$f=mysqli_fetch_array($rs);
-			
-			foreach($f as $k=>$v) $f[$k]=stripslashes($v);
-			
-			$f['size']=filesize($this->storage_path.$f['filename'])/1024/1024;
-			//$f['address']=nl2br($f['address']);
-			$arr[]=$f;
-		}
-		
-		return $arr;
 	}
 	
-	
-	
-	
-	public function ClearLostFiles($ttl=86400){
-		//$files=array();
-		$message_files=array();
-		
-		$message_files=$this->GetFilenamesArr();
-		//print_r($message_files);
-		$iterator = new DirectoryIterator($this->storage_path);
-		foreach ($iterator as $fileinfo) {
-			if ($fileinfo->isFile()) {
-				//echo $fileinfo->__toString();
-				//$filenames[$fileinfo->getMTime()] = $fileinfo->getFilename();
-				if(!in_array($fileinfo->__toString(), $message_files)){
-					
-					$tm=$fileinfo->getMTime();
-					if($tm<(time()-$ttl)){
-					  //провер€ть дату
-					  @unlink($this->storage_path.$fileinfo->__toString());
-					}
-				}
-			}
-		}
-		
-	}
-	
-	protected function GetFilenamesArr(){
-		//список позиций
-
-		$arr=Array();
-		$set=new MysqlSet('select * from '.$this->tablename.' order by id asc');
-		
-		$rs=$set->GetResult();
-		$rc=$set->GetResultNumRows();
-		for($i=0; $i<$rc; $i++){
-			$f=mysqli_fetch_array($rs);
-			$arr[]=$f['filename'];
-		}
-		
-		return $arr;
-		
-	}
-	
+	 
 }
+
+
+
+ 
 ?>

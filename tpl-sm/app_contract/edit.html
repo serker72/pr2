@@ -1,3 +1,4 @@
+%{debug}%
 <script type="text/javascript" src="/js/gen_validatorv4.js"></script>
 <script type="text/javascript" src="/js/jquery.mask.min.js"></script>
 <script type="text/javascript">
@@ -54,253 +55,6 @@ $(function(){
 		
 	});
 
-%{if $bill.total_is_working}%
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_total").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_total").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_total").html($days);
-	
-	$("#work_hours_total").html($hours);
-	
-	$("#work_mins_total").html($mins);
-	
-	$("#work_secs_total").html($secs);
-	$("#working_times_total").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-	
-	
-%{if $bill.0_is_working}%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_0").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_0").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_0").html($days)	;
-	
-	$("#work_hours_0").html($hours)	;
-	
-	$("#work_mins_0").html($mins)	;
-	
-	$("#work_secs_0").html($secs);
-	$("#working_times_0").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-
-	
-%{if $bill.1_is_working}%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_1").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_1").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_1").html($days)	;
-	
-	$("#work_hours_1").html($hours)	;
-	
-	$("#work_mins_1").html($mins)	;
-	
-	$("#work_secs_1").html($secs);
-	$("#working_times_1").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-
-	
-%{if $bill.2_is_working}%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_2").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_2").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_2").html($days)	;
-	
-	$("#work_hours_2").html($hours)	;
-	
-	$("#work_mins_2").html($mins)	;
-	
-	$("#work_secs_2").html($secs);
-	$("#working_times_2").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-
-	
-%{if $bill.3_is_working}%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_3").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_3").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_3").html($days)	;
-	
-	$("#work_hours_3").html($hours)	;
-	
-	$("#work_mins_3").html($mins)	;
-	
-	$("#work_secs_3").html($secs);
-	$("#working_times_3").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-	
-%{if $bill.4_is_working }%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_4").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_4").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_4").html($days)	;
-	
-	$("#work_hours_4").html($hours)	;
-	
-	$("#work_mins_4").html($mins)	;
-	
-	$("#work_secs_4").html($secs);
-	$("#working_times_4").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
-
-
-%{if $bill.5_is_working }%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_5").val());	
-	
-	$working_time+=1;
-	$("#working_time_unf_5").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_5").html($days)	;
-	
-	$("#work_hours_5").html($hours)	;
-	
-	$("#work_mins_5").html($mins)	;
-	
-	$("#work_secs_5").html($secs);
-	$("#working_times_5").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%	
- 
-
-%{if $bill.6_is_working}%
-
- 
-window.setInterval(function(){
-	$working_time=parseInt($("#working_time_unf_6").val());	
-	 
-	$working_time+=1;
-	$("#working_time_unf_6").val($working_time);
-	
-	$days=Math.floor($working_time/(24*60*60));
-	
-	$hours = Math.floor(($working_time - $days*24*60*60)/(60*60));
-	
-	$mins=Math.floor(($working_time - $days*24*60*60 - $hours*60*60)/(60));
-	
-	$secs=$working_time - $days*24*60*60 - $hours*60*60 - $mins*60;
-	
-	$("#work_days_6").html($days)	;
-	
-	$("#work_hours_6").html($hours)	;
-	
-	$("#work_mins_6").html($mins)	;
-	
-	$("#work_secs_6").html($secs);
-	$("#working_times_6").toggleClass("working_times_blue");	
-	
-}, 1000);
-
-%{/if}%		
-	
-	
-	
 	
 	
 %{if $field_rights.to_cancel}%
@@ -599,7 +353,7 @@ $("#to_tz").bind("click", function(){
 });
 </script>
 
- %{include file="every_help_dialog.html" filename="lead.html" prefix="" description="Информация о редактировании лида" style="float:right" is_right=true}%
+ %{include file="every_help_dialog.html" filename="app_contract.html" prefix="" description="Информация о редактировании лида" style="float:right" is_right=true}%
  
  
 %{include file="error_window.html"   prefix="" }%
@@ -611,9 +365,9 @@ $("#to_tz").bind("click", function(){
 %{include file="lead/review_dialog.html" }%
 %{include file="lead/defer_dialog.html" }%
 
-<h1>Редактирование лида</h1>
+<h1>Редактирование заявки на договор</h1>
 
-<form action="ed_lead.php" method="post" id="crea_form">
+<form action="ed_app_contract.php" method="post" id="crea_form">
 
 <input type="hidden" name="action" value="1">
  
@@ -635,215 +389,6 @@ $("#to_tz").bind("click", function(){
 <input type="hidden"  id="new_defer_pdate" name="new_defer_pdate" value="%{$bill.pdate_finish}%">
 
 
-<div style="float:right; margin-right:0px; min-width:110px; height:50px;" id="toggle_annul">
-%{include file="lead/toggle_annul_card.html"}%
-
-</div>
-
-
- 
-
-
-%{if $field_rights.to_work}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_work" id="to_work" value="Принять в работу"  />
-</div>
-%{/if}%
-
-%{if $field_rights.to_rework}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_rework" id="to_rework" %{if !$can_rework or $tender_blocked}% disabled%{/if}% value="Отправить на доработку"  />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_restore_work}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_restore_work" id="to_restore_work" %{if !$can_to_restore_work or $tender_blocked}% disabled%{/if}% value="Вернуть в работу"  />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_cancel}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_cancel" id="to_cancel" value="Отказ" %{if   $tender_blocked}% disabled%{/if}%  />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_view}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_view" id="to_view" value="На рассмотрение" %{if   $tender_blocked}% disabled%{/if}%   />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_defer}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_defer" id="to_defer" value="Отложить" %{if   $tender_blocked}% disabled%{/if}%  />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_win}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_win" id="to_win" value="Выиграть" %{if   $tender_blocked}% disabled%{/if}%   />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_fail}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="submit" name="to_fail" id="to_fail" value="Проиграть" %{if   $tender_blocked}% disabled%{/if}%   />
-</div>
-%{/if}%
-
-
-%{if $field_rights.to_tz}%
-<div style="float:left; margin-right:10px; margin-top:10px;">
-	<input type="button" name="to_tz" id="to_tz" value="Создать ТЗ" %{if   !$can_create_tz}% disabled%{/if}%   />
-</div>
-%{/if}%
-
-<br clear="all" />
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки менеджером:</strong><br>
-   
-    <div id="working_times_0" class="working_times"> 
-    <span id="work_days_0">%{$bill.times_0.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_0">%{$bill.times_0.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_0">%{$bill.times_0.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_0">%{$bill.times_0.secs|default:"0"}%</span> сек.
-    </div>
-    
-    <input id="working_time_unf_0" type="hidden" value="%{$bill.working_time_unf_0|default:"0"}%" />
-</div>
-
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки отделом закупок:</strong><br>
-   
-    <div id="working_times_1" class="working_times"> 
-    <span id="work_days_1">%{$bill.times_1.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_1">%{$bill.times_1.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_1">%{$bill.times_1.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_1">%{$bill.times_1.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_1" type="hidden" value="%{$bill.working_time_unf_1|default:"0"}%" />
-</div>
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки  техн. отделом:</strong><br>
-   
-    <div id="working_times_2" class="working_times"> 
-    <span id="work_days_2">%{$bill.times_2.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_2">%{$bill.times_2.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_2">%{$bill.times_2.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_2">%{$bill.times_2.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_2" type="hidden" value="%{$bill.working_time_unf_2|default:"0"}%" />
-</div>
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки пост-ком:</strong><br>
-   
-    <div id="working_times_3" class="working_times"> 
-    <span id="work_days_3">%{$bill.times_3.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_3">%{$bill.times_3.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_3">%{$bill.times_3.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_3">%{$bill.times_3.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_3" type="hidden" value="%{$bill.working_time_unf_3|default:"0"}%" />
-</div>
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. пров-ки коорд-рами ДПиМ:</strong><br>
-   
-    <div id="working_times_4" class="working_times"> 
-    <span id="work_days_4">%{$bill.times_4.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_4">%{$bill.times_4.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_4">%{$bill.times_4.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_4">%{$bill.times_4.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_4" type="hidden" value="%{$bill.working_time_unf_4|default:"0"}%" />
-</div>
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки  фин. службой:</strong><br>
-   
-    <div id="working_times_5" class="working_times"> 
-    <span id="work_days_5">%{$bill.times_5.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_5">%{$bill.times_5.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_5">%{$bill.times_5.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_5">%{$bill.times_5.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_5" type="hidden" value="%{$bill.working_time_unf_5|default:"0"}%" />
-</div>
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Вр. обр-ки ген. директором:</strong><br>
-   
-    <div id="working_times_6" class="working_times"> 
-    <span id="work_days_6">%{$bill.times_6.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_6">%{$bill.times_6.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_6">%{$bill.times_6.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_6">%{$bill.times_6.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_6" type="hidden" value="%{$bill.working_time_unf_6|default:"0"}%" />
-</div>
-
-
-<div style="float:left; margin-right:20px; margin-left:0px; ">
-    <strong>Общее вр. обр-ки:</strong><br>
-   
-    <div id="working_times_total" class="working_times"> 
-    <span id="work_days_total">%{$bill.times_total.days|default:"0"}%</span> д.
-    
-    <span id="work_hours_total">%{$bill.times_total.hours|default:"0"}%</span> ч.
-    
-    <span id="work_mins_total">%{$bill.times_total.mins|default:"0"}%</span> мин.
-    
-    <span id="work_secs_total">%{$bill.times_total.secs|default:"0"}%</span> сек.
-    </div>
-     
-    <input id="working_time_unf_total" type="hidden" value="%{$bill.working_time_unf_total|default:"0"}%" />
-</div>
-
- 
-
 <br clear="all" />
 <p />
 
@@ -851,32 +396,18 @@ $("#to_tz").bind("click", function(){
 
 <div style="float:right;  margin-right:0px; height:50px;">
    %{if $bill.is_confirmed==1}%
-  <a href="ed_lead_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
+  <a href="ed_app_contract_pdf.php?action=1&id=%{$bill.id}%&print=1" target="_blank" class="reestr_print reestr_right_button24" data-comment="печать..." ></a>
   %{else}%
-  <a href="#" onClick="alert('Для печати лида необходимо утвердить его заполнение!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
+  <a href="#" onClick="alert('Для печати заявки на договор необходимо утвердить его заполнение!'); return false;" class="reestr_print reestr_inactive reestr_right_button24" data-comment="печать..."></a>
   %{/if}%
 </div>  
 
 
  <div style="float:right; margin-right:10px;">
 
-<input type="button" value="Файлы..." onclick="location.href='lead_files2.php?bill_id=%{$bill.id}%';" />
+<input type="button" value="Файлы..." onclick="location.href='app_contract_files.php?bill_id=%{$bill.id}%';" />
 
 </div>
-
-
-
-
-
-<div style="float:right;  margin-right:10px;height:50px; ">
- 		%{if $bill.is_confirmed==1}%
-    <a href="#" id="lead_email_documents" class="reestr_email reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
-         %{include file="lead/pdf_actions.html" mode=0}%
-    %{else}%
-    <a href="#" onClick="alert('Для отправки на электронную почту лида необходимо утвердить его заполнение!'); return false;" class="reestr_email reestr_inactive reestr_right_button24" data-comment="отправить pdf-документы на электронную почту..."></a>
-    %{/if}%
-</div>
-
 
 
 
@@ -895,200 +426,21 @@ $("#to_tz").bind("click", function(){
     
 </div>
 
- <div style="float:left; margin-right:20px; height:50px;">
-	 
-  	<strong> Состояние:
-    </strong> <br />
-    
-    <span id="state"> 
-     %{if $bill.probability>=0 and  $bill.probability<=29.99}% 
-    <span style="color:#aaaaaa;"> холодный</span>
-    %{elseif $bill.probability>=30 and  $bill.probability<=69.99}%
-    <span style="color:#3a87ad;  ">теплый</span>
-    %{elseif $bill.probability>=70}%
-    <span style="color:#e9510f;  ">горячий</span>
-    %{/if}%
-	</span>
-</div>
-
-
-
 <div style="float:left; margin-right:20px; height:50px;">
-
-
-
-    
-    <label for="kind_id"> 
-Вид лида:</label> <br>
-
-  
-     <select %{if $bill.tender_id==0}%   name="kind_id"%{/if}% id="kind_id" %{if !$can_modify or  $bill.tender_id!=0}% disabled="disabled"%{/if}% style="width:100px">
-        %{html_options values=$tender_ids selected=$bill.kind_id output=$tender_vals}%
-    </select> 
-     
-%{if $bill.tender_id!=0}% 
-    <input type="hidden" name="kind_id"  %{if !$can_modify}% disabled="disabled"%{/if}%  value="3"> 
-    %{/if}%
+    <strong>Статус:</strong> <br />
+    <span id="state">%{$bill.last_status}%</span>
 </div>
-
-
-%{if $bill.tender_id!=0}% 
-<div style="float:left; margin-right:20px;  height:50px;">
-<strong>Тендер:</strong><br>
-<a href="ed_tender.php?action=1&id=%{$bill.tender_id}%" target="_blank">%{$tender.code}%</a>
-</div>
-%{/if}% 
-
-
-<div style="float:left; margin-right:20px; height:50px;">
-
-
-
-    
-    <label for="eq_type_id"> 
-Тип оборудования:</label> <br>
-
-  
-     <select name="eq_type_id" id="eq_type_id" %{if !$can_modify_eq_type}% disabled="disabled"%{/if}% style="width:200px">
-        %{html_options values=$eq_ids selected=$bill.eq_type_id output=$eq_vals}%
-    </select> 
-    
-      %{if !$can_modify_eq_type}% 
-     <input type="hidden"name="eq_type_id" value="%{$bill.eq_type_id}%" />
-     %{/if}%
-     
-	<input type="button" value="..." %{if !$can_expand_types or !$can_modify_eq_type}% disabled%{/if}% id="expand_types" />
-    
-     %{include file="lead/d_types_dialog.html"}%
-</div>
-
-
-
-
-
-
-  
-
-
-
-
-<div style="float:left; margin-right:20px; height:50px;">
-   <label for="max_price">
- Макс. цена контр-та:
-    </label><br />
-    
-    <input type="text" value="%{$bill.max_price}%" id="max_price" name="max_price"   size="10"  %{if !$can_modify}% disabled="disabled"%{/if}%     maxlength="512" />
-
-    <select name="currency_id" id="currency_id" style="width:45px;"  %{if !$can_modify}% disabled="disabled"%{/if}%   >
-    %{section name=cursec loop=$currs}%
-    <option value="%{$currs[cursec].id}%" %{if $currs[cursec].is_current}% selected="selected"%{/if}%>%{$currs[cursec].signature}%</option>
-    %{/section}%
-    </select>
-
-
-</div>
-  
-<div style="float:left; margin-right:20px; height:50px;">
-	
-    
-     <label for="producer_id">
-   Производитель:
-    </label><br />
-
-
-	<select name="producer_id" id="producer_id" style="width:80px;" %{if !$can_modify or $bill.wo_producer==1}% disabled="disabled"%{/if}% >
-    <option value="0" %{if $bill.producer_id==0}% selected="selected"%{/if}%>-</option>
-    %{section name=prodsec loop=$prods}%
-    <option value="%{$prods[prodsec].id}%" %{if $bill.producer_id==$prods[prodsec].id}% selected="selected"%{/if}%>%{$prods[prodsec].name}%</option>
-    %{/section}%
-    </select>
-    
-    <input type="checkbox" value="1" id="wo_producer" name="wo_producer" %{if $bill.wo_producer==1}% checked %{/if}% %{if !$can_modify}% disabled="disabled"%{/if}%  /><label id="wo_producer_label" for="wo_producer">пр-ль не в линейке</label>
-
-</div>
-
- <div style="float:left; margin-right:20px; height:50px;">
-	<label for="probability">
-  	 Вер-ть закл. контр-та, %:
-    </label><br />
-    
-     <input type="text" %{if !$can_modify}% disabled%{/if}% value="%{$bill.probability}%" id="probability" name="probability"   size="6"    maxlength="6" />
-
-</div>
-
-
-
-%{if $bill.status_id==34}%
-<div style="float:left; margin-right:20px; height:50px;">
-	 
-	<strong> Причина отказа:
-    </strong> <br />
-    %{$bill.fail_name}% %{$bill.fail_reason}%
-</div>    
-%{/if}%
-
-
-
-
-<div style="float:left; white-space:nowrap; margin-right:10px; height:50px;">
-
-<label for="pdate_finish">
-  Прогнозир-мая дата закл. контр-та:
-    </label> <br>
-
-    
-    <input type="text" value="%{$bill.pdate_finish}%"  %{if !$can_modify_pdate_finish}% disabled="disabled"%{/if}% id="pdate_finish" name="pdate_finish"  size="10"   maxlength="10" style="width:60px;" />
-
-        <select name="ptime_finish_h" id="ptime_finish_h"  %{if !$can_modify_pdate_finish}% disabled="disabled"%{/if}% style="width:40px">
-            %{html_options values=$ptime_finish_hs selected=$ptime_finish_h   output=$ptime_finish_hs}%
-        </select>: 
-        <select name="ptime_finish_m" id="ptime_finish_m"  %{if !$can_modify_pdate_finish}% disabled="disabled"%{/if}% style="width:40px">
-            %{html_options values=$ptime_finish_ms  selected=$ptime_finish_m output=$ptime_finish_ms}%
-        </select>
-    
-        
-</div>
-
-
 
 
 <br clear="all" />
- 
 
 
 
-
-
-
-<div style="float:left; margin-right:20px;width:100%;">
-
-
- 
-    <label for="topic">
-   Название лида:
-    </label><br />
-    
-     <input type="text" id="topic" name="topic" style="width:100%;" value="%{$bill.topic|escape:"html"}%" %{if !$can_modify}% disabled="disabled"%{/if}% />
-    
-     
-    
-    
-</div>   
-
-<br clear="all" />
-<p />
-
- 
 <div style="float:left; margin-right: 0px; width:100%;">
-<label for="description">Описание лида:</label><br>
+<label for="description">Описание заявки:</label><br>
 <textarea id="description" name="description" %{if !$can_modify}% disabled="disabled"%{/if}% style="width:100%; height:75px;">%{$bill.description|escape:"html"}%</textarea>
-
-
  
 <script type="text/javascript">
-
- 
- 
 	try{
 		$("#description").ckeditor({
               customConfig : '/ckeditor4/config-kp.js',
@@ -1174,7 +526,7 @@ $("#to_tz").bind("click", function(){
      </div>
 	
     	
-    %{include file="lead/manager_actions.html" can_modify=$can_modify_manager }%
+    %{include file="app_contract/manager_actions.html" can_modify=$can_modify_manager }%
     
 </div> 
  
@@ -1182,16 +534,6 @@ $("#to_tz").bind("click", function(){
 
 <br clear="all" />
 <p />
-
-<h3>Связанные документы:</h3>
-
-%{foreach name=df from=$binded_tzs item=bdoc}%
-%{$bdoc}%<br>
-
-%{foreachelse}%
--
-%{/foreach}%
-
 
 <br clear="all" />
 
@@ -1201,23 +543,6 @@ $("#to_tz").bind("click", function(){
 
 <input type="hidden" id="lenta_len" value="%{$lenta_len|default:"0"}%" />
 
-
-     
-
-
-
-
-
-
-
-
-
-
-
-
- 
-
- 
 <input type="checkbox"  id="is_confirmed" name="is_confirmed" value="1" onchange="" %{if $bill.is_confirmed==1}% checked="checked"%{/if}% %{if $can_confirm==false}% disabled="disabled"%{else}% %{/if}% /><label for="is_confirmed">Утверждаю заполнение</label>
  
 
@@ -1269,106 +594,6 @@ $(function(){
 });
 </script>
 
-
-<br />
-
-
-<input type="checkbox" id="is_confirmed_done" name="is_confirmed_done" value="1" onchange="" %{if $bill.is_confirmed_done==1}% checked="checked"%{/if}% %{if $can_confirm_done==false or $bill.is_fulfiled==1}% disabled="disabled"%{/if}% /><label for="is_confirmed_done">Утверждаю выполнение</label>
- 
-
-<span id="is_confirmed_done_confirmer">%{$is_confirmed_done_confirmer}%</span>
-
-<script type="text/javascript">
-$(function(){
-	$("#is_confirmed_done").bind("click",function(){
-		
-		if(	$("#is_confirmed_done").prop("checked")){
-			
-			 state=1;
-		}else state=0;
-		
-		$.ajax({
-              async: true,
-              url: "/js/lead.php",
-              type: "POST",
-              data:{
-                  "action":"redraw_is_confirmed_price_confirmer",
-				  state: state
-              },
-              beforeSend: function(){
-                 $("#is_confirmed_done_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
-              },
-              success: function(data){
-                $("#is_confirmed_done_confirmer").html(data);
-                
-              },
-              error: function(xhr, status){
-                  //alert("Ошибка добавления вопроса.");	
-              }	 
-          });
-		  
-		  
-		 if(state==0){
-		 
-			  
-			  $("#is_fulfiled").prop("checked",false);
-			 $("#is_fulfiled").trigger("click");
-			  $("#is_fulfiled").prop("checked",false); 
-		} 
-		
-
-		
-	});
-});
-</script>
-
-<br>
-
-
-
-<input type="checkbox" id="is_fulfiled" name="is_fulfiled" value="1" onchange="" %{if $bill.is_fulfiled==1}% checked="checked"%{/if}% %{if $can_confirm_fulfil==false }% disabled="disabled"%{else}% %{/if}% /><label for="is_fulfiled">Работа принята</label>
- 
-
-<span id="is_fulfiled_confirmer">%{$is_fulfiled_confirmer}%</span>
-
-<script type="text/javascript">
-$(function(){
-	$("#is_fulfiled").bind("click",function(){
-		
-		if(	$("#is_fulfiled").prop("checked")){
-			
-			 state=1;
-		}else state=0;
-		
-		$.ajax({
-              async: true,
-              url: "/js/lead.php",
-              type: "POST",
-              data:{
-                  "action":"redraw_is_confirmed_price_confirmer",
-				  state: state
-              },
-              beforeSend: function(){
-                 $("#is_fulfiled_confirmer").html('<img src="/img/icon_wait.gif" width="16" height="16" alt="подождите, пожалуйста..." border="0" />');   
-              },
-              success: function(data){
-                $("#is_fulfiled_confirmer").html(data);
-                
-              },
-              error: function(xhr, status){
-                  //alert("Ошибка добавления вопроса.");	
-              }	 
-          });
-		  
-		
-		
-	});
-});
-</script>
-
-
-
-
 <br clear="all">
 
 <p />
@@ -1380,83 +605,38 @@ $(function(){
 
 
  
-<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку лидов" />
+<input type="submit" name="doEdit" id="doEdit" value="Сохранить и перейти к списку заявок" />
 <input type="submit" name="doEditStay" id="doEditStay" value="Сохранить и остаться" />
  
 
 <input type="button" id="do_close" value="Закрыть форму" onclick="if(was_changed){
-if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='leads.php';
-}else location.href='leads.php';" />
+if(window.confirm('Вы уверены, что хотите закрыть форму? Все несохраненные изменения будут утрачены.')) location.href='app_contract.php';
+}else location.href='app_contract.php';" />
 
 
 
 </form>
-%{if $can_modify}%
 
-<script type="text/javascript">
-$(function(){
+%{if $can_modify}%
+    <script type="text/javascript">
+    $(function(){
 	var global_sem3=true;
 	
 	$("#crea_form").bind("submit",function(){
 		var res=true;
 		var error_fields=new Array();
 		
-		
-		if($("#pdate_finish").val()==""){
+		if($("#description").val().length==0){
 			res=res&&false;
 			 
 			error_fields.push({
-				"id":"pdate_finish",
-				"name":"Прогнозируемая дата заключения контракта",
-				"error":"Выберите прогнозируемую дату заключения контракта!"
-			});			 
-		}
-		
-		if(($("#kind_id").val()==0)||($("#kind_id").val()==null)||($("#kind_id").val()==undefined)){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"kind_id",
-				"name":"Вид лида",
-				"error":"Выберите вид лида!"
-			});			 
-		}
-		
-		if(($("#eq_type_id").val()==0)||($("#eq_type_id").val()==null)||($("#eq_type_id").val()==undefined)){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"eq_type_id",
-				"name":"Тип оборудования",
-				"error":"Выберите тип оборудования!"
-			});			 
-		}
-		
-		if($("#topic").val().length==0){
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"topic",
-				"name":"Название лида",
-				"error":"Укажите название лида!"
+				"id":"description",
+				"name":"Описание заявки",
+				"error":"Укажите описание заявки!"
 			});			 
 		}
 		
 		
-		probability=$("#probability").val();
-		probability=probability.replace(/,/,'.');
-		if((probability.length==0)||isNaN(probability)||(parseFloat(probability)<1)||(parseFloat(probability)>100)){
-			 
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"probability",
-				"name":"Вероятность заключения контракта",
-				"error":"Введите корректную вероятность заключения контракта!"
-			});			
-		}
-		
-		 
 		//хотя бы 1 контрагент
 		if($("tr[id^=our_supplier_row_]").length==0){
 			 
@@ -1465,230 +645,18 @@ $(function(){
 			error_fields.push({
 				"id":"supplier_str",
 				"name":"Контрагент",
-				"error":"Укажите контрагента лида!"
+				"error":"Укажите контрагента заявки!"
 			});			
 			
 		}	
 		 
 		
-		//контрлль пр-ля
-		if(($("#wo_producer").prop("checked")==false)&&( ($("#producer_id").val()==0)||($("#producer_id").val()==null) ||($("#producer_id").val()==undefined) )) {
-				
-			res=res&&false;
-			 
-			error_fields.push({
-				"id":"producer_id",
-				"name":"Производитель",
-				"error":"Отметьте галочку Пр-ль не в линейке, либо выберите производителя."
-			});		
-				
-			 
-		}
-		
-		
-		//контроль даты по род. тендеру...
-		if($("#kind_id").val()==3){
-			var can_ret=true;
-			$.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_pdate_finish",
-					tender_id: $("#tender_id").val(),
-					pdate: $("#pdate_finish").val(),
-					ptime_h: $("#ptime_finish_h").val(),
-					ptime_m: $("#ptime_finish_m").val()
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				 
-				  if(data!=0){
-					 
-					 
-					 
-					 res=res&&false;
-			 
-					error_fields.push({
-						"id":"pdate_finish",
-						"name":"Прогнозируемая дата заключения контракта",
-						"error":"Некорректная прогнозируемая дата заключения контракта: "+data+".\n"
-					});
-					 
-				  } 
-				},
-				error: function(xhr, status){
-					
-					 
-					 
-					res=res&&false;
-			 
-					error_fields.push({
-						"id":"pdate_finish",
-						"name":"Прогнозируемая дата заключения контракта",
-						"error":"Ошибка при проверке связанного тендера. Пожалуйста, попытайтесь сохранить лид снова."
-					});
-				}	 
-			});
-			
-		}
-		
-		if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
-			if(($("#manager_id").val()==0)||($("#manager_id").val()==null)||($("#manager_id").val()==undefined)){
-				 
-				
-				res=res&&false;
-				 
-				error_fields.push({
-					"id":"manager_id",
-					"name":"Ответственный сотрудник",
-					"error":"Укажите ответственного сотрудника!"
-				});
-			}
-			
-			
-			pdate_finish=new Date( $("#pdate_finish").val().substr(6,4), $("#pdate_finish").val().substr(3,2)-1, $("#pdate_finish").val().substr(0,2), $("#ptime_finish_h").val(), $("#ptime_finish_m").val(),0,0);
-			now=new Date();
-			if(pdate_finish<now){
-				res=res&&false;
-				 
-				error_fields.push({
-					"id":"pdate_finish",
-					"name":"Прогнозир-мая дата закл. контр-та",
-					"error":"Прогнозируемая дата заключения контракта должна быть позднее сегодняшней даты!"
-				});
-			}
-			
-			
-			/*
-			$.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_confirm_price",
-					id: "%{$bill.id}%"
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				  if(data!=0){
-					 
-					 res=res&&false;
-				 
-					error_fields.push({
-						"id":"is_confirmed",
-						"name":"Утверждение заполнения лида",
-						"error":"Невозможно утвердить заполнение лида. Причина: "+data+"\n"
-					});
-					 
-					 
-				  } 
-				},
-				error: function(xhr, status){
-					
-					res=res&&false;
-					error_fields.push({
-						"id":"is_confirmed",
-						"name":"Утверждение заполнения лида",
-						"error":"Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова."
-					});
-				}	 
-			});
-			*/
-			
-			
-			
-			//проверка, нет ли разутвержденных связанных документов
-			//если они есть - вывести форму с подтверждением. 
-			local_can_ret=true;
-			
-			
-			if(global_sem3) $.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_docs_binded_child",
-					id: "%{$bill.id}%"
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				  
-				 
-				  if(data!=0){
-					  local_can_ret=local_can_ret&&false;
-					   // alert(data);	 
-					  
-					   $("#error_window_text_unconfirm").html('<ul>'+data+'</ul>');					   
-					   $("#error_window_dialog_unconfirm").dialog("option", "title", "Найдены связанные документы");					   
-					   $("#error_window_dialog_caption_unconfirm").html('Обнаружены следующие связанные документы.<br>При утверждении заполнения лида у этих документов также будет утверждено заполнение.<br><br>Вы уверены?');
-					   
-		  
-					   max_height=700; min_height=250;
-						   
-					   our_height=parseInt($("#error_window_text_unconfirm").height());
-						
-					   if(our_height>max_height) our_height=max_height;
-					   if(our_height<min_height) our_height=min_height;
-					   
-					   
-					   
-					   $("#error_window_dialog_unconfirm").dialog( "option", "height", our_height+140);
-					   
-					   $("#error_window_dialog_unconfirm").dialog({
-							 
-							buttons:{
-								"Да":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									 global_sem3=false;
-									 $("#doEditStay").trigger("click");
-									
-								},
-								"Нет":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									
-								}
-							}
-						});
-					  
-					   $("#error_window_dialog_unconfirm").dialog("open"); 
-					  
-					
-				  } 
-				},
-				error: function(xhr, status){
-					 
-				}	 
-			}); 
-			 
-			if(!local_can_ret) {
-				return false;
-			}
-			
-			
-		}
-		
-	
-	//попытка утвердить заполнение тендера
-	if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
-			
+                //попытка утвердить заполнение тендера
+                if((%{$bill.is_confirmed}%==0)&&($("#is_confirmed").prop("checked")==true)){
 			%{if !$can_unconfirm}%
-			
-			 if(! window.confirm("Внимание! Вы утверждаете заполнение лида. У Вас нет прав для обратного действия - снятия утверждения заполнения лида.\nПросьба проверить корректность заполнения всех данных лида.\nПродолжить?\nОК - Да, Отмена - Нет")) return false;
-			 
-			 
+			 if(! window.confirm("Внимание! Вы утверждаете заполнение заявки. У Вас нет прав для обратного действия - снятия утверждения заполнения лида.\nПросьба проверить корректность заполнения всех данных заявки.\nПродолжить?\nОК - Да, Отмена - Нет")) return false;
 			%{/if}%
-	}
+                }
 	 
 		
 		
@@ -1727,13 +695,11 @@ $(function(){
 	 
 		return res;
 	});
-});
-
- 
-</script>
+    });
+    </script>
 %{else}%
-<script type="text/javascript">
-$(function(){
+    <script type="text/javascript">
+    $(function(){
 	var global_sem1=true, global_sem2=true;
 	
 	
@@ -1744,224 +710,21 @@ $(function(){
 		var error_fields=new Array();
 		
 		
-		//проверка доступности снятия приема работы
-		
-		if((%{$bill.is_fulfiled}%==1)&&($("#is_fulfiled").prop("checked")==false)){
-			local_can_ret=true;
-			
-			
-			if(global_sem2) $.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_docs_unconfirm_fulfil",
-					id: "%{$bill.id}%"
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				  
-				 
-				  if(data!=0){
-					  local_can_ret=local_can_ret&&false;
-					   // alert(data);	 
-					  
-					   $("#error_window_text_unconfirm").html('<ul>'+data+'</ul>');					   
-					   $("#error_window_dialog_unconfirm").dialog("option", "title", "Найдены связанные документы");					   
-					   $("#error_window_dialog_caption_unconfirm").html('Обнаружены следующие связанные документы.<br>Изменения будут применены ко всем этим документам.<br><br>Вы уверены?');
-					   
-		  
-					   max_height=700; min_height=100;
-						   
-					   our_height=parseInt($("#error_window_text_unconfirm").height());
-						
-					   if(our_height>max_height) our_height=max_height;
-					   if(our_height<min_height) our_height=min_height;
-					   
-					   
-					   
-					   $("#error_window_dialog_unconfirm").dialog( "option", "height", our_height+140);
-					   
-					   $("#error_window_dialog_unconfirm").dialog({
-							 
-							buttons:{
-								"Да":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									 global_sem2=false;
-									 $("#doEditStay").trigger("click");
-									
-								},
-								"Нет":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									
-								}
-							}
-						});
-					  
-					   $("#error_window_dialog_unconfirm").dialog("open"); 
-					  
-					
-				  } 
-				},
-				error: function(xhr, status){
-					 
-				}	 
-			}); 
-			 
-			if(!local_can_ret) {
-				return false;
-			}
-		}
-		
-		
-		//проверка доступности снятия утверждения выполнения
-		if((%{$bill.is_confirmed_done}%==1)&&($("#is_confirmed_done").prop("checked")==false)){
-			local_can_ret=true;
-			
-			
-			if(global_sem1) $.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_docs_unconfirm_ship",
-					id: "%{$bill.id}%"
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				  
-				  
-				  if(data!=0){
-					  local_can_ret=local_can_ret&&false;
-					  //	 alert(data);
-					  
-					   $("#error_window_text_unconfirm").html('<ul>'+data+'</ul>');					   
-					   $("#error_window_dialog_unconfirm").dialog("option", "title", "Найдены связанные документы");					   
-					   $("#error_window_dialog_caption_unconfirm").html('Обнаружены следующие связанные документы.<br>Изменения будут применены ко всем этим документам.<br><br>Вы уверены?');
-					   
-		  
-					   max_height=700; min_height=100;
-						   
-					   our_height=parseInt($("#error_window_text_unconfirm").height());
-						
-					   if(our_height>max_height) our_height=max_height;
-					   if(our_height<min_height) our_height=min_height;
-					   
-					   
-					   
-					   $("#error_window_dialog_unconfirm").dialog( "option", "height", our_height+140);
-					   
-					   $("#error_window_dialog_unconfirm").dialog({
-							 
-							buttons:{
-								"Да":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									 global_sem1=false;
-									 $("#doEditStay").trigger("click");
-									
-								},
-								"Нет":function(){
-									//
-									
-									 $("#error_window_dialog_unconfirm").dialog("close");
-									
-								}
-							}
-						});
-					  
-					   $("#error_window_dialog_unconfirm").dialog("open"); 
-					  
-					
-				  } 
-				},
-				error: function(xhr, status){
-					 
-				}	 
-			}); 
-			 
-			if(!local_can_ret) {
-				return false;
-			}
-			 
-			$.ajax({
-				async: false,
-				url: "/js/lead.php",
-				type: "POST",
-				data:{
-					"action":"check_unconfirm",
-					id: "%{$bill.id}%"
-				},
-				beforeSend: function(){
-					  
-				},
-				success: function(data){
-				  if(data!=0){
-					 
-					 res=res&&false;
-				 
-					error_fields.push({
-						"id":"is_confirmed_done",
-						"name":"Утверждение выполнения лида",
-						"error":"Невозможно снять утверждение выполнения лида. Причина: "+data+"\n"
-					});
-					 
-					 
-				  } 
-				},
-				error: function(xhr, status){
-					
-					res=res&&false;
-					error_fields.push({
-						"id":"is_confirmed_done",
-						"name":"Утверждение выполнения лида",
-						"error":"Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова."
-					});
-				}	 
-			});
-		}	
-		
-		
-		if((%{$bill.is_confirmed_done}%==0)&&($("#is_confirmed_done").prop("checked"))){
-				 
-			res=res&&false;
-			error_fields.push({
-				"id":"is_confirmed_done",
-				"name":"Утверждение выполнения лида",
-				"error":"Утверждение выполнения лида производится автоматически при выборе одного из следующих действий: Выиграть, Проиграть, Отказ.\nПроведите одно из этих действий."
-			});
-			
-		 
-			$("#is_confirmed_done").prop("checked",false);
-		
-		}
-			
-		
 		//проверка доступности снятия утверждения цены
 		if((%{$bill.is_confirmed}%==1)&&($("#is_confirmed").prop("checked")==false)){
 			
 			var local_can_ret=true;
 			%{if !$can_unconfirm}%
-			
 				res=res&&false;
 				local_can_ret=local_can_ret&&false;
 				error_fields.push({
 					"id":"is_confirmed",
-					"name":"Утверждение заполнения лида",
+					"name":"Утверждение заполнения заявки",
 					"error":"У Вас недостаточно прав для снятия утверждения заполнения лида.\nПрава на это действие есть у следующих сотрудников: %{strip}%
 				%{foreach name=uncf from=$can_unconfirm_users item=unc}%
 				%{$unc.name_s}%%{if $smarty.foreach.uncf.last==false}%,%{/if}%
 				%{/foreach}%
-															 %{/strip}%"
+                                    %{/strip}%"
 				});
 				
 			
@@ -1969,7 +732,7 @@ $(function(){
 				$("#is_confirmed").prop("checked", true).trigger("change");
 				
 				//в журнал
-				$.ajax({
+				/*$.ajax({
 					async: true,
 					url: "/js/lead.php",
 					type: "POST",
@@ -1977,7 +740,7 @@ $(function(){
 						"action":"fail_unconfirm_price",
 						id: "%{$bill.id}%"
 					}
-				});
+				});*/
 			%{/if}%
 			
 			
@@ -1995,26 +758,20 @@ $(function(){
 				},
 				success: function(data){
 				  if(data!=0){
-					 
 					res=res&&false;
 					error_fields.push({
 						"id":"is_confirmed_done",
-						"name":"Утверждение заполнения лида",
-						"error":"Невозможно снять утверждение заполнения лида. Причина: "+data
+						"name":"Утверждение заполнения заявки",
+						"error":"Невозможно снять утверждение заполнения заявки. Причина: "+data
 					});
-					 
-					 
 				  } 
 				},
 				error: function(xhr, status){
-					
-					 
-					
 					res=res&&false;
 					error_fields.push({
 						"id":"is_confirmed_done",
-						"name":"Утверждение заполнения лида",
-						"error":"Ошибка при проверке состояния лида. Пожалуйста, попытайтесь сохранить лид снова."
+						"name":"Утверждение заполнения заявки",
+						"error":"Ошибка при проверке состояния заявки. Пожалуйста, попытайтесь сохранить заявку снова."
 					});
 				}	 
 			});
@@ -2059,8 +816,6 @@ $(function(){
    
 	  return res;
 	});
-});
-
-
-</script>
+    });
+    </script>
 %{/if}%
