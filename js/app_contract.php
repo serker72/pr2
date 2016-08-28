@@ -11,7 +11,7 @@ require_once('../classes/discr_table_objects.php');
 require_once('../classes/actionlog.php');
 require_once('../classes/db_decorator.php');
  
-require_once('../classes/lead.class.php');
+//require_once('../classes/lead.class.php');
 
 require_once('../classes/supplieritem.php'); 
 require_once('../classes/quick_suppliers_group.php'); 
@@ -20,6 +20,13 @@ require_once('../classes/app_contract_group.php');
 require_once('../classes/app_contract_item.php');
 require_once('../classes/app_contract_notesitem.php');
 
+require_once('../classes/app_contract_historygroup.php');
+require_once('../classes/app_contract_historyitem.php');
+
+require_once('../classes/app_contract_history_filegroup.php');
+require_once('../classes/app_contract_history_fileitem.php');
+
+require_once('../classes/filecontents.php');
  
 
 $au=new AuthUser();
@@ -297,25 +304,25 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 	$_hi = new AppContractHistoryItem; 
         $_hg = new AppContractHistoryGroup; 
         $_dsi = new DocStatusItem; 
-	$_file = new lead_HistoryFileItem;
+	$_file = new AppContractHistoryFileItem;
 	
-	$_sch=new lead_Item;
+	$_sch=new AppContractItem;
 	$sch=$_sch->GetItemById($id);
 	$count_hi=$_hg->CountHistory($id);
 	
 	
 	$params=array();
-	$params['sched_id']=$id;
+	$params['app_contract_id']=$id;
 	$params['txt']=SecStr(iconv("utf-8","windows-1251",$_POST['comment']));
 	$params['user_id']=$result['id'];
 	$params['pdate']=time();
 	
 	$code=$_hi->Add($params);
 	
-	$log->PutEntry($result['id'],'добавлен комментарий к лиду', NULL,950,NULL, $params['txt'],$id);
+	$log->PutEntry($result['id'],'добавлен комментарий к заявке на договор', NULL,1150,NULL, $params['txt'],$id);
 	
 	
-	if(isset($_POST['probability'])){
+	/*if(isset($_POST['probability'])){
 		$a_params=array();
 		$a_params['probability']=abs((float)str_replace(',','.',$_POST['probability']));
 		$_sch->Edit($id, $a_params);
@@ -348,7 +355,7 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 	
 		}
 		
-	}
+	}*/
 	
 	$files_server=$_POST['files_server'];
 	$files_client=$_POST['files_client'];
@@ -360,7 +367,7 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 			'orig_name'=>SecStr(iconv("utf-8","windows-1251",$files_client[$k])),
 		));	
 		
-		$log->PutEntry($result['id'],'прикреплен файл к комментарию  к лиду', NULL,950,NULL, 'Комментарий '.$params['txt'].',  файл '.SecStr(iconv("utf-8","windows-1251",$files_client[$k])),$id);
+		$log->PutEntry($result['id'],'прикреплен файл к комментарию  к заявке на договор', NULL,950,NULL, 'Комментарий '.$params['txt'].',  файл '.SecStr(iconv("utf-8","windows-1251",$files_client[$k])),$id);
 		 
 		
 		$_ct=new FileContents(SecStr(iconv("utf-8","windows-1251", $files_client[$k])), $_file->GetStoragePath().$file_server);
@@ -500,7 +507,7 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 	
 	
 	//
-	if(($sch['status_id']==23)&&($count_hi==0)){
+	/*if(($sch['status_id']==23)&&($count_hi==0)){
 		$_sch->Edit($id,array('status_id'=>24));
 					  
 			$log->PutEntry($result['id'],'начал выполнение лида',NULL,950, NULL, NULL,$id);
@@ -508,18 +515,18 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 			$stat=$_dsi->GetItemById(24);
 			$log->PutEntry($result['id'],'смена статуса лида',NULL,950,NULL,'установлен статус '.$stat['name'],$id);	
 		
-	}
+	}*/
 	
 	
 	//вывести что получилось
-	$_hr=new lead_HistoryGroup;
+	$_hr=new AppContractHistoryGroup;
 	
 	$dec=new DBDecorator();
 	$dec->AddEntry(new SqlEntry('o.id',$code, SqlEntry::E));
 	
-	$ret=$_hr->ShowHistory($id, 'lead/lenta.html', $dec, true, false, true,  $result,
-			 $au->user_rights->CheckAccess('w',951),
-			 $au->user_rights->CheckAccess('w',952));
+	$ret=$_hr->ShowHistory($id, 'app_contract/lenta.html', $dec, true, false, true,  $result,
+			 $au->user_rights->CheckAccess('w',1158),
+			 $au->user_rights->CheckAccess('w',1159));
 }			 
 			 
 	

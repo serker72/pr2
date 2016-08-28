@@ -10,7 +10,7 @@ class AppContractFileGroup extends AbstractFileDocFolderGroup {
 		$this->tablename='app_contract_file';
 		$this->file_instance=$file_instance; //ıêçåìïëÿğ êëàññà ôàéëà
 		$this->folder_instance=$folder_instance; //ıêçåìïëÿğ êëàññà ïàïêè
-		$this->pagename='ed_app_contract.php';	
+		$this->pagename='app_contract_files.php';	
 		$this->vis_name='is_shown';	
 		$this->subkeyname='bill_id';
 			

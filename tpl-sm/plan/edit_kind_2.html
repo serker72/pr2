@@ -561,18 +561,26 @@ function DoCustomValidation()
 	
 	//если мы создаем фактический звонок - то требовать запонение поля Результат звонка
 	if($("#plan_or_fact").val()==1){
-		try{
-			data=CKEDITOR.instances.report.getData();
-		}catch(e){
-			data=$("#report").val();
-		}
-		
-		if(strip_tags($.trim(data)).length<10){
-			 sfm_show_error_msg('Заполните поле Результат командировки (мин. длина 10 симоволов)!');
-			 $("#report").focus();
-		  	return false;		
-		}
-		
+            local_can_ret=true;
+            $("textarea[id^=supplier_result_]").each(function(index, element) {
+                id=$(element).attr("id");
+                sid=id.replace(/^supplier_result_/,'');
+                
+                try{
+                        data=CKEDITOR.instances[id].getData();
+                }catch(e){
+                        data=$("#"+id).val();
+                }
+
+                if((strip_tags($.trim(data)).length<10)&&(!$("#supplier_not_meet_"+sid).prop("checked"))){
+                        local_can_ret=local_can_ret&&false;		
+                }
+            });
+            
+            if(!local_can_ret) {
+                sfm_show_error_msg('Заполните поле Результат командировки (мин. длина 10 симоволов), либо отметьте галочку "не встречался" для каждого контрагента!');
+                return false;
+            }
 	}
 	
 	

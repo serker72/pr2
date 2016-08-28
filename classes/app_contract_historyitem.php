@@ -38,7 +38,7 @@ class AppContractHistoryItem extends AbstractItem{
 		
 		
 		//дилер ли добавил сообщение, какой дилер
-		$_di=new UserDItem;
+		/*$_di=new UserDItem;
 		$di=$_di->GetItemById($params['user_id']);
 		
 		
@@ -89,7 +89,7 @@ class AppContractHistoryItem extends AbstractItem{
 				
 			}
 			
-		}
+		}*/
 		
 		
 		return $code;

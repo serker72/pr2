@@ -1,7 +1,7 @@
 <?
 
 require_once('abstractgroup.php');
-require_once('app_contract_filegroup.php');
+require_once('app_contract_history_filegroup.php');
 
 // абстрактная группа
 class AppContractHistoryGroup extends AbstractGroup {
@@ -22,11 +22,9 @@ class AppContractHistoryGroup extends AbstractGroup {
 	public function ShowHistory($order_id, $template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $can_create_order) {
 		$sm=new SmartyAdm;
 		
-		$ofg=new AppContractFileGroup;
+		$ofg=new AppContractHistoryFileGroup;
 		
-		$sql='select o.*, 
-                        u.login as login, u.group_id, u.name_s, u.name_d,
-                        s.name as last_status
+		$sql='select o.*, u.login as login, u.group_id, u.name_s, s.name as last_status
                       from '.$this->tablename.' as o
 			left join user as u on o.user_id=u.id	
 			left join app_contract_status as s on o.status_id=s.id
@@ -49,7 +47,8 @@ class AppContractHistoryGroup extends AbstractGroup {
 		if(strlen($ord_flt)>0){
 			$sql.=' order by '.$ord_flt;
 		}
-		//echo $sql;
+		
+                //echo '<p>'.$sql.'</p>';
 		//echo $sql_count;
 		
 		$set=new mysqlSet($sql,$to_page, $from,$sql_count);
@@ -100,6 +99,8 @@ class AppContractHistoryGroup extends AbstractGroup {
 		$sm->assign('pages',$pages);
 		$sm->assign('items',$alls);
 		$sm->assign('can_create_order',$can_create_order);
+		$sm->assign('can_edit',$can_create_order);
+		$sm->assign('has_header', true);
 		
 		//ссылка для кнопок сортировки
 		$link=$dec->GenFltUri();
@@ -108,6 +109,16 @@ class AppContractHistoryGroup extends AbstractGroup {
 		
 		return $sm->fetch($template);
 		
+	}
+	
+	//подсчет новых историй данного заказа
+	public function CountHistory($order_id){
+		$ts=new mysqlSet('select count(*) from app_contract_history where app_contract_id="'.$order_id.'"');
+			
+			$trs=$ts->GetResult();
+			$g=mysqli_fetch_array($trs);
+			
+			return $g[0];
 	}
 	
 	//подсчет новых историй данного заказа

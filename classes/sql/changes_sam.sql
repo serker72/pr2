@@ -6,7 +6,7 @@ CREATE TABLE `app_contract` (
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `posted_user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `pdate` bigint(20) unsigned NOT NULL DEFAULT '0',
-  `txt` text NOT NULL,
+  `description` text NOT NULL,
   `supplier_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `supplier_contact_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `supplier_contact_data_id` bigint(20) unsigned NOT NULL DEFAULT '0',

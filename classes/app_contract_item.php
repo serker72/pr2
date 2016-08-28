@@ -140,5 +140,42 @@ class AppContractItem extends AbstractItem{
             
             return $can;
 	}
+        
+	public function GetSupplierItemByIdArr($id, $item=NULL){
+            if($id === NULL) return false;
+            if($item === NULL) $item = $this->GetItemById($id);
+            
+            $arr = array();
+        
+            $sql = 'select s.id as id, s.full_name, opf.name as opf_name, s.id as supplier_id, 
+                sc.id as c_id, sc.name as c_name, sc.position as c_position
+                from '.$this->tablename.' as ac
+                    left join supplier as s on ac.supplier_id = s.id
+                    left join opf as opf on s.opf_id = opf.id
+                    left join supplier_contact as sc on ac.supplier_contact_id = sc.id
+                where ac.id = "'.$id.'"';
+            
+            //echo $sql;
+            
+            $set=new MysqlSet($sql);
+		
+            $rs = $set->GetResult();
+            $rc = $set->GetResultNumRows();
+            for($i=0; $i<$rc; $i++){
+                $f = mysqli_fetch_array($rs);
+
+                foreach($f as $k => $v) $f[$k] = stripslashes($v);
+
+                $f['contacts'] = array(array(
+                    'id' => stripslashes($f['c_id']),
+                    'name' => stripslashes($f['c_name']),
+                    'position' => stripslashes($f['c_position'])
+                ));
+
+                $arr[] = $f;
+            }
+
+            return $arr;
+      }
 }
 ?>

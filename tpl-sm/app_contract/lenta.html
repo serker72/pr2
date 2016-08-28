@@ -65,7 +65,7 @@ $(function(){
 			});		
 		}
 		
-		probability=$("#lenta_probability").val();
+		/*probability=$("#lenta_probability").val();
 		probability=probability.replace(/,/,'.');
 		if((probability.length==0)||isNaN(probability)||(parseFloat(probability)<0)||(parseFloat(probability)>100)){
 			//alert('Введите корректное значение Вероятности заключения контракта, %!');
@@ -98,7 +98,7 @@ $(function(){
 				"name":" Макс. цена контр-та",
 				"error":"Введите корректное значение максимальной цены контракта!"
 			});	
-		}
+		}*/
 		
 		
 		
@@ -150,9 +150,9 @@ $(function(){
 			  data:{
 				  "action":"add_comment",
 				  "comment": comment,
-				  "probability":probability,
-				  "max_price":$("#lenta_max_price").val(),
-				  "currency_id":$("#lenta_currency_id").val(),
+				  //"probability":probability,
+				  //"max_price":$("#lenta_max_price").val(),
+				  //"currency_id":$("#lenta_currency_id").val(),
 				  "id":"%{$id}%",
 				  "files_server[]":files_server,
 				  "files_client[]":files_client
@@ -377,7 +377,7 @@ $(function(){
 		
 		//подятнуть текущую вероятность!!!!
 		
-		$.ajax({
+		/*$.ajax({
 		  async: true,
 		  url: "/js/app_contract.php",
 		  type: "POST",
@@ -400,7 +400,7 @@ $(function(){
 		  }	 
 	  });
 		
-		$("#lenta_probability_block").show();
+		$("#lenta_probability_block").show();*/
 		
 		location.href="#lenta_new_set";
 		
@@ -657,7 +657,7 @@ $(function(){
     <textarea id="lenta_comment" cols="60" rows="5" style="width:100%; height:75px;"></textarea>
     <p />
     
-    <div id="lenta_probability_block">
+    <!--div id="lenta_probability_block">
     
     
 		<div style="float:left; margin-right:20px;" >
@@ -708,7 +708,7 @@ $(function(){
         
         <br clear="all">
 
-    </div>
+    </div-->
     
 
     

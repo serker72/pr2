@@ -68,6 +68,7 @@ require_once('classes/tender_history_item.php');
 
 require_once('classes/app_contract_group.php');
 require_once('classes/app_contract_item.php');
+require_once('classes/app_contract_filegroup.php');
 require_once('classes/app_contract_fileitem.php');
 require_once('classes/app_contract_creator.php');
 require_once('classes/app_contract_historygroup.php');
@@ -180,6 +181,17 @@ if($action==0){
     }
     
     foreach($editing_user as $k => $v) $editing_user[$k] = stripslashes($v);
+    
+    if(!$au->user_rights->CheckAccess('w',1160)){	
+            $is_shown = in_array($id, $available_appc);
+
+            if(!$is_shown){
+                    header("HTTP/1.1 404 Not Found");
+                    header("Status: 404 Not Found");
+                    include('404.php');
+                    die();
+            }
+    }
 }
 
 //обработка данных
@@ -189,7 +201,7 @@ if(($action==0)&&(isset($_POST['doNew'])||isset($_POST['doNewEdit']))){
 	$params['posted_user_id'] = $result['id'];
 	$params['pdate'] = time();
 	$params['user_id'] = abs((int)$_POST['manager_id']);
-	$params['txt'] = SecStr($_POST['description']);
+	$params['description'] = SecStr($_POST['description']);
 	$params['status_id'] = 1;
 			
 	//контрагенты
@@ -267,7 +279,7 @@ if(($action==0)&&(isset($_POST['doNew'])||isset($_POST['doNewEdit']))){
         }
 		  
 	if($au->user_rights->CheckAccess('w',1151)&&($_POST['do_confirm']==1)){
-            $_res->instance->Edit($code,array('is_confirmed'=>1, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
+            $_appc_item->Edit($code,array('status_id'=>2, 'is_confirmed'=>1, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
 
             $log->PutEntry($result['id'],'автоматически утвердил заполнение заявки на договор',NULL,1151, NULL, NULL,$code);	
 	}else{
@@ -310,6 +322,7 @@ elseif(($action==1)&&(isset($_POST['doEdit'])||isset($_POST['doEditStay']))){
 	
 	if($condition){
             $params['user_id']=abs((int)$_POST['manager_id']);
+            $params['description'] = SecStr($_POST['description']);
             
             //контрагенты
             foreach($_POST as $k=>$v){
@@ -341,7 +354,7 @@ elseif(($action==1)&&(isset($_POST['doEdit'])||isset($_POST['doEditStay']))){
 	}
 //	
 	
-	$appc_item->Edit($id, $params);
+	$_appc_item->Edit($id, $params);
 	
 		
 	//$_appc_item->Edit($id, $params);
@@ -382,7 +395,7 @@ elseif(($action==1)&&(isset($_POST['doEdit'])||isset($_POST['doEditStay']))){
             // 
             if(($au->user_rights->CheckAccess('w',1155)) ){
                 if(!isset($_POST['is_confirmed'])){
-                    $appc_item->Edit($id,array('is_confirmed'=>0, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
+                    $_appc_item->Edit($id,array('status_id'=>4, 'is_confirmed'=>0, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
                     $log->PutEntry($result['id'],'снял утверждение заполнения',NULL,1155, NULL, NULL,$id);	
                 }
             } 
@@ -390,7 +403,7 @@ elseif(($action==1)&&(isset($_POST['doEdit'])||isset($_POST['doEditStay']))){
             //есть права
             if($au->user_rights->CheckAccess('w',1154) ){
                 if(isset($_POST['is_confirmed'])&&($_POST['is_confirmed']==1)){
-                    $appc_item->Edit($id,array('is_confirmed'=>1, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
+                    $_appc_item->Edit($id,array('status_id'=>2, 'is_confirmed'=>1, 'user_confirm_id'=>$result['id'], 'confirm_pdate'=>time()),true,$result);
                     $log->PutEntry($result['id'],'утвердил заполнение',NULL,1154, NULL, NULL,$id);	
                     //die();
                 }
@@ -436,17 +449,19 @@ if($action==1){
 	
 	//лента задачи - вызовем ее для отметки комментариев, как прочитанных
 		$_hg=new AppContractHistoryGroup;
-		$history= $_hg->ShowHistory(
+		$history = $_hg->ShowHistory(
 			$editing_user['id'],
-			 'app_contract/lenta'.$print_add.'.html', 
-			 new DBDecorator(), 
-			 $can_modify_ribbon,
-			 true,
-			 false,
-			 $result,
-			 $au->user_rights->CheckAccess('w',951),
-			 $au->user_rights->CheckAccess('w',952),$history_data,true,true
-			 );		
+			'app_contract/lenta'.$print_add.'.html', 
+			new DBDecorator(), 
+                        0,
+                        ITEMS_PER_PAGE,
+			$can_modify_ribbon,
+			true,
+			false,
+			$result,
+			$au->user_rights->CheckAccess('w',951),
+			$au->user_rights->CheckAccess('w',952),$history_data,true,true
+			);		
 } 
 
 
@@ -479,43 +494,6 @@ $_menu_id=86;
 	
 	//создание позиции
 	 if($action==0){
-		 
-		 
-		//виды лидов
-		$_tks=new LeadKindGroup;
-		$tks=$_tks->GetItemsArr();
-		//var_dump($tks);
-		$_ids=array(); $_vals=array();
-		$_ids[]=0; $_vals[]='-выберите-';
-		foreach($tks as $k=>$v){
-			$_ids[]=$v['id'];
-			$_vals[]=$v['name'];
-		}
-		$sm1->assign('tender_ids', $_ids); $sm1->assign('tender_vals', $_vals);
-		
-		
-		//валюты
-		 $_curr=new PlCurrGroup;
-		$sm1->assign('currs', $_curr->GetItemsArr(0));
-		 
-		
-		//типы оборудования 
-		$_eqs=new Tender_EqTypeGroup;
-		$eqs=$_eqs->GetItemsArr();
-		$_ids=array(); $_vals=array();
-		$_ids[]=0; $_vals[]='-выберите-';
-		foreach($eqs as $k=>$v){
-			$_ids[]=$v['id'];
-			$_vals[]=$v['name'];
-		}
-		$sm1->assign('eq_ids', $_ids); $sm1->assign('eq_vals', $_vals);
-		 
-		 
-		//print_r($eqs); 
-		 
-		$sm1->assign('opfs_total', $eqs); 
-		 
-		 
 		if(isset($_GET['supplier_id'])&&($_GET['supplier_id']!=0)){
 			//если задан КОНТРАГЕНТ:
 			//подставить в карту город контрагента
@@ -529,101 +507,29 @@ $_menu_id=86;
 			$_si=new SupplierItem;
 			$supplier=$_si->getitembyid($supplier_id);
 			$sm1->assign('supplier', $supplier);
-			
-			 
-			
-		 
 		} 
 		 
-		 
-		if(isset($_GET['tender_id'])&&($_GET['tender_id']!=0)){
-			 $tender_id=abs((int)$_GET['tender_id']);
-			
-			 $sm1->assign('kind_id', 3);
-			 
-			 //подставить контрагента, ответственных из ТЕНДЕРА
-			 
-			 $_tender=new Tender_Item;
-			 $tender=$_tender->GetItemById($tender_id);
-			 $sm1->assign('tender', $tender);
-			 
-			 //контрагенты
-			$_suppliers1=new Tender_SupplierGroup;
-			$sup1=$_suppliers1->GetItemsByIdArr($tender_id);
-			$sup2=array();
-			if(count($sup1)>0) $sup2[]=$sup1[0];
-			$sm1->assign('suppliers', $sup2);
-			
-			//отвеств сотр-к
-			$_user_s=new UserSItem;
-			$user_s=$_user_s->GetItemById($tender['manager_id']);
-			 
-			$sm1->assign('manager_id', $tender['manager_id']);
-			$sm1->assign('manager_string', $user_s['name_s']);
-			
-			//оборудование из тендера
-			$sm1->assign('eq_type_id', $tender['eq_type_id']);
-			 	
-		}else $tender_id=0;
-		
-		 $sm1->assign('tender_id', $tender_id); 
-	 
-		
-		
-		$_prods=new PlProdGroup;
-		$prods=$_prods->GetItemsArr();
-		$sm1->assign('prods',  $prods); 
-		
-		
 		$sm1->assign('now_time',  date('d.m.Y H:i:s')); 
 		$sm1->assign('now_date',  date('d.m.Y')); 
 		 
-	 
-	 	$from_hrs=array();
-		//$from_hrs[]='';
-		for($i=0;$i<=23;$i++) $from_hrs[]=sprintf("%02d",$i);
-		$sm1->assign('ptime_finish_h',$from_hrs);
-		$sm1->assign('ptime_claiming_h',$from_hrs);
-		
-				
-		$from_ms=array();
-		//$from_ms[]='';
-		for($i=0;$i<=59;$i++) $from_ms[]=sprintf("%02d",$i);
-		$sm1->assign('ptime_finish_m',$from_ms);
-		$sm1->assign('ptime_claiming_m',$from_ms);
-		
-		
 		//получим список тех, кто может снять утверждение заполнения
 		$_usg1=new UsersSGroup;
-		$usg1=$_usg1->GetUsersByRightArr('w', 965);
+		$usg1=$_usg1->GetUsersByRightArr('w', 1155);
 		$sm1->assign('can_unconfirm_users',$usg1);
-		$sm1->assign('can_unconfirm',$au->user_rights->CheckAccess('w',965));
+		$sm1->assign('can_unconfirm',$au->user_rights->CheckAccess('w',1155));
 		
 		
 		 
 		$sm1->assign('session_id', session_id());
 		
-		$sm1->assign('can_expand_types', $au->user_rights->CheckAccess('w',939));
-		$sm1->assign('can_add_supplier', $au->user_rights->CheckAccess('w',87));
+		$sm1->assign('can_modify_supplier', true);
+		$sm1->assign('can_modify_manager', true);
 		
-		$sm1->assign('can_modify_supplier', ($tender_id==0));
-		$sm1->assign('can_modify_manager', ($tender_id==0));
-		$sm1->assign('can_modify_eq_type', ($tender_id==0));
-		
-		$sm1->assign('can_confirm', $au->user_rights->CheckAccess('w',949));
+		$sm1->assign('can_confirm', $au->user_rights->CheckAccess('w',1154));
 		
 		
 		$user_form=$sm1->fetch('app_contract/create.html');
-		 
-		
-		
-		$sm->assign('has_tz', $au->user_rights->CheckAccess('w',1005));
-		$sm->assign('tzs','Работа с ТЗ по лиду в данном режиме невозможна. Пожалуйста, сохраните и утвердите лид для создания по нему ТЗ.');
-		
-		$sm->assign('kp_ins','Работа с входящими КП по лиду в данном режиме невозможна. Пожалуйста, сохраните и утвердите лид для создания по нему входящего КП.');
-		
-		
-	 }elseif($action==1){
+	 } elseif($action==1){
 		//редактирование позиции
 		
 		if($print==0) $print_add='';
@@ -687,65 +593,6 @@ $_menu_id=86;
 		}
 		$sm1->assign('can_confirm',$can_confirm_price);
 		
-		
-		//блок утв. выполнения
-		if(($editing_user['is_confirmed_done']==1)&&($editing_user['user_confirm_done_id']!=0)){
-			$confirmer='';
-			$_user_temp=new UserSItem;
-			$_user_confirmer=$_user_temp->GetItemById($editing_user['user_confirm_done_id']);
-			$confirmer=$_user_confirmer['position_s'].' '.$_user_confirmer['name_s'].' '.date("d.m.Y H:i:s",$editing_user['confirm_done_pdate']);
-			
-			$sm1->assign('is_confirmed_done_confirmer',$confirmer);
-		}
-		
-		$can_confirm_shipping=false;
-		if($editing_user['is_confirmed']==1){
-		
-		   
-		  if($editing_user['is_confirmed_done']==1){
-				$can_confirm_shipping=$au->user_rights->CheckAccess('w',950)&&(($au->user_rights->CheckAccess('w',958))/*||($editing_user['manager_id']==$result['id'])*/);
-		  }else{
-		  //ставим утв	
-			  $can_confirm_shipping=$au->user_rights->CheckAccess('w',950)&&(($au->user_rights->CheckAccess('w',956))/*||($editing_user['manager_id']==$result['id'])*/);
-		  }
-		}
-		// + есть галочка утв. цен
-		$can_confirm_shipping=$can_confirm_shipping&&($editing_user['is_confirmed']==1);
-		
-		
-		
-		$sm1->assign('can_confirm_done',$can_confirm_shipping);
-		
-		
-		
-		//блок утв. принятия
-		if(($editing_user['is_fulfiled']==1)&&($editing_user['user_fulfiled_id']!=0)){
-			$confirmer='';
-			$_user_temp=new UserSItem;
-			$_user_confirmer=$_user_temp->GetItemById($editing_user['user_fulfiled_id']);
-			$confirmer=$_user_confirmer['position_s'].' '.$_user_confirmer['name_s'].' '.date("d.m.Y H:i:s",$editing_user['fulfiled_pdate']);
-			
-			$sm1->assign('is_fulfiled_confirmer',$confirmer);
-		}
-		
-		$can_confirm_shipping=false;
-		if($editing_user['is_confirmed_done']==1){
-		
-		  if($editing_user['is_fulfiled']==1){
-			   $can_confirm_shipping=$au->user_rights->CheckAccess('w',959);
-		  }else{
-			  //95
-			  $can_confirm_shipping=$au->user_rights->CheckAccess('w',957);
-		  }
-		}
-		// + есть галочка утв. цен
-		$can_confirm_shipping=$can_confirm_shipping&&($editing_user['is_confirmed_done']==1);
-		
-		
-		$sm1->assign('can_confirm_fulfil',$can_confirm_shipping);
-		
-		
-		
 		$reason='';
 		
 		
@@ -767,10 +614,12 @@ $_menu_id=86;
 		$history = $_hg->ShowHistory(
                     $editing_user['id'],
                     'app_contract/lenta'.$print_add.'.html', 
-                    new DBDecorator(), 
+                    new DBDecorator(),
+                    0,
+                    ITEMS_PER_PAGE,
                     $can_modify_ribbon,
                     true,
-                    false,
+                    true,
                     $result,
                     $au->user_rights->CheckAccess('w',951),
                     $au->user_rights->CheckAccess('w',952),$history_data,true,true
@@ -780,8 +629,9 @@ $_menu_id=86;
 		
 		 
 		//контрагенты
-		$_suppliers=new Lead_SupplierGroup;
-		$sup=$_suppliers->GetItemsByIdArr($editing_user['id']);
+		//$_suppliers=new Lead_SupplierGroup;
+		//$sup=$_suppliers->GetItemsByIdArr($editing_user['id']);
+                $sup = $_appc_item->GetSupplierItemByIdArr($editing_user['id']);
 		$sm1->assign('suppliers', $sup);
 		
 		
@@ -789,13 +639,14 @@ $_menu_id=86;
 		$sm1->assign('can_modify_ribbon', $can_modify_ribbon);  
 		 
 		 
-		 $sm1->assign('can_modify_supplier', ( $can_modify&&($editing_user['tender_id']==0)));
+		 $sm1->assign('can_modify_supplier', $can_modify);
 		$sm1->assign('can_add_supplier', $au->user_rights->CheckAccess('w',87)); 
 		
 		//смена менеджера при проставленной 1 галочке 
 		$sm1->assign('can_change_manager', ($editing_user['is_confirmed']==1)&&($editing_user['is_confimed_done']==0)&&(in_array($editing_user['status_id'], array(33,2,28)))&&($au->user_rights->CheckAccess('w',980)||($editing_user['manager_id']==$result['id'])));   
 		 
 		$sm1->assign('can_modify_manager', ( $can_modify&&($editing_user['tender_id']==0)));
+		$sm1->assign('can_modify_iam', $editing_user['user_id'] == $result['id']);
 		 
 		
 		$sm1->assign('bill', $editing_user);
@@ -819,9 +670,9 @@ $_menu_id=86;
 			  
 			  
 			  
-			  $ffg=new LeadFileGroup(1,  $id,  new FileDocFolderItem(1,  $id, new LeadFileItem(1)));;
+			  $ffg=new AppContractFileGroup(1,  $id,  new FileDocFolderItem(1,  $id, new AppContractFileItem(1)));;
 			  
-			  $filetext=$ffg->ShowFiles('app_contract/files_list.html', $decorator,0,10000,'ed_app_contract.php', 'lead_file.html', 'swfupl-js/app_contract_files.php',  
+			  $filetext=$ffg->ShowFiles('app_contract/files_list.html', $decorator,0,10000,'ed_app_contract.php', 'app_contract_file.html', 'swfupl-js/app_contract_files.php',  
 			  false,  
 			 false, 
 			 false , 

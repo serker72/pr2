@@ -108,7 +108,7 @@ $_menu_id=84;
 /*********** OPO ****************************************************************************/		
 	
 	//покажем лог
-	$log=new AppContractGroup;
+	$log = new AppContractGroup;
 	//Разбор переменных запроса
 	if(isset($_GET['from'])) $from=abs((int)$_GET['from']);
 	else $from=0;
@@ -120,7 +120,13 @@ $_menu_id=84;
 	//$decorator->AddEntry(new SqlEntry('p.org_id',abs((int)$result['org_id']), SqlEntry::E));
 	
 	//echo $result['org_id'];
-	
+
+        //контроль видимости
+        if(!$au->user_rights->CheckAccess('w',1160)){
+                //$decorator->AddEntry(new SqlEntry('p.manager_id',$result['id'], SqlEntry::E));
+                $decorator->AddEntry(new SqlEntry('p.id', NULL, SqlEntry::IN_VALUES, NULL,$log->GetAvailableAppContractIds($result['id'])));
+        }
+        
 	if(!isset($_GET['sortmode'])){
 		$sortmode=0;	
 	}else{
@@ -339,7 +345,7 @@ $_menu_id=84;
             $au->user_rights->CheckAccess('w',1155),
             $au->user_rights->CheckAccess('w',1156),
             $au->user_rights->CheckAccess('w',1157),
-            false
+            $au->user_rights->CheckAccess('w',1160)
 	);
 	
 	

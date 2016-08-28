@@ -17,7 +17,7 @@ class AppContractGroup extends AbstractGroup {
     }
 
     // Показать договора
-    public function ShowPos($template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $user_id=0, $can_create_contract, $can_edit_contract, $can_delete_contract, $can_confirm_contract, $can_unconfirm_contract, $can_annul_contract, $can_restore_contract,$can_view_all=false){
+    public function ShowPos($template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $user_id=0, $can_create_contract, $can_edit_contract, $can_delete_contract, $can_confirm_contract, $can_unconfirm_contract, $can_annul_contract, $can_restore_contract/*, $can_view_all=false*/){
         $sm = new SmartyAdm;
 
         $sql = 'select p.*, 
@@ -48,22 +48,22 @@ class AppContractGroup extends AbstractGroup {
 
         $this->_view = new AppContract_ViewGroup;
 
-        if (!$can_view_all) {
+        /*if (!$can_view_all) {
             $sql .= ' where p.' . $this->subkeyname . ' = "'.$user_id.'" ';
             $sql_count .= ' where p.' . $this->subkeyname . ' = "'.$user_id.'" ';
-        }
+        }*/
 
 
 
         $db_flt=$dec->GenFltSql(' and ');
         if(strlen($db_flt)>0){
-            if($can_view_all && !$user_id) {
+            //if($can_view_all && !$user_id) {
                 $sql.=' where '.$db_flt;
                 $sql_count.=' where '.$db_flt;
-            }else{
+            /*}else{
                 $sql.=' and '.$db_flt;
                 $sql_count.=' and '.$db_flt;	
-            }
+            }*/
         }
 
         $ord_flt=$dec->GenFltOrd();
@@ -174,7 +174,7 @@ class AppContractGroup extends AbstractGroup {
                 }
         }else{
                 //свои
-                $sql='select id from app_contract where user_id="'.$user_id.'" '; // or created_id="'.$user_id.'" ';	
+                $sql='select id from app_contract where user_id="'.$user_id.'" or posted_user_id="'.$user_id.'" ';	
 
                 //руководитель отдела - давать доступ к документам подчиненных
                 $_ui=new UserSItem;
@@ -182,7 +182,7 @@ class AppContractGroup extends AbstractGroup {
                 $_upos=new UserPosItem;
                 $upos=$_upos->GetItemById($user['position_id']);
                 if($upos['is_ruk_otd']==1){
-                        $sql.=' or user_id in(select id from user where department_id="'.$user['department_id'].'")';
+                        $sql.=' or user_id in (select id from user where department_id="'.$user['department_id'].'")';
 
                 } 
 

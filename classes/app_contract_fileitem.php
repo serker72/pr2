@@ -3,9 +3,9 @@ require_once('abstractfileitem.php');
 
 //абстрактный файл
 class AppContractFileItem extends AbstractFileItem{
-	protected $storage_id;
-	protected $storage_name;
-	protected $storage_path;
+	//protected $storage_id;
+	//protected $storage_name;
+	//protected $storage_path;
 	
 	
 	public function __construct($id=1){
@@ -16,7 +16,7 @@ class AppContractFileItem extends AbstractFileItem{
 	protected function init($id){
 		$this->tablename='app_contract_file';
 		$this->item=NULL;
-		$this->pagename='ed_app_contract.php';	
+		$this->pagename='app_contract_files.php';	
 		$this->vis_name='is_shown';	
 		$this->subkeyname='bill_id';
 			

@@ -25,8 +25,8 @@
 	}
 	 
 	
-	if (isset($_POST["bill_id"])){
-		$id=abs((int)$_POST["bill_id"]);	
+	if (isset($_POST["id"])){
+		$id=abs((int)$_POST["id"]);	
 	}else{
 		header("HTTP/1.1 404 Not Found");
 		header("Status: 404 Not Found");

@@ -40,15 +40,15 @@ if(($result===NULL)||(!$au->CheckOrgId())){
 	die();		
 }
 
-if(!isset($_GET['bill_id'])){
-	if(!isset($_POST['bill_id'])){
+if(!isset($_GET['bill_id']) && !isset($_GET['id'])){
+	if(!isset($_POST['bill_id']) && !isset($_POST['id'])){
 		header("HTTP/1.1 404 Not Found");
 		header("Status: 404 Not Found");
 		include("404.php");
 		die();		
-	}else $bill_id=abs((int)$_POST['bill_id']);
+	}else $bill_id = isset($_POST['bill_id']) ? abs((int)$_POST['bill_id']) : abs((int)$_POST['id']);
 	
-}else $bill_id=abs((int)$_GET['bill_id']); 
+}else $bill_id = isset($_GET['bill_id']) ? abs((int)$_GET['bill_id']) : abs((int)$_GET['id']); 
 
 $_user=new AppContractItem;
 $user=$_user->GetItemById($bill_id);
@@ -77,7 +77,7 @@ $_folder_desrc='';
 if($folder_id==0){
 	$_folder_desrc='';
 }else{
-	$_ff=new FileDocFolderItem(2, $bill_id, new AppContractFileItem(2));
+	$_ff=new FileDocFolderItem(1, $bill_id, new AppContractFileItem(1));
 	$_ff->SetTablename('app_contract_file_folder');
 	
 	$ff=strip_tags($_ff->DrawNavigCli($folder_id, '', '/', false)); 
@@ -141,7 +141,7 @@ if(isset($_GET['action'])&&($_GET['action']==3)){
 			die();	
 	}
 	
-	$_ff=new FileDocFolderItem(2, $bill_id, new AppContractFileItem2(2));
+	$_ff=new FileDocFolderItem(1, $bill_id, new AppContractFileItem2(1));
 	$_ff->SetTablename('app_contract_file_folder');
 	$_ff->SetDocIdName('doc_id');
 		
@@ -204,7 +204,7 @@ if(isset($_GET['action'])&&($_GET['action']==4)){
 	
 	
 		 	
-			$_ff=new FileDocFolderItem(2, $bill_id, new AppContractFileItem(2));
+			$_ff=new FileDocFolderItem(1, $bill_id, new AppContractFileItem(1));
 	$_ff->SetTablename('app_contract_file_folder');
 	$_ff->SetDocIdName('doc_id');
 		
@@ -261,13 +261,11 @@ unset($smarty);
 	
 	$decorator->AddEntry(new UriEntry('bill_id',$bill_id));
 	
-	$ffg=new AppContractFileGroup(2, $bill_id,  new FileDocFolderItem(2,  $bill_id, new AppContractFileItem(2)));
+	$ffg=new AppContractFileGroup(1, $bill_id,  new FileDocFolderItem(1,  $bill_id, new AppContractFileItem(1)));
 	
 	 
 	
 	$filetext=$ffg->ShowFiles('doc_file/list.html', $decorator,$from,$to_page, 'app_contract_files.php', 'app_contract_file.html', 'swfupl-js/app_contract_files.php', 
-	
-	 
 	  $au->user_rights->CheckAccess('w',1150),
 	 $au->user_rights->CheckAccess('w',1150),
 	 $au->user_rights->CheckAccess('w',1150),
@@ -276,8 +274,6 @@ unset($smarty);
 	 $au->user_rights->CheckAccess('w',1150),
 	  $au->user_rights->CheckAccess('w',1150),
 	  $au->user_rights->CheckAccess('w',1150),
-	 
-	
 	'',
 	 $au->user_rights->CheckAccess('w',1150),
 	 $result

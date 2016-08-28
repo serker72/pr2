@@ -141,6 +141,8 @@ RewriteRule ^doc_vn_lenta_file.html$ /doc_vn_lenta_load.php [L]
 
 RewriteRule ^load_memo.html$ /file_memo_load.php [L]
 
+RewriteRule ^app_contract_file.html$ /app_contract_file_load.php [L]
+
 
 #зоны и страницы-исключения
 RewriteRule ^img/campaign_([0-9]+)_([0-9]+).png  /js/delivery_view.php?user_id=$1&delivery_id=$2 [L]
