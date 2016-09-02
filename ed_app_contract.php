@@ -450,18 +450,19 @@ if($action==1){
 	//лента задачи - вызовем ее для отметки комментариев, как прочитанных
 		$_hg=new AppContractHistoryGroup;
 		$history = $_hg->ShowHistory(
-			$editing_user['id'],
-			'app_contract/lenta'.$print_add.'.html', 
-			new DBDecorator(), 
-                        0,
-                        ITEMS_PER_PAGE,
-			$can_modify_ribbon,
-			true,
-			false,
-			$result,
-			$au->user_rights->CheckAccess('w',951),
-			$au->user_rights->CheckAccess('w',952),$history_data,true,true
-			);		
+                    $editing_user['id'],
+                    'app_contract/lenta'.$print_add.'.html', 
+                    new DBDecorator(),
+                    true,
+                    true,
+                    false,
+                    $result,
+                    $au->user_rights->CheckAccess('w',1158),
+                    $au->user_rights->CheckAccess('w',1159),
+                    $history_data,
+                    true,
+                    true
+		);		
 } 
 
 
@@ -479,7 +480,7 @@ else $smarty->display('top_print.html');
 unset($smarty);
 
 
-$_menu_id=86;
+$_menu_id=84;
 	
 	if($print==0) include('inc/menu.php');
 	
@@ -615,14 +616,15 @@ $_menu_id=86;
                     $editing_user['id'],
                     'app_contract/lenta'.$print_add.'.html', 
                     new DBDecorator(),
-                    0,
-                    ITEMS_PER_PAGE,
-                    $can_modify_ribbon,
                     true,
                     true,
+                    false,
                     $result,
-                    $au->user_rights->CheckAccess('w',951),
-                    $au->user_rights->CheckAccess('w',952),$history_data,true,true
+                    $au->user_rights->CheckAccess('w',1158),
+                    $au->user_rights->CheckAccess('w',1159),
+                    $history_data,
+                    true,
+                    true
 		);
 		$sm1->assign('lenta',$history);
 		$sm1->assign('lenta_len',count($history_data));

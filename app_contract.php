@@ -1,11 +1,16 @@
 <?
+/*ini_set("display_errors", 1);
+ini_set("track_errors", 1);
+ini_set("html_errors", 1);
+error_reporting(E_ALL);*/
+
 session_start();
 Header("Cache-Control: no-store, no-cache, must-revalidate"); //для протокола HTTP/1.1
 Header("Pragma: no-cache"); // для протокола HTTP/1.1
 Header("Last-Modified: " . gmdate("D, d M Y H:i:s") . "GMT"); // дата и время генерации страницы
 header("Expires: " . date("r")); // дата и время время, когда страница будет считаться устаревшей
 
-
+//phpinfo();
 require_once('classes/global.php');
 require_once('classes/authuser.php');
 
@@ -22,6 +27,7 @@ require_once('classes/user_pos_item.php');
 require_once('classes/user_to_user.php');
 require_once('classes/rl/rl_man.php');
 
+
 $smarty = new SmartyAdm;
 $smarty->assign("SITETITLE",'Заявки на договора');
 
@@ -31,7 +37,7 @@ if(($result===NULL)||(!$au->CheckOrgId())){
 	header("HTTP/1.1 403 Forbidden");
 	header("Status: 403 Forbidden");
 	include("index.php");
-	die();		
+	die('');		
 }
 
 	if(isset($_GET['from']))
@@ -48,12 +54,12 @@ if(!isset($_GET['print'])){
 	}else $print=abs((int)$_POST['print']); 
 }else $print=abs((int)$_GET['print']);
 
-if(($print==1)&&!$au->user_rights->CheckAccess('w',823)){
+/*if(($print==1)&&!$au->user_rights->CheckAccess('w',823)){
 	header("HTTP/1.1 403 Forbidden");
 	header("Status: 403 Forbidden");
 	include("403.php");
 	die();	
-}
+}*/
 
 if(!$au->user_rights->CheckAccess('w',1150)){
 	header("HTTP/1.1 403 Forbidden");
@@ -61,8 +67,6 @@ if(!$au->user_rights->CheckAccess('w',1150)){
 	include("403.php");
 	die();	
 }
-
-
 
 
 //журнал событий 

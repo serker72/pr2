@@ -1,0 +1,184 @@
+%{debug}%
+%{section name=rowsec loop=$items}%%{/section}%
+<h1>Рассчитать лизинговые платежи</h1>
+
+<form id="calc_leasing_form" method="post" action="calc_leasing_pay.php">
+    <input type="hidden" id="action" name="action" value="1">
+    
+    <!--table width="100%" border="0" cellpadding="2" cellspacing="0" class="messagetable">
+        <thead>
+            <tr align="center" valign="top">
+                <th style="font-weight: bold;" colspan="11">Формула расчета ежемесячного размера лизинговых платежей</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr align="center" valign="top">
+                <td style="color: #0000ff; font-weight: bold;">ЛП</td>
+                <td style="color: #0000ff; font-weight: bold;" rowspan="2">=</td>
+                <td style="color: #0000ff; font-weight: bold;">АО</td>
+                <td style="color: #0000ff; font-weight: bold;" rowspan="2">+</td>
+                <td style="color: #0000ff; font-weight: bold;">ПК</td>
+                <td style="color: #0000ff; font-weight: bold;" rowspan="2">+</td>
+                <td style="color: #0000ff; font-weight: bold;">ЛП</td>
+                <td style="color: #0000ff; font-weight: bold;" rowspan="2">+</td>
+                <td style="color: #0000ff; font-weight: bold;">ДУ</td>
+                <td style="color: #0000ff; font-weight: bold;" rowspan="2">+</td>
+                <td style="color: #0000ff; font-weight: bold;">НДС</td>
+            </tr>
+
+            <tr align="center" valign="top">
+                <td>Лизинговый платеж</td>
+                <td>величина амортизационных отчислений</td>
+                <td>плата за использованные кредитные ресурсы</td>
+                <td>лизинговая премия лизингодателю за предоставленные услуги</td>
+                <td>плата лизингодателю за дополнительные услуги</td>
+                <td>налог на добавленную стоимость</td>
+            </tr>
+
+            <tr align="center" valign="top">
+                <td colspan="3">
+                    <label for="equipment_cost">Стоимость оборудования (руб.)</label><br>
+                    <input type="text" id="equipment_cost" name="equipment_cost" value="%{$equipment_cost}%">
+                </td>
+                
+                <td>&nbsp;</td>
+
+                <td colspan="3">
+                    <label for="additional_services_cost">Стоимость дополнительных услуг (руб.)</label><br>
+                    <input type="text" id="additional_services_cost" name="additional_services_cost" value="%{$additional_services_cost}%">
+                </td>
+
+                <td>&nbsp;</td>
+
+                <td colspan="3">
+                    <label for="prepayment_cost">Сумма авансового платежа (руб.)</label><br>
+                    <input type="text" id="prepayment_cost" name="prepayment_cost" value="%{$prepayment_cost}%">
+                </td>
+            </tr>
+
+            <tr align="center" valign="top">
+                <td colspan="3">
+                    <label for="contract_time">Срок действия договора (лет)</label><br>
+                    <input type="text" id="contract_time" name="contract_time" value="%{$contract_time}%">
+                </td>
+
+                <td>&nbsp;</td>
+
+                <td colspan="3">
+                    <label for="equipment_service_life">Срок службы оборудования (лет)</label><br>
+                    <input type="text" id="equipment_service_life" name="equipment_service_life" value="%{$equipment_service_life}%">
+                </td>
+
+                <td>&nbsp;</td>
+
+                <td colspan="3">
+                    <label for="k_amortiz">Коэффициент ускоренной амортизации</label><br>
+                    <input type="text" id="k_amortiz" name="k_amortiz" value="%{$k_amortiz}%">
+                </td>
+            </tr>
+
+            <tr align="center" valign="top">
+                <td colspan="3">
+                    <label for="credit_rate">Процентная ставка по кредиту (% годовых)</label><br>
+                    <input type="text" id="credit_rate" name="credit_rate" value="%{$credit_rate}%">
+                </td>
+
+                <td colspan="3">
+                    <label for="nds_rate">Процентная ставка НДС (%)</label><br>
+                    <input type="text" id="nds_rate" name="nds_rate" value="%{$nds_rate}%">
+                </td>
+
+                <td colspan="3">
+                    <label for="leasing_rate">Лизинговая премия (% от средней остаточной стоимости оборудования)</label><br>
+                    <input type="text" id="leasing_rate" name="leasing_rate" value="%{$leasing_rate}%">
+                </td>
+            </tr>
+        </tbody>
+    </table-->
+
+    <br clear="all">
+
+    <div>
+        <input type="submit" value="Выполнить расчет" name="doCalc" />
+    </div>
+</form>
+        
+<!--div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <br clear="all">
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+        
+        <div style="float:left; margin-right:20px; height:50px;">
+        </div>
+</div-->
+
+<script type="text/javascript">
+$(function(){
+    $("#calc_leasing_form").bind("submit",function(){
+        var res=true;
+        var error_fields=new Array();
+
+        if (($("#equipment_cost").val().length == 0) || ($("#equipment_cost").val() == '0')){
+                res=res&&false;
+
+                error_fields.push({
+                        "id":"equipment_cost",
+                        "name":"Стоимость оборудования",
+                        "error":"Укажите стоимость оборудования !"
+                });			 
+        }
+        
+        $(".blue").removeClass("blue");
+        
+        if(!res){
+            var tt='<ul>';
+            $.each(error_fields,function(k,v){
+                    tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+
+                    $("#"+v.id).addClass("blue");
+            });
+
+            tt+='</ul>';
+
+
+            $("#error_window_text").html(tt);
+
+             max_height=700; min_height=300;
+
+             our_height=parseInt($("#error_window_text").height());
+
+             if(our_height>max_height) our_height=max_height;
+             if(our_height<min_height) our_height=min_height;
+
+
+
+             $("#error_window_dialog").dialog( "option", "height", our_height+140);
+
+
+            $("#error_window_dialog").dialog("open");
+        }
+
+        return res;
+    });
+});
+</script>

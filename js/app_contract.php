@@ -11,7 +11,7 @@ require_once('../classes/discr_table_objects.php');
 require_once('../classes/actionlog.php');
 require_once('../classes/db_decorator.php');
  
-//require_once('../classes/lead.class.php');
+require_once('../classes/lead.class.php');
 
 require_once('../classes/supplieritem.php'); 
 require_once('../classes/quick_suppliers_group.php'); 
@@ -316,6 +316,7 @@ elseif(isset($_POST['action'])&&($_POST['action']=="add_comment")){
 	$params['txt']=SecStr(iconv("utf-8","windows-1251",$_POST['comment']));
 	$params['user_id']=$result['id'];
 	$params['pdate']=time();
+	$params['status_id']=$sch['status_id'];
 	
 	$code=$_hi->Add($params);
 	

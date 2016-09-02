@@ -19,8 +19,20 @@ class AppContractHistoryGroup extends AbstractGroup {
 	}
 	
 	
-	public function ShowHistory($order_id, $template, DBDecorator $dec, $from=0, $to_page=ITEMS_PER_PAGE, $can_create_order) {
-		$sm=new SmartyAdm;
+	public function ShowHistory($order_id, $template, DBDecorator $dec, $can_edit=false, $has_header=true, $is_ajax=false, $result=NULL, $can_edit_record=false, $can_edit_all_record=false, &$data, $do_template=true, $do_read=false, $item=NULL){
+		if($is_ajax) $sm=new SmartyAj;
+		else $sm=new SmartyAdm;
+		
+		$sm->assign('can_edit_record',$can_edit_record);
+		$sm->assign('can_edit_all_record',$can_edit_all_record);
+		
+		if($result===NULL){
+			$_au=new AuthUser;
+			$result=$_au->Auth(false,false);	
+		}
+		
+		$_app_c = new AppContractItem;
+		if($item===NULL) $item = $_app_c->GetItemById($order_id);
 		
 		$ofg=new AppContractHistoryFileGroup;
 		
@@ -35,6 +47,21 @@ class AppContractHistoryGroup extends AbstractGroup {
 			left join app_contract_status as s on o.status_id=s.id
 		where o.'.$this->subkeyname.'="'.$order_id.'" ';
 		
+                if(!$can_edit_all_record) {
+                    $sql .=
+                        'and 
+                            (o.user_id="'.$result['id'].'" or
+                                    (o.user_id<>"'.$result['id'].'" and o.is_shown=1)
+                            )
+                        ';
+                    
+                    $sql_count .=
+                        'and 
+                            (o.user_id="'.$result['id'].'" or
+                                    (o.user_id<>"'.$result['id'].'" and o.is_shown=1)
+                            )
+                        ';
+                }
 		
 					 
 		$db_flt=$dec->GenFltSql(' and ');
@@ -56,15 +83,8 @@ class AppContractHistoryGroup extends AbstractGroup {
 		$rc=$set->GetResultNumRows();
 		$total=$set->GetResultNumRowsUnf();
 		
-		
-		//page
-		$navig = new PageNavigator($this->pagename,$total,$to_page,$from,10,'&'.$dec->GenFltUri());
-		$navig->SetFirstParamName('from');
-		$navig->setDivWrapperName('alblinks');
-		$navig->setPageDisplayDivName('alblinks1');			
-		$pages= $navig->GetNavigator();
-		
 		$alls=array();
+                $viewed_ids=array();
 		for($i=0; $i<$rc; $i++){
 			$f=mysqli_fetch_array($rs);
 			foreach($f as $k=>$v) $f[$k]=stripslashes($v);
@@ -74,6 +94,14 @@ class AppContractHistoryGroup extends AbstractGroup {
 			$f['files']=$ofg->GetItemsByIdArr($f['id']);
 			//print_r($f);	
 			$alls[]=$f;
+                        $viewed_ids[]=$f['id'];
+		}
+		
+		$data=$alls;
+		
+		//пометим прочитаннымм
+		if($do_read){
+			$this->ToggleRead($order_id, $viewed_ids, $result['id']);	
 		}
 		
 		//заполним шаблон полями
@@ -90,25 +118,19 @@ class AppContractHistoryGroup extends AbstractGroup {
 		}
 		
 		
-	
-		
-		
 		$sm->assign('id',$order_id);
-		$sm->assign('from',$from);
-		$sm->assign('to_page',$to_page);
-		$sm->assign('pages',$pages);
 		$sm->assign('items',$alls);
 		$sm->assign('can_create_order',$can_create_order);
-		$sm->assign('can_edit',$can_create_order);
+		$sm->assign('can_edit',$can_edit);
 		$sm->assign('has_header', true);
+                
+		$sm->assign('session_id', session_id());
 		
-		//ссылка для кнопок сортировки
-		$link=$dec->GenFltUri();
-		$link=$this->pagename.'?'.eregi_replace('&sortmode=[[:digit:]]+','',$link);
-		$sm->assign('link',$link);
+		$sm->assign('item',$item);
 		
-		return $sm->fetch($template);
 		
+		if( $do_template) return $sm->fetch($template);
+		else return $alls;
 	}
 	
 	//подсчет новых историй данного заказа

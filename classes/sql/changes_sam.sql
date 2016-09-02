@@ -182,3 +182,5 @@ INSERT `user_rights` (`id`, `user_id`, `right_id`, `object_id`) VALUES
 INSERT INTO `left_menu_new` (`id`, `parent_id`, `object_id`, `name`, `description`, `url`, `ord`) VALUES 
 (null, '0', '0', 'Заявки на договора', 'Раздел "Заявки на договора"', '#', ''),
 (null, '28', '1150', 'Заявки на договора', 'Раздел "Заявки на договора"', 'app_contract.php?from=0', '193');
+
+ALTER TABLE `app_contract_history` ADD `is_shown` TINYINT UNSIGNED NOT NULL DEFAULT '1' AFTER `is_new`;

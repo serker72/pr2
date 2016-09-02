@@ -1,3 +1,4 @@
+%{*debug*}%
 %{section name=rowsec loop=$items}%%{/section}%
 
 %{if $has_header}%
@@ -103,9 +104,8 @@ $(function(){
 		
 		
 		$(".blue").removeClass("blue");
+                
 		if(!res){
-			
-			 
 			var tt='<ul>';
 			$.each(error_fields,function(k,v){
 				tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
@@ -132,8 +132,6 @@ $(function(){
 			
 			$("#error_window_dialog_comment").dialog("open");
 		}else{
-	
-		
 			files_server=new Array(); files_client=new Array();
 			$.each($("#uploaded_files input[id^=upload_file_]"), function(k,v){
 				id=$(v).attr("id");
@@ -162,8 +160,6 @@ $(function(){
 			  },
 			  success: function(data){
 				 alert("Комментарий добавлен!"); 
-				
-				 
 				  
 				$("#lenta_commments").append(data);
 				$("#uploaded_files").empty();
@@ -176,45 +172,8 @@ $(function(){
 				
 				$("#lenta_new_set").prop("disabled", false);
 				$("#lenta_new_cancel").trigger("click"); 
-				
-				//подгрузить новую вероятность в карту...
-				//обновить блок Состояние
-				$.ajax({
-					  async: true,
-					  url: "/js/app_contract.php",
-					  type: "POST",
-					  data:{
-						  "action":"get_probability",
-						   
-						  "id":"%{$id}%" 
-					  },
-					  beforeSend: function(){
-						  
-					  },
-					  success: function(data){
-						  $("#probability").val(data);
-						  d=parseFloat(data);
-						  if((d>=0)&&(d<=29.99)){
-							$("#state").html('<span style="color:#aaaaaa;"> холодный</span>');  
-						  }else if((d>=30)&&(d<=69.99)){
-							$("#state").html('<span style="color:#3a87ad;  ">теплый</span>');  
-						  }
-						  else if((d>=70)){
-							$("#state").html('<span style="color:#e9510f;  ">горячий</span>');  
-						  }
-						
-					  },
-					  error: function(xhr, status){
-						 // alert("Ошибка добавления комментария.");	
-						   
-					  }	 
-				  });
-				  
-				  //проставить новую макс цену
-				  $("#max_price").val($("#lenta_max_price").val());
-				  $("#currency_id").val($("#lenta_currency_id").val());
-				
-				
+                                //
+                                $("#lenta_new").hide();
 			  },
 			  error: function(xhr, status){
 				  alert("Ошибка добавления комментария.");	
@@ -407,21 +366,20 @@ $(function(){
 	});
 	
 	$("#lenta_new_cancel").bind("click", function(){
-		
 		try{
 			CKEDITOR.instances.lenta_comment.destroy();
 		}catch(e){
-			
+                    
 		}
 		$("#lenta_new_set").appendTo($("#lenta_new"));
 		
 		
 		try{
-			$("#lenta_comment").ckeditor({
-               customConfig : '/ckeditor4/config-kp.js',
-							 width:'100%',
-							 height: '75px'
-            });
+                    $("#lenta_comment").ckeditor({
+                        customConfig : '/ckeditor4/config-kp.js',
+                        width:'100%',
+			height: '75px'
+                    });
 			
 		}catch(e){}
 	 

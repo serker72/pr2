@@ -1,0 +1,205 @@
+%{include file="error_window.html"   prefix="" }%
+
+<!--h1>Рассчитать лизинговые платежи</h1-->
+
+<form id="calc_leasing_form" method="post" action="calc_leasing_pay.php">
+    <input type="hidden" id="action" name="action" value="1">
+    
+    <table width="100%" border="0" cellpadding="2" cellspacing="0" class="reptable2">
+        <thead>
+            <tr align="center" valign="top" style="background-color:#f1f1f1;">
+                <th style="font-weight: bold;" colspan="11"><h2>Формула расчета ежемесячного размера лизинговых платежей</h2></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr align="center" valign="top" style="background-color:#f1f1f1;">
+                <td style="color: #0000ff; font-weight: bold; width: 200px;">ЛП</td>
+                <td style="color: #0000ff; font-weight: bold;">&nbsp;=</td>
+                <td style="color: #0000ff; font-weight: bold;">АО</td>
+                <td style="color: #0000ff; font-weight: bold;">&nbsp;+</td>
+                <td style="color: #0000ff; font-weight: bold;">ПК</td>
+                <td style="color: #0000ff; font-weight: bold;">&nbsp;+</td>
+                <td style="color: #0000ff; font-weight: bold;">ЛП</td>
+                <td style="color: #0000ff; font-weight: bold;">&nbsp;+</td>
+                <td style="color: #0000ff; font-weight: bold;">ДУ</td>
+                <td style="color: #0000ff; font-weight: bold;">&nbsp;+</td>
+                <td style="color: #0000ff; font-weight: bold;">НДС</td>
+            </tr>
+
+            <tr align="center" valign="top" style="background-color:#f1f1f1;">
+                <td>&nbsp;&nbsp;Лизинговый платеж</td>
+                <td>&nbsp;</td>
+                <td>величина амортизационных отчислений</td>
+                <td>&nbsp;</td>
+                <td>плата за использованные кредитные ресурсы</td>
+                <td>&nbsp;</td>
+                <td>лизинговая премия за предоставленные услуги</td>
+                <td>&nbsp;</td>
+                <td>плата за дополнительные услуги</td>
+                <td>&nbsp;</td>
+                <td>налог на добавленную стоимость</td>
+            </tr>
+            
+            <tr align="center" valign="top">
+                <th style="background-color:#f1f1f1;" colspan="11">&nbsp;</th>
+            </tr>
+            
+            <tr valign="bottom">
+                <td colspan="2">
+                    <label for="equipment_cost">Стоимость<br> оборудования (руб.)</label><br>
+                    <input type="text" id="equipment_cost" name="equipment_cost" value="%{$equipment_cost}%">
+                </td>
+                
+                <td colspan="2">
+                    <label for="additional_services_cost">Стоимость дополнительных<br>услуг (руб.)</label><br>
+                    <input type="text" id="additional_services_cost" name="additional_services_cost" value="%{$additional_services_cost}%">
+                </td>
+
+                <td colspan="2">
+                    <label for="prepayment_cost">Сумма авансового<br>платежа (руб.)</label><br>
+                    <input type="text" id="prepayment_cost" name="prepayment_cost" value="%{$prepayment_cost}%">
+                </td>
+
+                <td colspan="2">
+                    <label for="contract_time">Срок действия<br>договора (лет)</label><br>
+                    <input type="text" id="contract_time" name="contract_time" value="%{$contract_time}%">
+                </td>
+
+                <td colspan="3">
+                    <label for="equipment_service_life">Срок службы<br>оборудования (лет)</label><br>
+                    <input type="text" id="equipment_service_life" name="equipment_service_life" value="%{$equipment_service_life}%">
+                </td>
+            </tr>
+
+            <tr valign="bottom">
+                <td colspan="2">
+                    <label for="k_amortiz">Коэффициент ускоренной<br>амортизации</label><br>
+                    <input type="text" id="k_amortiz" name="k_amortiz" value="%{$k_amortiz}%">
+                </td>
+
+                <td colspan="2">
+                    <label for="credit_rate">Процентная ставка<br>по кредиту (% годовых)</label><br>
+                    <input type="text" id="credit_rate" name="credit_rate" value="%{$credit_rate}%">
+                </td>
+
+                <td colspan="2">
+                    <label for="nds_rate">Процентная ставка<br>НДС (%)</label><br>
+                    <input type="text" id="nds_rate" name="nds_rate" value="%{$nds_rate}%">
+                </td>
+                
+                <td colspan="5">
+                    <label for="leasing_rate">Лизинговая премия<br>(% от средней остаточной стоимости)</label><br>
+                    <input type="text" id="leasing_rate" name="leasing_rate" value="%{$leasing_rate}%">
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <br clear="all">
+
+    <div>
+        <div style="float: left; margin-right: 15px;">
+            <input type="submit" value="Выполнить расчет" name="doCalc" />
+        </div>
+
+        <div style="float: left; margin-right: 15px;">
+            %{if $has_save_excel}%
+            <a href="calc_leasing_pay_xls.php?action=1&equipment_cost=%{$equipment_cost}%&additional_services_cost=%{$additional_services_cost}%&prepayment_cost=%{$prepayment_cost}%&contract_time=%{$contract_time}%&equipment_service_life=%{$equipment_service_life}%&k_amortiz=%{$k_amortiz}%&credit_rate=%{$credit_rate}%&nds_rate=%{$nds_rate}%&leasing_rate=%{$leasing_rate}%" 
+               target="_blank" data-comment="Сформировать в Excel..." title="Сформировать в Excel..." style="width:32px; height:32px; display:inline-block; background-image:url(/i/excel.png); background-position:left top; background-repeat:no-repeat;"></a>
+            %{/if}%
+        </div>
+    </div>
+    
+    <br clear="all">
+</form>
+
+<script type="text/javascript">
+$(function(){
+    $("#calc_leasing_form").bind("submit",function(){
+        var res=true;
+        var error_fields=new Array();
+
+        if (($("#equipment_cost").val().length == 0) || ($("#equipment_cost").val() == '') || ($("#equipment_cost").val() == '0')){
+                res = res && false;
+
+                error_fields.push({
+                        "id":"equipment_cost",
+                        "name":"Стоимость оборудования",
+                        "error":"Укажите стоимость оборудования !"
+                });			 
+        }
+        
+        if (($("#contract_time").val().length == 0) || ($("#contract_time").val() == '') || ($("#contract_time").val() == '0')){
+                res = res && false;
+
+                error_fields.push({
+                        "id":"contract_time",
+                        "name":"Срок действия договора",
+                        "error":"Укажите срок действия договора !"
+                });			 
+        }
+        
+        if (($("#equipment_service_life").val().length == 0) || ($("#equipment_service_life").val() == '') || ($("#equipment_service_life").val() == '0')){
+                res = res && false;
+
+                error_fields.push({
+                        "id":"equipment_service_life",
+                        "name":"Срок службы оборудования",
+                        "error":"Укажите срок службы оборудования !"
+                });			 
+        }
+        
+        if (($("#nds_rate").val().length == 0) || ($("#nds_rate").val() == '') || ($("#nds_rate").val() == '0')){
+                res = res && false;
+
+                error_fields.push({
+                        "id":"nds_rate",
+                        "name":"Процентная ставка НДС",
+                        "error":"Укажите процентную ставку НДС !"
+                });			 
+        }
+        
+        if (($("#leasing_rate").val().length == 0) || ($("#leasing_rate").val() == '') || ($("#leasing_rate").val() == '0')){
+                res = res && false;
+
+                error_fields.push({
+                        "id":"leasing_rate",
+                        "name":"Лизинговая премия",
+                        "error":"Укажите лизинговую премию !"
+                });			 
+        }
+        
+        $(".blue").removeClass("blue");
+        
+        if(!res){
+            var tt='<ul>';
+            $.each(error_fields,function(k,v){
+                    tt+='<li><strong>'+v.name+'</strong>: '+v.error+' </li>';
+
+                    $("#"+v.id).addClass("blue");
+            });
+
+            tt+='</ul>';
+
+
+            $("#error_window_text").html(tt);
+
+             max_height=700; min_height=300;
+
+             our_height=parseInt($("#error_window_text").height());
+
+             if(our_height>max_height) our_height=max_height;
+             if(our_height<min_height) our_height=min_height;
+
+
+
+             $("#error_window_dialog").dialog( "option", "height", our_height+140);
+
+
+            $("#error_window_dialog").dialog("open");
+        }
+
+        return res;
+    });
+});
+</script>
